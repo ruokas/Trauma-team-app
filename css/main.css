@@ -17,6 +17,7 @@ main{max-width:1200px;margin:12px auto;padding:0 16px;display:grid;grid-template
 nav{position:sticky;top:68px;align-self:start}
 nav .tab{display:block;padding:10px 12px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;background:#0f1822;color:var(--ink);cursor:pointer;font-weight:600;text-align:left}
 nav .tab.active{background:#162334;border-color:#2b405c}
+nav .tab:focus{outline:2px solid var(--accent)}
 section.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
 section.card h2{font-size:16px;margin:0 0 10px}
 section.card .grid{display:grid;gap:10px}
