@@ -13,7 +13,12 @@ const imgWrap=$('#imaging_basic'); IMG.forEach(n=>{const s=document.createElemen
 const labsWrap=$('#labs_basic'); LABS.forEach(n=>{const s=document.createElement('span'); s.className='chip'; s.dataset.value=n; s.textContent=n; labsWrap.appendChild(s);});
 const fastAreas=['Perikardas','Dešinė pleura','Kairė pleura','RUQ','LUQ','Dubuo']; const fastWrap=$('#fastGrid');
 fastAreas.forEach(a=>{const box=document.createElement('div'); box.innerHTML=`<label>${a}</label><div class="row"><label class="pill"><input type="radio" name="fast_${a}" value="Yra"> Yra</label><label class="pill"><input type="radio" name="fast_${a}" value="Nėra"> Nėra</label></div>`; fastWrap.appendChild(box);});
-const teamWrap=$('#teamGrid'); TEAM_ROLES.forEach(r=>{const box=document.createElement('div'); box.innerHTML=`<label>${r}</label><input type="text" data-team="${r}" placeholder="Vardas Pavardė">`; teamWrap.appendChild(box);});
+const teamWrap=$('#teamGrid'); TEAM_ROLES.forEach(r=>{
+  const slug=r.replace(/\s+/g,'_');
+  const box=document.createElement('div');
+  box.innerHTML=`<label>${r}</label><input type="text" data-team="${r}" data-field="team_${slug}" placeholder="Vardas Pavardė">`;
+  teamWrap.appendChild(box);
+});
 
 /* ===== SVG Body Map (no canvas) ===== */
 const BodySVG=(function(){
@@ -91,7 +96,8 @@ const FIELD_SELECTORS='input[type="text"],input[type="number"],input[type="time"
 function saveAll(){
   const data={};
   $$(FIELD_SELECTORS).forEach(el=>{
-    const key=el.id||el.name||el.dataset.team||el.className;
+    const key=el.dataset.field || el.id || el.name;
+    if(!key) return;
     if(el.type==='radio'){ if(el.checked) data[key+'__'+el.value]=true; }
     else if(el.type==='checkbox'){ data[key]=el.checked?'__checked__':(el.value||''); }
     else{ data[key]=el.value; }
@@ -108,7 +114,8 @@ function loadAll(){
   try{
     const data=JSON.parse(raw);
     $$(FIELD_SELECTORS).forEach(el=>{
-      const key=el.id||el.name||el.dataset.team||el.className;
+      const key=el.dataset.field || el.id || el.name;
+      if(!key) return;
       if(el.type==='radio'){ if(data[key+'__'+el.value]) el.checked=true; }
       else if(el.type==='checkbox'){ el.checked=(data[key]==='__checked__'); }
       else{ if(data[key]!=null) el.value=data[key]; }

@@ -3,16 +3,17 @@ import { $, nowHM } from './utils.js';
 export const MEDS = ['TXA','Fentanilis','Paracetamolis','Ketoprofenas','O- kraujas','Fibryga','Ca gliukonatas'];
 export const PROCS = ['Intubacija','Krikotirotomija','Pleuros drenažas','Adatinė dekompresija','Kūno šildymas','Turniketas','Dubens diržas','Gipsavimas','Siuvimas','Repocizija'];
 
-function buildActionCard(name, saveAll){
+function buildActionCard(group, name, saveAll){
   const card=document.createElement('div');
   card.className='card';
   card.style.padding='10px';
   card.style.borderRadius='10px';
-  card.innerHTML=`<label class="pill"><input type="checkbox" class="act_chk"> ${name}</label>
+  const slug=name.toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'');
+  card.innerHTML=`<label class="pill"><input type="checkbox" class="act_chk" data-field="${group}_${slug}_chk"> ${name}</label>
     <div class="grid cols-3" style="margin-top:6px">
-      <div><label>Laikas</label><input type="time" class="act_time"></div>
-      <div><label>Dozė/kiekis</label><input type="text" class="act_dose"></div>
-      <div><label>Pastabos</label><input type="text" class="act_note"></div>
+      <div><label>Laikas</label><input type="time" class="act_time" data-field="${group}_${slug}_time"></div>
+      <div><label>Dozė/kiekis</label><input type="text" class="act_dose" data-field="${group}_${slug}_dose"></div>
+      <div><label>Pastabos</label><input type="text" class="act_note" data-field="${group}_${slug}_note"></div>
     </div>`;
   const chk=card.querySelector('.act_chk');
   const time=card.querySelector('.act_time');
@@ -24,6 +25,6 @@ function buildActionCard(name, saveAll){
 export function initActions(saveAll){
   const medsWrap=$('#medications');
   const procsWrap=$('#procedures');
-  MEDS.forEach(n=>medsWrap.appendChild(buildActionCard(n, saveAll)));
-  PROCS.forEach(n=>procsWrap.appendChild(buildActionCard(n, saveAll)));
+  MEDS.forEach(n=>medsWrap.appendChild(buildActionCard('med', n, saveAll)));
+  PROCS.forEach(n=>procsWrap.appendChild(buildActionCard('proc', n, saveAll)));
 }
