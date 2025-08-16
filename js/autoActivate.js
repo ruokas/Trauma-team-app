@@ -31,6 +31,12 @@ function autoActivateFromEMS(){
       delete chip.dataset.auto;
     }
   });
+  if($$('.chip.active', red).length){
+    const yellow=$('#chips_yellow');
+    if(yellow) $$('.chip', yellow).forEach(c=>setChipActive(c,false));
+  }
+  window.ensureSingleTeam && window.ensureSingleTeam();
+  window.updateActivationIndicator && window.updateActivationIndicator();
 }
 
 export function initAutoActivate(saveAll){
