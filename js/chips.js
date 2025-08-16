@@ -17,6 +17,13 @@ export function setChipActive(chip, active){
   chip.classList.toggle('active', active);
 }
 
+function togglePupilNote(side, chip){
+  const note = $(`#d_pupil_${side}_note`);
+  const show = chip.dataset.value==='kita' && isChipActive(chip);
+  note.style.display = show ? 'block' : 'none';
+  if(chip.dataset.value!=='kita') note.value='';
+}
+
 export function initChips(saveAll){
   document.addEventListener('click', e => {
     const chip = e.target.closest('.chip');
@@ -32,12 +39,10 @@ export function initChips(saveAll){
     }
 
     if(group.id==='d_pupil_left_group'){
-      $('#d_pupil_left_note').style.display = (chip.dataset.value==='kita' && isChipActive(chip)) ? 'block' : 'none';
-      if(chip.dataset.value!=='kita') $('#d_pupil_left_note').value='';
+      togglePupilNote('left', chip);
     }
     if(group.id==='d_pupil_right_group'){
-      $('#d_pupil_right_note').style.display = (chip.dataset.value==='kita' && isChipActive(chip)) ? 'block' : 'none';
-      if(chip.dataset.value!=='kita') $('#d_pupil_right_note').value='';
+      togglePupilNote('right', chip);
     }
       if(group.id==='spr_decision_group'){
         const showSky = chip.dataset.value==='Stacionarizavimas' && isChipActive(chip);
