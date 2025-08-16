@@ -25,6 +25,9 @@ section.card h2{font-size:16px;margin:0 0 10px}
 section.card .grid{display:grid;gap:10px}
 .cols-2{grid-template-columns:1fr 1fr}
 .cols-3{grid-template-columns:repeat(3,1fr)}
+/* Specific layout tweaks for GKS inputs */
+.gcs-grid{gap:6px}
+.gcs-grid input{text-align:center}
 label{display:block;color:var(--muted);font-size:13px;margin-bottom:4px}
 input[type="text"],input[type="number"],input[type="time"],input[type="date"],textarea,select{
   width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:10px;background:#0f1620;color:var(--ink);font-size:14px;outline:none
