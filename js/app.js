@@ -279,6 +279,8 @@ window.ensureSingleTeam=ensureSingleTeam;
 
 /* ===== Save / Load ===== */
 const FIELD_SELECTORS='input[type="text"],input[type="number"],input[type="time"],input[type="date"],textarea,select,#patient_name,#patient_age,#patient_sex,#patient_id';
+let fields=[];
+const getFields=()=>fields.length?fields:(fields=$$(FIELD_SELECTORS));
 
 function expandOutput(){
   const ta = $('#output');
@@ -287,10 +289,18 @@ function expandOutput(){
   ta.style.height = ta.scrollHeight + 'px';
 }
 
+function debounce(fn, delay){
+  let t;
+  return (...args)=>{
+    clearTimeout(t);
+    t=setTimeout(()=>fn(...args),delay);
+  };
+}
+
 export function saveAll(){
   if(!currentSessionId) return;
   const data={};
-  $$(FIELD_SELECTORS).forEach(el=>{
+  getFields().forEach(el=>{
     const key=el.dataset.field || el.id || el.name;
     if(!key) return;
     if(el.type==='radio'){ if(el.checked) data[key+'__'+el.value]=true; }
@@ -313,7 +323,7 @@ export function saveAll(){
 export function loadAll(){
   if(!currentSessionId) return;
   const apply=data=>{
-    $$(FIELD_SELECTORS).forEach(el=>{
+    getFields().forEach(el=>{
       const key=el.dataset.field || el.id || el.name;
       if(!key) return;
       if(el.type==='radio'){ if(data[key+'__'+el.value]) el.checked=true; }
@@ -359,6 +369,8 @@ export function loadAll(){
     fallback();
   }
 }
+
+const saveAllDebounced = debounce(saveAll, 300);
 
 /* ===== Other UI ===== */
 $('#btnGCS15').addEventListener('click',()=>{
@@ -484,12 +496,13 @@ async function init(){
   connectSocket();
   await initSessions();
   initTabs();
-  initChips(saveAll);
-  initAutoActivate(saveAll);
-  initActions(saveAll);
+  initChips(saveAllDebounced);
+  initAutoActivate(saveAllDebounced);
+  initActions(saveAllDebounced);
   initTimeline();
   setupActivationControls();
-  document.addEventListener('input', saveAll);
+  fields = $$(FIELD_SELECTORS);
+  document.addEventListener('input', saveAllDebounced);
 
   const vitals = {
     '#gmp_hr': 'GMP ŠSD',
