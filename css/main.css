@@ -19,9 +19,10 @@ nav .tab{display:block;padding:10px 12px;border:1px solid var(--line);border-rad
 nav .tab.active{background:#162334;border-color:#2b405c}
 section.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
 section.card h2{font-size:16px;margin:0 0 10px}
-section.card .grid{display:grid;gap:10px}
-.cols-2{grid-template-columns:1fr 1fr}
-.cols-3{grid-template-columns:repeat(3,1fr)}
+/* Grid utilities */
+.grid{display:grid;gap:10px}
+.grid-cols-2{grid-template-columns:repeat(2,1fr)}
+.grid-cols-3{grid-template-columns:repeat(3,1fr)}
 label{display:block;color:var(--muted);font-size:13px;margin-bottom:4px}
 input[type="text"],input[type="number"],input[type="time"],input[type="date"],textarea,select{
   width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:10px;background:#0f1620;color:var(--ink);font-size:14px;outline:none
@@ -40,6 +41,17 @@ textarea{min-height:80px;resize:vertical}
 .split{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .subtle{font-size:12px;color:var(--muted)}
 .divider{height:1px;background:var(--line);margin:10px 0}
+/* Utility classes */
+.mt-6{margin-top:6px}
+.mt-8{margin-top:8px}
+.mt-12{margin-top:12px}
+.m-0{margin:0}
+.mb-6{margin-bottom:6px}
+.fs-14{font-size:14px}
+.flex-1{flex:1}
+.text-muted{color:var(--muted)}
+.p-10{padding:10px}
+.rounded-10{border-radius:10px}
 /* SVG body map */
 .map-toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:6px 0}
 .tool{padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:#0f1822;color:var(--ink);min-height:36px;cursor:pointer;font-weight:700}
@@ -51,5 +63,5 @@ textarea{min-height:80px;resize:vertical}
 .mark-b{fill:#64b5f6}
 .mark-n{fill:#ffd54f;stroke:#6b540e;stroke-width:2}
 .hidden{display:none}
-@media (max-width:980px){ main{grid-template-columns:1fr} nav{position:static} .cols-3{grid-template-columns:1fr 1fr} }
+@media (max-width:980px){ main{grid-template-columns:1fr} nav{position:static} .grid-cols-3{grid-template-columns:1fr 1fr} }
 @media print{ header,nav,.toolbar{display:none!important} body{background:#fff;color:#000} section.card{break-inside:avoid} }

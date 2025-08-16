@@ -5,12 +5,10 @@ export const PROCS = ['Intubacija','Krikotirotomija','Pleuros drenažas','Adatin
 
 function buildActionCard(group, name, saveAll){
   const card=document.createElement('div');
-  card.className='card';
-  card.style.padding='10px';
-  card.style.borderRadius='10px';
+  card.className='card p-10 rounded-10';
   const slug=name.toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'');
   card.innerHTML=`<label class="pill"><input type="checkbox" class="act_chk" data-field="${group}_${slug}_chk"> ${name}</label>
-    <div class="grid cols-3" style="margin-top:6px">
+      <div class="grid grid-cols-3 mt-6">
       <div><label>Laikas</label><input type="time" class="act_time" data-field="${group}_${slug}_time"></div>
       <div><label>Dozė/kiekis</label><input type="text" class="act_dose" data-field="${group}_${slug}_dose"></div>
       <div><label>Pastabos</label><input type="text" class="act_note" data-field="${group}_${slug}_note"></div>

@@ -28,17 +28,17 @@
     <!-- Aktyvacija (EMS) -->
     <section class="card view" data-tab="Aktyvacija (EMS)">
       <h2>Traumos komandos aktyvacija <span class="badge">EMS rodikliai → auto</span></h2>
-      <div class="grid cols-3">
+      <div class="grid grid-cols-3">
         <div><label>EMS ŠSD (k./min)</label><input id="ems_hr" type="number" min="0" max="250"></div>
         <div><label>EMS KD (k./min)</label><input id="ems_rr" type="number" min="0" max="80"></div>
         <div><label>EMS SpO₂ (%)</label><input id="ems_spo2" type="number" min="0" max="100"></div>
       </div>
-      <div class="grid cols-3" style="margin-top:8px">
-        <div class="row"><div style="flex:1"><label>EMS AKS s</label><input id="ems_sbp" type="number" min="0" max="300"></div><div style="flex:1"><label>EMS AKS d</label><input id="ems_dbp" type="number" min="0" max="200"></div></div>
+      <div class="grid grid-cols-3 mt-8">
+        <div class="row"><div class="flex-1"><label>EMS AKS s</label><input id="ems_sbp" type="number" min="0" max="300"></div><div class="flex-1"><label>EMS AKS d</label><input id="ems_dbp" type="number" min="0" max="200"></div></div>
         <div><label>EMS GKS (A-K-M)</label><div class="row"><input id="ems_gksa" type="number" min="1" max="4" placeholder="A"><input id="ems_gksk" type="number" min="1" max="5" placeholder="K"><input id="ems_gksm" type="number" min="1" max="6" placeholder="M"></div></div>
         <div><label>EMS Temperatūra (nebūtina)</label><input id="ems_temp" type="number" step="0.1"></div>
       </div>
-      <div class="split" style="margin-top:12px">
+      <div class="split mt-12">
         <div>
           <label><strong>RAUDONA</strong></label>
           <div class="chip-group" id="chips_red">
@@ -66,7 +66,7 @@
           </div>
         </div>
       </div>
-      <div class="hint" style="margin-top:6px">Auto-aktyvacija – tik iš EMS rodiklių; rankiniai pakeitimai išlieka.</div>
+      <div class="hint mt-6">Auto-aktyvacija – tik iš EMS rodiklių; rankiniai pakeitimai išlieka.</div>
     </section>
 
     <!-- A -->
@@ -78,13 +78,13 @@
         <span class="chip" data-value="Užtikrinti (intub./GMP)">Užtikrinti (intub./GMP)</span>
         <span class="chip" data-value="Kita">Kita</span>
       </div>
-      <div class="row" style="margin-top:8px"><label style="margin:0">Pastabos</label><input id="a_notes" type="text" placeholder="Trumpai..."></div>
+        <div class="row mt-8"><label class="m-0">Pastabos</label><input id="a_notes" type="text" placeholder="Trumpai..."></div>
     </section>
 
     <!-- B -->
     <section class="card view" data-tab="B – Kvėpavimas">
       <h2>B – Kvėpavimas</h2>
-      <div class="grid cols-3">
+      <div class="grid grid-cols-3">
         <div><label>KD (k./min)</label><input id="b_rr" type="number" min="0" max="80"></div>
         <div><label>SpO₂ (%)</label><input id="b_spo2" type="number" min="0" max="100"></div>
         <div>
@@ -100,9 +100,9 @@
     <!-- C -->
     <section class="card view" data-tab="C – Kraujotaka">
       <h2>C – Kraujotaka</h2>
-      <div class="grid cols-3">
+      <div class="grid grid-cols-3">
         <div><label>ŠSD (k./min)</label><input id="c_hr" type="number" min="0" max="250"></div>
-        <div class="row"><div style="flex:1"><label>AKS s</label><input id="c_sbp" type="number" min="0" max="300"></div><div style="flex:1"><label>AKS d</label><input id="c_dbp" type="number" min="0" max="200"></div></div>
+          <div class="row"><div class="flex-1"><label>AKS s</label><input id="c_sbp" type="number" min="0" max="300"></div><div class="flex-1"><label>AKS d</label><input id="c_dbp" type="number" min="0" max="200"></div></div>
         <div><label>KPL (sek.)</label><input id="c_caprefill" type="number" step="0.1" min="0" max="20"></div>
       </div>
     </section>
@@ -110,7 +110,7 @@
     <!-- D -->
     <section class="card view" data-tab="D – Sąmonė">
       <h2>D – Sąmonė</h2>
-      <div class="grid cols-3">
+      <div class="grid grid-cols-3">
         <div>
           <label>GKS (A-K-M) <span class="subtle">(15b. mygtukas užpildo 4/5/6)</span></label>
           <div class="row">
@@ -123,33 +123,33 @@
         <div>
           <label>Vyzdžiai – Kairė</label>
           <div class="chip-group" id="d_pupil_left_group" data-single="true"><span class="chip" data-value="n.y.">n.y.</span><span class="chip" data-value="kita">kita</span></div>
-          <input id="d_pupil_left_note" type="text" placeholder="Pastabos..." style="margin-top:6px;display:none">
+          <input id="d_pupil_left_note" class="mt-6 hidden" type="text" placeholder="Pastabos...">
         </div>
         <div>
           <label>Vyzdžiai – Dešinė</label>
           <div class="chip-group" id="d_pupil_right_group" data-single="true"><span class="chip" data-value="n.y.">n.y.</span><span class="chip" data-value="kita">kita</span></div>
-          <input id="d_pupil_right_note" type="text" placeholder="Pastabos..." style="margin-top:6px;display:none">
+          <input id="d_pupil_right_note" class="mt-6 hidden" type="text" placeholder="Pastabos...">
         </div>
       </div>
-      <div class="row" style="margin-top:8px"><label style="margin:0">Pastabos</label><input id="d_notes" type="text" placeholder="Trumpai..."></div>
+      <div class="row mt-8"><label class="m-0">Pastabos</label><input id="d_notes" type="text" placeholder="Trumpai..."></div>
     </section>
 
     <!-- E -->
     <section class="card view" data-tab="E – Kita">
       <h2>E – Kita</h2>
-      <div class="grid cols-3">
+      <div class="grid grid-cols-3">
         <div><label>Temperatūra (°C)</label><input id="e_temp" type="number" step="0.1" min="30" max="43"></div>
         <div><label>Nugaros apžiūra</label><div class="row"><label class="pill"><input id="e_back_ny" type="checkbox"> n.y.</label><input id="e_back_notes" type="text" placeholder="Pastabos..."></div></div>
         <div><label>Kitos pastabos</label><input id="e_other" type="text" placeholder="..."></div>
       </div>
 
       <div class="divider"></div>
-      <h3 style="font-size:14px;margin:0 0 6px;color:var(--muted)">Kūno žemėlapis (SVG) – Žaizda (Ž), Sumušimas (S), Nudegimas (N)</h3>
+      <h3 class="fs-14 m-0 mb-6 text-muted">Kūno žemėlapis (SVG) – Žaizda (Ž), Sumušimas (S), Nudegimas (N)</h3>
       <div class="map-toolbar">
         <button class="tool" data-tool="Ž">Žaizda</button>
         <button class="tool" data-tool="S">Sumušimas</button>
         <button class="tool" data-tool="N">Nudegimas</button>
-        <span style="flex:1"></span>
+          <span class="flex-1"></span>
         <button class="tool" id="btnSide">↺ Rodyti: Priekis</button>
         <button class="tool" id="btnUndo">↩ Anuliuoti</button>
         <button class="tool" id="btnClearMap">🧹 Išvalyti</button>
@@ -230,16 +230,16 @@
     <section class="card view" data-tab="Intervencijos">
       <h2>Intervencijos</h2>
       <div class="split">
-        <div><h3 style="margin:0 0 6px;font-size:14px;color:var(--muted)">Medikamentai</h3><div class="grid cols-3" id="medications"></div></div>
-        <div><h3 style="margin:0 0 6px;font-size:14px;color:var(--muted)">Procedūros</h3><div class="grid cols-3" id="procedures"></div></div>
+        <div><h3 class="m-0 mb-6 fs-14 text-muted">Medikamentai</h3><div class="grid grid-cols-3" id="medications"></div></div>
+        <div><h3 class="m-0 mb-6 fs-14 text-muted">Procedūros</h3><div class="grid grid-cols-3" id="procedures"></div></div>
       </div>
-      <div class="hint" style="margin-top:6px">Paspaudus ant vaisto/procedūros automatiškai užpildomas laikas (galima koreguoti).</div>
+      <div class="hint mt-6">Paspaudus ant vaisto/procedūros automatiškai užpildomas laikas (galima koreguoti).</div>
     </section>
 
     <!-- Vaizdai / Laboratorija / Komanda / Ataskaita -->
-    <section class="card view" data-tab="Vaizdiniai tyrimai"><h2>Vaizdiniai tyrimai</h2><div class="chip-group" id="imaging_basic"></div><h3 style="margin-top:12px;font-size:14px;color:var(--muted)">FAST</h3><div class="grid cols-3" id="fastGrid"></div></section>
+      <section class="card view" data-tab="Vaizdiniai tyrimai"><h2>Vaizdiniai tyrimai</h2><div class="chip-group" id="imaging_basic"></div><h3 class="mt-12 fs-14 text-muted">FAST</h3><div class="grid grid-cols-3" id="fastGrid"></div></section>
     <section class="card view" data-tab="Laboratorija"><h2>Laboratoriniai tyrimai</h2><div class="chip-group" id="labs_basic"></div></section>
-    <section class="card view" data-tab="Komanda"><h2>Komandos nariai</h2><div class="grid cols-3" id="teamGrid"></div></section>
+    <section class="card view" data-tab="Komanda"><h2>Komandos nariai</h2><div class="grid grid-cols-3" id="teamGrid"></div></section>
     <section class="card view" data-tab="Ataskaita"><h2>Sugeneruotas tekstas</h2><textarea id="output" placeholder="Spauskite „Sugeneruoti ataskaitą“..."></textarea><div class="hint">Tekstą galima įklijuoti į LIS/ESIS.</div></section>
   </div>
 </main>
