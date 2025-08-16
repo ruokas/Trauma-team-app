@@ -4,21 +4,73 @@ import { initChips, listChips, setChipActive, isChipActive } from './chips.js';
 import { initAutoActivate } from './autoActivate.js';
 import { initActions } from './actions.js';
 
+let authToken = localStorage.getItem('trauma_token') || null;
+let socket = null;
+
+async function ensureLogin(){
+  if(authToken || typeof fetch !== 'function' || typeof prompt !== 'function') return;
+  try{
+    const name = prompt('Įveskite vardą dalyvauti bendroje sesijoje');
+    if(!name) return;
+    const res = await fetch('/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name })
+    });
+    const data = await res.json();
+    authToken = data.token;
+    localStorage.setItem('trauma_token', authToken);
+  }catch(e){
+    // ignore
+  }
+}
+
+function connectSocket(){
+  if(typeof io === 'undefined' || socket || !authToken) return;
+  socket = io({ auth: { token: authToken } });
+  socket.on('sessions', list => {
+    const sel = $('#sessionSelect');
+    if(sel) populateSessionSelect(sel, list);
+  });
+  socket.on('sessionData', ({id}) => {
+    if(id === currentSessionId) loadAll();
+  });
+}
+
 /* ===== Sessions ===== */
 let currentSessionId = localStorage.getItem('trauma_current_session') || null;
 const sessionKey = () => 'trauma_v10_' + currentSessionId;
 
-function getSessions(){
+async function getSessions(){
+  if(authToken && typeof fetch === 'function'){
+    try{
+      const res = await fetch('/api/sessions', { headers: { 'Authorization': authToken } });
+      if(res.ok){
+        const data = await res.json();
+        localStorage.setItem('trauma_sessions', JSON.stringify(data));
+        return data;
+      }
+    }catch(e){ /* ignore */ }
+  }
   try{ return JSON.parse(localStorage.getItem('trauma_sessions')||'[]'); }catch(e){ return []; }
 }
-function saveSessions(list){ localStorage.setItem('trauma_sessions', JSON.stringify(list)); }
+function saveSessions(list){
+  localStorage.setItem('trauma_sessions', JSON.stringify(list));
+  if(authToken && typeof fetch === 'function'){
+    fetch('/api/sessions', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'Authorization': authToken },
+      body: JSON.stringify(list)
+    }).catch(()=>{});
+  }
+}
 function populateSessionSelect(sel, sessions){
   sel.innerHTML='';
   sessions.forEach(s=>{ const opt=document.createElement('option'); opt.value=s.id; opt.textContent=s.name; sel.appendChild(opt); });
 }
-function initSessions(){
+async function initSessions(){
   const select=$('#sessionSelect');
-  let sessions=getSessions();
+  let sessions=await getSessions();
   if(!sessions.length){
     const id=Date.now().toString(36);
     sessions=[{id,name:'Case 1'}];
@@ -249,12 +301,17 @@ export function saveAll(){
   data['pain_meds']=pack($('#pain_meds')); data['bleeding_meds']=pack($('#bleeding_meds')); data['other_meds']=pack($('#other_meds')); data['procs']=pack($('#procedures'));
   data['bodymap_svg']=BodySVG.serialize();
   localStorage.setItem(sessionKey(), JSON.stringify(data));
+  if(authToken && typeof fetch === 'function'){
+    fetch(`/api/sessions/${currentSessionId}/data`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'Authorization': authToken },
+      body: JSON.stringify(data)
+    }).catch(()=>{});
+  }
 }
 export function loadAll(){
   if(!currentSessionId) return;
-  const raw=localStorage.getItem(sessionKey()); if(!raw) return;
-  try{
-    const data=JSON.parse(raw);
+  const apply=data=>{
     $$(FIELD_SELECTORS).forEach(el=>{
       const key=el.dataset.field || el.id || el.name;
       if(!key) return;
@@ -262,19 +319,19 @@ export function loadAll(){
       else if(el.type==='checkbox'){ el.checked=(data[key]==='__checked__'); }
       else{ if(data[key]!=null) el.value=data[key]; }
     });
-  CHIP_GROUPS.forEach(sel=>{ const arr=data['chips:'+sel]||[]; $$('.chip',$(sel)).forEach(c=>c.classList.toggle('active',arr.includes(c.dataset.value))); });
-  const labsArr=data['chips:#labs_basic']||[];
-  const labsContainer=$('#labs_basic');
-  labsArr.forEach(val=>{
-    if(!$$('.chip',labsContainer).some(c=>c.dataset.value===val)){
-      const chip=document.createElement('span');
-      chip.className='chip';
-      chip.dataset.value=val;
-      chip.textContent=val;
-      labsContainer.appendChild(chip);
-    }
-  });
-  $$('.chip',labsContainer).forEach(c=>c.classList.toggle('active',labsArr.includes(c.dataset.value)));
+    CHIP_GROUPS.forEach(sel=>{ const arr=data['chips:'+sel]||[]; $$('.chip',$(sel)).forEach(c=>c.classList.toggle('active',arr.includes(c.dataset.value))); });
+    const labsArr=data['chips:#labs_basic']||[];
+    const labsContainer=$('#labs_basic');
+    labsArr.forEach(val=>{
+      if(!$$('.chip',labsContainer).some(c=>c.dataset.value===val)){
+        const chip=document.createElement('span');
+        chip.className='chip';
+        chip.dataset.value=val;
+        chip.textContent=val;
+        labsContainer.appendChild(chip);
+      }
+    });
+    $$('.chip',labsContainer).forEach(c=>c.classList.toggle('active',labsArr.includes(c.dataset.value)));
     function unpack(container,records){ if(!Array.isArray(records)) return; Array.from(container.children).forEach((card,i)=>{ const r=records[i]; if(!r) return; card.querySelector('.act_chk').checked=!!r.on; card.querySelector('.act_time').value=r.time||''; const d=card.querySelector('.act_dose'); if(d) d.value=r.dose||''; card.querySelector('.act_note').value=r.note||''; const cn=card.querySelector('.act_custom_name'); if(cn) cn.value=r.name||'';});}
     unpack($('#pain_meds'),data['pain_meds']); unpack($('#bleeding_meds'),data['bleeding_meds']); unpack($('#other_meds'),data['other_meds']); unpack($('#procedures'),data['procs']);
     if(data['bodymap_svg']) BodySVG.load(data['bodymap_svg']);
@@ -289,7 +346,17 @@ export function loadAll(){
     ensureSingleTeam();
     updateActivationIndicator();
     expandOutput();
-  }catch(e){}
+  };
+  const fallback=()=>{
+    const raw=localStorage.getItem(sessionKey()); if(!raw) return; try{ apply(JSON.parse(raw)); }catch(e){}
+  };
+  if(authToken && typeof fetch === 'function'){
+    fetch(`/api/sessions/${currentSessionId}/data`, { headers:{ 'Authorization': authToken }})
+      .then(r=>r.json()).then(d=>{ localStorage.setItem(sessionKey(), JSON.stringify(d)); apply(d); })
+      .catch(fallback);
+  } else {
+    fallback();
+  }
 }
 
 /* ===== Other UI ===== */
@@ -411,8 +478,10 @@ export function validateVitals(){
 window.validateVitals=validateVitals;
 
 /* ===== Init modules ===== */
-function init(){
-  initSessions();
+async function init(){
+  await ensureLogin();
+  connectSocket();
+  await initSessions();
   initTabs();
   initChips(saveAll);
   initAutoActivate(saveAll);
