@@ -23,12 +23,13 @@ export const DEFAULT_DOSES = {
 function buildActionCard(group, name, saveAll){
   const card=document.createElement('div');
   card.className='card';
-  card.style.padding='10px';
+  card.style.padding='6px';
   card.style.borderRadius='10px';
   const slug=name.toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'');
-  card.innerHTML=`<label class="pill"><input type="checkbox" class="act_chk" data-field="${group}_${slug}_chk"> ${name}</label>
+  const icon = group==='med'?'💊':'🛠';
+  card.innerHTML=`<label class="pill"><input type="checkbox" class="act_chk" data-field="${group}_${slug}_chk"> <span class="act_icon">${icon}</span><span class="act_name">${name}</span></label>
     <div class="detail collapsed">
-      <div class="grid cols-3" style="margin-top:6px">
+      <div class="grid cols-3" style="margin-top:4px">
         <div><label>Laikas</label><input type="time" class="act_time" data-field="${group}_${slug}_time"></div>
         <div><label>Dozė/kiekis</label><input type="text" class="act_dose" data-field="${group}_${slug}_dose"></div>
         <div><label>Pastabos</label><input type="text" class="act_note" data-field="${group}_${slug}_note"></div>
@@ -93,7 +94,7 @@ export function initActions(saveAll){
       const q=medSearch.value.trim().toLowerCase();
       wraps.forEach(wrap=>{
         wrap.querySelectorAll('.card').forEach(card=>{
-          const name=card.querySelector('label').textContent.toLowerCase();
+          const name=card.querySelector('.act_name').textContent.toLowerCase();
           card.style.display=name.includes(q)?'':'none';
         });
       });
