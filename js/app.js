@@ -226,11 +226,11 @@ function bodymapSummary(){
 document.getElementById('btnGen').addEventListener('click',()=>{
   const out=[];
   const red=listChips('#chips_red'), yellow=listChips('#chips_yellow');
-  const ems={ hr:$('#ems_hr').value, rr:$('#ems_rr').value, spo2:$('#ems_spo2').value, sbp:$('#ems_sbp').value, dbp:$('#ems_dbp').value, gksa:$('#ems_gksa').value, gksk:$('#ems_gksk').value, gksm:$('#ems_gksm').value, time:$('#ems_time').value, mechanism:$('#ems_mechanism').value, notes:$('#ems_notes').value };
-  const gksEMS=gksSum(ems.gksa,ems.gksk,ems.gksm);
-  const emsMeta=[ems.time?`GMP ${ems.time}`:null, ems.mechanism?`Mechanizmas: ${ems.mechanism}`:null].filter(Boolean).join('; ');
-  const emsLine=[ems.hr?`ŠSD ${ems.hr}/min`:null, ems.rr?`KD ${ems.rr}/min`:null, ems.spo2?`SpO₂ ${ems.spo2}%`:null, (ems.sbp||ems.dbp)?`AKS ${ems.sbp}/${ems.dbp}`:null, gksEMS?`GKS ${gksEMS} (A${ems.gksa}-K${ems.gksk}-M${ems.gksm})`:null].filter(Boolean).join('; ');
-  out.push('--- Aktyvacija ---'); if(emsMeta) out.push(emsMeta); if(emsLine) out.push(emsLine); if(ems.notes) out.push('Pastabos: '+ems.notes); if(red.length) out.push('RAUDONA: '+red.join(', ')); if(yellow.length) out.push('GELTONA: '+yellow.join(', '));
+  const gmp={ hr:$('#gmp_hr').value, rr:$('#gmp_rr').value, spo2:$('#gmp_spo2').value, sbp:$('#gmp_sbp').value, dbp:$('#gmp_dbp').value, gksa:$('#gmp_gksa').value, gksk:$('#gmp_gksk').value, gksm:$('#gmp_gksm').value, time:$('#gmp_time').value, mechanism:$('#gmp_mechanism').value, notes:$('#gmp_notes').value };
+  const gksGMP=gksSum(gmp.gksa,gmp.gksk,gmp.gksm);
+  const gmpMeta=[gmp.time?`GMP ${gmp.time}`:null, gmp.mechanism?`Mechanizmas: ${gmp.mechanism}`:null].filter(Boolean).join('; ');
+  const gmpLine=[gmp.hr?`ŠSD ${gmp.hr}/min`:null, gmp.rr?`KD ${gmp.rr}/min`:null, gmp.spo2?`SpO₂ ${gmp.spo2}%`:null, (gmp.sbp||gmp.dbp)?`AKS ${gmp.sbp}/${gmp.dbp}`:null, gksGMP?`GKS ${gksGMP} (A${gmp.gksa}-K${gmp.gksk}-M${gmp.gksm})`:null].filter(Boolean).join('; ');
+  out.push('--- Aktyvacija ---'); if(gmpMeta) out.push(gmpMeta); if(gmpLine) out.push(gmpLine); if(gmp.notes) out.push('Pastabos: '+gmp.notes); if(red.length) out.push('RAUDONA: '+red.join(', ')); if(yellow.length) out.push('GELTONA: '+yellow.join(', '));
 
   out.push('\n--- A Kvėpavimo takai ---'); out.push(['Takai: '+(getSingleValue('#a_airway_group')||'-'), $('#a_notes').value?('Pastabos: '+$('#a_notes').value):null].filter(Boolean).join(' | '));
 
