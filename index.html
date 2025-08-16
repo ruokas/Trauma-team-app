@@ -145,13 +145,31 @@
         </div>
         <div class="grid cols-2">
           <div>
-            <label>Vyzdžiai – Kairė</label>
-            <div class="chip-group" id="d_pupil_left_group" data-single="true"><button type="button" class="chip" data-value="n.y." aria-pressed="false">n.y.</button><button type="button" class="chip" data-value="kita" aria-pressed="false">kita</button></div>
+            <fieldset class="chip-group" id="d_pupil_left_group" style="border:0;padding:0;margin:0">
+              <legend>Vyzdžiai – Kairė</legend>
+              <label class="chip" data-value="n.y.">
+                <input type="radio" name="d_pupil_left" value="n.y.">
+                n.y.
+              </label>
+              <label class="chip" data-value="kita">
+                <input type="radio" name="d_pupil_left" value="kita">
+                kita
+              </label>
+            </fieldset>
             <input id="d_pupil_left_note" type="text" placeholder="Pastabos..." style="margin-top:6px;display:none">
           </div>
           <div>
-            <label>Vyzdžiai – Dešinė</label>
-            <div class="chip-group" id="d_pupil_right_group" data-single="true"><button type="button" class="chip" data-value="n.y." aria-pressed="false">n.y.</button><button type="button" class="chip" data-value="kita" aria-pressed="false">kita</button></div>
+            <fieldset class="chip-group" id="d_pupil_right_group" style="border:0;padding:0;margin:0">
+              <legend>Vyzdžiai – Dešinė</legend>
+              <label class="chip" data-value="n.y.">
+                <input type="radio" name="d_pupil_right" value="n.y.">
+                n.y.
+              </label>
+              <label class="chip" data-value="kita">
+                <input type="radio" name="d_pupil_right" value="kita">
+                kita
+              </label>
+            </fieldset>
             <input id="d_pupil_right_note" type="text" placeholder="Pastabos..." style="margin-top:6px;display:none">
           </div>
         </div>
