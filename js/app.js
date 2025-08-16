@@ -194,6 +194,7 @@ function init(){
   initActions(saveAll);
   setupActivationControls();
   document.addEventListener('input', saveAll);
+  $('#btnGmpNow').addEventListener('click', ()=>{ $('#gmp_time').value=nowHM(); saveAll(); });
   $('#btnOxygen').addEventListener('click', ()=>{
     const box = $('#oxygenFields');
     const show = getComputedStyle(box).display === 'none';
