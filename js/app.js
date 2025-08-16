@@ -139,6 +139,14 @@ window.ensureSingleTeam=ensureSingleTeam;
 
 /* ===== Save / Load ===== */
 const FIELD_SELECTORS='input[type="text"],input[type="number"],input[type="time"],input[type="date"],textarea,select';
+
+function expandOutput(){
+  const ta = $('#output');
+  if(!ta) return;
+  ta.style.height = 'auto';
+  ta.style.height = ta.scrollHeight + 'px';
+}
+
 function saveAll(){
   const data={};
   $$(FIELD_SELECTORS).forEach(el=>{
@@ -181,6 +189,7 @@ function loadAll(){
     $('#imaging_other').style.display = ($$('.chip.active', $('#imaging_basic')).some(c=>c.dataset.value==='Kita'))?'block':'none';
     ensureSingleTeam();
     updateActivationIndicator();
+    expandOutput();
   }catch(e){}
 }
 
@@ -256,6 +265,7 @@ function init(){
       if(!show) $('#spr_skyrius_kita').value='';
       saveAll();
     });
+    $('#output').addEventListener('input', expandOutput);
     loadAll();
     updateGksTotal();
   }
@@ -353,8 +363,11 @@ document.getElementById('btnGen').addEventListener('click',()=>{
       if(sprVitals) out.push(sprVitals);
     }
 
-  $('#output').value=out.filter(Boolean).join('\n'); showTab('Ataskaita'); saveAll();
-});
+    $('#output').value=out.filter(Boolean).join('\n');
+    expandOutput();
+    showTab('Ataskaita');
+    saveAll();
+  });
 
 document.getElementById('btnCopy').addEventListener('click',async()=>{ try{ await navigator.clipboard.writeText($('#output').value||''); alert('Nukopijuota.'); }catch(e){ alert('Nepavyko nukopijuoti.'); }});
 document.getElementById('btnSave').addEventListener('click',()=>{ saveAll(); alert('Išsaugota naršyklėje.');});
