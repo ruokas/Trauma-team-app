@@ -271,6 +271,7 @@ function init(){
     };
     ['#gmp_gksa','#gmp_gksk','#gmp_gksm'].forEach(sel=>$(sel).addEventListener('input', updateGmpGksTotal));
     $('#btnGmpNow').addEventListener('click', ()=>{ $('#gmp_time').value=nowHM(); saveAll(); });
+    $('#btnSprNow').addEventListener('click', ()=>{ $('#spr_time').value=nowHM(); saveAll(); });
   $('#btnOxygen').addEventListener('click', ()=>{
     const box = $('#oxygenFields');
     const show = getComputedStyle(box).display === 'none';
