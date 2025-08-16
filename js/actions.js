@@ -36,4 +36,17 @@ export function initActions(saveAll){
   BLEEDING_MEDS.forEach(n=>bleedingWrap.appendChild(buildActionCard('med', n, saveAll)));
   OTHER_MEDS.forEach(n=>otherWrap.appendChild(buildActionCard('med', n, saveAll)));
   PROCS.forEach(n=>procsWrap.appendChild(buildActionCard('proc', n, saveAll)));
+  const medSearch=$('#medSearch');
+  if(medSearch){
+    const wraps=[painWrap,bleedingWrap,otherWrap];
+    medSearch.addEventListener('input',()=>{
+      const q=medSearch.value.trim().toLowerCase();
+      wraps.forEach(wrap=>{
+        wrap.querySelectorAll('.card').forEach(card=>{
+          const name=card.querySelector('label').textContent.toLowerCase();
+          card.style.display=name.includes(q)?'':'none';
+        });
+      });
+    });
+  }
 }
