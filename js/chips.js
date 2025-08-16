@@ -1,6 +1,6 @@
 import { $, $$ } from './utils.js';
 
-let clickListenerAdded = false;
+let listenersAdded = false;
 
 export function isChipActive(chip){
   if(chip.tagName === 'BUTTON') return chip.getAttribute('aria-pressed') === 'true';
@@ -10,9 +10,8 @@ export function isChipActive(chip){
 }
 
 export function setChipActive(chip, active){
-  if(chip.tagName === 'BUTTON'){
-    chip.setAttribute('aria-pressed', active ? 'true' : 'false');
-  } else {
+  chip.setAttribute('aria-pressed', active ? 'true' : 'false');
+  if(chip.tagName !== 'BUTTON'){
     const input = chip.querySelector('input');
     if(input) input.checked = active;
   }
@@ -38,17 +37,18 @@ export function initChips(saveAll){
     if(group){
       group.setAttribute('role', single ? 'radiogroup' : 'group');
     }
-    if(single){
+    if(chip.tagName !== 'BUTTON'){
+      chip.setAttribute('tabindex', '0');
+      chip.setAttribute('role', single ? 'radio' : 'button');
+    } else if(single){
       chip.setAttribute('role', 'radio');
-      chip.setAttribute('aria-checked', isChipActive(chip) ? 'true' : 'false');
     }
+    setChipActive(chip, isChipActive(chip));
   });
-  if(clickListenerAdded) return;
-  clickListenerAdded = true;
+  if(listenersAdded) return;
+  listenersAdded = true;
 
-  document.addEventListener('click', e => {
-    const chip = e.target.closest('.chip');
-    if(!chip) return;
+  function handleChip(chip){
     const group = chip.parentElement;
     const single = group?.dataset?.single === 'true';
 
@@ -66,25 +66,39 @@ export function initChips(saveAll){
       box.style.display = show ? 'block' : 'none';
       if(!show) box.value='';
     }
-      if(group.id==='spr_decision_group'){
-        const showSky = chip.dataset.value==='Stacionarizavimas' && isChipActive(chip);
-        const boxSky = $('#spr_skyrius_container');
-        boxSky.style.display = showSky ? 'block' : 'none';
-        if(!showSky){
-          $('#spr_skyrius').value='';
-          $('#spr_skyrius_kita').style.display='none';
-          $('#spr_skyrius_kita').value='';
-        }
-
-        const showHosp = chip.dataset.value==='Pervežimas į kitą ligoninę' && isChipActive(chip);
-        const boxHosp = $('#spr_ligonine_container');
-        boxHosp.style.display = showHosp ? 'block' : 'none';
-        if(!showHosp){
-          $('#spr_ligonine').value='';
-        }
+    if(group.id==='spr_decision_group'){
+      const showSky = chip.dataset.value==='Stacionarizavimas' && isChipActive(chip);
+      const boxSky = $('#spr_skyrius_container');
+      boxSky.style.display = showSky ? 'block' : 'none';
+      if(!showSky){
+        $('#spr_skyrius').value='';
+        $('#spr_skyrius_kita').style.display='none';
+        $('#spr_skyrius_kita').value='';
       }
+
+      const showHosp = chip.dataset.value==='Pervežimas į kitą ligoninę' && isChipActive(chip);
+      const boxHosp = $('#spr_ligonine_container');
+      boxHosp.style.display = showHosp ? 'block' : 'none';
+      if(!showHosp){
+        $('#spr_ligonine').value='';
+      }
+    }
     delete chip.dataset.auto;
     if(typeof saveAll === 'function') saveAll();
+  }
+
+  document.addEventListener('click', e => {
+    const chip = e.target.closest('.chip');
+    if(!chip) return;
+    handleChip(chip);
+  }, true);
+
+  document.addEventListener('keydown', e => {
+    if(e.key !== 'Enter' && e.key !== ' ') return;
+    const chip = e.target.closest('.chip');
+    if(!chip) return;
+    e.preventDefault();
+    handleChip(chip);
   }, true);
 }
 

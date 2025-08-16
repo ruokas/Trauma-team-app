@@ -26,12 +26,44 @@ describe('chips', () => {
     const [c1, c2] = single.querySelectorAll('.chip');
     expect(c1.getAttribute('role')).toBe('radio');
     expect(c1.getAttribute('aria-checked')).toBe('false');
+    expect(c1.getAttribute('aria-pressed')).toBe('false');
     c1.click();
     expect(c1.getAttribute('aria-checked')).toBe('true');
+    expect(c1.getAttribute('aria-pressed')).toBe('true');
     expect(c2.getAttribute('aria-checked')).toBe('false');
+    expect(c2.getAttribute('aria-pressed')).toBe('false');
     c2.click();
     expect(c1.getAttribute('aria-checked')).toBe('false');
+    expect(c1.getAttribute('aria-pressed')).toBe('false');
     expect(c2.getAttribute('aria-checked')).toBe('true');
+    expect(c2.getAttribute('aria-pressed')).toBe('true');
+  });
+
+  test('assigns role and tabindex to non-button chips', () => {
+    document.body.innerHTML = `
+      <div id="group"><span class="chip" data-value="x"></span></div>
+    `;
+    const { initChips } = require('./chips.js');
+    initChips();
+    const chip = document.querySelector('#group .chip');
+    expect(chip.getAttribute('role')).toBe('button');
+    expect(chip.getAttribute('tabindex')).toBe('0');
+    expect(chip.getAttribute('aria-pressed')).toBe('false');
+    chip.click();
+    expect(chip.getAttribute('aria-pressed')).toBe('true');
+  });
+
+  test('toggles chip with keyboard interaction', () => {
+    document.body.innerHTML = `
+      <div id="group"><span class="chip" data-value="x"></span></div>
+    `;
+    const { initChips, isChipActive } = require('./chips.js');
+    initChips();
+    const chip = document.querySelector('#group .chip');
+    chip.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+    expect(isChipActive(chip)).toBe(true);
+    chip.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', bubbles: true }));
+    expect(isChipActive(chip)).toBe(false);
   });
 
   test('shows hospital field when transfer decision selected', () => {
