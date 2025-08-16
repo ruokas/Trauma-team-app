@@ -12,11 +12,11 @@
     <h1>Traumos forma – Desktop v9</h1>
     <div class="sub">Aktyvacija (EMS) · ABCDE · LT · SVG kūno žemėlapis</div>
     <div class="toolbar">
-      <button class="btn primary" id="btnGen">Sugeneruoti ataskaitą</button>
-      <button class="btn" id="btnCopy">Kopijuoti</button>
-      <button class="btn" id="btnSave">Išsaugoti</button>
-      <button class="btn ghost" id="btnClear">Išvalyti</button>
-      <button class="btn warn" onclick="window.print()">🖨 Spausdinti</button>
+      <button type="button" class="btn primary" id="btnGen">Sugeneruoti ataskaitą</button>
+      <button type="button" class="btn" id="btnCopy">Kopijuoti</button>
+      <button type="button" class="btn" id="btnSave">Išsaugoti</button>
+      <button type="button" class="btn ghost" id="btnClear">Išvalyti</button>
+      <button type="button" class="btn warn" onclick="window.print()">🖨 Spausdinti</button>
     </div>
   </div>
 </header>
@@ -117,7 +117,7 @@
             <input id="d_gksa" type="number" min="1" max="4" placeholder="A">
             <input id="d_gksk" type="number" min="1" max="5" placeholder="K">
             <input id="d_gksm" type="number" min="1" max="6" placeholder="M">
-            <button class="btn" id="btnGCS15">15b.</button>
+            <button type="button" class="btn" id="btnGCS15">15b.</button>
           </div>
         </div>
         <div>
@@ -146,14 +146,14 @@
       <div class="divider"></div>
       <h3 style="font-size:14px;margin:0 0 6px;color:var(--muted)">Kūno žemėlapis (SVG) – Žaizda (Ž), Sumušimas (S), Nudegimas (N)</h3>
       <div class="map-toolbar">
-        <button class="tool" data-tool="Ž">Žaizda</button>
-        <button class="tool" data-tool="S">Sumušimas</button>
-        <button class="tool" data-tool="N">Nudegimas</button>
+        <button type="button" class="tool" data-tool="Ž">Žaizda</button>
+        <button type="button" class="tool" data-tool="S">Sumušimas</button>
+        <button type="button" class="tool" data-tool="N">Nudegimas</button>
         <span style="flex:1"></span>
-        <button class="tool" id="btnSide">↺ Rodyti: Priekis</button>
-        <button class="tool" id="btnUndo">↩ Anuliuoti</button>
-        <button class="tool" id="btnClearMap">🧹 Išvalyti</button>
-        <button class="tool" id="btnExportSvg">⬇ Eksportuoti SVG</button>
+        <button type="button" class="tool" id="btnSide">↺ Rodyti: Priekis</button>
+        <button type="button" class="tool" id="btnUndo">↩ Anuliuoti</button>
+        <button type="button" class="tool" id="btnClearMap">🧹 Išvalyti</button>
+        <button type="button" class="tool" id="btnExportSvg">⬇ Eksportuoti SVG</button>
       </div>
 
       <!-- SVG BODY MAP -->

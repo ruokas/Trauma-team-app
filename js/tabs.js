@@ -20,6 +20,7 @@ export function initTabs(){
   nav.setAttribute('role','tablist');
   TABS.forEach((t,i)=>{
     const b=document.createElement('button');
+    b.type='button';
     b.className='tab'+(i===0?' active':'');
     b.textContent=t;
     b.setAttribute('role','tab');
