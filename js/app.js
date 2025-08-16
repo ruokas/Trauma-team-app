@@ -185,7 +185,11 @@ function loadAll(){
 }
 
 /* ===== Other UI ===== */
-$('#btnGCS15').addEventListener('click',()=>{ $('#d_gksa').value=4; $('#d_gksk').value=5; $('#d_gksm').value=6; saveAll();});
+$('#btnGCS15').addEventListener('click',()=>{
+  $('#d_gksa').value=4; $('#d_gksk').value=5; $('#d_gksm').value=6;
+  ['#d_gksa','#d_gksk','#d_gksm'].forEach(sel=>$(sel).dispatchEvent(new Event('input')));
+  saveAll();
+});
 $('#e_back_ny').addEventListener('change',e=>{ $('#e_back_notes').disabled=e.target.checked; if(e.target.checked) $('#e_back_notes').value=''; saveAll();});
 
 /* ===== Init modules ===== */
@@ -193,10 +197,14 @@ function init(){
   initTabs();
   initChips(saveAll);
   initAutoActivate(saveAll);
-  initActions(saveAll);
-  setupActivationControls();
-  document.addEventListener('input', saveAll);
-  $('#btnGmpNow').addEventListener('click', ()=>{ $('#gmp_time').value=nowHM(); saveAll(); });
+    initActions(saveAll);
+    setupActivationControls();
+    document.addEventListener('input', saveAll);
+    const updateGksTotal=()=>{
+      $('#d_gks_total').textContent=gksSum($('#d_gksa').value,$('#d_gksk').value,$('#d_gksm').value);
+    };
+    ['#d_gksa','#d_gksk','#d_gksm'].forEach(sel=>$(sel).addEventListener('input', updateGksTotal));
+    $('#btnGmpNow').addEventListener('click', ()=>{ $('#gmp_time').value=nowHM(); saveAll(); });
   $('#btnOxygen').addEventListener('click', ()=>{
     const box = $('#oxygenFields');
     const show = getComputedStyle(box).display === 'none';
@@ -215,9 +223,10 @@ function init(){
       if(!show) $('#spr_skyrius_kita').value='';
       saveAll();
     });
-  loadAll();
-}
-init();
+    loadAll();
+    updateGksTotal();
+  }
+  init();
 
 /* ===== Report ===== */
 function gksSum(a,k,m){ a=+a||0;k=+k||0;m=+m||0; return (a&&k&&m)?(a+k+m):''; }
