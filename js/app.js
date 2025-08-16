@@ -190,6 +190,39 @@ $('#btnGCS15').addEventListener('click',()=>{
   ['#d_gksa','#d_gksk','#d_gksm'].forEach(sel=>$(sel).dispatchEvent(new Event('input')));
   saveAll();
 });
+$('#btnGCSCalc').addEventListener('click',()=>{
+  const choose=(title,opts)=>{
+    const msg=[title].concat(opts.map(o=>`${o.value} - ${o.text}`)).join('\n');
+    const val=parseInt(prompt(msg)||'',10);
+    return opts.some(o=>o.value===val)?val:0;
+  };
+  const a=choose('Akių atmerkimas (A)',[
+    {value:4,text:'spontaniškai'},
+    {value:3,text:'į garsą'},
+    {value:2,text:'į skausmą'},
+    {value:1,text:'nereaguoja'}
+  ]);
+  const k=choose('Kalba (K)',[
+    {value:5,text:'orientuotas'},
+    {value:4,text:'paini'},
+    {value:3,text:'žodžiai'},
+    {value:2,text:'garsai'},
+    {value:1,text:'nėra'}
+  ]);
+  const m=choose('Judesių reakcija (M)',[
+    {value:6,text:'vykdo komandas'},
+    {value:5,text:'lokalizuoja skausmą'},
+    {value:4,text:'atitraukia nuo skausmo'},
+    {value:3,text:'lenkia nuo skausmo'},
+    {value:2,text:'atpalaiduoja'},
+    {value:1,text:'nereaguoja'}
+  ]);
+  if(a) $('#d_gksa').value=a;
+  if(k) $('#d_gksk').value=k;
+  if(m) $('#d_gksm').value=m;
+  ['#d_gksa','#d_gksk','#d_gksm'].forEach(sel=>$(sel).dispatchEvent(new Event('input')));
+  saveAll();
+});
 $('#e_back_ny').addEventListener('change',e=>{ $('#e_back_notes').disabled=e.target.checked; if(e.target.checked) $('#e_back_notes').value=''; saveAll();});
 
 /* ===== Init modules ===== */
