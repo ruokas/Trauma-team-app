@@ -11,6 +11,17 @@ const TEAM_ROLES=['Komandos vadovas','Raštininkas','ED gydytojas 1','ED gydytoj
 
 const imgWrap=$('#imaging_basic'); IMG.forEach(n=>{const s=document.createElement('span'); s.className='chip'; s.dataset.value=n; s.textContent=n; imgWrap.appendChild(s);});
 const labsWrap=$('#labs_basic'); LABS.forEach(n=>{const s=document.createElement('span'); s.className='chip'; s.dataset.value=n; s.textContent=n; labsWrap.appendChild(s);});
+const bloodInfo=$('#bloodOrderInfo');
+$('#btnBloodOrder').addEventListener('click',()=>{
+  const units=prompt('Kiek vienetų užsakyta?');
+  const group=prompt('Kokia kraujo grupė?');
+  if(units && group){
+    $('#blood_units').value=units;
+    $('#blood_group').value=group;
+    bloodInfo.textContent=units+' vnt. '+group;
+    saveAll();
+  }
+});
 const fastAreas=['Perikardas','Dešinė pleura','Kairė pleura','RUQ','LUQ','Dubuo']; const fastWrap=$('#fastGrid');
 fastAreas.forEach(a=>{const box=document.createElement('div'); box.innerHTML=`<label>${a}</label><div class="row"><label class="pill"><input type="radio" name="fast_${a}" value="Yra"> Yra</label><label class="pill"><input type="radio" name="fast_${a}" value="Nėra"> Nėra</label></div>`; fastWrap.appendChild(box);});
 const teamWrap=$('#teamGrid'); TEAM_ROLES.forEach(r=>{
@@ -187,6 +198,9 @@ function loadAll(){
     $('#spr_ligonine_container').style.display = ($$('.chip.active', $('#spr_decision_group')).some(c=>c.dataset.value==='Pervežimas į kitą ligoninę'))?'block':'none';
     $('#spr_skyrius_kita').style.display = ($('#spr_skyrius').value === 'Kita') ? 'block' : 'none';
     $('#imaging_other').style.display = ($$('.chip.active', $('#imaging_basic')).some(c=>c.dataset.value==='Kita'))?'block':'none';
+    const bu=$('#blood_units').value;
+    const bg=$('#blood_group').value;
+    $('#bloodOrderInfo').textContent = (bu && bg) ? (bu+' vnt. '+bg) : '';
     ensureSingleTeam();
     updateActivationIndicator();
     expandOutput();
@@ -359,7 +373,14 @@ document.getElementById('btnGen').addEventListener('click',()=>{
   const fr=fastAreas.map(a=>{ const y=document.querySelector('input[name="fast_'+a+'"][value="Yra"]')?.checked; const n=document.querySelector('input[name="fast_'+a+'"][value="Nėra"]')?.checked; return y? a+': skystis Yra' : (n? a+': skystis Nėra' : null); }).filter(Boolean);
   if(imgs.length||fr.length){ out.push('\n--- Vaizdiniai tyrimai ---'); if(imgs.length) out.push('Užsakyta: '+imgs.join(', ')); if(fr.length) out.push('FAST: '+fr.join(' | ')); }
 
-  const labs=listChips('#labs_basic'); if(labs.length){ out.push('\n--- Laboratorija ---'); out.push(labs.join(', ')); }
+  const labs=listChips('#labs_basic');
+  const bloodUnits=$('#blood_units').value;
+  const bloodGroup=$('#blood_group').value;
+  if(labs.length || (bloodUnits && bloodGroup)){
+    out.push('\n--- Laboratorija ---');
+    if(labs.length) out.push(labs.join(', '));
+    if(bloodUnits && bloodGroup) out.push('Kraujo užsakymas: '+bloodUnits+' vnt. '+bloodGroup);
+  }
 
   const team=TEAM_ROLES.map(r=>{ const el=document.querySelector('input[data-team="'+r+'"]'); const v=el?.value?.trim(); return v? r+': '+v : null; }).filter(Boolean); if(team.length){ out.push('\n--- Komanda ---'); out.push(team.join(' | ')); }
 
