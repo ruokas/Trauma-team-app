@@ -300,11 +300,13 @@ document.getElementById('btnGen').addEventListener('click',()=>{
     const sprLigonine = sprDecision==='Pervežimas į kitą ligoninę'
       ? $('#spr_ligonine').value
       : '';
+    const sprGks=gksSum($('#spr_gksa').value,$('#spr_gksk').value,$('#spr_gksm').value);
     const sprVitals=[
       $('#spr_hr').value?('ŠSD '+$('#spr_hr').value+'/min'):null,
       $('#spr_rr').value?('KD '+$('#spr_rr').value+'/min'):null,
       $('#spr_spo2').value?('SpO₂ '+$('#spr_spo2').value+'%'):null,
-      ($('#spr_sbp').value||$('#spr_dbp').value)?('AKS '+$('#spr_sbp').value+'/'+$('#spr_dbp').value):null
+      ($('#spr_sbp').value||$('#spr_dbp').value)?('AKS '+$('#spr_sbp').value+'/'+$('#spr_dbp').value):null,
+      sprGks?(`GKS ${sprGks} (A${$('#spr_gksa').value}-K${$('#spr_gksk').value}-M${$('#spr_gksm').value})`):null
     ].filter(Boolean).join('; ');
     if(sprDecision || $('#spr_time').value || sprVitals){
       out.push('\n--- Sprendimas ---');
