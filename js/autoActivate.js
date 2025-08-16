@@ -43,8 +43,13 @@ export function initAutoActivate(saveAll){
     ['#gmp_hr','#gmp_rr','#gmp_spo2','#gmp_sbp','#gmp_dbp','#gmp_gksa','#gmp_gksk','#gmp_gksm']
     .forEach(sel=>{
       const el = $(sel);
-      if(el) el.addEventListener('input', ()=>{ autoActivateFromGMP(); if(typeof saveAll==='function') saveAll(); });
+      if(el) el.addEventListener('input', ()=>{
+        if(typeof window !== 'undefined' && typeof window.validateVitals === 'function') window.validateVitals();
+        autoActivateFromGMP();
+        if(typeof saveAll==='function') saveAll();
+      });
     });
+    if(typeof window !== 'undefined' && typeof window.validateVitals === 'function') window.validateVitals();
 }
 
 export { autoActivateFromGMP };
