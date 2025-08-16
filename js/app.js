@@ -164,7 +164,7 @@ const fastAreas=[
 const fastWrap=$('#fastGrid');
 fastAreas.forEach(({name,marker})=>{
   const box=document.createElement('div');
-  box.innerHTML=`<label>${name} (${marker})</label><div class="row"><label class="pill"><input type="radio" name="fast_${name}" value="Yra"> Yra</label><label class="pill"><input type="radio" name="fast_${name}" value="Nėra"> Nėra</label></div>`;
+  box.innerHTML=`<label>${name} (${marker})</label><div class="row"><label class="pill red"><input type="radio" name="fast_${name}" value="Yra"> Yra</label><label class="pill"><input type="radio" name="fast_${name}" value="Nėra"> Nėra</label></div>`;
   fastWrap.appendChild(box);
 });
 const teamWrap=$('#teamGrid'); TEAM_ROLES.forEach(r=>{

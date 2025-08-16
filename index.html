@@ -98,10 +98,10 @@
       <label>Takai</label>
       <div class="chip-group" id="a_airway_group" data-single="true" aria-label="Takai">
         <button type="button" class="chip" data-value="Atviri" aria-pressed="false">Atviri</button>
-        <button type="button" class="chip" data-value="Obstrukcija" aria-pressed="false">Obstrukcija</button>
-        <button type="button" class="chip" data-value="Įvesta laringinė kaukė" aria-pressed="false">Įvesta laringinė kaukė</button>
-        <button type="button" class="chip" data-value="Intubuotas" aria-pressed="false">Intubuotas</button>
-        <button type="button" class="chip" data-value="Kita" aria-pressed="false">Kita</button>
+        <button type="button" class="chip red" data-value="Obstrukcija" aria-pressed="false">Obstrukcija</button>
+        <button type="button" class="chip red" data-value="Įvesta laringinė kaukė" aria-pressed="false">Įvesta laringinė kaukė</button>
+        <button type="button" class="chip red" data-value="Intubuotas" aria-pressed="false">Intubuotas</button>
+        <button type="button" class="chip red" data-value="Kita" aria-pressed="false">Kita</button>
       </div>
       <div class="row" style="margin-top:8px"><label style="margin:0">Pastabos</label><input id="a_notes" type="text" placeholder="Trumpai..."></div>
     </section>
@@ -116,8 +116,8 @@
       </div>
       <h3>Alsavimas</h3>
       <div class="row">
-        <div><div class="subtle">Kairė</div><div class="chip-group" id="b_breath_left_group" data-single="true" aria-label="Alsavimas – Kairė"><button type="button" class="chip breath-chip" data-value="+" aria-pressed="false">+</button><button type="button" class="chip breath-chip" data-value="-" aria-pressed="false">-</button></div></div>
-        <div><div class="subtle">Dešinė</div><div class="chip-group" id="b_breath_right_group" data-single="true" aria-label="Alsavimas – Dešinė"><button type="button" class="chip breath-chip" data-value="+" aria-pressed="false">+</button><button type="button" class="chip breath-chip" data-value="-" aria-pressed="false">-</button></div></div>
+        <div><div class="subtle">Kairė</div><div class="chip-group" id="b_breath_left_group" data-single="true" aria-label="Alsavimas – Kairė"><button type="button" class="chip breath-chip" data-value="+" aria-pressed="false">+</button><button type="button" class="chip breath-chip red" data-value="-" aria-pressed="false">-</button></div></div>
+        <div><div class="subtle">Dešinė</div><div class="chip-group" id="b_breath_right_group" data-single="true" aria-label="Alsavimas – Dešinė"><button type="button" class="chip breath-chip" data-value="+" aria-pressed="false">+</button><button type="button" class="chip breath-chip red" data-value="-" aria-pressed="false">-</button></div></div>
       </div>
       <h3>Pagalbinė ventiliacija</h3>
       <div class="row" style="flex-wrap:wrap">
@@ -171,9 +171,9 @@
               <select id="d_gcs_calc_a">
                 <option value=""></option>
                 <option value="4">akys atmerktos spontaniškai</option>
-                <option value="3">akys atveriamos į garsą</option>
-                <option value="2">akys atveriamos į skausmą</option>
-                <option value="1">akys neatveriamos</option>
+                <option value="3" class="red">akys atveriamos į garsą</option>
+                <option value="2" class="red">akys atveriamos į skausmą</option>
+                <option value="1" class="red">akys neatveriamos</option>
               </select>
             </div>
             <div>
@@ -181,10 +181,10 @@
               <select id="d_gcs_calc_k">
                 <option value=""></option>
                 <option value="5">orientuota kalba</option>
-                <option value="4">paini kalba</option>
-                <option value="3">atskiri žodžiai</option>
-                <option value="2">neaiškūs garsai</option>
-                <option value="1">nereaguoja</option>
+                <option value="4" class="red">paini kalba</option>
+                <option value="3" class="red">atskiri žodžiai</option>
+                <option value="2" class="red">neaiškūs garsai</option>
+                <option value="1" class="red">nereaguoja</option>
               </select>
             </div>
             <div>
@@ -192,11 +192,11 @@
               <select id="d_gcs_calc_m">
                 <option value=""></option>
                 <option value="6">vykdo komandas</option>
-                <option value="5">lokalizuoja skausmą</option>
-                <option value="4">atitraukia nuo skausmo</option>
-                <option value="3">nenormali fleksija (lenkia į skausmą)</option>
-                <option value="2">nenormali ekstensija (ištiesia į skausmą)</option>
-                <option value="1">nereaguoja</option>
+                <option value="5" class="red">lokalizuoja skausmą</option>
+                <option value="4" class="red">atitraukia nuo skausmo</option>
+                <option value="3" class="red">nenormali fleksija (lenkia į skausmą)</option>
+                <option value="2" class="red">nenormali ekstensija (ištiesia į skausmą)</option>
+                <option value="1" class="red">nereaguoja</option>
               </select>
             </div>
           </div>
@@ -208,12 +208,12 @@
       </div>
       <div style="margin-top:8px">
         <label>Vyzdžiai – Kairė</label>
-        <div class="chip-group" id="d_pupil_left_group" data-single="true" aria-label="Vyzdžiai – Kairė"><button type="button" class="chip" data-value="n.y." aria-pressed="false">n.y.</button><button type="button" class="chip" data-value="kita" aria-pressed="false">kita</button></div>
+        <div class="chip-group" id="d_pupil_left_group" data-single="true" aria-label="Vyzdžiai – Kairė"><button type="button" class="chip" data-value="n.y." aria-pressed="false">n.y.</button><button type="button" class="chip red" data-value="kita" aria-pressed="false">kita</button></div>
         <input id="d_pupil_left_note" type="text" placeholder="Pastabos..." style="margin-top:6px;display:none">
       </div>
       <div style="margin-top:8px">
         <label>Vyzdžiai – Dešinė</label>
-        <div class="chip-group" id="d_pupil_right_group" data-single="true" aria-label="Vyzdžiai – Dešinė"><button type="button" class="chip" data-value="n.y." aria-pressed="false">n.y.</button><button type="button" class="chip" data-value="kita" aria-pressed="false">kita</button></div>
+        <div class="chip-group" id="d_pupil_right_group" data-single="true" aria-label="Vyzdžiai – Dešinė"><button type="button" class="chip" data-value="n.y." aria-pressed="false">n.y.</button><button type="button" class="chip red" data-value="kita" aria-pressed="false">kita</button></div>
         <input id="d_pupil_right_note" type="text" placeholder="Pastabos..." style="margin-top:6px;display:none">
       </div>
       <div class="row" style="margin-top:8px"><label style="margin:0">Pastabos</label><input id="d_notes" type="text" placeholder="Trumpai..."></div>
