@@ -307,3 +307,9 @@ document.getElementById('btnGen').addEventListener('click',()=>{
 document.getElementById('btnCopy').addEventListener('click',async()=>{ try{ await navigator.clipboard.writeText($('#output').value||''); alert('Nukopijuota.'); }catch(e){ alert('Nepavyko nukopijuoti.'); }});
 document.getElementById('btnSave').addEventListener('click',()=>{ saveAll(); alert('Išsaugota naršyklėje.');});
 document.getElementById('btnClear').addEventListener('click',()=>{ if(confirm('Išvalyti viską?')){ localStorage.removeItem('trauma_v9'); location.reload(); }});
+document.getElementById('btnPrint').addEventListener('click',()=>{
+  const prevTab=localStorage.getItem('v9_activeTab');
+  document.getElementById('btnGen').click();
+  window.print();
+  if(prevTab) showTab(prevTab);
+});
