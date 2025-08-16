@@ -15,13 +15,13 @@ describe('initActions default doses', () => {
     const chk = card.querySelector('.act_chk');
     const dose = card.querySelector('.act_dose');
     chk.checked = true;
-    chk.dispatchEvent(new Event('change'));
+    chk.dispatchEvent(new Event('change', { bubbles: true }));
     expect(dose.value).toBe(DEFAULT_DOSES['Fentanilis']);
     dose.value = '150 mcg';
     chk.checked = false;
-    chk.dispatchEvent(new Event('change'));
+    chk.dispatchEvent(new Event('change', { bubbles: true }));
     chk.checked = true;
-    chk.dispatchEvent(new Event('change'));
+    chk.dispatchEvent(new Event('change', { bubbles: true }));
     expect(dose.value).toBe('150 mcg');
   });
 
@@ -41,7 +41,7 @@ describe('initActions default doses', () => {
       const chk = card.querySelector('.act_chk');
       const dose = card.querySelector('.act_dose');
       chk.checked = true;
-      chk.dispatchEvent(new Event('change'));
+      chk.dispatchEvent(new Event('change', { bubbles: true }));
       expect(dose.value).toBe(DEFAULT_DOSES[med]);
     }
   );
