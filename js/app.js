@@ -687,7 +687,28 @@ document.getElementById('btnPdf').addEventListener('click', async () => {
 });
 document.getElementById('btnPrint').addEventListener('click',()=>{
   const prevTab=localStorage.getItem('v10_activeTab');
-  document.getElementById('btnGen').click();
-  window.print();
+  generateReport();
+  const text=$('#output').value||'';
+  const svg=$('#bodySvg').cloneNode(true);
+  const front=svg.querySelector('#layer-front');
+  const back=svg.querySelector('#layer-back');
+  if(front) front.classList.remove('hidden');
+  if(back) back.classList.remove('hidden');
+  const printWin=window.open('','_blank');
+  if(printWin){
+    const doc=printWin.document;
+    doc.open();
+    doc.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>Ataskaita</title><link rel="stylesheet" href="css/main.css"><style>body{font-family:sans-serif;padding:20px;} pre{white-space:pre-wrap;}</style></head><body></body></html>');
+    doc.close();
+    const pre=doc.createElement('pre');
+    pre.textContent=text;
+    doc.body.appendChild(pre);
+    doc.body.appendChild(svg);
+    printWin.focus();
+    printWin.print();
+    printWin.close();
+  }else{
+    window.print();
+  }
   if(prevTab) showTab(prevTab);
 });
