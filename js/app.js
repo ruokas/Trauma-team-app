@@ -186,6 +186,16 @@ function loadAll(){
 /* ===== Other UI ===== */
 $('#btnGCS15').addEventListener('click',()=>{ $('#d_gksa').value=4; $('#d_gksk').value=5; $('#d_gksm').value=6; saveAll();});
 $('#e_back_ny').addEventListener('change',e=>{ $('#e_back_notes').disabled=e.target.checked; if(e.target.checked) $('#e_back_notes').value=''; saveAll();});
+$('#btnGCSCalc').addEventListener('click',()=>{
+  const a=+$('#gcs_eye').value; const k=+$('#gcs_verbal').value; const m=+$('#gcs_motor').value;
+  if(a && k && m){
+    $('#d_gksa').value=a; $('#d_gksk').value=k; $('#d_gksm').value=m;
+    $('#gcsResult').textContent='GKS: '+(a+k+m);
+  }else{
+    $('#gcsResult').textContent='';
+  }
+  saveAll();
+});
 
 /* ===== Init modules ===== */
 function init(){

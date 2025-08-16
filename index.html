@@ -142,6 +142,45 @@
             <input id="d_gksm" type="number" min="1" max="6" placeholder="M">
             <button type="button" class="btn" id="btnGCS15">15b.</button>
           </div>
+          <div class="grid cols-3" style="margin-top:8px">
+            <div>
+              <label>Akys</label>
+              <select id="gcs_eye">
+                <option value=""></option>
+                <option value="4">Spontaniškai</option>
+                <option value="3">Į žodinę komandą</option>
+                <option value="2">Į skausmą</option>
+                <option value="1">Neatsimerkia</option>
+              </select>
+            </div>
+            <div>
+              <label>Kalba</label>
+              <select id="gcs_verbal">
+                <option value=""></option>
+                <option value="5">Orientuotas</option>
+                <option value="4">Sumišęs</option>
+                <option value="3">Netinkami žodžiai</option>
+                <option value="2">Nesuprantami garsai</option>
+                <option value="1">Nekalba</option>
+              </select>
+            </div>
+            <div>
+              <label>Motorika</label>
+              <select id="gcs_motor">
+                <option value=""></option>
+                <option value="6">Paklūsta komandai</option>
+                <option value="5">Lokalizuoja skausmą</option>
+                <option value="4">Atsitraukia nuo skausmo</option>
+                <option value="3">Lenkimas į skausmą</option>
+                <option value="2">Ištiesimas į skausmą</option>
+                <option value="1">Nejudina</option>
+              </select>
+            </div>
+            <div class="row" style="grid-column:1/-1;gap:8px;align-items:center;margin-top:8px">
+              <button type="button" class="btn" id="btnGCSCalc">Skaičiuoti</button>
+              <span id="gcsResult"></span>
+            </div>
+          </div>
         </div>
         <div class="grid cols-2">
           <div>
