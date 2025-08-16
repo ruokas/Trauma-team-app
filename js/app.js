@@ -111,12 +111,9 @@ function saveAll(){
   if(painContainer) data['pain_meds']=pack(painContainer);
   const bleedContainer=$('#bleeding_meds');
   if(bleedContainer) data['bleeding_meds']=pack(bleedContainer);
-  const oldMedsContainer=$('#medications');
-  if(oldMedsContainer) data['meds']=pack(oldMedsContainer);
   data['procs']=pack($('#procedures'));
   data['bodymap_svg']=BodySVG.serialize();
   localStorage.setItem(LS_KEY_CURRENT, JSON.stringify(data));
-  if(LS_KEY_OLD!==LS_KEY_CURRENT) localStorage.removeItem(LS_KEY_OLD);
 }
 function loadAll(){
   const raw=localStorage.getItem(LS_KEY_CURRENT) || localStorage.getItem(LS_KEY_OLD); if(!raw) return;
@@ -134,8 +131,6 @@ function loadAll(){
     function unpack(container,records){ if(!container || !Array.isArray(records)) return; Array.from(container.children).forEach((card,i)=>{ const r=records[i]; if(!r) return; card.querySelector('.act_chk').checked=!!r.on; card.querySelector('.act_time').value=r.time||''; card.querySelector('.act_dose').value=r.dose||''; card.querySelector('.act_note').value=r.note||'';});}
     unpack($('#pain_meds'), data['pain_meds'] || data['meds']);
     unpack($('#bleeding_meds'), data['bleeding_meds']);
-    const oldMedsContainer=$('#medications');
-    if(oldMedsContainer && data['meds']) unpack(oldMedsContainer, data['meds']);
     unpack($('#procedures'),data['procs']);
     if(data['bodymap_svg']) BodySVG.load(data['bodymap_svg']);
     $('#d_pupil_left_note').style.display = ($$('.chip.active', $('#d_pupil_left_group')).some(c=>c.dataset.value==='kita'))?'block':'none';
