@@ -14,6 +14,23 @@ const imgCtWrap=$('#imaging_ct'); IMG_CT.forEach(n=>{const s=document.createElem
 const imgXrayWrap=$('#imaging_xray'); IMG_XRAY.forEach(n=>{const s=document.createElement('span'); s.className='chip'; s.dataset.value=n; s.textContent=n; imgXrayWrap.appendChild(s);});
 const imgOtherWrap=$('#imaging_other_group'); ['Kita'].forEach(n=>{const s=document.createElement('span'); s.className='chip'; s.dataset.value=n; s.textContent=n; imgOtherWrap.appendChild(s);});
 const labsWrap=$('#labs_basic'); LABS.forEach(n=>{const s=document.createElement('span'); s.className='chip'; s.dataset.value=n; s.textContent=n; labsWrap.appendChild(s);});
+const btnBloodOrder=$('#btnBloodOrder');
+if(btnBloodOrder){
+  btnBloodOrder.addEventListener('click',()=>{
+    const units=prompt('Įveskite užsakomų vienetų skaičių');
+    if(!units) return;
+    const group=prompt('Įveskite kraujo grupę');
+    if(!group) return;
+    const val=`Kraujo užsakymas: ${units} vnt ${group}`;
+    const chip=document.createElement('span');
+    chip.className='chip';
+    chip.dataset.value=val;
+    chip.textContent=val;
+    labsWrap.appendChild(chip);
+    setChipActive(chip,true);
+    saveAll();
+  });
+}
 const IMAGING_GROUPS=['#imaging_ct','#imaging_xray','#imaging_other_group'];
 const CHIP_GROUPS=['#chips_red','#chips_yellow',...IMAGING_GROUPS,'#labs_basic','#a_airway_group','#b_breath_left_group','#b_breath_right_group','#d_pupil_left_group','#d_pupil_right_group','#spr_decision_group'];
 const fastAreas=['Perikardas','Dešinė pleura','Kairė pleura','RUQ','LUQ','Dubuo']; const fastWrap=$('#fastGrid');
@@ -179,6 +196,18 @@ function loadAll(){
       else{ if(data[key]!=null) el.value=data[key]; }
     });
   CHIP_GROUPS.forEach(sel=>{ const arr=data['chips:'+sel]||[]; $$('.chip',$(sel)).forEach(c=>c.classList.toggle('active',arr.includes(c.dataset.value))); });
+  const labsArr=data['chips:#labs_basic']||[];
+  const labsContainer=$('#labs_basic');
+  labsArr.forEach(val=>{
+    if(!$$('.chip',labsContainer).some(c=>c.dataset.value===val)){
+      const chip=document.createElement('span');
+      chip.className='chip';
+      chip.dataset.value=val;
+      chip.textContent=val;
+      labsContainer.appendChild(chip);
+    }
+  });
+  $$('.chip',labsContainer).forEach(c=>c.classList.toggle('active',labsArr.includes(c.dataset.value)));
     function unpack(container,records){ if(!Array.isArray(records)) return; Array.from(container.children).forEach((card,i)=>{ const r=records[i]; if(!r) return; card.querySelector('.act_chk').checked=!!r.on; card.querySelector('.act_time').value=r.time||''; card.querySelector('.act_dose').value=r.dose||''; card.querySelector('.act_note').value=r.note||''; const cn=card.querySelector('.act_custom_name'); if(cn) cn.value=r.name||'';});}
     unpack($('#pain_meds'),data['pain_meds']); unpack($('#bleeding_meds'),data['bleeding_meds']); unpack($('#other_meds'),data['other_meds']); unpack($('#procedures'),data['procs']);
     if(data['bodymap_svg']) BodySVG.load(data['bodymap_svg']);
