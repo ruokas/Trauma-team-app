@@ -39,6 +39,10 @@ textarea{min-height:80px;resize:vertical}
 .pill{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border:1px solid var(--line);border-radius:999px;background:#152231;color:#fff;font-weight:700}
 .pill:has(input:checked){background:var(--accent);border-color:#2d74b8}
 .pill.red:has(input:checked){background:var(--red);border-color:#a52623}
+#fastGrid .pill{
+  padding:10px 16px;
+  font-size:16px;
+}
 select option.red{color:var(--red)}
 .chip{
   display:inline-flex;
