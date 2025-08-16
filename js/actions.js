@@ -88,11 +88,22 @@ export function initActions(saveAll){
   PAIN_MEDS.sort((a,b)=>a.localeCompare(b));
   BLEEDING_MEDS.sort((a,b)=>a.localeCompare(b));
   OTHER_MEDS.sort((a,b)=>a.localeCompare(b));
-  PAIN_MEDS.forEach(n=>painWrap.appendChild(buildActionCard('med', n, saveAll)));
-  BLEEDING_MEDS.forEach(n=>bleedingWrap.appendChild(buildActionCard('med', n, saveAll)));
-  OTHER_MEDS.forEach(n=>otherWrap.appendChild(buildActionCard('med', n, saveAll)));
-  otherWrap.appendChild(buildActionCard('med','Kita', saveAll, {custom:true}));
-  PROCS.forEach(n=>procsWrap.appendChild(buildActionCard('proc', n, saveAll)));
+  const painFrag=document.createDocumentFragment();
+  PAIN_MEDS.forEach(n=>painFrag.appendChild(buildActionCard('med', n, saveAll)));
+  painWrap.appendChild(painFrag);
+
+  const bleedingFrag=document.createDocumentFragment();
+  BLEEDING_MEDS.forEach(n=>bleedingFrag.appendChild(buildActionCard('med', n, saveAll)));
+  bleedingWrap.appendChild(bleedingFrag);
+
+  const otherFrag=document.createDocumentFragment();
+  OTHER_MEDS.forEach(n=>otherFrag.appendChild(buildActionCard('med', n, saveAll)));
+  otherFrag.appendChild(buildActionCard('med','Kita', saveAll, {custom:true}));
+  otherWrap.appendChild(otherFrag);
+
+  const procsFrag=document.createDocumentFragment();
+  PROCS.forEach(n=>procsFrag.appendChild(buildActionCard('proc', n, saveAll)));
+  procsWrap.appendChild(procsFrag);
   const medSearch=$('#medSearch');
   if(medSearch){
     const wraps=[painWrap,bleedingWrap,otherWrap];
