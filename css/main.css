@@ -93,4 +93,3 @@ section[data-tab="Intervencijos"] .split{gap:8px}
 section[data-tab="Intervencijos"] .card{padding:6px}
 section[data-tab="Intervencijos"] .card .grid{gap:6px}
 section[data-tab="Intervencijos"] h3{display:flex;align-items:center;gap:4px}
-section[data-tab="Intervencijos"] .act_icon{font-size:16px}

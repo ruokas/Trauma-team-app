@@ -25,9 +25,8 @@ function buildActionCard(group, name, saveAll){
   card.className='card';
   card.style.padding='6px';
   card.style.borderRadius='10px';
-  const slug=name.toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'');
-  const icon = group==='med'?'💊':'🛠';
-  card.innerHTML=`<label class="pill"><input type="checkbox" class="act_chk" data-field="${group}_${slug}_chk"> <span class="act_icon">${icon}</span><span class="act_name">${name}</span></label>
+    const slug=name.toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'');
+    card.innerHTML=`<label class="pill"><input type="checkbox" class="act_chk" data-field="${group}_${slug}_chk"><span class="act_name">${name}</span></label>
     <div class="detail collapsed">
       <div class="grid cols-3" style="margin-top:4px">
         <div><label>Laikas</label><input type="time" class="act_time" data-field="${group}_${slug}_time"></div>
