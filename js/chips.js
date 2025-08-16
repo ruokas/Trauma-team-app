@@ -40,13 +40,20 @@ export function initChips(saveAll){
       if(chip.dataset.value!=='kita') $('#d_pupil_right_note').value='';
     }
       if(group.id==='spr_decision_group'){
-        const show = chip.dataset.value==='Stacionarizavimas' && isChipActive(chip);
-        const box = $('#spr_skyrius_container');
-        box.style.display = show ? 'block' : 'none';
-        if(!show){
+        const showSky = chip.dataset.value==='Stacionarizavimas' && isChipActive(chip);
+        const boxSky = $('#spr_skyrius_container');
+        boxSky.style.display = showSky ? 'block' : 'none';
+        if(!showSky){
           $('#spr_skyrius').value='';
           $('#spr_skyrius_kita').style.display='none';
           $('#spr_skyrius_kita').value='';
+        }
+
+        const showHosp = chip.dataset.value==='Pervežimas į kitą ligoninę' && isChipActive(chip);
+        const boxHosp = $('#spr_ligonine_container');
+        boxHosp.style.display = showHosp ? 'block' : 'none';
+        if(!showHosp){
+          $('#spr_ligonine').value='';
         }
       }
     delete chip.dataset.auto;
