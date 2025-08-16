@@ -45,4 +45,17 @@ describe('initActions default doses', () => {
       expect(dose.value).toBe(DEFAULT_DOSES[med]);
     }
   );
+
+  test('adds custom medication field', () => {
+    document.body.innerHTML = `
+      <div id="pain_meds"></div>
+      <div id="bleeding_meds"></div>
+      <div id="other_meds"></div>
+      <div id="procedures"></div>
+      <input id="medSearch" />
+    `;
+    initActions(() => {});
+    const customCard = document.querySelector('#other_meds .act_custom_name');
+    expect(customCard).not.toBeNull();
+  });
 });
