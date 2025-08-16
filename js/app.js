@@ -671,14 +671,19 @@ document.getElementById('btnGen').addEventListener('click', generateReport);
 document.getElementById('btnCopy').addEventListener('click',async()=>{ try{ await navigator.clipboard.writeText($('#output').value||''); alert('Nukopijuota.'); }catch(e){ alert('Nepavyko nukopijuoti.'); }});
 document.getElementById('btnSave').addEventListener('click',()=>{ saveAll(); alert('Išsaugota naršyklėje.');});
 document.getElementById('btnClear').addEventListener('click',()=>{ if(confirm('Išvalyti viską?')){ localStorage.removeItem(sessionKey()); location.reload(); }});
-document.getElementById('btnPdf').addEventListener('click',async()=>{
+document.getElementById('btnPdf').addEventListener('click', async () => {
   generateReport();
-  const text=$('#output').value||'';
-  const { jsPDF } = await import('../node_modules/jspdf/dist/jspdf.umd.min.js');
-  const doc=new jsPDF();
-  const lines=doc.splitTextToSize(text,180);
-  doc.text(lines,10,10);
-  doc.save('report.pdf');
+  const text = $('#output').value || '';
+  try {
+    const { jsPDF } = await import('./lib/jspdf.umd.min.js');
+    const doc = new jsPDF();
+    const lines = doc.splitTextToSize(text, 180);
+    doc.text(lines, 10, 10);
+    doc.save('report.pdf');
+  } catch (e) {
+    alert('Nepavyko sugeneruoti PDF.');
+    console.error('PDF generation failed', e);
+  }
 });
 document.getElementById('btnPrint').addEventListener('click',()=>{
   const prevTab=localStorage.getItem('v10_activeTab');

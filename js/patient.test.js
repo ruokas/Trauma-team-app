@@ -4,7 +4,7 @@ const mockJsPDF = jest.fn().mockImplementation(() => ({
   text: jest.fn(),
   save: mockSave
 }));
-jest.mock('../node_modules/jspdf/dist/jspdf.umd.min.js', () => ({ jsPDF: mockJsPDF }));
+jest.mock('./lib/jspdf.umd.min.js', () => ({ jsPDF: mockJsPDF }));
 
 const setupDom = () => {
   document.body.innerHTML = `
