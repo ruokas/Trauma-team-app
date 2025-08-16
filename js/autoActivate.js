@@ -28,7 +28,7 @@ function autoActivateFromEMS(){
 }
 
 export function initAutoActivate(saveAll){
-  ['#ems_hr','#ems_rr','#ems_spo2','#ems_sbp','#ems_dbp','#ems_gksa','#ems_gksk','#ems_gksm','#ems_temp']
+  ['#ems_hr','#ems_rr','#ems_spo2','#ems_sbp','#ems_dbp','#ems_gksa','#ems_gksk','#ems_gksm']
     .forEach(sel=>{
       const el = $(sel);
       if(el) el.addEventListener('input', ()=>{ autoActivateFromEMS(); if(typeof saveAll==='function') saveAll(); });

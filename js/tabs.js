@@ -1,7 +1,7 @@
 import { $ } from './utils.js';
 
 export const TABS = [
-  'Aktyvacija (EMS)','A – Kvėpavimo takai','B – Kvėpavimas','C – Kraujotaka',
+  'Aktyvacija','A – Kvėpavimo takai','B – Kvėpavimas','C – Kraujotaka',
   'D – Sąmonė','E – Kita','Intervencijos','Vaizdiniai tyrimai','Laboratorija','Komanda','Ataskaita'
 ];
 
