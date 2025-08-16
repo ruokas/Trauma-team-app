@@ -55,4 +55,24 @@ describe('chips', () => {
     normalChip.click();
     expect(box.style.display).toBe('none');
   });
+
+  test('toggles pupil note visibility and clears value when switching options', () => {
+    document.body.innerHTML = `
+      <div id="d_pupil_left_group" data-single="true">
+        <button type="button" class="chip" data-value="n.y." aria-pressed="false"></button>
+        <button type="button" class="chip" data-value="kita" aria-pressed="false"></button>
+      </div>
+      <input id="d_pupil_left_note" style="display:none;" />
+    `;
+    const { initChips } = require('./chips.js');
+    initChips();
+    const [nyChip, otherChip] = document.querySelectorAll('#d_pupil_left_group .chip');
+    const note = document.getElementById('d_pupil_left_note');
+    otherChip.click();
+    expect(note.style.display).toBe('block');
+    note.value = 'test';
+    nyChip.click();
+    expect(note.style.display).toBe('none');
+    expect(note.value).toBe('');
+  });
 });
