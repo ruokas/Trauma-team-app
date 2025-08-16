@@ -35,4 +35,24 @@ describe('chips', () => {
     otherChip.click();
     expect(container.style.display).toBe('none');
   });
+
+  test('shows other imaging field when "Kita" selected', () => {
+    document.body.innerHTML = `
+      <div id="imaging_basic">
+        <span class="chip" data-value="Galvos KT"></span>
+        <span class="chip" data-value="Kita"></span>
+      </div>
+      <input id="imaging_other" style="display:none;" />
+    `;
+    const { initChips } = require('./chips.js');
+    initChips();
+    const [normalChip, otherChip] = document.querySelectorAll('#imaging_basic .chip');
+    const box = document.getElementById('imaging_other');
+    otherChip.click();
+    expect(box.style.display).toBe('block');
+    otherChip.click();
+    expect(box.style.display).toBe('none');
+    normalChip.click();
+    expect(box.style.display).toBe('none');
+  });
 });
