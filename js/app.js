@@ -153,8 +153,20 @@ if(bloodUnitsInput && bloodGroupWrap && addBloodOrderBtn){
 }
 const IMAGING_GROUPS=['#imaging_ct','#imaging_xray','#imaging_other_group'];
 const CHIP_GROUPS=['#chips_red','#chips_yellow',...IMAGING_GROUPS,'#labs_basic','#a_airway_group','#b_breath_left_group','#b_breath_right_group','#d_pupil_left_group','#d_pupil_right_group','#spr_decision_group'];
-const fastAreas=['Perikardas','Dešinė pleura','Kairė pleura','RUQ','LUQ','Dubuo']; const fastWrap=$('#fastGrid');
-fastAreas.forEach(a=>{const box=document.createElement('div'); box.innerHTML=`<label>${a}</label><div class="row"><label class="pill"><input type="radio" name="fast_${a}" value="Yra"> Yra</label><label class="pill"><input type="radio" name="fast_${a}" value="Nėra"> Nėra</label></div>`; fastWrap.appendChild(box);});
+const fastAreas=[
+  {name:'Perikardas', marker:'skystis'},
+  {name:'Dešinė pleura', marker:'skystis ar oras'},
+  {name:'Kairė pleura', marker:'skystis ar oras'},
+  {name:'RUQ', marker:'skystis'},
+  {name:'LUQ', marker:'skystis'},
+  {name:'Dubuo', marker:'skystis'}
+];
+const fastWrap=$('#fastGrid');
+fastAreas.forEach(({name,marker})=>{
+  const box=document.createElement('div');
+  box.innerHTML=`<label>${name} (${marker})</label><div class="row"><label class="pill"><input type="radio" name="fast_${name}" value="Yra"> Yra</label><label class="pill"><input type="radio" name="fast_${name}" value="Nėra"> Nėra</label></div>`;
+  fastWrap.appendChild(box);
+});
 const teamWrap=$('#teamGrid'); TEAM_ROLES.forEach(r=>{
   const slug=r.replace(/\s+/g,'_');
   const box=document.createElement('div');
@@ -627,7 +639,11 @@ export function generateReport(){
     const other=$('#imaging_other').value.trim();
     if(other) imgs.push(other);
   }
-  const fr=fastAreas.map(a=>{ const y=document.querySelector('input[name="fast_'+a+'"][value="Yra"]')?.checked; const n=document.querySelector('input[name="fast_'+a+'"][value="Nėra"]')?.checked; return y? a+': skystis Yra' : (n? a+': skystis Nėra' : null); }).filter(Boolean);
+  const fr=fastAreas.map(({name,marker})=>{
+    const y=document.querySelector('input[name="fast_'+name+'"][value="Yra"]')?.checked;
+    const n=document.querySelector('input[name="fast_'+name+'"][value="Nėra"]')?.checked;
+    return y? `${name}: ${marker} Yra` : (n? `${name}: ${marker} Nėra` : null);
+  }).filter(Boolean);
   if(imgs.length||fr.length){ out.push('\n--- Vaizdiniai tyrimai ---'); if(imgs.length) out.push('Užsakyta: '+imgs.join(', ')); if(fr.length) out.push('FAST: '+fr.join(' | ')); }
 
   const labs=listChips('#labs_basic'); if(labs.length){ out.push('\n--- Laboratorija ---'); out.push(labs.join(', ')); }
