@@ -9,8 +9,26 @@ const IMG=['Galvos KT','Kaklo KT','Viso kūno KT','Krūtinės Ro','Dubens Ro'];
 const LABS=['BKT','Biocheminis tyrimas','Krešumai','Fibrinogenas','ROTEM','Kraujo grupė','Kraujo dujos'];
 const TEAM_ROLES=['Komandos vadovas','Raštininkas','ED gydytojas 1','ED gydytojas 2','Slaugytoja 1','Slaugytoja 2','Anesteziologas','Chirurgas','Ortopedas','Radiologas'];
 
-const imgWrap=$('#imaging_basic'); IMG.forEach(n=>{const s=document.createElement('span'); s.className='chip'; s.dataset.value=n; s.textContent=n; imgWrap.appendChild(s);});
-const labsWrap=$('#labs_basic'); LABS.forEach(n=>{const s=document.createElement('span'); s.className='chip'; s.dataset.value=n; s.textContent=n; labsWrap.appendChild(s);});
+const imgWrap=$('#imaging_basic');
+IMG.forEach(n=>{
+  const b=document.createElement('button');
+  b.type='button';
+  b.className='chip';
+  b.dataset.value=n;
+  b.setAttribute('aria-pressed','false');
+  b.textContent=n;
+  imgWrap.appendChild(b);
+});
+const labsWrap=$('#labs_basic');
+LABS.forEach(n=>{
+  const b=document.createElement('button');
+  b.type='button';
+  b.className='chip';
+  b.dataset.value=n;
+  b.setAttribute('aria-pressed','false');
+  b.textContent=n;
+  labsWrap.appendChild(b);
+});
 const fastAreas=['Perikardas','Dešinė pleura','Kairė pleura','RUQ','LUQ','Dubuo']; const fastWrap=$('#fastGrid');
 fastAreas.forEach(a=>{const box=document.createElement('div'); box.innerHTML=`<label>${a}</label><div class="row"><label class="pill"><input type="radio" name="fast_${a}" value="Yra"> Yra</label><label class="pill"><input type="radio" name="fast_${a}" value="Nėra"> Nėra</label></div>`; fastWrap.appendChild(box);});
 const teamWrap=$('#teamGrid'); TEAM_ROLES.forEach(r=>{
@@ -103,7 +121,7 @@ function saveAll(){
     else{ data[key]=el.value; }
   });
   ['#chips_red','#chips_yellow','#imaging_basic','#labs_basic','#a_airway_group','#b_breath_left_group','#b_breath_right_group','#d_pupil_left_group','#d_pupil_right_group']
-    .forEach(sel=>{ const arr=$$('.chip.active',$(sel)).map(c=>c.dataset.value); data['chips:'+sel]=arr; });
+    .forEach(sel=>{ data['chips:'+sel]=listChips(sel); });
   function pack(container){ return Array.from(container.children).map(card=>({ name:card.querySelector('.act_chk').parentElement.textContent.trim(), on:card.querySelector('.act_chk').checked, time:card.querySelector('.act_time').value, dose:card.querySelector('.act_dose').value, note:card.querySelector('.act_note').value }));}
   data['meds']=pack($('#medications')); data['procs']=pack($('#procedures'));
   data['bodymap_svg']=BodySVG.serialize();
@@ -121,12 +139,17 @@ function loadAll(){
       else{ if(data[key]!=null) el.value=data[key]; }
     });
     ['#chips_red','#chips_yellow','#imaging_basic','#labs_basic','#a_airway_group','#b_breath_left_group','#b_breath_right_group','#d_pupil_left_group','#d_pupil_right_group']
-      .forEach(sel=>{ const arr=data['chips:'+sel]||[]; $$('.chip',$(sel)).forEach(c=>c.classList.toggle('active',arr.includes(c.dataset.value))); });
+      .forEach(sel=>{
+        const arr=data['chips:'+sel]||[];
+        const container=$(sel);
+        $$('button.chip',container).forEach(b=>b.setAttribute('aria-pressed',arr.includes(b.dataset.value)?'true':'false'));
+        $$('input',container).forEach(i=>{ i.checked=arr.includes(i.value); });
+      });
     function unpack(container,records){ if(!Array.isArray(records)) return; Array.from(container.children).forEach((card,i)=>{ const r=records[i]; if(!r) return; card.querySelector('.act_chk').checked=!!r.on; card.querySelector('.act_time').value=r.time||''; card.querySelector('.act_dose').value=r.dose||''; card.querySelector('.act_note').value=r.note||'';});}
     unpack($('#medications'),data['meds']); unpack($('#procedures'),data['procs']);
     if(data['bodymap_svg']) BodySVG.load(data['bodymap_svg']);
-    $('#d_pupil_left_note').style.display = ($$('.chip.active', $('#d_pupil_left_group')).some(c=>c.dataset.value==='kita'))?'block':'none';
-    $('#d_pupil_right_note').style.display = ($$('.chip.active', $('#d_pupil_right_group')).some(c=>c.dataset.value==='kita'))?'block':'none';
+    $('#d_pupil_left_note').style.display = listChips('#d_pupil_left_group').includes('kita')?'block':'none';
+    $('#d_pupil_right_note').style.display = listChips('#d_pupil_right_group').includes('kita')?'block':'none';
   }catch(e){}
 }
 

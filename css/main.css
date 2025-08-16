@@ -30,10 +30,13 @@ textarea{min-height:80px;resize:vertical}
 .row{display:flex;gap:8px;align-items:center}
 .pill{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border:1px solid var(--line);border-radius:999px;background:#0f1822;color:#fff;font-weight:700}
 .chip{display:inline-flex;align-items:center;justify-content:center;padding:8px 10px;border:1px solid var(--line);
-  border-radius:999px;background:#0f1822;cursor:pointer;user-select:none}
-.chip.active{background:var(--accent);color:#051b32;border-color:#2d74b8}
-.chip.red.active{background:var(--red);color:#fff;border-color:#a52623}
-.chip.yellow.active{background:var(--yellow);color:#231b00;border-color:#8a7400}
+  border-radius:999px;background:#0f1822;cursor:pointer;user-select:none;position:relative}
+.chip>input{position:absolute;opacity:0;width:0;height:0}
+button.chip{background:#0f1822;border:1px solid var(--line)}
+button.chip[aria-pressed="true"],.chip:has(input:checked){background:var(--accent);color:#051b32;border-color:#2d74b8}
+button.chip.red[aria-pressed="true"],.chip.red:has(input:checked){background:var(--red);color:#fff;border-color:#a52623}
+button.chip.yellow[aria-pressed="true"],.chip.yellow:has(input:checked){background:var(--yellow);color:#231b00;border-color:#8a7400}
+button.chip:focus-visible,.chip:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:2px}
 .chip-group{display:flex;flex-wrap:wrap;gap:8px}
 .hint{color:var(--muted);font-size:12px}
 .badge{padding:2px 8px;border-radius:8px;font-size:12px;border:1px solid var(--line);background:#0f1822;color:var(--muted)}

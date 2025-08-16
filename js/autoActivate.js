@@ -22,7 +22,14 @@ function autoActivateFromEMS(){
   Object.entries(autoMap.red).forEach(([label,fn])=>{
     if(fn()){
       const chip = $$('.chip', red).find(c=>c.dataset.value===label);
-      if(chip && !chip.classList.contains('active')) chip.classList.add('active');
+      if(chip){
+        if(chip.tagName==='BUTTON'){
+          chip.setAttribute('aria-pressed','true');
+        }else{
+          const input=chip.querySelector('input');
+          if(input) input.checked=true;
+        }
+      }
     }
   });
 }
