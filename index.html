@@ -27,20 +27,20 @@
   <div id="views">
     <!-- Aktyvacija -->
     <section class="card view" data-tab="Aktyvacija">
-      <h2>Traumos komandos aktyvacija <span class="badge">EMS rodikliai → auto</span></h2>
+        <h2>Traumos komandos aktyvacija <span class="badge">GMP rodikliai → auto</span></h2>
       <div class="grid cols-3">
-        <div><label>EMS ŠSD (k./min)</label><input id="ems_hr" type="number" min="0" max="250"></div>
-        <div><label>EMS KD (k./min)</label><input id="ems_rr" type="number" min="0" max="80"></div>
-        <div><label>EMS SpO₂ (%)</label><input id="ems_spo2" type="number" min="0" max="100"></div>
+          <div><label>GMP ŠSD (k./min)</label><input id="gmp_hr" type="number" min="0" max="250"></div>
+          <div><label>GMP KD (k./min)</label><input id="gmp_rr" type="number" min="0" max="80"></div>
+          <div><label>GMP SpO₂ (%)</label><input id="gmp_spo2" type="number" min="0" max="100"></div>
       </div>
       <div class="grid cols-3" style="margin-top:8px">
-        <div class="row"><div style="flex:1"><label>EMS AKS s</label><input id="ems_sbp" type="number" min="0" max="300"></div><div style="flex:1"><label>EMS AKS d</label><input id="ems_dbp" type="number" min="0" max="200"></div></div>
-        <div><label>EMS GKS (A-K-M)</label><div class="row"><input id="ems_gksa" type="number" min="1" max="4" placeholder="A"><input id="ems_gksk" type="number" min="1" max="5" placeholder="K"><input id="ems_gksm" type="number" min="1" max="6" placeholder="M"></div></div>
-        <div><label>GMP pranešimo laikas</label><input id="ems_time" type="time"></div>
+          <div class="row"><div style="flex:1"><label>GMP AKS s</label><input id="gmp_sbp" type="number" min="0" max="300"></div><div style="flex:1"><label>GMP AKS d</label><input id="gmp_dbp" type="number" min="0" max="200"></div></div>
+          <div><label>GMP GKS (A-K-M)</label><div class="row"><input id="gmp_gksa" type="number" min="1" max="4" placeholder="A"><input id="gmp_gksk" type="number" min="1" max="5" placeholder="K"><input id="gmp_gksm" type="number" min="1" max="6" placeholder="M"></div></div>
+          <div><label>GMP pranešimo laikas</label><input id="gmp_time" type="time"></div>
       </div>
       <div class="grid cols-2" style="margin-top:8px">
-        <div><label>Traumos mechanizmas</label><input id="ems_mechanism" type="text"></div>
-        <div><label>Pastabos</label><input id="ems_notes" type="text" placeholder="Trumpai..."></div>
+          <div><label>Traumos mechanizmas</label><input id="gmp_mechanism" type="text"></div>
+          <div><label>Pastabos</label><input id="gmp_notes" type="text" placeholder="Trumpai..."></div>
       </div>
       <div class="split" style="margin-top:12px">
         <div>
@@ -70,7 +70,7 @@
           </div>
         </div>
       </div>
-      <div class="hint" style="margin-top:6px">Auto-aktyvacija – tik iš EMS rodiklių; rankiniai pakeitimai išlieka.</div>
+        <div class="hint" style="margin-top:6px">Auto-aktyvacija – tik iš GMP rodiklių; rankiniai pakeitimai išlieka.</div>
     </section>
 
     <!-- A -->
