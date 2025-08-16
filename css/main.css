@@ -64,6 +64,8 @@ label.chip input{
 .chip.red.active{background:var(--red);color:#fff;border-color:#a52623}
 .chip.yellow.active{background:var(--yellow);color:#231b00;border-color:#8a7400}
 .chip-group{display:flex;flex-wrap:wrap;gap:8px}
+.gcs-calc{margin-top:8px;border:1px solid var(--line);border-radius:10px;padding:8px;background:#152231}
+.gcs-calc .grid{margin-bottom:8px}
 .labs-controls{display:flex;gap:8px;align-items:flex-start;flex-wrap:wrap}
 .labs-controls .chip-group{flex:1}
 .breath-chip{padding:12px 20px;font-size:18px}

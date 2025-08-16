@@ -302,39 +302,34 @@ $('#btnGCS15').addEventListener('click',()=>{
   ['#d_gksa','#d_gksk','#d_gksm'].forEach(sel=>$(sel).dispatchEvent(new Event('input')));
   saveAll();
 });
-$('#btnGCSCalc').addEventListener('click',()=>{
-  const choose=(title,opts)=>{
-    const msg=[title].concat(opts.map(o=>`${o.value} - ${o.text}`)).join('\n');
-    const val=parseInt(prompt(msg)||'',10);
-    return opts.some(o=>o.value===val)?val:0;
-  };
-  const a=choose('Akių atmerkimas (A)',[
-    {value:4,text:'spontaniškai'},
-    {value:3,text:'į garsą'},
-    {value:2,text:'į skausmą'},
-    {value:1,text:'nereaguoja'}
-  ]);
-  const k=choose('Kalba (K)',[
-    {value:5,text:'orientuotas'},
-    {value:4,text:'paini'},
-    {value:3,text:'žodžiai'},
-    {value:2,text:'garsai'},
-    {value:1,text:'nėra'}
-  ]);
-  const m=choose('Judesių reakcija (M)',[
-    {value:6,text:'vykdo komandas'},
-    {value:5,text:'lokalizuoja skausmą'},
-    {value:4,text:'atitraukia nuo skausmo'},
-    {value:3,text:'lenkia nuo skausmo'},
-    {value:2,text:'atpalaiduoja'},
-    {value:1,text:'nereaguoja'}
-  ]);
-  if(a) $('#d_gksa').value=a;
-  if(k) $('#d_gksk').value=k;
-  if(m) $('#d_gksm').value=m;
-  ['#d_gksa','#d_gksk','#d_gksm'].forEach(sel=>$(sel).dispatchEvent(new Event('input')));
-  saveAll();
-});
+function setupGcsCalc(prefix){
+  const panel=$(`#${prefix}_gcs_calc`);
+  const selA=$(`#${prefix}_gcs_calc_a`);
+  const selK=$(`#${prefix}_gcs_calc_k`);
+  const selM=$(`#${prefix}_gcs_calc_m`);
+  const apply=$(`#${prefix}_gcs_apply`);
+  const total=$(`#${prefix}_gcs_calc_total`);
+  if(!panel||!selA||!selK||!selM||!apply||!total) return ()=>{};
+  const update=()=>{ total.textContent=gksSum(selA.value,selK.value,selM.value); };
+  [selA,selK,selM].forEach(sel=>sel.addEventListener('change',update));
+  apply.addEventListener('click',()=>{
+    if(selA.value) $(`#${prefix}_gksa`).value=selA.value;
+    if(selK.value) $(`#${prefix}_gksk`).value=selK.value;
+    if(selM.value) $(`#${prefix}_gksm`).value=selM.value;
+    ['#'+prefix+'_gksa','#'+prefix+'_gksk','#'+prefix+'_gksm'].forEach(sel=>$(sel).dispatchEvent(new Event('input')));
+    panel.style.display='none';
+    saveAll();
+  });
+  return ()=>{ panel.style.display = panel.style.display==='none' ? 'block' : 'none'; };
+}
+if($('#d_gcs_calc') && $('#btnGCSCalc')){
+  const toggleDGcs=setupGcsCalc('d');
+  $('#btnGCSCalc').addEventListener('click',toggleDGcs);
+}
+if($('#spr_gcs_calc') && $('#btnSprGCSCalc')){
+  const toggleSprGcs=setupGcsCalc('spr');
+  $('#btnSprGCSCalc').addEventListener('click',toggleSprGcs);
+}
 $('#e_back_ny').addEventListener('change',e=>{ $('#e_back_notes').disabled=e.target.checked; if(e.target.checked) $('#e_back_notes').value=''; saveAll();});
 
 function clampNumberInputs(){
@@ -409,6 +404,12 @@ function init(){
       $('#gmp_gks_total').textContent=gksSum($('#gmp_gksa').value,$('#gmp_gksk').value,$('#gmp_gksm').value);
     };
     ['#gmp_gksa','#gmp_gksk','#gmp_gksm'].forEach(sel=>$(sel).addEventListener('input', updateGmpGksTotal));
+    if($('#spr_gks_total')){
+      const updateSprGksTotal=()=>{
+        $('#spr_gks_total').textContent=gksSum($('#spr_gksa').value,$('#spr_gksk').value,$('#spr_gksm').value);
+      };
+      ['#spr_gksa','#spr_gksk','#spr_gksm'].forEach(sel=>$(sel).addEventListener('input', updateSprGksTotal));
+    }
     $('#btnGmpNow').addEventListener('click', ()=>{ $('#gmp_time').value=nowHM(); saveAll(); });
     $('#btnSprNow').addEventListener('click', ()=>{ $('#spr_time').value=nowHM(); saveAll(); });
   $('#btnOxygen').addEventListener('click', ()=>{

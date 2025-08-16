@@ -166,6 +166,47 @@
               <button type="button" class="btn" id="btnGCSCalc">Skaičiuoti</button>
               <span id="d_gks_total"></span>
           </div>
+          <div id="d_gcs_calc" class="gcs-calc" style="display:none">
+            <div class="grid cols-3">
+              <div>
+                <label>Akių atmerkimas (A)</label>
+                <select id="d_gcs_calc_a">
+                  <option value=""></option>
+                  <option value="4">akys atmerktos spontaniškai</option>
+                  <option value="3">akys atveriamos į garsą</option>
+                  <option value="2">akys atveriamos į skausmą</option>
+                  <option value="1">akys neatveriamos</option>
+                </select>
+              </div>
+              <div>
+                <label>Kalba (K)</label>
+                <select id="d_gcs_calc_k">
+                  <option value=""></option>
+                  <option value="5">orientuota kalba</option>
+                  <option value="4">paini kalba</option>
+                  <option value="3">atskiri žodžiai</option>
+                  <option value="2">neaiškūs garsai</option>
+                  <option value="1">nereaguoja</option>
+                </select>
+              </div>
+              <div>
+                <label>Judesių reakcija (M)</label>
+                <select id="d_gcs_calc_m">
+                  <option value=""></option>
+                  <option value="6">vykdo komandas</option>
+                  <option value="5">lokalizuoja skausmą</option>
+                  <option value="4">atitraukia nuo skausmo</option>
+                  <option value="3">nenormali fleksija (lenkia į skausmą)</option>
+                  <option value="2">nenormali ekstensija (ištiesia į skausmą)</option>
+                  <option value="1">nereaguoja</option>
+                </select>
+              </div>
+            </div>
+            <div class="row" style="margin-top:8px">
+              <button type="button" class="btn" id="d_gcs_apply">Taikyti</button>
+              <span id="d_gcs_calc_total"></span>
+            </div>
+          </div>
         </div>
         <div>
           <label>Vyzdžiai – Kairė</label>
@@ -354,6 +395,49 @@
           <input id="spr_gksa" type="number" min="1" max="4" placeholder="A">
           <input id="spr_gksk" type="number" min="1" max="5" placeholder="K">
           <input id="spr_gksm" type="number" min="1" max="6" placeholder="M">
+          <button type="button" class="btn" id="btnSprGCSCalc">Skaičiuoti</button>
+          <span id="spr_gks_total"></span>
+        </div>
+        <div id="spr_gcs_calc" class="gcs-calc" style="display:none">
+          <div class="grid cols-3">
+            <div>
+              <label>Akių atmerkimas (A)</label>
+              <select id="spr_gcs_calc_a">
+                <option value=""></option>
+                <option value="4">akys atmerktos spontaniškai</option>
+                <option value="3">akys atveriamos į garsą</option>
+                <option value="2">akys atveriamos į skausmą</option>
+                <option value="1">akys neatveriamos</option>
+              </select>
+            </div>
+            <div>
+              <label>Kalba (K)</label>
+              <select id="spr_gcs_calc_k">
+                <option value=""></option>
+                <option value="5">orientuota kalba</option>
+                <option value="4">paini kalba</option>
+                <option value="3">atskiri žodžiai</option>
+                <option value="2">neaiškūs garsai</option>
+                <option value="1">nereaguoja</option>
+              </select>
+            </div>
+            <div>
+              <label>Judesių reakcija (M)</label>
+              <select id="spr_gcs_calc_m">
+                <option value=""></option>
+                <option value="6">vykdo komandas</option>
+                <option value="5">lokalizuoja skausmą</option>
+                <option value="4">atitraukia nuo skausmo</option>
+                <option value="3">nenormali fleksija (lenkia į skausmą)</option>
+                <option value="2">nenormali ekstensija (ištiesia į skausmą)</option>
+                <option value="1">nereaguoja</option>
+              </select>
+            </div>
+          </div>
+          <div class="row" style="margin-top:8px">
+            <button type="button" class="btn" id="spr_gcs_apply">Taikyti</button>
+            <span id="spr_gcs_calc_total"></span>
+          </div>
         </div>
       </div>
     </section>
