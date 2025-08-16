@@ -260,6 +260,20 @@
           <button type="button" class="chip" data-value="Pervežimas į kitą ligoninę" aria-pressed="false">Pervežimas į kitą ligoninę</button>
         </div>
       </div>
+      <div id="spr_department_wrap" style="margin-top:8px;display:none">
+        <label>Skyrius</label>
+        <div class="row">
+          <select id="spr_department">
+            <option value="">–</option>
+            <option value="CHRITS">CHRITS</option>
+            <option value="Traumatologijos">Traumatologijos</option>
+            <option value="Chirurgijos">Chirurgijos</option>
+            <option value="Neurochirurgijos">Neurochirurgijos</option>
+            <option value="Kita">Kita</option>
+          </select>
+          <input id="spr_department_other" type="text" placeholder="Kitas skyrius" style="margin-left:6px;display:none">
+        </div>
+      </div>
       <div class="grid cols-3" style="margin-top:8px">
         <div><label>ŠSD (k./min)</label><input id="spr_hr" type="number" min="0" max="250"></div>
         <div><label>KD (k./min)</label><input id="spr_rr" type="number" min="0" max="80"></div>

@@ -127,12 +127,20 @@ function loadAll(){
     if(data['bodymap_svg']) BodySVG.load(data['bodymap_svg']);
     $('#d_pupil_left_note').style.display = ($$('.chip.active', $('#d_pupil_left_group')).some(c=>c.dataset.value==='kita'))?'block':'none';
     $('#d_pupil_right_note').style.display = ($$('.chip.active', $('#d_pupil_right_group')).some(c=>c.dataset.value==='kita'))?'block':'none';
+    $('#spr_department_wrap').style.display = ($$('.chip.active', $('#spr_decision_group')).some(c=>c.dataset.value==='Stacionarizavimas'))?'block':'none';
+    $('#spr_department_other').style.display = ($('#spr_department').value==='Kita')?'inline-block':'none';
   }catch(e){}
 }
 
 /* ===== Other UI ===== */
 $('#btnGCS15').addEventListener('click',()=>{ $('#d_gksa').value=4; $('#d_gksk').value=5; $('#d_gksm').value=6; saveAll();});
 $('#e_back_ny').addEventListener('change',e=>{ $('#e_back_notes').disabled=e.target.checked; if(e.target.checked) $('#e_back_notes').value=''; saveAll();});
+$('#spr_department').addEventListener('change',e=>{
+  const show=e.target.value==='Kita';
+  $('#spr_department_other').style.display=show?'inline-block':'none';
+  if(!show) $('#spr_department_other').value='';
+  saveAll();
+});
 
 /* ===== Init modules ===== */
 function init(){
@@ -198,6 +206,11 @@ document.getElementById('btnGen').addEventListener('click',()=>{
   const team=TEAM_ROLES.map(r=>{ const el=document.querySelector('input[data-team="'+r+'"]'); const v=el?.value?.trim(); return v? r+': '+v : null; }).filter(Boolean); if(team.length){ out.push('\n--- Komanda ---'); out.push(team.join(' | ')); }
 
   const sprDecision=getSingleValue('#spr_decision_group');
+  let sprDept='';
+  if(sprDecision==='Stacionarizavimas'){
+    const dep=$('#spr_department').value;
+    sprDept=dep==='Kita'? $('#spr_department_other').value : dep;
+  }
   const sprVitals=[
     $('#spr_hr').value?('ŠSD '+$('#spr_hr').value+'/min'):null,
     $('#spr_rr').value?('KD '+$('#spr_rr').value+'/min'):null,
@@ -206,7 +219,7 @@ document.getElementById('btnGen').addEventListener('click',()=>{
   ].filter(Boolean).join('; ');
   if(sprDecision || $('#spr_time').value || sprVitals){
     out.push('\n--- Sprendimas ---');
-    const meta=[ $('#spr_time').value?('Laikas '+$('#spr_time').value):null, sprDecision?('Sprendimas: '+sprDecision):null ].filter(Boolean).join(' | ');
+    const meta=[ $('#spr_time').value?('Laikas '+$('#spr_time').value):null, sprDecision?('Sprendimas: '+sprDecision):null, sprDept?('Skyrius: '+sprDept):null ].filter(Boolean).join(' | ');
     if(meta) out.push(meta);
     if(sprVitals) out.push(sprVitals);
   }
