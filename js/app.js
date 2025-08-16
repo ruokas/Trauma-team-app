@@ -3,6 +3,7 @@ import { initTabs, showTab } from './tabs.js';
 import { initChips, listChips, setChipActive, isChipActive } from './chips.js';
 import { initAutoActivate } from './autoActivate.js';
 import { initActions } from './actions.js';
+import { logEvent, initTimeline } from './timeline.js';
 
 let authToken = localStorage.getItem('trauma_token') || null;
 let socket = null;
@@ -485,9 +486,28 @@ async function init(){
   initTabs();
   initChips(saveAll);
   initAutoActivate(saveAll);
-    initActions(saveAll);
-    setupActivationControls();
-    document.addEventListener('input', saveAll);
+  initActions(saveAll);
+  initTimeline();
+  setupActivationControls();
+  document.addEventListener('input', saveAll);
+
+  const vitals = {
+    '#gmp_hr': 'GMP ŠSD',
+    '#gmp_rr': 'GMP KD',
+    '#gmp_spo2': 'GMP SpO₂',
+    '#gmp_sbp': 'GMP AKS s',
+    '#gmp_dbp': 'GMP AKS d',
+    '#b_rr': 'KD',
+    '#b_spo2': 'SpO₂',
+    '#c_hr': 'ŠSD',
+    '#c_sbp': 'AKS s',
+    '#c_dbp': 'AKS d',
+    '#c_caprefill': 'KPL'
+  };
+  Object.entries(vitals).forEach(([sel,label])=>{
+    const el=$(sel);
+    if(el) el.addEventListener('change',()=>{ if(el.value) logEvent('vital', label, el.value); });
+  });
     const updateDGksTotal=()=>{
       $('#d_gks_total').textContent=gksSum($('#d_gksa').value,$('#d_gksk').value,$('#d_gksm').value);
     };

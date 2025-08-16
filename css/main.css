@@ -81,6 +81,10 @@ label.chip input{
 .med-search{margin-bottom:8px;width:100%}
 .subtle{font-size:12px;color:var(--muted)}
 .divider{height:1px;background:var(--line);margin:10px 0}
+
+.timeline-list{border:1px solid var(--line);border-radius:10px;padding:8px;max-height:300px;overflow-y:auto}
+.timeline-entry{padding:4px 0;border-bottom:1px solid var(--line)}
+.timeline-entry:last-child{border-bottom:none}
 /* SVG body map */
 .map-toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:6px 0}
 .tool{padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:#152231;color:var(--ink);min-height:36px;cursor:pointer;font-weight:700}
