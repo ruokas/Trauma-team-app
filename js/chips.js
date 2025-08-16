@@ -39,6 +39,12 @@ export function initChips(saveAll){
       $('#d_pupil_right_note').style.display = (chip.dataset.value==='kita' && isChipActive(chip)) ? 'block' : 'none';
       if(chip.dataset.value!=='kita') $('#d_pupil_right_note').value='';
     }
+    if(group.id==='imaging_basic'){
+      const box = $('#imaging_other_input');
+      const show = $$('.chip.active', group).some(c=>c.dataset.value==='Kita');
+      box.style.display = show ? 'block' : 'none';
+      if(!show) box.value='';
+    }
       if(group.id==='spr_decision_group'){
         const showSky = chip.dataset.value==='Stacionarizavimas' && isChipActive(chip);
         const boxSky = $('#spr_skyrius_container');

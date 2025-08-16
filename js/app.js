@@ -5,11 +5,18 @@ import { initAutoActivate } from './autoActivate.js';
 import { initActions } from './actions.js';
 
 /* ===== Imaging / Labs / Team ===== */
-const IMG=['Galvos KT','Kaklo KT','Viso kūno KT','Krūtinės Ro','Dubens Ro'];
+const IMG=['Galvos KT','Kaklo KT','Viso kūno KT','Krūtinės Ro','Dubens Ro','Kita'];
 const LABS=['BKT','Biocheminis tyrimas','Krešumai','Fibrinogenas','ROTEM','Kraujo grupė','Kraujo dujos'];
 const TEAM_ROLES=['Komandos vadovas','Raštininkas','ED gydytojas 1','ED gydytojas 2','Slaugytoja 1','Slaugytoja 2','Anesteziologas','Chirurgas','Ortopedas','Radiologas'];
 
-const imgWrap=$('#imaging_basic'); IMG.forEach(n=>{const s=document.createElement('span'); s.className='chip'; s.dataset.value=n; s.textContent=n; imgWrap.appendChild(s);});
+const imgWrap=$('#imaging_basic');
+IMG.forEach(n=>{
+  const s=document.createElement('span');
+  s.className='chip';
+  s.dataset.value=n;
+  s.textContent=n;
+  imgWrap.appendChild(s);
+});
 const labsWrap=$('#labs_basic'); LABS.forEach(n=>{const s=document.createElement('span'); s.className='chip'; s.dataset.value=n; s.textContent=n; labsWrap.appendChild(s);});
 const fastAreas=['Perikardas','Dešinė pleura','Kairė pleura','RUQ','LUQ','Dubuo']; const fastWrap=$('#fastGrid');
 fastAreas.forEach(a=>{const box=document.createElement('div'); box.innerHTML=`<label>${a}</label><div class="row"><label class="pill"><input type="radio" name="fast_${a}" value="Yra"> Yra</label><label class="pill"><input type="radio" name="fast_${a}" value="Nėra"> Nėra</label></div>`; fastWrap.appendChild(box);});
@@ -178,6 +185,8 @@ function loadAll(){
     $('#spr_skyrius_container').style.display = ($$('.chip.active', $('#spr_decision_group')).some(c=>c.dataset.value==='Stacionarizavimas'))?'block':'none';
     $('#spr_ligonine_container').style.display = ($$('.chip.active', $('#spr_decision_group')).some(c=>c.dataset.value==='Pervežimas į kitą ligoninę'))?'block':'none';
     $('#spr_skyrius_kita').style.display = ($('#spr_skyrius').value === 'Kita') ? 'block' : 'none';
+    $('#imaging_other_input').style.display = ($$('.chip.active', $('#imaging_basic')).some(c=>c.dataset.value==='Kita')) ? 'block' : 'none';
+    if(!$$('.chip.active', $('#imaging_basic')).some(c=>c.dataset.value==='Kita')) $('#imaging_other_input').value='';
     ensureSingleTeam();
     updateActivationIndicator();
   }catch(e){}
@@ -269,7 +278,13 @@ document.getElementById('btnGen').addEventListener('click',()=>{
     if(procs.length) out.push('Procedūros:\n'+procs.join('\n'));
   }
 
-  const imgs=listChips('#imaging_basic'); const fr=fastAreas.map(a=>{ const y=document.querySelector('input[name="fast_'+a+'"][value="Yra"]')?.checked; const n=document.querySelector('input[name="fast_'+a+'"][value="Nėra"]')?.checked; return y? a+': skystis Yra' : (n? a+': skystis Nėra' : null); }).filter(Boolean);
+  const imgs=listChips('#imaging_basic');
+  const otherImg=$('#imaging_other_input').value.trim();
+  const idx=imgs.indexOf('Kita');
+  if(idx!==-1){
+    if(otherImg) imgs[idx]=otherImg; else imgs.splice(idx,1);
+  }
+  const fr=fastAreas.map(a=>{ const y=document.querySelector('input[name="fast_'+a+'"][value="Yra"]')?.checked; const n=document.querySelector('input[name="fast_'+a+'"][value="Nėra"]')?.checked; return y? a+': skystis Yra' : (n? a+': skystis Nėra' : null); }).filter(Boolean);
   if(imgs.length||fr.length){ out.push('\n--- Vaizdiniai tyrimai ---'); if(imgs.length) out.push('Užsakyta: '+imgs.join(', ')); if(fr.length) out.push('FAST: '+fr.join(' | ')); }
 
   const labs=listChips('#labs_basic'); if(labs.length){ out.push('\n--- Laboratorija ---'); out.push(labs.join(', ')); }
