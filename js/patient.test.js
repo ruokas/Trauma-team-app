@@ -7,6 +7,13 @@ const setupDom = () => {
     <button id="btnPdf"></button>
     <button id="btnGCS15"></button>
     <button id="btnGCSCalc"></button>
+    <div id="d_gcs_calc" style="display:none">
+      <select id="d_gcs_calc_a"></select>
+      <select id="d_gcs_calc_k"></select>
+      <select id="d_gcs_calc_m"></select>
+      <button id="d_gcs_apply"></button>
+      <span id="d_gcs_calc_total"></span>
+    </div>
     <input type="checkbox" id="e_back_ny" />
     <button id="btnGen"></button>
     <textarea id="output"></textarea>
@@ -82,5 +89,33 @@ describe('patient fields', () => {
     expect(report).toContain('25');
     expect(report).toContain('M');
     expect(report).toContain('ID123');
+  });
+
+  test('GCS panel focuses first select and closes on Escape', () => {
+    require('./app.js');
+    const btn=document.getElementById('btnGCSCalc');
+    const panel=document.getElementById('d_gcs_calc');
+    const selA=document.getElementById('d_gcs_calc_a');
+
+    btn.click();
+    expect(panel.style.display).toBe('block');
+    expect(document.activeElement).toBe(selA);
+
+    document.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape'}));
+    expect(panel.style.display).toBe('none');
+    expect(document.activeElement).toBe(btn);
+  });
+
+  test('GCS panel closes when clicking outside', () => {
+    require('./app.js');
+    const btn=document.getElementById('btnGCSCalc');
+    const panel=document.getElementById('d_gcs_calc');
+
+    btn.click();
+    expect(panel.style.display).toBe('block');
+
+    document.body.click();
+    expect(panel.style.display).toBe('none');
+    expect(document.activeElement).toBe(btn);
   });
 });
