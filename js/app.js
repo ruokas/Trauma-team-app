@@ -333,10 +333,14 @@ function clampNumberInputs(){
     if(el.value==='') return;
     const min=el.getAttribute('min');
     const max=el.getAttribute('max');
+    const step=parseFloat(el.getAttribute('step')) || 1;
     let val=parseFloat(el.value);
+    if(isNaN(val)) return;
     if(min!==null && val<parseFloat(min)) val=parseFloat(min);
     if(max!==null && val>parseFloat(max)) val=parseFloat(max);
-    el.value=val;
+    val=Math.round(val/step)*step;
+    const decimals=(step.toString().split('.')[1]||'').length;
+    el.value=val.toFixed(decimals);
   };
   $$('input[type="number"]').forEach(el=>{
     const min=el.getAttribute('min');
@@ -363,7 +367,7 @@ function showInlineError(el,msg){
 }
 
 export function validateVitals(){
-  const fields=['#gmp_hr','#gmp_rr','#gmp_spo2','#gmp_sbp','#gmp_dbp','#gmp_gksa','#gmp_gksk','#gmp_gksm'];
+  const fields=['#gmp_hr','#gmp_rr','#gmp_spo2','#gmp_sbp','#gmp_dbp','#gmp_gksa','#gmp_gksk','#gmp_gksm','#d_gksa','#d_gksk','#d_gksm'];
   fields.forEach(sel=>{
     const el=$(sel);
     if(!el) return;
@@ -427,8 +431,11 @@ function init(){
       saveAll();
     });
     $('#output').addEventListener('input', expandOutput);
+    const vitalSelectors=['#gmp_hr','#gmp_rr','#gmp_spo2','#gmp_sbp','#gmp_dbp','#gmp_gksa','#gmp_gksk','#gmp_gksm','#d_gksa','#d_gksk','#d_gksm'];
+    vitalSelectors.forEach(sel=>{ const el=$(sel); if(el) el.addEventListener('input', validateVitals); });
     loadAll();
     clampNumberInputs();
+    validateVitals();
     updateDGksTotal();
     updateGmpGksTotal();
   }
