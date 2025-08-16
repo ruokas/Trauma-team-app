@@ -12,15 +12,34 @@ function buildActionCard(group, name, saveAll){
   card.style.borderRadius='10px';
   const slug=name.toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'');
   card.innerHTML=`<label class="pill"><input type="checkbox" class="act_chk" data-field="${group}_${slug}_chk"> ${name}</label>
-    <div class="grid cols-3" style="margin-top:6px">
-      <div><label>Laikas</label><input type="time" class="act_time" data-field="${group}_${slug}_time"></div>
-      <div><label>Dozė/kiekis</label><input type="text" class="act_dose" data-field="${group}_${slug}_dose"></div>
-      <div><label>Pastabos</label><input type="text" class="act_note" data-field="${group}_${slug}_note"></div>
+    <div class="detail collapsed">
+      <div class="grid cols-3" style="margin-top:6px">
+        <div><label>Laikas</label><input type="time" class="act_time" data-field="${group}_${slug}_time"></div>
+        <div><label>Dozė/kiekis</label><input type="text" class="act_dose" data-field="${group}_${slug}_dose"></div>
+        <div><label>Pastabos</label><input type="text" class="act_note" data-field="${group}_${slug}_note"></div>
+      </div>
     </div>`;
+
   const chk=card.querySelector('.act_chk');
   const time=card.querySelector('.act_time');
-  chk.addEventListener('change',()=>{ if(chk.checked && !time.value) time.value=nowHM(); if(typeof saveAll==='function') saveAll(); });
+  const detail=card.querySelector('.detail');
+
+  function update(){
+    if(chk.checked || card.classList.contains('expanded')) detail.classList.remove('collapsed');
+    else detail.classList.add('collapsed');
+  }
+
+  chk.addEventListener('change',()=>{ if(chk.checked && !time.value) time.value=nowHM(); update(); if(typeof saveAll==='function') saveAll(); });
+
+  card.addEventListener('click',e=>{
+    if(e.target.closest('label.pill') || e.target.closest('.detail')) return;
+    card.classList.toggle('expanded');
+    update();
+  });
+
   card.querySelector('label.pill').addEventListener('click',()=>{ setTimeout(()=>{ if(chk.checked && !time.value){ time.value=nowHM(); if(typeof saveAll==='function') saveAll(); }},0);});
+
+  update();
   return card;
 }
 
