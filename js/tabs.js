@@ -15,6 +15,7 @@ export function initTabs(){
   const nav = document.getElementById('tabs');
   TABS.forEach((t,i)=>{
     const b=document.createElement('button');
+    b.type='button';
     b.className='tab'+(i===0?' active':'');
     b.textContent=t;
     b.onclick=()=>showTab(t);
