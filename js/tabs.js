@@ -8,7 +8,7 @@ export const TABS = [
   { name: 'D – Sąmonė' },
   { name: 'E – Kita' },
   { name: 'Intervencijos', icon: '💉' },
-  { name: 'Vaizdiniai tyrimai', icon: '🩻' },
+  { name: 'Vaizdiniai tyrimai', icon: '☢️' },
   { name: 'Laboratorija', icon: '🧪' },
   { name: 'Komanda', icon: '👥' },
   { name: 'Ataskaita', icon: '📝' },
