@@ -328,7 +328,7 @@ function init(){
     updateDGksTotal();
     updateGmpGksTotal();
   }
-  init();
+  window.addEventListener('DOMContentLoaded', init);
 
 /* ===== Report ===== */
 function gksSum(a,k,m){ a=+a||0;k=+k||0;m=+m||0; return (a&&k&&m)?(a+k+m):''; }
