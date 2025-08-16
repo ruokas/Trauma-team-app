@@ -5,6 +5,21 @@ export const BLEEDING_MEDS = ['TXA','O- kraujas','Fibryga','Ca gliukonatas'];
 export const OTHER_MEDS = ['Ringerio tirpalas','Noradrenalinas','Metoklopramidas','Ondansetronas'];
 export const PROCS = ['Intubacija','Krikotirotomija','Pleuros drenažas','Adatinė dekompresija','Kūno šildymas','Turniketas','Dubens diržas','Gipsavimas','Siuvimas','Repocizija'];
 
+// Default doses for medications
+export const DEFAULT_DOSES = {
+  'Fentanilis': '100 mcg',
+  'Paracetamolis': '1 g',
+  'Ketoprofenas': '100 mg',
+  'TXA': '1 g',
+  'O- kraujas': '2 V',
+  'Fibryga': '1 g',
+  'Ca gliukonatas': '1 g',
+  'Ringerio tirpalas': '500 ml',
+  'Noradrenalinas': '0.1 µg/kg/min',
+  'Metoklopramidas': '10 mg',
+  'Ondansetronas': '8 mg'
+};
+
 function buildActionCard(group, name, saveAll){
   const card=document.createElement('div');
   card.className='card';
@@ -22,6 +37,7 @@ function buildActionCard(group, name, saveAll){
 
   const chk=card.querySelector('.act_chk');
   const time=card.querySelector('.act_time');
+  const dose=card.querySelector('.act_dose');
   const detail=card.querySelector('.detail');
 
   function update(){
@@ -29,7 +45,14 @@ function buildActionCard(group, name, saveAll){
     else detail.classList.add('collapsed');
   }
 
-  chk.addEventListener('change',()=>{ if(chk.checked && !time.value) time.value=nowHM(); update(); if(typeof saveAll==='function') saveAll(); });
+  chk.addEventListener('change',()=>{
+    if(chk.checked){
+      if(!time.value) time.value=nowHM();
+      if(!dose.value && DEFAULT_DOSES[name]) dose.value = DEFAULT_DOSES[name];
+    }
+    update();
+    if(typeof saveAll==='function') saveAll();
+  });
 
   card.addEventListener('click',e=>{
     if(e.target.closest('label.pill') || e.target.closest('.detail')) return;
@@ -37,7 +60,15 @@ function buildActionCard(group, name, saveAll){
     update();
   });
 
-  card.querySelector('label.pill').addEventListener('click',()=>{ setTimeout(()=>{ if(chk.checked && !time.value){ time.value=nowHM(); if(typeof saveAll==='function') saveAll(); }},0);});
+  card.querySelector('label.pill').addEventListener('click',()=>{
+    setTimeout(()=>{
+      if(chk.checked){
+        if(!time.value) time.value=nowHM();
+        if(!dose.value && DEFAULT_DOSES[name]) dose.value = DEFAULT_DOSES[name];
+        if(typeof saveAll==='function') saveAll();
+      }
+    },0);
+  });
 
   update();
   return card;
