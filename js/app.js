@@ -183,8 +183,6 @@ function loadAll(){
 /* ===== Other UI ===== */
 $('#btnGCS15').addEventListener('click',()=>{ $('#d_gksa').value=4; $('#d_gksk').value=5; $('#d_gksm').value=6; saveAll();});
 $('#e_back_ny').addEventListener('change',e=>{ $('#e_back_notes').disabled=e.target.checked; if(e.target.checked) $('#e_back_notes').value=''; saveAll();});
-$('#btnOxygen').addEventListener('click',()=>{ const box=$('#oxygenFields'); box.style.display=(box.style.display==='none'||!box.style.display)?'flex':'none'; saveAll(); });
-$('#btnDPV').addEventListener('click',()=>{ const box=$('#dpvFields'); box.style.display=(box.style.display==='none'||!box.style.display)?'flex':'none'; saveAll(); });
 
 /* ===== Init modules ===== */
 function init(){
@@ -194,6 +192,18 @@ function init(){
   initActions(saveAll);
   setupActivationControls();
   document.addEventListener('input', saveAll);
+  $('#btnOxygen').addEventListener('click', ()=>{
+    const box = $('#oxygenFields');
+    const show = getComputedStyle(box).display === 'none';
+    box.style.display = show ? 'flex' : 'none';
+    saveAll();
+  });
+  $('#btnDPV').addEventListener('click', ()=>{
+    const box = $('#dpvFields');
+    const show = getComputedStyle(box).display === 'none';
+    box.style.display = show ? 'flex' : 'none';
+    saveAll();
+  });
   loadAll();
 }
 init();
@@ -228,7 +238,7 @@ document.getElementById('btnGen').addEventListener('click',()=>{
     $('#b_rr').value?('KD '+$('#b_rr').value+'/min'):null,
     $('#b_spo2').value?('SpO₂ '+$('#b_spo2').value+'%'):null,
     'Alsavimas kairė '+(getSingleValue('#b_breath_left_group')||'–')+', dešinė '+(getSingleValue('#b_breath_right_group')||'–'),
-    ($('#b_oxygen_liters').value||$('#b_oxygen_type').value)?('Oxygen '+($('#b_oxygen_liters').value?$('#b_oxygen_liters').value+' L/min ':'')+($('#b_oxygen_type').value?$('#b_oxygen_type').value:'')):null,
+    ($('#b_oxygen_liters').value||$('#b_oxygen_type').value)?('O2 '+($('#b_oxygen_liters').value?$('#b_oxygen_liters').value+' L/min ':'')+($('#b_oxygen_type').value?$('#b_oxygen_type').value:'')):null,
     $('#b_dpv_fio2').value?('DPV FiO₂ '+$('#b_dpv_fio2').value):null
   ].filter(Boolean).join('; '));
 
