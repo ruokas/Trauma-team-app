@@ -20,7 +20,8 @@ export const DEFAULT_DOSES = {
   'Ondansetronas': '8 mg'
 };
 
-function buildActionCard(group, name, saveAll){
+function buildActionCard(group, name, saveAll, opts={}){
+  const custom = opts.custom;
   const card=document.createElement('div');
   card.className='card';
   card.style.padding='6px';
@@ -29,6 +30,7 @@ function buildActionCard(group, name, saveAll){
     card.innerHTML=`<label class="pill"><input type="checkbox" class="act_chk" data-field="${group}_${slug}_chk"><span class="act_name">${name}</span></label>
     <div class="detail collapsed">
       <div class="grid cols-3" style="margin-top:4px">
+        ${custom?`<div><label>Pavadinimas</label><input type="text" class="act_custom_name" data-field="${group}_${slug}_custom"></div>`:''}
         <div><label>Laikas</label><input type="time" class="act_time" data-field="${group}_${slug}_time"></div>
         <div><label>Dozė/kiekis</label><input type="text" class="act_dose" data-field="${group}_${slug}_dose"></div>
         <div><label>Pastabos</label><input type="text" class="act_note" data-field="${group}_${slug}_note"></div>
@@ -85,6 +87,7 @@ export function initActions(saveAll){
   PAIN_MEDS.forEach(n=>painWrap.appendChild(buildActionCard('med', n, saveAll)));
   BLEEDING_MEDS.forEach(n=>bleedingWrap.appendChild(buildActionCard('med', n, saveAll)));
   OTHER_MEDS.forEach(n=>otherWrap.appendChild(buildActionCard('med', n, saveAll)));
+  otherWrap.appendChild(buildActionCard('med','Kita', saveAll, {custom:true}));
   PROCS.forEach(n=>procsWrap.appendChild(buildActionCard('proc', n, saveAll)));
   const medSearch=$('#medSearch');
   if(medSearch){
