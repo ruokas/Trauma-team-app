@@ -1,4 +1,5 @@
 import { $, $$ } from './utils.js';
+import { setChipActive } from './chips.js';
 
 function emsGKS(){
   const a = +($('#ems_gksa')?.value || 0);
@@ -20,9 +21,14 @@ const autoMap = {
 function autoActivateFromEMS(){
   const red = $('#chips_red');
   Object.entries(autoMap.red).forEach(([label,fn])=>{
+    const chip = $$('.chip', red).find(c=>c.dataset.value===label);
+    if(!chip) return;
     if(fn()){
-      const chip = $$('.chip', red).find(c=>c.dataset.value===label);
-      if(chip && !chip.classList.contains('active')) chip.classList.add('active');
+      setChipActive(chip, true);
+      chip.dataset.auto = 'true';
+    } else if(chip.dataset.auto === 'true'){
+      setChipActive(chip, false);
+      delete chip.dataset.auto;
     }
   });
 }

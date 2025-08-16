@@ -1,12 +1,12 @@
 import { $, $$ } from './utils.js';
 
-function isChipActive(chip){
+export function isChipActive(chip){
   if(chip.tagName === 'BUTTON') return chip.getAttribute('aria-pressed') === 'true';
   const input = chip.querySelector('input');
   return !!input && input.checked;
 }
 
-function setChipActive(chip, active){
+export function setChipActive(chip, active){
   if(chip.tagName === 'BUTTON'){
     chip.setAttribute('aria-pressed', active ? 'true' : 'false');
   } else {
@@ -38,6 +38,7 @@ export function initChips(saveAll){
       $('#d_pupil_right_note').style.display = (chip.dataset.value==='kita' && isChipActive(chip)) ? 'block' : 'none';
       if(chip.dataset.value!=='kita') $('#d_pupil_right_note').value='';
     }
+    delete chip.dataset.auto;
     if(typeof saveAll === 'function') saveAll();
   }, true);
 }
