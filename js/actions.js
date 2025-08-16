@@ -1,4 +1,5 @@
 import { $, nowHM } from './utils.js';
+import { logEvent } from './timeline.js';
 
 export const PAIN_MEDS = ['Fentanilis','Paracetamolis','Ketoprofenas'];
 export const BLEEDING_MEDS = ['TXA','O- kraujas','Fibryga','Ca gliukonatas'];
@@ -53,6 +54,7 @@ function buildActionCard(group, name, saveAll, opts={}){
     if(chk.checked){
       if(!time.value) time.value=nowHM();
       if(includeDose && dose && !dose.value && DEFAULT_DOSES[name]) dose.value = DEFAULT_DOSES[name];
+      logEvent(group, name, includeDose && dose ? dose.value : '', time.value);
     }
     update();
     if(typeof saveAll==='function') saveAll();

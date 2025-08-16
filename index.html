@@ -441,6 +441,19 @@
         </div>
       </div>
     </section>
+    <section class="card view" data-tab="Laiko juosta">
+      <h2>Laiko juosta</h2>
+      <div class="row" style="gap:8px;margin-bottom:8px;">
+        <select id="timelineFilter">
+          <option value="">Visi</option>
+          <option value="med">Vaistai</option>
+          <option value="proc">Procedūros</option>
+          <option value="vital">Gyvybiniai rodikliai</option>
+        </select>
+        <button type="button" class="btn" id="timelineExport">Eksportuoti</button>
+      </div>
+      <div id="timelineList" class="timeline-list"></div>
+    </section>
     <section class="card view" data-tab="Ataskaita"><h2>Sugeneruotas tekstas</h2><textarea id="output" placeholder="Spauskite „Sugeneruoti ataskaitą“..."></textarea><div class="hint">Tekstą galima įklijuoti į LIS/ESIS.</div></section>
   </div>
 </main>
