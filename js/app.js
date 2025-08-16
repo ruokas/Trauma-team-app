@@ -233,10 +233,14 @@ function init(){
     initActions(saveAll);
     setupActivationControls();
     document.addEventListener('input', saveAll);
-    const updateGksTotal=()=>{
+    const updateDGksTotal=()=>{
       $('#d_gks_total').textContent=gksSum($('#d_gksa').value,$('#d_gksk').value,$('#d_gksm').value);
     };
-    ['#d_gksa','#d_gksk','#d_gksm'].forEach(sel=>$(sel).addEventListener('input', updateGksTotal));
+    ['#d_gksa','#d_gksk','#d_gksm'].forEach(sel=>$(sel).addEventListener('input', updateDGksTotal));
+    const updateGmpGksTotal=()=>{
+      $('#gmp_gks_total').textContent=gksSum($('#gmp_gksa').value,$('#gmp_gksk').value,$('#gmp_gksm').value);
+    };
+    ['#gmp_gksa','#gmp_gksk','#gmp_gksm'].forEach(sel=>$(sel).addEventListener('input', updateGmpGksTotal));
     $('#btnGmpNow').addEventListener('click', ()=>{ $('#gmp_time').value=nowHM(); saveAll(); });
   $('#btnOxygen').addEventListener('click', ()=>{
     const box = $('#oxygenFields');
@@ -257,7 +261,8 @@ function init(){
       saveAll();
     });
     loadAll();
-    updateGksTotal();
+    updateDGksTotal();
+    updateGmpGksTotal();
   }
   init();
 
