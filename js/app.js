@@ -305,18 +305,41 @@ function setupGcsCalc(prefix){
   const selM=$(`#${prefix}_gcs_calc_m`);
   const apply=$(`#${prefix}_gcs_apply`);
   const total=$(`#${prefix}_gcs_calc_total`);
+  const btn = prefix==='spr' ? $('#btnSprGCSCalc') : $('#btnGCSCalc');
   if(!panel||!selA||!selK||!selM||!apply||!total) return ()=>{};
+
   const update=()=>{ total.textContent=gksSum(selA.value,selK.value,selM.value); };
   [selA,selK,selM].forEach(sel=>sel.addEventListener('change',update));
+
+  const close=()=>{
+    panel.style.display='none';
+    document.removeEventListener('keydown',onKey);
+    document.removeEventListener('click',onDocClick);
+    if(btn) btn.focus();
+  };
+  const onKey=e=>{ if(e.key==='Escape') close(); };
+  const onDocClick=e=>{ if(!panel.contains(e.target) && e.target!==btn) close(); };
+
   apply.addEventListener('click',()=>{
     if(selA.value) $(`#${prefix}_gksa`).value=selA.value;
     if(selK.value) $(`#${prefix}_gksk`).value=selK.value;
     if(selM.value) $(`#${prefix}_gksm`).value=selM.value;
     ['#'+prefix+'_gksa','#'+prefix+'_gksk','#'+prefix+'_gksm'].forEach(sel=>$(sel).dispatchEvent(new Event('input')));
-    panel.style.display='none';
+    close();
     saveAll();
   });
-  return ()=>{ panel.style.display = panel.style.display==='none' ? 'block' : 'none'; };
+
+  return ()=>{
+    const hidden=panel.style.display==='none';
+    if(hidden){
+      panel.style.display='block';
+      document.addEventListener('keydown',onKey);
+      document.addEventListener('click',onDocClick);
+      selA.focus();
+    }else{
+      close();
+    }
+  };
 }
 if($('#d_gcs_calc') && $('#btnGCSCalc')){
   const toggleDGcs=setupGcsCalc('d');
