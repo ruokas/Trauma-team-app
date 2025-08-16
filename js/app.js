@@ -659,7 +659,7 @@ document.getElementById('btnClear').addEventListener('click',()=>{ if(confirm('I
 document.getElementById('btnPdf').addEventListener('click',async()=>{
   generateReport();
   const text=$('#output').value||'';
-  const { jsPDF } = await import('jspdf');
+  const { jsPDF } = await import('../node_modules/jspdf/dist/jspdf.umd.min.js');
   const doc=new jsPDF();
   const lines=doc.splitTextToSize(text,180);
   doc.text(lines,10,10);

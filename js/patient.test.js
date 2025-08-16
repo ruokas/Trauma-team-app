@@ -1,3 +1,11 @@
+const mockSave = jest.fn();
+const mockJsPDF = jest.fn().mockImplementation(() => ({
+  splitTextToSize: jest.fn(() => []),
+  text: jest.fn(),
+  save: mockSave
+}));
+jest.mock('../node_modules/jspdf/dist/jspdf.umd.min.js', () => ({ jsPDF: mockJsPDF }));
+
 const setupDom = () => {
   document.body.innerHTML = `
     <button id="btnCopy"></button>
@@ -51,6 +59,8 @@ describe('patient fields', () => {
     localStorage.clear();
     setupDom();
     localStorage.setItem('trauma_current_session','test');
+    mockJsPDF.mockClear();
+    mockSave.mockClear();
   });
 
   test('persist with saveAll/loadAll', () => {
@@ -117,5 +127,13 @@ describe('patient fields', () => {
     document.body.click();
     expect(panel.style.display).toBe('none');
     expect(document.activeElement).toBe(btn);
+  });
+
+  test('PDF button generates file via jsPDF', async () => {
+    require('./app.js');
+    document.getElementById('btnPdf').click();
+    await new Promise(resolve => setTimeout(resolve, 0));
+    expect(mockJsPDF).toHaveBeenCalled();
+    expect(mockSave).toHaveBeenCalledWith('report.pdf');
   });
 });
