@@ -35,7 +35,7 @@ export function initTabs(){
     b.type='button';
     b.className='tab'+(i===0?' active':'');
     b.dataset.tab = t.name;
-    const label = t.name.toUpperCase();
+    const label = t.name;
     b.innerHTML = t.icon ? `${t.icon} ${label}` : label;
     b.setAttribute('role','tab');
     b.setAttribute('tabindex','0');
