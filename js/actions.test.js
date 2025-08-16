@@ -58,4 +58,17 @@ describe('initActions default doses', () => {
     const customCard = document.querySelector('#other_meds .act_custom_name');
     expect(customCard).not.toBeNull();
   });
+
+  test('procedure cards omit dose input', () => {
+    document.body.innerHTML = `
+      <div id="pain_meds"></div>
+      <div id="bleeding_meds"></div>
+      <div id="other_meds"></div>
+      <div id="procedures"></div>
+      <input id="medSearch" />
+    `;
+    initActions(() => {});
+    const procCard = document.querySelector('#procedures .card');
+    expect(procCard.querySelector('.act_dose')).toBeNull();
+  });
 });

@@ -240,7 +240,7 @@ export function saveAll(){
     else{ data[key]=el.value; }
   });
   CHIP_GROUPS.forEach(sel=>{ const arr=$$('.chip.active',$(sel)).map(c=>c.dataset.value); data['chips:'+sel]=arr; });
-  function pack(container){ return Array.from(container.children).map(card=>({ name:(card.querySelector('.act_custom_name')?card.querySelector('.act_custom_name').value:card.querySelector('.act_name').textContent.trim()), on:card.querySelector('.act_chk').checked, time:card.querySelector('.act_time').value, dose:card.querySelector('.act_dose').value, note:card.querySelector('.act_note').value }));}
+  function pack(container){ return Array.from(container.children).map(card=>({ name:(card.querySelector('.act_custom_name')?card.querySelector('.act_custom_name').value:card.querySelector('.act_name').textContent.trim()), on:card.querySelector('.act_chk').checked, time:card.querySelector('.act_time').value, dose:(card.querySelector('.act_dose')?card.querySelector('.act_dose').value:''), note:card.querySelector('.act_note').value }));}
   data['pain_meds']=pack($('#pain_meds')); data['bleeding_meds']=pack($('#bleeding_meds')); data['other_meds']=pack($('#other_meds')); data['procs']=pack($('#procedures'));
   data['bodymap_svg']=BodySVG.serialize();
   localStorage.setItem(sessionKey(), JSON.stringify(data));
@@ -270,7 +270,7 @@ export function loadAll(){
     }
   });
   $$('.chip',labsContainer).forEach(c=>c.classList.toggle('active',labsArr.includes(c.dataset.value)));
-    function unpack(container,records){ if(!Array.isArray(records)) return; Array.from(container.children).forEach((card,i)=>{ const r=records[i]; if(!r) return; card.querySelector('.act_chk').checked=!!r.on; card.querySelector('.act_time').value=r.time||''; card.querySelector('.act_dose').value=r.dose||''; card.querySelector('.act_note').value=r.note||''; const cn=card.querySelector('.act_custom_name'); if(cn) cn.value=r.name||'';});}
+    function unpack(container,records){ if(!Array.isArray(records)) return; Array.from(container.children).forEach((card,i)=>{ const r=records[i]; if(!r) return; card.querySelector('.act_chk').checked=!!r.on; card.querySelector('.act_time').value=r.time||''; const d=card.querySelector('.act_dose'); if(d) d.value=r.dose||''; card.querySelector('.act_note').value=r.note||''; const cn=card.querySelector('.act_custom_name'); if(cn) cn.value=r.name||'';});}
     unpack($('#pain_meds'),data['pain_meds']); unpack($('#bleeding_meds'),data['bleeding_meds']); unpack($('#other_meds'),data['other_meds']); unpack($('#procedures'),data['procs']);
     if(data['bodymap_svg']) BodySVG.load(data['bodymap_svg']);
     $('#d_pupil_left_note').style.display = ($$('.chip.active', $('#d_pupil_left_group')).some(c=>c.dataset.value==='kita'))?'block':'none';
@@ -472,7 +472,7 @@ export function generateReport(){
 
   out.push('\n--- E Kita ---'); out.push([$('#e_temp').value?('T '+$('#e_temp').value+'°C'):null, $('#e_back_ny').checked?'Nugara: n.y.':($('#e_back_notes').value?('Nugara: '+$('#e_back_notes').value):null), $('#e_other').value?('Kita: '+$('#e_other').value):null, bodymapSummary()].filter(Boolean).join(' | '));
 
-  function collect(container){ return Array.from(container.children).map(card=>{ const on=card.querySelector('.act_chk').checked; if(!on) return null; const nameInput=card.querySelector('.act_custom_name'); const base=card.querySelector('.act_name').textContent.trim(); const customName=nameInput?nameInput.value.trim():''; const name=nameInput?customName:base; if(nameInput && !customName) return null; const time=card.querySelector('.act_time').value; const dose=card.querySelector('.act_dose').value; const note=card.querySelector('.act_note').value; return [name, time?('laikas '+time):null, dose?('dozė '+dose):null, note?('pastabos '+note):null].filter(Boolean).join(' | '); }).filter(Boolean);}
+  function collect(container){ return Array.from(container.children).map(card=>{ const on=card.querySelector('.act_chk').checked; if(!on) return null; const nameInput=card.querySelector('.act_custom_name'); const base=card.querySelector('.act_name').textContent.trim(); const customName=nameInput?nameInput.value.trim():''; const name=nameInput?customName:base; if(nameInput && !customName) return null; const time=card.querySelector('.act_time').value; const doseInput=card.querySelector('.act_dose'); const dose=doseInput?doseInput.value:''; const note=card.querySelector('.act_note').value; return [name, time?('laikas '+time):null, dose?('dozė '+dose):null, note?('pastabos '+note):null].filter(Boolean).join(' | '); }).filter(Boolean);}
   const pain=collect($('#pain_meds')), bleeding=collect($('#bleeding_meds')), other=collect($('#other_meds')), procs=collect($('#procedures'));
   if(pain.length||bleeding.length||other.length||procs.length){
     out.push('\n--- Intervencijos ---');
