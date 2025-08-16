@@ -2,7 +2,7 @@ import { $ } from './utils.js';
 
 export const TABS = [
   'Aktyvacija','A – Kvėpavimo takai','B – Kvėpavimas','C – Kraujotaka',
-  'D – Sąmonė','E – Kita','Intervencijos','Vaizdiniai tyrimai','Laboratorija','Komanda','Ataskaita'
+  'D – Sąmonė','E – Kita','Intervencijos','Vaizdiniai tyrimai','Laboratorija','Komanda','Ataskaita','Sprendimas'
 ];
 
 export function showTab(name){

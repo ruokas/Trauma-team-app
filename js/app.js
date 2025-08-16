@@ -102,7 +102,7 @@ function saveAll(){
     else if(el.type==='checkbox'){ data[key]=el.checked?'__checked__':(el.value||''); }
     else{ data[key]=el.value; }
   });
-  ['#chips_red','#chips_yellow','#imaging_basic','#labs_basic','#a_airway_group','#b_breath_left_group','#b_breath_right_group','#d_pupil_left_group','#d_pupil_right_group']
+  ['#chips_red','#chips_yellow','#imaging_basic','#labs_basic','#a_airway_group','#b_breath_left_group','#b_breath_right_group','#d_pupil_left_group','#d_pupil_right_group','#spr_decision_group']
     .forEach(sel=>{ const arr=$$('.chip.active',$(sel)).map(c=>c.dataset.value); data['chips:'+sel]=arr; });
   function pack(container){ return Array.from(container.children).map(card=>({ name:card.querySelector('.act_chk').parentElement.textContent.trim(), on:card.querySelector('.act_chk').checked, time:card.querySelector('.act_time').value, dose:card.querySelector('.act_dose').value, note:card.querySelector('.act_note').value }));}
   data['pain_meds']=pack($('#pain_meds')); data['bleeding_meds']=pack($('#bleeding_meds')); data['other_meds']=pack($('#other_meds')); data['procs']=pack($('#procedures'));
@@ -120,7 +120,7 @@ function loadAll(){
       else if(el.type==='checkbox'){ el.checked=(data[key]==='__checked__'); }
       else{ if(data[key]!=null) el.value=data[key]; }
     });
-    ['#chips_red','#chips_yellow','#imaging_basic','#labs_basic','#a_airway_group','#b_breath_left_group','#b_breath_right_group','#d_pupil_left_group','#d_pupil_right_group']
+  ['#chips_red','#chips_yellow','#imaging_basic','#labs_basic','#a_airway_group','#b_breath_left_group','#b_breath_right_group','#d_pupil_left_group','#d_pupil_right_group','#spr_decision_group']
       .forEach(sel=>{ const arr=data['chips:'+sel]||[]; $$('.chip',$(sel)).forEach(c=>c.classList.toggle('active',arr.includes(c.dataset.value))); });
     function unpack(container,records){ if(!Array.isArray(records)) return; Array.from(container.children).forEach((card,i)=>{ const r=records[i]; if(!r) return; card.querySelector('.act_chk').checked=!!r.on; card.querySelector('.act_time').value=r.time||''; card.querySelector('.act_dose').value=r.dose||''; card.querySelector('.act_note').value=r.note||'';});}
     unpack($('#pain_meds'),data['pain_meds']); unpack($('#bleeding_meds'),data['bleeding_meds']); unpack($('#other_meds'),data['other_meds']); unpack($('#procedures'),data['procs']);
@@ -196,6 +196,20 @@ document.getElementById('btnGen').addEventListener('click',()=>{
   const labs=listChips('#labs_basic'); if(labs.length){ out.push('\n--- Laboratorija ---'); out.push(labs.join(', ')); }
 
   const team=TEAM_ROLES.map(r=>{ const el=document.querySelector('input[data-team="'+r+'"]'); const v=el?.value?.trim(); return v? r+': '+v : null; }).filter(Boolean); if(team.length){ out.push('\n--- Komanda ---'); out.push(team.join(' | ')); }
+
+  const sprDecision=getSingleValue('#spr_decision_group');
+  const sprVitals=[
+    $('#spr_hr').value?('ŠSD '+$('#spr_hr').value+'/min'):null,
+    $('#spr_rr').value?('KD '+$('#spr_rr').value+'/min'):null,
+    $('#spr_spo2').value?('SpO₂ '+$('#spr_spo2').value+'%'):null,
+    ($('#spr_sbp').value||$('#spr_dbp').value)?('AKS '+$('#spr_sbp').value+'/'+$('#spr_dbp').value):null
+  ].filter(Boolean).join('; ');
+  if(sprDecision || $('#spr_time').value || sprVitals){
+    out.push('\n--- Sprendimas ---');
+    const meta=[ $('#spr_time').value?('Laikas '+$('#spr_time').value):null, sprDecision?('Sprendimas: '+sprDecision):null ].filter(Boolean).join(' | ');
+    if(meta) out.push(meta);
+    if(sprVitals) out.push(sprVitals);
+  }
 
   $('#output').value=out.filter(Boolean).join('\n'); showTab('Ataskaita'); saveAll();
 });
