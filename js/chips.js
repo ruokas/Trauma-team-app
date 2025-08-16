@@ -3,7 +3,8 @@ import { $, $$ } from './utils.js';
 export function isChipActive(chip){
   if(chip.tagName === 'BUTTON') return chip.getAttribute('aria-pressed') === 'true';
   const input = chip.querySelector('input');
-  return !!input && input.checked;
+  if(input) return input.checked;
+  return chip.classList.contains('active');
 }
 
 export function setChipActive(chip, active){

@@ -1,13 +1,25 @@
 import { $ } from './utils.js';
 
 export const TABS = [
-  'Aktyvacija','A – Kvėpavimo takai','B – Kvėpavimas','C – Kraujotaka',
-  'D – Sąmonė','E – Kita','Intervencijos','Vaizdiniai tyrimai','Laboratorija','Komanda','Ataskaita','Sprendimas'
+  { name: 'Aktyvacija', icon: '🚨' },
+  { name: 'A – Kvėpavimo takai' },
+  { name: 'B – Kvėpavimas' },
+  { name: 'C – Kraujotaka' },
+  { name: 'D – Sąmonė' },
+  { name: 'E – Kita' },
+  { name: 'Intervencijos', icon: '💉' },
+  { name: 'Vaizdiniai tyrimai', icon: '☢️' },
+  { name: 'Laboratorija', icon: '🧪' },
+  { name: 'Komanda', icon: '👥' },
+  { name: 'Ataskaita', icon: '📝' },
+  { name: 'Sprendimas', icon: '⚖️' }
 ];
+
+export const TAB_NAMES = TABS.map(t => t.name);
 
 export function showTab(name){
   document.querySelectorAll('nav .tab').forEach(b=>{
-    const active = b.textContent === name;
+    const active = b.dataset.tab === name;
     b.classList.toggle('active', active);
     b.setAttribute('aria-selected', active ? 'true' : 'false');
   });
@@ -22,11 +34,12 @@ export function initTabs(){
     const b=document.createElement('button');
     b.type='button';
     b.className='tab'+(i===0?' active':'');
-    b.textContent=t;
+    b.dataset.tab = t.name;
+    b.innerHTML = t.icon ? `${t.icon} ${t.name}` : t.name;
     b.setAttribute('role','tab');
     b.setAttribute('tabindex','0');
     b.setAttribute('aria-selected', i===0 ? 'true' : 'false');
-    b.onclick=()=>showTab(t);
+    b.onclick=()=>showTab(t.name);
     nav.appendChild(b);
   });
   document.querySelectorAll('.view').forEach((v,i)=>v.style.display=(i===0)?'block':'none');
@@ -47,5 +60,5 @@ export function initTabs(){
   });
 
   const savedTab = localStorage.getItem('v9_activeTab');
-  if(savedTab && TABS.includes(savedTab)) showTab(savedTab);
+  if(savedTab && TAB_NAMES.includes(savedTab)) showTab(savedTab);
 }

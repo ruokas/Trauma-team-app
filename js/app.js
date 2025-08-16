@@ -1,6 +1,6 @@
 import { $, $$, nowHM } from './utils.js';
 import { initTabs, showTab } from './tabs.js';
-import { initChips, listChips } from './chips.js';
+import { initChips, listChips, setChipActive, isChipActive } from './chips.js';
 import { initAutoActivate } from './autoActivate.js';
 import { initActions } from './actions.js';
 
@@ -91,6 +91,52 @@ const BodySVG=(function(){
   return {serialize,load,counts,get side(){return side;},get tool(){return activeTool;}};
 })();
 
+/* ===== Activation indicator ===== */
+function ensureSingleTeam(){
+  const red=$('#chips_red');
+  const yellow=$('#chips_yellow');
+  const redActive=$$('.chip.active', red).length>0;
+  const yellowActive=$$('.chip.active', yellow).length>0;
+  if(redActive && yellowActive){
+    $$('.chip', yellow).forEach(c=>setChipActive(c,false));
+  }
+}
+function updateActivationIndicator(){
+  const dot=$('#activationIndicator');
+  const redActive=$$('.chip.active', $('#chips_red')).length>0;
+  const yellowActive=$$('.chip.active', $('#chips_yellow')).length>0;
+  dot.classList.remove('red','yellow');
+  dot.style.display='none';
+  if(redActive){ dot.classList.add('red'); dot.style.display='inline-block'; }
+  else if(yellowActive){ dot.classList.add('yellow'); dot.style.display='inline-block'; }
+}
+function setupActivationControls(){
+  const redGroup=$('#chips_red');
+  const yellowGroup=$('#chips_yellow');
+  redGroup.addEventListener('click',e=>{
+    const chip=e.target.closest('.chip');
+    if(!chip) return;
+    if(isChipActive(chip)){
+      $$('.chip', yellowGroup).forEach(c=>setChipActive(c,false));
+    }
+    ensureSingleTeam();
+    updateActivationIndicator();
+    saveAll();
+  });
+  yellowGroup.addEventListener('click',e=>{
+    const chip=e.target.closest('.chip');
+    if(!chip) return;
+    if(isChipActive(chip)){
+      $$('.chip', redGroup).forEach(c=>setChipActive(c,false));
+    }
+    ensureSingleTeam();
+    updateActivationIndicator();
+    saveAll();
+  });
+}
+window.updateActivationIndicator=updateActivationIndicator;
+window.ensureSingleTeam=ensureSingleTeam;
+
 /* ===== Save / Load ===== */
 const FIELD_SELECTORS='input[type="text"],input[type="number"],input[type="time"],input[type="date"],textarea,select';
 function saveAll(){
@@ -128,6 +174,8 @@ function loadAll(){
     $('#d_pupil_left_note').style.display = ($$('.chip.active', $('#d_pupil_left_group')).some(c=>c.dataset.value==='kita'))?'block':'none';
     $('#d_pupil_right_note').style.display = ($$('.chip.active', $('#d_pupil_right_group')).some(c=>c.dataset.value==='kita'))?'block':'none';
     updateSprDepartment();
+    ensureSingleTeam();
+    updateActivationIndicator();
   }catch(e){}
 }
 
@@ -161,6 +209,7 @@ function init(){
   initChips(saveAll);
   initAutoActivate(saveAll);
   initActions(saveAll);
+  setupActivationControls();
   document.addEventListener('input', saveAll);
   loadAll();
 }
