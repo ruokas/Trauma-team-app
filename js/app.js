@@ -175,6 +175,8 @@ function loadAll(){
     $('#d_pupil_right_note').style.display = ($$('.chip.active', $('#d_pupil_right_group')).some(c=>c.dataset.value==='kita'))?'block':'none';
     $('#oxygenFields').style.display = ($('#b_oxygen_liters').value || $('#b_oxygen_type').value) ? 'flex' : 'none';
     $('#dpvFields').style.display = $('#b_dpv_fio2').value ? 'flex' : 'none';
+      $('#spr_skyrius_container').style.display = ($$('.chip.active', $('#spr_decision_group')).some(c=>c.dataset.value==='Stacionarizavimas'))?'block':'none';
+      $('#spr_skyrius_kita').style.display = ($('#spr_skyrius').value === 'Kita') ? 'block' : 'none';
     ensureSingleTeam();
     updateActivationIndicator();
   }catch(e){}
@@ -204,6 +206,12 @@ function init(){
     box.style.display = show ? 'flex' : 'none';
     saveAll();
   });
+    $('#spr_skyrius').addEventListener('change', e=>{
+      const show = e.target.value === 'Kita';
+      $('#spr_skyrius_kita').style.display = show ? 'block' : 'none';
+      if(!show) $('#spr_skyrius_kita').value='';
+      saveAll();
+    });
   loadAll();
 }
 init();
@@ -266,19 +274,26 @@ document.getElementById('btnGen').addEventListener('click',()=>{
 
   const team=TEAM_ROLES.map(r=>{ const el=document.querySelector('input[data-team="'+r+'"]'); const v=el?.value?.trim(); return v? r+': '+v : null; }).filter(Boolean); if(team.length){ out.push('\n--- Komanda ---'); out.push(team.join(' | ')); }
 
-  const sprDecision=getSingleValue('#spr_decision_group');
-  const sprVitals=[
-    $('#spr_hr').value?('ŠSD '+$('#spr_hr').value+'/min'):null,
-    $('#spr_rr').value?('KD '+$('#spr_rr').value+'/min'):null,
-    $('#spr_spo2').value?('SpO₂ '+$('#spr_spo2').value+'%'):null,
-    ($('#spr_sbp').value||$('#spr_dbp').value)?('AKS '+$('#spr_sbp').value+'/'+$('#spr_dbp').value):null
-  ].filter(Boolean).join('; ');
-  if(sprDecision || $('#spr_time').value || sprVitals){
-    out.push('\n--- Sprendimas ---');
-    const meta=[ $('#spr_time').value?('Laikas '+$('#spr_time').value):null, sprDecision?('Sprendimas: '+sprDecision):null ].filter(Boolean).join(' | ');
-    if(meta) out.push(meta);
-    if(sprVitals) out.push(sprVitals);
-  }
+    const sprDecision=getSingleValue('#spr_decision_group');
+    const sprSkyrius = sprDecision==='Stacionarizavimas'
+      ? ($('#spr_skyrius').value==='Kita' ? $('#spr_skyrius_kita').value : $('#spr_skyrius').value)
+      : '';
+    const sprVitals=[
+      $('#spr_hr').value?('ŠSD '+$('#spr_hr').value+'/min'):null,
+      $('#spr_rr').value?('KD '+$('#spr_rr').value+'/min'):null,
+      $('#spr_spo2').value?('SpO₂ '+$('#spr_spo2').value+'%'):null,
+      ($('#spr_sbp').value||$('#spr_dbp').value)?('AKS '+$('#spr_sbp').value+'/'+$('#spr_dbp').value):null
+    ].filter(Boolean).join('; ');
+    if(sprDecision || $('#spr_time').value || sprVitals){
+      out.push('\n--- Sprendimas ---');
+      const meta=[
+        $('#spr_time').value?('Laikas '+$('#spr_time').value):null,
+        sprDecision?('Sprendimas: '+sprDecision):null,
+        sprDecision==='Stacionarizavimas' && sprSkyrius?('Skyrius: '+sprSkyrius):null
+      ].filter(Boolean).join(' | ');
+      if(meta) out.push(meta);
+      if(sprVitals) out.push(sprVitals);
+    }
 
   $('#output').value=out.filter(Boolean).join('\n'); showTab('Ataskaita'); saveAll();
 });
