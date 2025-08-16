@@ -41,40 +41,12 @@ function buildActionCard(group, name, saveAll, opts={}){
     </div>`;
 
   const chk=card.querySelector('.act_chk');
-  const time=card.querySelector('.act_time');
-  const dose=includeDose?card.querySelector('.act_dose'):null;
   const detail=card.querySelector('.detail');
 
   function update(){
     if(chk.checked || card.classList.contains('expanded')) detail.classList.remove('collapsed');
     else detail.classList.add('collapsed');
   }
-
-  chk.addEventListener('change',()=>{
-    if(chk.checked){
-      if(!time.value) time.value=nowHM();
-      if(includeDose && dose && !dose.value && DEFAULT_DOSES[name]) dose.value = DEFAULT_DOSES[name];
-      logEvent(group, name, includeDose && dose ? dose.value : '', time.value);
-    }
-    update();
-    if(typeof saveAll==='function') saveAll();
-  });
-
-  card.addEventListener('click',e=>{
-    if(e.target.closest('label.pill') || e.target.closest('.detail')) return;
-    card.classList.toggle('expanded');
-    update();
-  });
-
-  card.querySelector('label.pill').addEventListener('click',()=>{
-    setTimeout(()=>{
-      if(chk.checked){
-        if(!time.value) time.value=nowHM();
-        if(includeDose && dose && !dose.value && DEFAULT_DOSES[name]) dose.value = DEFAULT_DOSES[name];
-        if(typeof saveAll==='function') saveAll();
-      }
-    },0);
-  });
 
   update();
   return card;
@@ -104,12 +76,52 @@ export function initActions(saveAll){
   const procsFrag=document.createDocumentFragment();
   PROCS.forEach(n=>procsFrag.appendChild(buildActionCard('proc', n, saveAll)));
   procsWrap.appendChild(procsFrag);
+
+  const wraps=[painWrap,bleedingWrap,otherWrap,procsWrap];
+
+  function handleAction(e){
+    const card=e.target.closest('.card');
+    if(!card) return;
+    const chk=card.querySelector('.act_chk');
+    const detail=card.querySelector('.detail');
+    const time=card.querySelector('.act_time');
+    const dose=card.querySelector('.act_dose');
+    const name=card.querySelector('.act_name').textContent;
+    const includeDose=!!dose;
+    const field=chk.dataset.field||'';
+    const group=field.split('_')[0];
+
+    const update=()=>{
+      if(chk.checked || card.classList.contains('expanded')) detail.classList.remove('collapsed');
+      else detail.classList.add('collapsed');
+    };
+
+    if(e.type==='change' && e.target.matches('.act_chk')){
+      if(chk.checked){
+        if(!time.value) time.value=nowHM();
+        if(includeDose && !dose.value && DEFAULT_DOSES[name]) dose.value=DEFAULT_DOSES[name];
+        logEvent(group, name, includeDose && dose ? dose.value : '', time.value);
+      }
+      update();
+      if(typeof saveAll==='function') saveAll();
+    } else if(e.type==='click') {
+      if(e.target.closest('label.pill') || e.target.closest('.detail')) return;
+      card.classList.toggle('expanded');
+      update();
+    }
+  }
+
+  wraps.forEach(wrap=>{
+    wrap.addEventListener('click', handleAction);
+    wrap.addEventListener('change', handleAction);
+  });
+
   const medSearch=$('#medSearch');
   if(medSearch){
-    const wraps=[painWrap,bleedingWrap,otherWrap];
+    const medWraps=[painWrap,bleedingWrap,otherWrap];
     medSearch.addEventListener('input',()=>{
       const q=medSearch.value.trim().toLowerCase();
-      wraps.forEach(wrap=>{
+      medWraps.forEach(wrap=>{
         wrap.querySelectorAll('.card').forEach(card=>{
           const name=card.querySelector('.act_name').textContent.toLowerCase();
           card.style.display=name.includes(q)?'':'none';
