@@ -17,7 +17,7 @@ h1{font-size:20px;margin:4px 0}
 .btn.ghost{background:transparent;color:var(--muted);border-style:dashed}
 main{max-width:1200px;margin:12px auto;padding:0 16px;display:grid;grid-template-columns:220px 1fr;gap:12px}
 nav{position:sticky;top:68px;align-self:start}
-nav .tab{display:block;padding:10px 12px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;background:#152231;color:var(--ink);cursor:pointer;font-weight:600;text-align:left;text-transform:uppercase;font-size:18px}
+nav .tab{display:block;padding:10px 12px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;background:#152231;color:var(--ink);cursor:pointer;font-weight:600;text-align:left;text-transform:none;font-size:16px}
 nav .tab.active{background:#1f2e44;border-color:#2b405c}
 nav .tab:focus{outline:2px solid var(--accent)}
 section.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
