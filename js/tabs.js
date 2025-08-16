@@ -1,5 +1,3 @@
-import { $ } from './utils.js';
-
 export const TABS = [
   { name: 'Aktyvacija', icon: '🚨' },
   { name: 'A – Kvėpavimo takai' },

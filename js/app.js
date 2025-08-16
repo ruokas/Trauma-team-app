@@ -1,4 +1,4 @@
-import { $, $$, nowHM } from './utils.js';
+import { $, $$ } from './utils.js';
 import { initTabs, showTab } from './tabs.js';
 import { initChips, listChips, setChipActive, isChipActive } from './chips.js';
 import { initAutoActivate } from './autoActivate.js';
