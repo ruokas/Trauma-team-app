@@ -11,8 +11,8 @@ export const TABS = [
   { name: 'Vaizdiniai tyrimai', icon: '☢️' },
   { name: 'Laboratorija', icon: '🧪' },
   { name: 'Komanda', icon: '👥' },
-  { name: 'Ataskaita', icon: '📝' },
-  { name: 'Sprendimas', icon: '⚖️' }
+  { name: 'Sprendimas', icon: '⚖️' },
+  { name: 'Ataskaita', icon: '📝' }
 ];
 
 export const TAB_NAMES = TABS.map(t => t.name);
