@@ -173,6 +173,8 @@ function loadAll(){
     if(data['bodymap_svg']) BodySVG.load(data['bodymap_svg']);
     $('#d_pupil_left_note').style.display = ($$('.chip.active', $('#d_pupil_left_group')).some(c=>c.dataset.value==='kita'))?'block':'none';
     $('#d_pupil_right_note').style.display = ($$('.chip.active', $('#d_pupil_right_group')).some(c=>c.dataset.value==='kita'))?'block':'none';
+    $('#oxygenFields').style.display = ($('#b_oxygen_liters').value || $('#b_oxygen_type').value) ? 'flex' : 'none';
+    $('#dpvFields').style.display = $('#b_dpv_fio2').value ? 'flex' : 'none';
     updateSprDepartment();
     ensureSingleTeam();
     updateActivationIndicator();
@@ -202,6 +204,8 @@ $('#spr_department').addEventListener('change',()=>{
   updateSprDepartment();
   saveAll();
 });
+$('#btnOxygen').addEventListener('click',()=>{ const box=$('#oxygenFields'); box.style.display=(box.style.display==='none'||!box.style.display)?'flex':'none'; saveAll(); });
+$('#btnDPV').addEventListener('click',()=>{ const box=$('#dpvFields'); box.style.display=(box.style.display==='none'||!box.style.display)?'flex':'none'; saveAll(); });
 
 /* ===== Init modules ===== */
 function init(){
@@ -241,7 +245,13 @@ document.getElementById('btnGen').addEventListener('click',()=>{
 
   out.push('\n--- A Kvėpavimo takai ---'); out.push(['Takai: '+(getSingleValue('#a_airway_group')||'-'), $('#a_notes').value?('Pastabos: '+$('#a_notes').value):null].filter(Boolean).join(' | '));
 
-  out.push('\n--- B Kvėpavimas ---'); out.push([$('#b_rr').value?('KD '+$('#b_rr').value+'/min'):null, $('#b_spo2').value?('SpO₂ '+$('#b_spo2').value+'%'):null, 'Alsavimas kairė '+(getSingleValue('#b_breath_left_group')||'–')+', dešinė '+(getSingleValue('#b_breath_right_group')||'–')].filter(Boolean).join('; '));
+  out.push('\n--- B Kvėpavimas ---'); out.push([
+    $('#b_rr').value?('KD '+$('#b_rr').value+'/min'):null,
+    $('#b_spo2').value?('SpO₂ '+$('#b_spo2').value+'%'):null,
+    'Alsavimas kairė '+(getSingleValue('#b_breath_left_group')||'–')+', dešinė '+(getSingleValue('#b_breath_right_group')||'–'),
+    ($('#b_oxygen_liters').value||$('#b_oxygen_type').value)?('Oxygen '+($('#b_oxygen_liters').value?$('#b_oxygen_liters').value+' L/min ':'')+($('#b_oxygen_type').value?$('#b_oxygen_type').value:'')):null,
+    $('#b_dpv_fio2').value?('DPV FiO₂ '+$('#b_dpv_fio2').value):null
+  ].filter(Boolean).join('; '));
 
   out.push('\n--- C Kraujotaka ---'); out.push([$('#c_hr').value?('ŠSD '+$('#c_hr').value+'/min'):null, ($('#c_sbp').value||$('#c_dbp').value)?('AKS '+$('#c_sbp').value+'/'+$('#c_dbp').value):null, $('#c_caprefill').value?('KPL '+$('#c_caprefill').value+'s'):null].filter(Boolean).join('; '));
 
