@@ -88,14 +88,33 @@
     <!-- B -->
     <section class="card view" data-tab="B – Kvėpavimas">
       <h2>B – Kvėpavimas</h2>
-      <div class="grid cols-3">
+      <div class="grid cols-2">
         <div><label>KD (k./min)</label><input id="b_rr" type="number" min="0" max="80"></div>
         <div><label>SpO₂ (%)</label><input id="b_spo2" type="number" min="0" max="100"></div>
-        <div>
-          <label>Alsavimas</label>
-          <div class="row">
-            <div><div class="subtle">Kairė</div><div class="chip-group" id="b_breath_left_group" data-single="true"><button type="button" class="chip" data-value="+" aria-pressed="false">+</button><button type="button" class="chip" data-value="-" aria-pressed="false">-</button></div></div>
-            <div><div class="subtle">Dešinė</div><div class="chip-group" id="b_breath_right_group" data-single="true"><button type="button" class="chip" data-value="+" aria-pressed="false">+</button><button type="button" class="chip" data-value="-" aria-pressed="false">-</button></div></div>
+      </div>
+      <div style="margin-top:8px">
+        <label>Alsavimas</label>
+        <div class="row">
+          <div><div class="subtle">Kairė</div><div class="chip-group" id="b_breath_left_group" data-single="true"><button type="button" class="chip breath-chip" data-value="+" aria-pressed="false">+</button><button type="button" class="chip breath-chip" data-value="-" aria-pressed="false">-</button></div></div>
+          <div><div class="subtle">Dešinė</div><div class="chip-group" id="b_breath_right_group" data-single="true"><button type="button" class="chip breath-chip" data-value="+" aria-pressed="false">+</button><button type="button" class="chip breath-chip" data-value="-" aria-pressed="false">-</button></div></div>
+        </div>
+      </div>
+      <div class="row" style="margin-top:8px;flex-wrap:wrap">
+        <div class="row" style="gap:8px;align-items:center;">
+          <button type="button" class="btn" id="btnOxygen">Oxygen</button>
+          <div id="oxygenFields" class="row" style="display:none;gap:8px;">
+            <input id="b_oxygen_liters" type="number" min="0" placeholder="L/min" style="width:80px">
+            <select id="b_oxygen_type">
+              <option value="Kaukė su rez.">Kaukė su rez.</option>
+              <option value="Kaukė">Kaukė</option>
+              <option value="Nosinės kaniulės">Nosinės kaniulės</option>
+            </select>
+          </div>
+        </div>
+        <div class="row" style="gap:8px;align-items:center;">
+          <button type="button" class="btn" id="btnDPV">DPV</button>
+          <div id="dpvFields" class="row" style="display:none;gap:8px;">
+            <input id="b_dpv_fio2" type="number" step="0.01" min="0" max="1" placeholder="FiO₂">
           </div>
         </div>
       </div>
