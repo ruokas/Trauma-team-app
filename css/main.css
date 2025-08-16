@@ -97,5 +97,8 @@ label.chip input{
 
 /* Interventions compact layout */
 section[data-tab="Intervencijos"] .card{padding:6px}
-section[data-tab="Intervencijos"] .card .grid{gap:6px}
-section[data-tab="Intervencijos"] h3{margin:0 0 6px;font-size:14px;color:var(--muted);display:flex;align-items:center;gap:4px}
+section[data-tab="Intervencijos"] .card .grid{gap:4px}
+section[data-tab="Intervencijos"] .interv-groups{gap:6px}
+section[data-tab="Intervencijos"] .med-search{margin-bottom:4px}
+section[data-tab="Intervencijos"] h3{margin:0 0 4px;font-size:13px;color:var(--muted);display:flex;align-items:center;gap:4px}
+section[data-tab="Intervencijos"] .cols-3{grid-template-columns:repeat(4,1fr)}
