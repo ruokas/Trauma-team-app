@@ -24,7 +24,7 @@ export function showTab(name){
     b.setAttribute('aria-selected', active ? 'true' : 'false');
   });
   document.querySelectorAll('.view').forEach(v=>v.style.display = (v.dataset.tab===name)?'block':'none');
-  localStorage.setItem('v9_activeTab', name);
+  localStorage.setItem('v10_activeTab', name);
 }
 
 export function initTabs(){
@@ -60,6 +60,6 @@ export function initTabs(){
     }
   });
 
-  const savedTab = localStorage.getItem('v9_activeTab');
+  const savedTab = localStorage.getItem('v10_activeTab');
   if(savedTab && TAB_NAMES.includes(savedTab)) showTab(savedTab);
 }

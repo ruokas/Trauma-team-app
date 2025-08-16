@@ -26,7 +26,7 @@ describe('tabs', () => {
 
     nav.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight' }));
     nav.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter' }));
-    expect(setSpy).toHaveBeenCalledWith('v9_activeTab', tabs.TABS[1].name);
+    expect(setSpy).toHaveBeenCalledWith('v10_activeTab', tabs.TABS[1].name);
   });
 
   test('showTab saves active tab and initTabs restores it', () => {
@@ -49,7 +49,7 @@ describe('tabs', () => {
 
     tabs.initTabs();
     tabs.showTab('A – Kvėpavimo takai');
-    expect(window.localStorage.setItem).toHaveBeenCalledWith('v9_activeTab', 'A – Kvėpavimo takai');
+    expect(window.localStorage.setItem).toHaveBeenCalledWith('v10_activeTab', 'A – Kvėpavimo takai');
 
     document.body.innerHTML = `
       <nav id="tabs"></nav>
@@ -58,7 +58,7 @@ describe('tabs', () => {
     `;
 
     tabs.initTabs();
-    expect(window.localStorage.getItem).toHaveBeenCalledWith('v9_activeTab');
+    expect(window.localStorage.getItem).toHaveBeenCalledWith('v10_activeTab');
     const active = document.querySelector('nav .tab.active');
     expect(active.dataset.tab).toBe('A – Kvėpavimo takai');
   });

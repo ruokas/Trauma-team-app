@@ -6,7 +6,7 @@ import { initActions } from './actions.js';
 
 /* ===== Sessions ===== */
 let currentSessionId = localStorage.getItem('trauma_current_session') || null;
-const sessionKey = () => 'trauma_v9_' + currentSessionId;
+const sessionKey = () => 'trauma_v10_' + currentSessionId;
 
 function getSessions(){
   try{ return JSON.parse(localStorage.getItem('trauma_sessions')||'[]'); }catch(e){ return []; }
@@ -550,7 +550,7 @@ document.getElementById('btnPdf').addEventListener('click',async()=>{
   doc.save('report.pdf');
 });
 document.getElementById('btnPrint').addEventListener('click',()=>{
-  const prevTab=localStorage.getItem('v9_activeTab');
+  const prevTab=localStorage.getItem('v10_activeTab');
   document.getElementById('btnGen').click();
   window.print();
   if(prevTab) showTab(prevTab);
