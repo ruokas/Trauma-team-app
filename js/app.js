@@ -234,6 +234,26 @@ $('#btnGCSCalc').addEventListener('click',()=>{
 });
 $('#e_back_ny').addEventListener('change',e=>{ $('#e_back_notes').disabled=e.target.checked; if(e.target.checked) $('#e_back_notes').value=''; saveAll();});
 
+function clampNumberInputs(){
+  const clamp=el=>{
+    if(el.value==='') return;
+    const min=el.getAttribute('min');
+    const max=el.getAttribute('max');
+    let val=parseFloat(el.value);
+    if(min!==null && val<parseFloat(min)) val=parseFloat(min);
+    if(max!==null && val>parseFloat(max)) val=parseFloat(max);
+    el.value=val;
+  };
+  $$('input[type="number"]').forEach(el=>{
+    const min=el.getAttribute('min');
+    const max=el.getAttribute('max');
+    if(min!==null || max!==null){
+      ['input','change'].forEach(evt=>el.addEventListener(evt,()=>clamp(el)));
+      clamp(el);
+    }
+  });
+}
+
 /* ===== Init modules ===== */
 function init(){
   initTabs();
@@ -271,6 +291,7 @@ function init(){
     });
     $('#output').addEventListener('input', expandOutput);
     loadAll();
+    clampNumberInputs();
     updateDGksTotal();
     updateGmpGksTotal();
   }
