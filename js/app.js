@@ -127,18 +127,31 @@ function loadAll(){
     if(data['bodymap_svg']) BodySVG.load(data['bodymap_svg']);
     $('#d_pupil_left_note').style.display = ($$('.chip.active', $('#d_pupil_left_group')).some(c=>c.dataset.value==='kita'))?'block':'none';
     $('#d_pupil_right_note').style.display = ($$('.chip.active', $('#d_pupil_right_group')).some(c=>c.dataset.value==='kita'))?'block':'none';
-    $('#spr_department_wrap').style.display = ($$('.chip.active', $('#spr_decision_group')).some(c=>c.dataset.value==='Stacionarizavimas'))?'block':'none';
-    $('#spr_department_other').style.display = ($('#spr_department').value==='Kita')?'inline-block':'none';
+    updateSprDepartment();
   }catch(e){}
 }
 
 /* ===== Other UI ===== */
 $('#btnGCS15').addEventListener('click',()=>{ $('#d_gksa').value=4; $('#d_gksk').value=5; $('#d_gksm').value=6; saveAll();});
 $('#e_back_ny').addEventListener('change',e=>{ $('#e_back_notes').disabled=e.target.checked; if(e.target.checked) $('#e_back_notes').value=''; saveAll();});
-$('#spr_department').addEventListener('change',e=>{
-  const show=e.target.value==='Kita';
-  $('#spr_department_other').style.display=show?'inline-block':'none';
-  if(!show) $('#spr_department_other').value='';
+function updateSprDepartment(){
+  const showDept=$$('.chip.active', $('#spr_decision_group')).some(c=>c.dataset.value==='Stacionarizavimas');
+  $('#spr_department_wrap').style.display = showDept ? 'block' : 'none';
+  const showOther=showDept && $('#spr_department').value==='Kita';
+  $('#spr_department_other').style.display = showOther ? 'inline-block' : 'none';
+  if(!showDept){
+    $('#spr_department').value='';
+    $('#spr_department_other').value='';
+  }else if(!showOther){
+    $('#spr_department_other').value='';
+  }
+}
+$('#spr_decision_group').addEventListener('click',()=>{
+  updateSprDepartment();
+  saveAll();
+});
+$('#spr_department').addEventListener('change',()=>{
+  updateSprDepartment();
   saveAll();
 });
 
