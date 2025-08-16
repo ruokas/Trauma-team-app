@@ -247,6 +247,29 @@
     <section class="card view" data-tab="Laboratorija"><h2>Laboratoriniai tyrimai</h2><div class="chip-group" id="labs_basic"></div></section>
     <section class="card view" data-tab="Komanda"><h2>Komandos nariai</h2><div class="grid cols-3" id="teamGrid"></div></section>
     <section class="card view" data-tab="Ataskaita"><h2>Sugeneruotas tekstas</h2><textarea id="output" placeholder="Spauskite „Sugeneruoti ataskaitą“..."></textarea><div class="hint">Tekstą galima įklijuoti į LIS/ESIS.</div></section>
+    <section class="card view" data-tab="Sprendimas">
+      <h2>Sprendimas</h2>
+      <div><label>Laikas</label><input id="spr_time" type="time"></div>
+      <div style="margin-top:8px">
+        <label>Sprendimas</label>
+        <div class="chip-group" id="spr_decision_group" data-single="true">
+          <button type="button" class="chip" data-value="Stacionarizavimas" aria-pressed="false">Stacionarizavimas</button>
+          <button type="button" class="chip" data-value="Namo" aria-pressed="false">Namo</button>
+          <button type="button" class="chip" data-value="Stebėjimas SMPS" aria-pressed="false">Stebėjimas SMPS</button>
+          <button type="button" class="chip" data-value="Mirtis" aria-pressed="false">Mirtis</button>
+          <button type="button" class="chip" data-value="Pervežimas į kitą ligoninę" aria-pressed="false">Pervežimas į kitą ligoninę</button>
+        </div>
+      </div>
+      <div class="grid cols-3" style="margin-top:8px">
+        <div><label>ŠSD (k./min)</label><input id="spr_hr" type="number" min="0" max="250"></div>
+        <div><label>KD (k./min)</label><input id="spr_rr" type="number" min="0" max="80"></div>
+        <div><label>SpO₂ (%)</label><input id="spr_spo2" type="number" min="0" max="100"></div>
+      </div>
+      <div class="row" style="margin-top:8px">
+        <div style="flex:1"><label>AKS s</label><input id="spr_sbp" type="number" min="0" max="300"></div>
+        <div style="flex:1"><label>AKS d</label><input id="spr_dbp" type="number" min="0" max="200"></div>
+      </div>
+    </section>
   </div>
 </main>
 
