@@ -72,6 +72,9 @@ label.chip input{
 .activation-dot.yellow{background:var(--yellow);display:inline-block}
 .split{display:flex;gap:12px;flex-wrap:wrap}
 .split>div{flex:1}
+.interv-groups{display:flex;gap:8px;flex-wrap:wrap}
+.interv-group{flex:1}
+.med-search{margin-bottom:8px;width:100%}
 .subtle{font-size:12px;color:var(--muted)}
 .divider{height:1px;background:var(--line);margin:10px 0}
 /* SVG body map */
@@ -91,7 +94,6 @@ label.chip input{
 @media print{ header,nav,.toolbar{display:none!important} body{background:#fff;color:#000} section.card{break-inside:avoid} }
 
 /* Interventions compact layout */
-section[data-tab="Intervencijos"] .split{gap:8px}
 section[data-tab="Intervencijos"] .card{padding:6px}
 section[data-tab="Intervencijos"] .card .grid{gap:6px}
-section[data-tab="Intervencijos"] h3{display:flex;align-items:center;gap:4px}
+section[data-tab="Intervencijos"] h3{margin:0 0 6px;font-size:14px;color:var(--muted);display:flex;align-items:center;gap:4px}
