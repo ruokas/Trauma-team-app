@@ -22,24 +22,26 @@ export const DEFAULT_DOSES = {
 
 function buildActionCard(group, name, saveAll, opts={}){
   const custom = opts.custom;
+  const includeDose = group !== 'proc';
   const card=document.createElement('div');
   card.className='card';
   card.style.padding='6px';
   card.style.borderRadius='10px';
-    const slug=name.toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'');
-    card.innerHTML=`<label class="pill"><input type="checkbox" class="act_chk" data-field="${group}_${slug}_chk"><span class="act_name">${name}</span></label>
+  const slug=name.toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'');
+  const gridClass=(includeDose || custom)?'cols-3':'cols-2';
+  card.innerHTML=`<label class="pill"><input type="checkbox" class="act_chk" data-field="${group}_${slug}_chk"><span class="act_name">${name}</span></label>
     <div class="detail collapsed">
-      <div class="grid cols-3" style="margin-top:4px">
+      <div class="grid ${gridClass}" style="margin-top:4px">
         ${custom?`<div><label>Pavadinimas</label><input type="text" class="act_custom_name" data-field="${group}_${slug}_custom"></div>`:''}
         <div><label>Laikas</label><input type="time" class="act_time" data-field="${group}_${slug}_time"></div>
-        <div><label>Dozė/kiekis</label><input type="text" class="act_dose" data-field="${group}_${slug}_dose"></div>
+        ${includeDose?`<div><label>Dozė/kiekis</label><input type="text" class="act_dose" data-field="${group}_${slug}_dose"></div>`:''}
         <div><label>Pastabos</label><input type="text" class="act_note" data-field="${group}_${slug}_note"></div>
       </div>
     </div>`;
 
   const chk=card.querySelector('.act_chk');
   const time=card.querySelector('.act_time');
-  const dose=card.querySelector('.act_dose');
+  const dose=includeDose?card.querySelector('.act_dose'):null;
   const detail=card.querySelector('.detail');
 
   function update(){
@@ -50,7 +52,7 @@ function buildActionCard(group, name, saveAll, opts={}){
   chk.addEventListener('change',()=>{
     if(chk.checked){
       if(!time.value) time.value=nowHM();
-      if(!dose.value && DEFAULT_DOSES[name]) dose.value = DEFAULT_DOSES[name];
+      if(includeDose && dose && !dose.value && DEFAULT_DOSES[name]) dose.value = DEFAULT_DOSES[name];
     }
     update();
     if(typeof saveAll==='function') saveAll();
@@ -66,7 +68,7 @@ function buildActionCard(group, name, saveAll, opts={}){
     setTimeout(()=>{
       if(chk.checked){
         if(!time.value) time.value=nowHM();
-        if(!dose.value && DEFAULT_DOSES[name]) dose.value = DEFAULT_DOSES[name];
+        if(includeDose && dose && !dose.value && DEFAULT_DOSES[name]) dose.value = DEFAULT_DOSES[name];
         if(typeof saveAll==='function') saveAll();
       }
     },0);
