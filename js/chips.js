@@ -1,5 +1,7 @@
 import { $, $$ } from './utils.js';
 
+let clickListenerAdded = false;
+
 export function isChipActive(chip){
   if(chip.tagName === 'BUTTON') return chip.getAttribute('aria-pressed') === 'true';
   const input = chip.querySelector('input');
@@ -15,6 +17,9 @@ export function setChipActive(chip, active){
     if(input) input.checked = active;
   }
   chip.classList.toggle('active', active);
+  if(chip.getAttribute('role') === 'radio'){
+    chip.setAttribute('aria-checked', active ? 'true' : 'false');
+  }
 }
 
 function togglePupilNote(side, chip){
@@ -27,6 +32,20 @@ function togglePupilNote(side, chip){
 }
 
 export function initChips(saveAll){
+  $$('.chip').forEach(chip => {
+    const group = chip.parentElement;
+    const single = group?.dataset?.single === 'true';
+    if(group){
+      group.setAttribute('role', single ? 'radiogroup' : 'group');
+    }
+    if(single){
+      chip.setAttribute('role', 'radio');
+      chip.setAttribute('aria-checked', isChipActive(chip) ? 'true' : 'false');
+    }
+  });
+  if(clickListenerAdded) return;
+  clickListenerAdded = true;
+
   document.addEventListener('click', e => {
     const chip = e.target.closest('.chip');
     if(!chip) return;
