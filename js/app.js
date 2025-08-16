@@ -175,8 +175,9 @@ function loadAll(){
     $('#d_pupil_right_note').style.display = ($$('.chip.active', $('#d_pupil_right_group')).some(c=>c.dataset.value==='kita'))?'block':'none';
     $('#oxygenFields').style.display = ($('#b_oxygen_liters').value || $('#b_oxygen_type').value) ? 'flex' : 'none';
     $('#dpvFields').style.display = $('#b_dpv_fio2').value ? 'flex' : 'none';
-      $('#spr_skyrius_container').style.display = ($$('.chip.active', $('#spr_decision_group')).some(c=>c.dataset.value==='Stacionarizavimas'))?'block':'none';
-      $('#spr_skyrius_kita').style.display = ($('#spr_skyrius').value === 'Kita') ? 'block' : 'none';
+    $('#spr_skyrius_container').style.display = ($$('.chip.active', $('#spr_decision_group')).some(c=>c.dataset.value==='Stacionarizavimas'))?'block':'none';
+    $('#spr_ligonine_container').style.display = ($$('.chip.active', $('#spr_decision_group')).some(c=>c.dataset.value==='Pervežimas į kitą ligoninę'))?'block':'none';
+    $('#spr_skyrius_kita').style.display = ($('#spr_skyrius').value === 'Kita') ? 'block' : 'none';
     ensureSingleTeam();
     updateActivationIndicator();
   }catch(e){}
@@ -278,6 +279,9 @@ document.getElementById('btnGen').addEventListener('click',()=>{
     const sprSkyrius = sprDecision==='Stacionarizavimas'
       ? ($('#spr_skyrius').value==='Kita' ? $('#spr_skyrius_kita').value : $('#spr_skyrius').value)
       : '';
+    const sprLigonine = sprDecision==='Pervežimas į kitą ligoninę'
+      ? $('#spr_ligonine').value
+      : '';
     const sprVitals=[
       $('#spr_hr').value?('ŠSD '+$('#spr_hr').value+'/min'):null,
       $('#spr_rr').value?('KD '+$('#spr_rr').value+'/min'):null,
@@ -289,7 +293,8 @@ document.getElementById('btnGen').addEventListener('click',()=>{
       const meta=[
         $('#spr_time').value?('Laikas '+$('#spr_time').value):null,
         sprDecision?('Sprendimas: '+sprDecision):null,
-        sprDecision==='Stacionarizavimas' && sprSkyrius?('Skyrius: '+sprSkyrius):null
+        sprDecision==='Stacionarizavimas' && sprSkyrius?('Skyrius: '+sprSkyrius):null,
+        sprDecision==='Pervežimas į kitą ligoninę' && sprLigonine?('Ligoninė: '+sprLigonine):null
       ].filter(Boolean).join(' | ');
       if(meta) out.push(meta);
       if(sprVitals) out.push(sprVitals);
