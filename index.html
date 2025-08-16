@@ -302,6 +302,11 @@
       <div class="labs-controls">
         <div class="chip-group" id="labs_basic" aria-label="Laboratoriniai tyrimai"></div>
         <button type="button" class="btn" id="btnBloodOrder">Kraujo užsakymas</button>
+        <div id="bloodOrderForm" class="row" style="display:none;">
+          <input type="number" id="bloodUnits" placeholder="Vnt">
+          <input type="text" id="bloodGroup" placeholder="Grupė">
+          <button type="button" class="btn" id="addBloodOrder">Pridėti</button>
+        </div>
       </div>
     </section>
     <section class="card view" data-tab="Komanda"><h2>Komandos nariai</h2><div class="grid cols-3" id="teamGrid"></div></section>
