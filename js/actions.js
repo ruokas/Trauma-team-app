@@ -1,6 +1,7 @@
 import { $, nowHM } from './utils.js';
 
-export const MEDS = ['TXA','Fentanilis','Paracetamolis','Ketoprofenas','O- kraujas','Fibryga','Ca gliukonatas'];
+export const PAIN_MEDS = ['Fentanilis','Paracetamolis','Ketoprofenas'];
+export const BLEEDING_MEDS = ['TXA','O- kraujas','Fibryga','Ca gliukonatas'];
 export const PROCS = ['Intubacija','Krikotirotomija','Pleuros drenažas','Adatinė dekompresija','Kūno šildymas','Turniketas','Dubens diržas','Gipsavimas','Siuvimas','Repocizija'];
 
 function buildActionCard(group, name, saveAll){
@@ -23,8 +24,10 @@ function buildActionCard(group, name, saveAll){
 }
 
 export function initActions(saveAll){
-  const medsWrap=$('#medications');
+  const painWrap=$('#pain_meds');
+  const bleedingWrap=$('#bleeding_meds');
   const procsWrap=$('#procedures');
-  MEDS.forEach(n=>medsWrap.appendChild(buildActionCard('med', n, saveAll)));
+  PAIN_MEDS.forEach(n=>painWrap.appendChild(buildActionCard('med', n, saveAll)));
+  BLEEDING_MEDS.forEach(n=>bleedingWrap.appendChild(buildActionCard('med', n, saveAll)));
   PROCS.forEach(n=>procsWrap.appendChild(buildActionCard('proc', n, saveAll)));
 }

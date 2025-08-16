@@ -105,7 +105,7 @@ function saveAll(){
   ['#chips_red','#chips_yellow','#imaging_basic','#labs_basic','#a_airway_group','#b_breath_left_group','#b_breath_right_group','#d_pupil_left_group','#d_pupil_right_group']
     .forEach(sel=>{ const arr=$$('.chip.active',$(sel)).map(c=>c.dataset.value); data['chips:'+sel]=arr; });
   function pack(container){ return Array.from(container.children).map(card=>({ name:card.querySelector('.act_chk').parentElement.textContent.trim(), on:card.querySelector('.act_chk').checked, time:card.querySelector('.act_time').value, dose:card.querySelector('.act_dose').value, note:card.querySelector('.act_note').value }));}
-  data['meds']=pack($('#medications')); data['procs']=pack($('#procedures'));
+  data['pain_meds']=pack($('#pain_meds')); data['bleeding_meds']=pack($('#bleeding_meds')); data['procs']=pack($('#procedures'));
   data['bodymap_svg']=BodySVG.serialize();
   localStorage.setItem('trauma_v9', JSON.stringify(data));
 }
@@ -123,7 +123,7 @@ function loadAll(){
     ['#chips_red','#chips_yellow','#imaging_basic','#labs_basic','#a_airway_group','#b_breath_left_group','#b_breath_right_group','#d_pupil_left_group','#d_pupil_right_group']
       .forEach(sel=>{ const arr=data['chips:'+sel]||[]; $$('.chip',$(sel)).forEach(c=>c.classList.toggle('active',arr.includes(c.dataset.value))); });
     function unpack(container,records){ if(!Array.isArray(records)) return; Array.from(container.children).forEach((card,i)=>{ const r=records[i]; if(!r) return; card.querySelector('.act_chk').checked=!!r.on; card.querySelector('.act_time').value=r.time||''; card.querySelector('.act_dose').value=r.dose||''; card.querySelector('.act_note').value=r.note||'';});}
-    unpack($('#medications'),data['meds']); unpack($('#procedures'),data['procs']);
+    unpack($('#pain_meds'),data['pain_meds']); unpack($('#bleeding_meds'),data['bleeding_meds']); unpack($('#procedures'),data['procs']);
     if(data['bodymap_svg']) BodySVG.load(data['bodymap_svg']);
     $('#d_pupil_left_note').style.display = ($$('.chip.active', $('#d_pupil_left_group')).some(c=>c.dataset.value==='kita'))?'block':'none';
     $('#d_pupil_right_note').style.display = ($$('.chip.active', $('#d_pupil_right_group')).some(c=>c.dataset.value==='kita'))?'block':'none';
@@ -180,7 +180,7 @@ document.getElementById('btnGen').addEventListener('click',()=>{
   out.push('\n--- E Kita ---'); out.push([$('#e_temp').value?('T '+$('#e_temp').value+'°C'):null, $('#e_back_ny').checked?'Nugara: n.y.':($('#e_back_notes').value?('Nugara: '+$('#e_back_notes').value):null), $('#e_other').value?('Kita: '+$('#e_other').value):null, bodymapSummary()].filter(Boolean).join(' | '));
 
   function collect(container){ return Array.from(container.children).map(card=>{ const on=card.querySelector('.act_chk').checked; if(!on) return null; const name=card.querySelector('.act_chk').parentElement.textContent.trim(); const time=card.querySelector('.act_time').value; const dose=card.querySelector('.act_dose').value; const note=card.querySelector('.act_note').value; return [name, time?('laikas '+time):null, dose?('dozė '+dose):null, note?('pastabos '+note):null].filter(Boolean).join(' | '); }).filter(Boolean);}
-  const meds=collect($('#medications')), procs=collect($('#procedures')); if(meds.length||procs.length){ out.push('\n--- Intervencijos ---'); if(meds.length) out.push('Medikamentai:\n'+meds.join('\n')); if(procs.length) out.push('Procedūros:\n'+procs.join('\n')); }
+  const pain=collect($('#pain_meds')), bleeding=collect($('#bleeding_meds')), procs=collect($('#procedures')); if(pain.length||bleeding.length||procs.length){ out.push('\n--- Intervencijos ---'); if(pain.length) out.push('Medikamentai (skausmo kontrolė):\n'+pain.join('\n')); if(bleeding.length) out.push('Medikamentai (kraujavimo kontrolė):\n'+bleeding.join('\n')); if(procs.length) out.push('Procedūros:\n'+procs.join('\n')); }
 
   const imgs=listChips('#imaging_basic'); const fr=fastAreas.map(a=>{ const y=document.querySelector('input[name="fast_'+a+'"][value="Yra"]')?.checked; const n=document.querySelector('input[name="fast_'+a+'"][value="Nėra"]')?.checked; return y? a+': skystis Yra' : (n? a+': skystis Nėra' : null); }).filter(Boolean);
   if(imgs.length||fr.length){ out.push('\n--- Vaizdiniai tyrimai ---'); if(imgs.length) out.push('Užsakyta: '+imgs.join(', ')); if(fr.length) out.push('FAST: '+fr.join(' | ')); }
