@@ -33,6 +33,7 @@ input::placeholder,
 textarea::placeholder{color:var(--muted)}
 textarea{min-height:80px;resize:vertical}
 .row{display:flex;gap:8px;align-items:center}
+#d_gks_total{margin-left:auto;font-weight:700}
 .pill{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border:1px solid var(--line);border-radius:999px;background:#152231;color:#fff;font-weight:700}
 .chip{
   display:inline-flex;
