@@ -1,4 +1,4 @@
-import { $, nowHM } from './utils.js';
+import { $, nowHM, timeZoneOffset } from './utils.js';
 
 const entries = [];
 
@@ -17,11 +17,12 @@ export function renderTimeline() {
   const list = $('#timelineList');
   if (!list) return;
   const filter = $('#timelineFilter')?.value || '';
+  const tz = timeZoneOffset();
   list.innerHTML = '';
   getEntries(filter).forEach(e => {
     const div = document.createElement('div');
     div.className = 'timeline-entry';
-    div.textContent = `${e.time} – ${e.label}${e.value ? ': ' + e.value : ''}`;
+    div.textContent = `${e.time} ${tz} – ${e.label}${e.value ? ': ' + e.value : ''}`;
     list.appendChild(div);
   });
 }
@@ -29,8 +30,9 @@ export function renderTimeline() {
 export function initTimeline() {
   $('#timelineFilter')?.addEventListener('change', renderTimeline);
   $('#timelineExport')?.addEventListener('click', () => {
+    const tz = timeZoneOffset();
     const csv = entries
-      .map(e => `${e.time},${e.type},${e.label},${e.value}`)
+      .map(e => `${e.time} ${tz},${e.type},${e.label},${e.value}`)
       .join('\n');
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
