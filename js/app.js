@@ -75,12 +75,18 @@ const imgXrayWrap=$('#imaging_xray'); IMG_XRAY.forEach(n=>{const s=document.crea
 const imgOtherWrap=$('#imaging_other_group'); ['Kita'].forEach(n=>{const s=document.createElement('span'); s.className='chip'; s.dataset.value=n; s.textContent=n; imgOtherWrap.appendChild(s);});
 const labsWrap=$('#labs_basic'); LABS.forEach(n=>{const s=document.createElement('span'); s.className='chip'; s.dataset.value=n; s.textContent=n; labsWrap.appendChild(s);});
 const btnBloodOrder=$('#btnBloodOrder');
-if(btnBloodOrder){
+const bloodOrderForm=$('#bloodOrderForm');
+const bloodUnitsInput=$('#bloodUnits');
+const bloodGroupInput=$('#bloodGroup');
+const addBloodOrderBtn=$('#addBloodOrder');
+if(btnBloodOrder && bloodOrderForm && addBloodOrderBtn){
   btnBloodOrder.addEventListener('click',()=>{
-    const units=prompt('Įveskite užsakomų vienetų skaičių');
-    if(!units) return;
-    const group=prompt('Įveskite kraujo grupę');
-    if(!group) return;
+    bloodOrderForm.style.display=bloodOrderForm.style.display==='none'?'flex':'none';
+  });
+  addBloodOrderBtn.addEventListener('click',()=>{
+    const units=bloodUnitsInput.value.trim();
+    const group=bloodGroupInput.value.trim();
+    if(!units||!group) return;
     const val=`Kraujo užsakymas: ${units} vnt ${group}`;
     const chip=document.createElement('span');
     chip.className='chip';
@@ -89,6 +95,9 @@ if(btnBloodOrder){
     labsWrap.appendChild(chip);
     setChipActive(chip,true);
     saveAll();
+    bloodUnitsInput.value='';
+    bloodGroupInput.value='';
+    bloodOrderForm.style.display='none';
   });
 }
 const IMAGING_GROUPS=['#imaging_ct','#imaging_xray','#imaging_other_group'];
