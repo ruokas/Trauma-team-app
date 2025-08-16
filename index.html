@@ -30,6 +30,22 @@
   <nav id="tabs"></nav>
 
   <div id="views">
+    <!-- Pacientas -->
+    <section class="card view" data-tab="Pacientas">
+      <h2>Pacientas</h2>
+      <div class="grid cols-4">
+        <div><label>Vardas</label><input id="patient_name" type="text"></div>
+        <div><label>Amžius</label><input id="patient_age" type="number" min="0"></div>
+        <div><label>Lytis</label>
+          <select id="patient_sex">
+            <option value=""></option>
+            <option value="M">Vyras</option>
+            <option value="F">Moteris</option>
+          </select>
+        </div>
+        <div><label>Paciento ID</label><input id="patient_id" type="text"></div>
+      </div>
+    </section>
     <!-- Aktyvacija -->
     <section class="card view" data-tab="Aktyvacija">
         <h2>Traumos komandos aktyvacija <span class="badge">GMP rodikliai → auto</span></h2>
