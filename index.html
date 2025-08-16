@@ -340,12 +340,12 @@
     </section>
     <section class="card view" data-tab="Laboratorija">
       <h2>Laboratoriniai tyrimai</h2>
-      <div class="labs-controls">
-        <div class="chip-group" id="labs_basic" aria-label="Laboratoriniai tyrimai"></div>
-        <button type="button" class="btn" id="btnBloodOrder">Kraujo užsakymas</button>
-        <div id="bloodOrderForm" class="row" style="display:none;">
-          <input type="number" id="bloodUnits" placeholder="Vnt">
-          <input type="text" id="bloodGroup" placeholder="Grupė">
+      <div class="chip-group" id="labs_basic" aria-label="Laboratoriniai tyrimai"></div>
+      <div class="blood-order-box">
+        <label>Kraujo užsakymas</label>
+        <div class="row" style="gap:8px;flex-wrap:wrap;align-items:center;">
+          <input type="number" id="bloodUnits" placeholder="Vnt" style="width:80px;">
+          <div class="chip-group" id="bloodGroup" data-single="true" aria-label="Kraujo grupė"></div>
           <button type="button" class="btn" id="addBloodOrder">Pridėti</button>
         </div>
       </div>

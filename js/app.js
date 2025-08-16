@@ -68,24 +68,21 @@ function initSessions(){
 const IMG_CT=['Galvos KT','Kaklo KT','Viso kūno KT'];
 const IMG_XRAY=['Krūtinės Ro','Dubens Ro'];
 const LABS=['BKT','Biocheminis tyrimas','Krešumai','Fibrinogenas','ROTEM','Kraujo grupė','Kraujo dujos'];
+const BLOOD_GROUPS=['0-','0+','A-','A+','B-','B+','AB-','AB+'];
 const TEAM_ROLES=['Komandos vadovas','Raštininkas','ED gydytojas 1','ED gydytojas 2','Slaugytoja 1','Slaugytoja 2','Anesteziologas','Chirurgas','Ortopedas'];
 
 const imgCtWrap=$('#imaging_ct'); IMG_CT.forEach(n=>{const s=document.createElement('span'); s.className='chip'; s.dataset.value=n; s.textContent=n; imgCtWrap.appendChild(s);});
 const imgXrayWrap=$('#imaging_xray'); IMG_XRAY.forEach(n=>{const s=document.createElement('span'); s.className='chip'; s.dataset.value=n; s.textContent=n; imgXrayWrap.appendChild(s);});
 const imgOtherWrap=$('#imaging_other_group'); ['Kita'].forEach(n=>{const s=document.createElement('span'); s.className='chip'; s.dataset.value=n; s.textContent=n; imgOtherWrap.appendChild(s);});
 const labsWrap=$('#labs_basic'); LABS.forEach(n=>{const s=document.createElement('span'); s.className='chip'; s.dataset.value=n; s.textContent=n; labsWrap.appendChild(s);});
-const btnBloodOrder=$('#btnBloodOrder');
-const bloodOrderForm=$('#bloodOrderForm');
+const bloodGroupWrap=$('#bloodGroup'); if(bloodGroupWrap){ BLOOD_GROUPS.forEach(g=>{const s=document.createElement('span'); s.className='chip'; s.dataset.value=g; s.textContent=g; bloodGroupWrap.appendChild(s);}); }
 const bloodUnitsInput=$('#bloodUnits');
-const bloodGroupInput=$('#bloodGroup');
 const addBloodOrderBtn=$('#addBloodOrder');
-if(btnBloodOrder && bloodOrderForm && addBloodOrderBtn){
-  btnBloodOrder.addEventListener('click',()=>{
-    bloodOrderForm.style.display=bloodOrderForm.style.display==='none'?'flex':'none';
-  });
+if(bloodUnitsInput && bloodGroupWrap && addBloodOrderBtn){
   addBloodOrderBtn.addEventListener('click',()=>{
     const units=bloodUnitsInput.value.trim();
-    const group=bloodGroupInput.value.trim();
+    const groupEl=$$('.chip',bloodGroupWrap).find(c=>isChipActive(c));
+    const group=groupEl?.dataset.value||'';
     if(!units||!group) return;
     const val=`Kraujo užsakymas: ${units} vnt ${group}`;
     const chip=document.createElement('span');
@@ -96,8 +93,7 @@ if(btnBloodOrder && bloodOrderForm && addBloodOrderBtn){
     setChipActive(chip,true);
     saveAll();
     bloodUnitsInput.value='';
-    bloodGroupInput.value='';
-    bloodOrderForm.style.display='none';
+    $$('.chip',bloodGroupWrap).forEach(c=>setChipActive(c,false));
   });
 }
 const IMAGING_GROUPS=['#imaging_ct','#imaging_xray','#imaging_other_group'];

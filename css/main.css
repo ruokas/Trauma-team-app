@@ -66,8 +66,8 @@ label.chip input{
 .chip-group{display:flex;flex-wrap:wrap;gap:8px}
 .gcs-calc{margin-top:8px;border:1px solid var(--line);border-radius:10px;padding:8px;background:#152231}
 .gcs-calc .grid{margin-bottom:8px}
-.labs-controls{display:flex;gap:8px;align-items:flex-start;flex-wrap:wrap}
-.labs-controls .chip-group{flex:1}
+.blood-order-box{margin-top:8px;border:1px solid var(--line);border-radius:10px;padding:8px}
+.blood-order-box .row{gap:8px;flex-wrap:wrap;align-items:center}
 .breath-chip{padding:12px 20px;font-size:18px}
 .hint{color:var(--muted);font-size:12px}
 .badge{padding:2px 8px;border-radius:8px;font-size:12px;border:1px solid var(--line);background:#152231;color:var(--muted)}
