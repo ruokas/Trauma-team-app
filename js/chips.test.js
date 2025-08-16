@@ -38,15 +38,18 @@ describe('chips', () => {
 
   test('shows other imaging field when "Kita" selected', () => {
     document.body.innerHTML = `
-      <div id="imaging_basic">
+      <div id="imaging_ct">
         <span class="chip" data-value="Galvos KT"></span>
+      </div>
+      <div id="imaging_other_group">
         <span class="chip" data-value="Kita"></span>
       </div>
       <input id="imaging_other" style="display:none;" />
     `;
     const { initChips } = require('./chips.js');
     initChips();
-    const [normalChip, otherChip] = document.querySelectorAll('#imaging_basic .chip');
+    const normalChip = document.querySelector('#imaging_ct .chip');
+    const otherChip = document.querySelector('#imaging_other_group .chip');
     const box = document.getElementById('imaging_other');
     otherChip.click();
     expect(box.style.display).toBe('block');

@@ -41,10 +41,9 @@ export function initChips(saveAll){
     }
     togglePupilNote('left', chip);
     togglePupilNote('right', chip);
-    if(group.id==='imaging_basic'){
-      const otherChip=$$('.chip', group).find(c=>c.dataset.value==='Kita');
+    if(group.id.startsWith('imaging_')){
       const box=$('#imaging_other');
-      const show=otherChip && isChipActive(otherChip);
+      const show=!!document.querySelector('[id^="imaging_"] .chip.active[data-value="Kita"]');
       box.style.display = show ? 'block' : 'none';
       if(!show) box.value='';
     }
