@@ -4,6 +4,7 @@ const setupDom = () => {
     <button id="btnSave"></button>
     <button id="btnClear"></button>
     <button id="btnPrint"></button>
+    <button id="btnPdf"></button>
     <button id="btnGCS15"></button>
     <button id="btnGCSCalc"></button>
     <input type="checkbox" id="e_back_ny" />

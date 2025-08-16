@@ -531,6 +531,15 @@ document.getElementById('btnGen').addEventListener('click', generateReport);
 document.getElementById('btnCopy').addEventListener('click',async()=>{ try{ await navigator.clipboard.writeText($('#output').value||''); alert('Nukopijuota.'); }catch(e){ alert('Nepavyko nukopijuoti.'); }});
 document.getElementById('btnSave').addEventListener('click',()=>{ saveAll(); alert('Išsaugota naršyklėje.');});
 document.getElementById('btnClear').addEventListener('click',()=>{ if(confirm('Išvalyti viską?')){ localStorage.removeItem(sessionKey()); location.reload(); }});
+document.getElementById('btnPdf').addEventListener('click',async()=>{
+  generateReport();
+  const text=$('#output').value||'';
+  const { jsPDF } = await import('jspdf');
+  const doc=new jsPDF();
+  const lines=doc.splitTextToSize(text,180);
+  doc.text(lines,10,10);
+  doc.save('report.pdf');
+});
 document.getElementById('btnPrint').addEventListener('click',()=>{
   const prevTab=localStorage.getItem('v9_activeTab');
   document.getElementById('btnGen').click();
