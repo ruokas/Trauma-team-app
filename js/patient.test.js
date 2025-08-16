@@ -136,4 +136,19 @@ describe('patient fields', () => {
     expect(mockJsPDF).toHaveBeenCalled();
     expect(mockSave).toHaveBeenCalledWith('report.pdf');
   });
+
+  test('print window contains body map', () => {
+    const newDoc = document.implementation.createHTMLDocument();
+    const openMock = jest.spyOn(window, 'open').mockReturnValue({
+      document: newDoc,
+      focus: jest.fn(),
+      print: jest.fn(),
+      close: jest.fn()
+    });
+    require('./app.js');
+    document.getElementById('btnPrint').click();
+    const svg = newDoc.querySelector('#bodySvg');
+    expect(svg).not.toBeNull();
+    openMock.mockRestore();
+  });
 });
