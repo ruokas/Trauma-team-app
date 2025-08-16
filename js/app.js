@@ -220,7 +220,7 @@ window.updateActivationIndicator=updateActivationIndicator;
 window.ensureSingleTeam=ensureSingleTeam;
 
 /* ===== Save / Load ===== */
-const FIELD_SELECTORS='input[type="text"],input[type="number"],input[type="time"],input[type="date"],textarea,select';
+const FIELD_SELECTORS='input[type="text"],input[type="number"],input[type="time"],input[type="date"],textarea,select,#patient_name,#patient_age,#patient_sex,#patient_id';
 
 function expandOutput(){
   const ta = $('#output');
@@ -229,7 +229,7 @@ function expandOutput(){
   ta.style.height = ta.scrollHeight + 'px';
 }
 
-function saveAll(){
+export function saveAll(){
   if(!currentSessionId) return;
   const data={};
   $$(FIELD_SELECTORS).forEach(el=>{
@@ -245,7 +245,7 @@ function saveAll(){
   data['bodymap_svg']=BodySVG.serialize();
   localStorage.setItem(sessionKey(), JSON.stringify(data));
 }
-function loadAll(){
+export function loadAll(){
   if(!currentSessionId) return;
   const raw=localStorage.getItem(sessionKey()); if(!raw) return;
   try{
@@ -443,8 +443,11 @@ function bodymapSummary(){
   }catch(e){ return ''; }
 }
 
-document.getElementById('btnGen').addEventListener('click',()=>{
+export function generateReport(){
   const out=[];
+  const patient={ name:$('#patient_name').value, age:$('#patient_age').value, sex:$('#patient_sex').value, id:$('#patient_id').value };
+  const patientLine=[patient.name?`Vardas: ${patient.name}`:null, patient.age?`Amžius ${patient.age}`:null, patient.sex?`Lytis ${patient.sex}`:null, patient.id?`ID ${patient.id}`:null].filter(Boolean).join('; ');
+  if(patientLine){ out.push('--- Pacientas ---'); out.push(patientLine); }
   const red=listChips('#chips_red'), yellow=listChips('#chips_yellow');
   const gmp={ hr:$('#gmp_hr').value, rr:$('#gmp_rr').value, spo2:$('#gmp_spo2').value, sbp:$('#gmp_sbp').value, dbp:$('#gmp_dbp').value, gksa:$('#gmp_gksa').value, gksk:$('#gmp_gksk').value, gksm:$('#gmp_gksm').value, time:$('#gmp_time').value, mechanism:$('#gmp_mechanism').value, notes:$('#gmp_notes').value };
   const gksGMP=gksSum(gmp.gksa,gmp.gksk,gmp.gksm);
@@ -522,7 +525,8 @@ document.getElementById('btnGen').addEventListener('click',()=>{
     expandOutput();
     showTab('Ataskaita');
     saveAll();
-  });
+}
+document.getElementById('btnGen').addEventListener('click', generateReport);
 
 document.getElementById('btnCopy').addEventListener('click',async()=>{ try{ await navigator.clipboard.writeText($('#output').value||''); alert('Nukopijuota.'); }catch(e){ alert('Nepavyko nukopijuoti.'); }});
 document.getElementById('btnSave').addEventListener('click',()=>{ saveAll(); alert('Išsaugota naršyklėje.');});
