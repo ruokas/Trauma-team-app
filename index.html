@@ -242,12 +242,24 @@
     <!-- Intervencijos -->
     <section class="card view" data-tab="Intervencijos">
       <h2>Intervencijos</h2>
-      <input id="medSearch" type="text" placeholder="Ieškoti medikamentų..." style="margin-bottom:8px;width:100%">
-      <div class="split">
-        <div><h3 style="margin:0 0 6px;font-size:14px;color:var(--muted)">💊 Medikamentai – skausmo kontrolė</h3><div class="grid cols-3" id="pain_meds"></div></div>
-        <div><h3 style="margin:0 0 6px;font-size:14px;color:var(--muted)">💊 Medikamentai – kraujavimo kontrolė</h3><div class="grid cols-3" id="bleeding_meds"></div></div>
-        <div><h3 style="margin:0 0 6px;font-size:14px;color:var(--muted)">💊 Medikamentai – kita</h3><div class="grid cols-3" id="other_meds"></div></div>
-        <div><h3 style="margin:0 0 6px;font-size:14px;color:var(--muted)">🛠 Procedūros</h3><div class="grid cols-3" id="procedures"></div></div>
+      <input id="medSearch" type="text" placeholder="Ieškoti medikamentų..." class="med-search">
+      <div class="interv-groups">
+        <section class="interv-group">
+          <h3>💊 Medikamentai – skausmo kontrolė</h3>
+          <div class="grid cols-3" id="pain_meds"></div>
+        </section>
+        <section class="interv-group">
+          <h3>💊 Medikamentai – kraujavimo kontrolė</h3>
+          <div class="grid cols-3" id="bleeding_meds"></div>
+        </section>
+        <section class="interv-group">
+          <h3>💊 Medikamentai – kita</h3>
+          <div class="grid cols-3" id="other_meds"></div>
+        </section>
+        <section class="interv-group">
+          <h3>🛠 Procedūros</h3>
+          <div class="grid cols-3" id="procedures"></div>
+        </section>
       </div>
       <div class="hint" style="margin-top:6px">Paspaudus ant vaisto/procedūros automatiškai užpildomi laikas ir standartinė dozė (galima koreguoti).</div>
     </section>
