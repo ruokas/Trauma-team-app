@@ -53,7 +53,7 @@ describe('patient fields', () => {
     document.getElementById('patient_sex').value='M';
     document.getElementById('patient_id').value='ID123';
     saveAll();
-    const stored = JSON.parse(localStorage.getItem('trauma_v9_test'));
+    const stored = JSON.parse(localStorage.getItem('trauma_v10_test'));
     expect(stored.patient_name).toBe('Jonas');
     expect(stored.patient_age).toBe('25');
     expect(stored.patient_sex).toBe('M');
