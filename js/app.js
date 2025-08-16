@@ -4,6 +4,66 @@ import { initChips, listChips, setChipActive, isChipActive } from './chips.js';
 import { initAutoActivate } from './autoActivate.js';
 import { initActions } from './actions.js';
 
+/* ===== Sessions ===== */
+let currentSessionId = localStorage.getItem('trauma_current_session') || null;
+const sessionKey = () => 'trauma_v9_' + currentSessionId;
+
+function getSessions(){
+  try{ return JSON.parse(localStorage.getItem('trauma_sessions')||'[]'); }catch(e){ return []; }
+}
+function saveSessions(list){ localStorage.setItem('trauma_sessions', JSON.stringify(list)); }
+function populateSessionSelect(sel, sessions){
+  sel.innerHTML='';
+  sessions.forEach(s=>{ const opt=document.createElement('option'); opt.value=s.id; opt.textContent=s.name; sel.appendChild(opt); });
+}
+function initSessions(){
+  const select=$('#sessionSelect');
+  let sessions=getSessions();
+  if(!sessions.length){
+    const id=Date.now().toString(36);
+    sessions=[{id,name:'Case 1'}];
+    saveSessions(sessions);
+    currentSessionId=id;
+    localStorage.setItem('trauma_current_session', id);
+  }
+  if(!currentSessionId || !sessions.some(s=>s.id===currentSessionId)){
+    currentSessionId=sessions[0].id;
+    localStorage.setItem('trauma_current_session', currentSessionId);
+  }
+  populateSessionSelect(select, sessions);
+  select.value=currentSessionId;
+
+  $('#btnNewSession').addEventListener('click',()=>{
+    const name=prompt('Sesijos pavadinimas');
+    if(!name) return;
+    const id=Date.now().toString(36);
+    sessions.push({id,name});
+    saveSessions(sessions);
+    localStorage.setItem('trauma_current_session', id);
+    currentSessionId=id;
+    populateSessionSelect(select, sessions);
+    select.value=id;
+    location.reload();
+  });
+  $('#btnRenameSession').addEventListener('click',()=>{
+    const sess=sessions.find(s=>s.id===select.value);
+    if(!sess) return;
+    const name=prompt('Naujas pavadinimas', sess.name);
+    if(!name) return;
+    sess.name=name;
+    saveSessions(sessions);
+    populateSessionSelect(select, sessions);
+    select.value=currentSessionId;
+  });
+  select.addEventListener('change',()=>{
+    const id=select.value;
+    saveAll();
+    localStorage.setItem('trauma_current_session', id);
+    currentSessionId=id;
+    location.reload();
+  });
+}
+
 /* ===== Imaging / Labs / Team ===== */
 const IMG_CT=['Galvos KT','Kaklo KT','Viso kūno KT'];
 const IMG_XRAY=['Krūtinės Ro','Dubens Ro'];
@@ -170,6 +230,7 @@ function expandOutput(){
 }
 
 function saveAll(){
+  if(!currentSessionId) return;
   const data={};
   $$(FIELD_SELECTORS).forEach(el=>{
     const key=el.dataset.field || el.id || el.name;
@@ -182,10 +243,11 @@ function saveAll(){
   function pack(container){ return Array.from(container.children).map(card=>({ name:(card.querySelector('.act_custom_name')?card.querySelector('.act_custom_name').value:card.querySelector('.act_name').textContent.trim()), on:card.querySelector('.act_chk').checked, time:card.querySelector('.act_time').value, dose:card.querySelector('.act_dose').value, note:card.querySelector('.act_note').value }));}
   data['pain_meds']=pack($('#pain_meds')); data['bleeding_meds']=pack($('#bleeding_meds')); data['other_meds']=pack($('#other_meds')); data['procs']=pack($('#procedures'));
   data['bodymap_svg']=BodySVG.serialize();
-  localStorage.setItem('trauma_v9', JSON.stringify(data));
+  localStorage.setItem(sessionKey(), JSON.stringify(data));
 }
 function loadAll(){
-  const raw=localStorage.getItem('trauma_v9'); if(!raw) return;
+  if(!currentSessionId) return;
+  const raw=localStorage.getItem(sessionKey()); if(!raw) return;
   try{
     const data=JSON.parse(raw);
     $$(FIELD_SELECTORS).forEach(el=>{
@@ -323,6 +385,7 @@ window.validateVitals=validateVitals;
 
 /* ===== Init modules ===== */
 function init(){
+  initSessions();
   initTabs();
   initChips(saveAll);
   initAutoActivate(saveAll);
@@ -370,7 +433,7 @@ function gksSum(a,k,m){ a=+a||0;k=+k||0;m=+m||0; return (a&&k&&m)?(a+k+m):''; }
 const getSingleValue=sel=>listChips(sel)[0]||'';
 function bodymapSummary(){
   try{
-    const data=JSON.parse(localStorage.getItem('trauma_v9')||'{}'); if(!data.bodymap_svg) return '';
+    const data=JSON.parse(localStorage.getItem(sessionKey())||'{}'); if(!data.bodymap_svg) return '';
     const o=JSON.parse(data.bodymap_svg); const cnt={front:{Ž:0,S:0,N:0}, back:{Ž:0,S:0,N:0}};
     (o.marks||[]).forEach(m=>{ if(cnt[m.side] && cnt[m.side][m.type]!=null) cnt[m.side][m.type]++; });
     const total=(cnt.front.Ž+cnt.front.S+cnt.front.N)+(cnt.back.Ž+cnt.back.S+cnt.back.N);
@@ -463,7 +526,7 @@ document.getElementById('btnGen').addEventListener('click',()=>{
 
 document.getElementById('btnCopy').addEventListener('click',async()=>{ try{ await navigator.clipboard.writeText($('#output').value||''); alert('Nukopijuota.'); }catch(e){ alert('Nepavyko nukopijuoti.'); }});
 document.getElementById('btnSave').addEventListener('click',()=>{ saveAll(); alert('Išsaugota naršyklėje.');});
-document.getElementById('btnClear').addEventListener('click',()=>{ if(confirm('Išvalyti viską?')){ localStorage.removeItem('trauma_v9'); location.reload(); }});
+document.getElementById('btnClear').addEventListener('click',()=>{ if(confirm('Išvalyti viską?')){ localStorage.removeItem(sessionKey()); location.reload(); }});
 document.getElementById('btnPrint').addEventListener('click',()=>{
   const prevTab=localStorage.getItem('v9_activeTab');
   document.getElementById('btnGen').click();
