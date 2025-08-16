@@ -29,6 +29,9 @@ export function initActions(saveAll){
   const bleedingWrap=$('#bleeding_meds');
   const otherWrap=$('#other_meds');
   const procsWrap=$('#procedures');
+  PAIN_MEDS.sort((a,b)=>a.localeCompare(b));
+  BLEEDING_MEDS.sort((a,b)=>a.localeCompare(b));
+  OTHER_MEDS.sort((a,b)=>a.localeCompare(b));
   PAIN_MEDS.forEach(n=>painWrap.appendChild(buildActionCard('med', n, saveAll)));
   BLEEDING_MEDS.forEach(n=>bleedingWrap.appendChild(buildActionCard('med', n, saveAll)));
   OTHER_MEDS.forEach(n=>otherWrap.appendChild(buildActionCard('med', n, saveAll)));
