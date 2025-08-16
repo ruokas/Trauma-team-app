@@ -12,6 +12,28 @@ describe('chips', () => {
     expect(isChipActive(chip)).toBe(false);
   });
 
+  test('sets proper roles and aria-checked for single-selection groups', () => {
+    document.body.innerHTML = `
+      <div id="multi"><span class="chip" data-value="a"></span><span class="chip" data-value="b"></span></div>
+      <div id="single" data-single="true"><span class="chip" data-value="1"></span><span class="chip" data-value="2"></span></div>
+    `;
+    const { initChips } = require('./chips.js');
+    initChips();
+    const multi = document.getElementById('multi');
+    const single = document.getElementById('single');
+    expect(multi.getAttribute('role')).toBe('group');
+    expect(single.getAttribute('role')).toBe('radiogroup');
+    const [c1, c2] = single.querySelectorAll('.chip');
+    expect(c1.getAttribute('role')).toBe('radio');
+    expect(c1.getAttribute('aria-checked')).toBe('false');
+    c1.click();
+    expect(c1.getAttribute('aria-checked')).toBe('true');
+    expect(c2.getAttribute('aria-checked')).toBe('false');
+    c2.click();
+    expect(c1.getAttribute('aria-checked')).toBe('false');
+    expect(c2.getAttribute('aria-checked')).toBe('true');
+  });
+
   test('shows hospital field when transfer decision selected', () => {
     document.body.innerHTML = `
       <div id="spr_decision_group" data-single="true">
