@@ -96,6 +96,7 @@ async function initSessions(){
     currentSessionId=id;
     populateSessionSelect(select, sessions);
     select.value=id;
+    localStorage.setItem('v10_activeTab','Aktyvacija');
     location.reload();
   });
   $('#btnRenameSession').addEventListener('click',()=>{
@@ -113,6 +114,7 @@ async function initSessions(){
     saveAll();
     localStorage.setItem('trauma_current_session', id);
     currentSessionId=id;
+    localStorage.setItem('v10_activeTab','Aktyvacija');
     location.reload();
   });
 }
