@@ -100,8 +100,9 @@ input.invalid,select.invalid{border-color:var(--red)}
 #saveStatus.offline::before{content:'⚠ ';}
 .split{display:flex;gap:12px;flex-wrap:wrap}
 .split>div{flex:1}
-.interv-groups{display:flex;gap:8px;flex-wrap:wrap}
-.interv-group{flex:1}
+.interv-groups{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.interv-group{display:flex;flex-direction:column;gap:8px;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px}
+.interv-group>.grid{grid-template-columns:repeat(auto-fill,minmax(120px,1fr))}
 .med-search{margin-bottom:8px;width:100%}
 .subtle{font-size:12px;color:var(--muted)}
 .divider{height:1px;background:var(--line);margin:10px 0}
@@ -145,12 +146,10 @@ input.invalid,select.invalid{border-color:var(--red)}
 @media print{ header,nav,.toolbar{display:none!important} body{background:#fff;color:#000} section.card{break-inside:avoid} }
 
 /* Interventions compact layout */
-section[data-tab="Intervencijos"] .card{padding:6px}
-section[data-tab="Intervencijos"] .card .grid{gap:4px}
-section[data-tab="Intervencijos"] .interv-groups{gap:6px}
-section[data-tab="Intervencijos"] .med-search{margin-bottom:4px}
-section[data-tab="Intervencijos"] h3{margin:0 0 4px;font-size:13px;color:var(--muted);display:flex;align-items:center;gap:4px}
-section[data-tab="Intervencijos"] .cols-3{grid-template-columns:repeat(4,1fr)}
+section[data-tab="Intervencijos"] .card{padding:8px}
+section[data-tab="Intervencijos"] .card .detail .grid{gap:4px}
+section[data-tab="Intervencijos"] .med-search{margin-bottom:8px}
+section[data-tab="Intervencijos"] h3{margin:0 0 8px;font-size:13px;color:var(--muted);display:flex;align-items:center;gap:4px}
 
 /* Modal and toast components */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:1000}
