@@ -351,12 +351,29 @@ export function saveAll(){
   data['pain_meds']=pack($('#pain_meds')); data['bleeding_meds']=pack($('#bleeding_meds')); data['other_meds']=pack($('#other_meds')); data['procs']=pack($('#procedures'));
   data['bodymap_svg']=BodySVG.serialize();
   localStorage.setItem(sessionKey(), JSON.stringify(data));
+  const statusEl = $('#saveStatus');
+  if(statusEl){
+    statusEl.textContent='Saving...';
+    statusEl.classList.remove('offline');
+  }
   if(authToken && typeof fetch === 'function'){
     fetch(`/api/sessions/${currentSessionId}/data`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json', 'Authorization': authToken },
       body: JSON.stringify(data)
-    }).catch(()=>{});
+    }).then(()=>{
+      if(statusEl){
+        statusEl.textContent='Saved';
+        statusEl.classList.remove('offline');
+      }
+    }).catch(()=>{
+      if(statusEl){
+        statusEl.textContent='Save failed';
+        statusEl.classList.add('offline');
+      }
+    });
+  } else if(statusEl){
+    statusEl.textContent='Saved';
   }
 }
 export function loadAll(){
