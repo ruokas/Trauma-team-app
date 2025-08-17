@@ -40,6 +40,15 @@ export function initTabs(){
     b.setAttribute('role','tab');
     b.setAttribute('tabindex','0');
     b.setAttribute('aria-selected', i===0 ? 'true' : 'false');
+    const view = document.querySelector(`.view[data-tab="${t.name}"]`);
+    const viewId = view?.id || `view-${i}`;
+    b.id = `tab-${viewId.replace(/^view-/, '')}`;
+    b.setAttribute('aria-controls', viewId);
+    if(view){
+      if(!view.id) view.id = viewId;
+      view.setAttribute('aria-labelledby', b.id);
+      view.setAttribute('role','tabpanel');
+    }
     b.onclick=()=>showTab(t.name);
     nav.appendChild(b);
   });
