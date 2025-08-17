@@ -5,6 +5,47 @@ import { initAutoActivate } from './autoActivate.js';
 import { initActions } from './actions.js';
 import { logEvent, initTimeline } from './timeline.js';
 
+function initNavToggle(){
+  const toggle = document.getElementById('navToggle');
+  const nav = document.querySelector('nav');
+  if(!toggle || !nav) return;
+  nav.setAttribute('aria-hidden','true');
+  const focusableSel = 'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
+  const trap = e => {
+    if(e.key === 'Tab'){
+      const items = nav.querySelectorAll(focusableSel);
+      if(!items.length) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      if(e.shiftKey){
+        if(document.activeElement === first){ e.preventDefault(); last.focus(); }
+      }else{
+        if(document.activeElement === last){ e.preventDefault(); first.focus(); }
+      }
+    }else if(e.key === 'Escape'){
+      close();
+    }
+  };
+  const open = () => {
+    document.body.classList.add('nav-open');
+    toggle.setAttribute('aria-expanded','true');
+    nav.removeAttribute('aria-hidden');
+    const items = nav.querySelectorAll(focusableSel);
+    if(items.length) items[0].focus();
+    document.addEventListener('keydown', trap);
+  };
+  const close = () => {
+    document.body.classList.remove('nav-open');
+    toggle.setAttribute('aria-expanded','false');
+    nav.setAttribute('aria-hidden','true');
+    document.removeEventListener('keydown', trap);
+    toggle.focus();
+  };
+  toggle.addEventListener('click', () => {
+    document.body.classList.contains('nav-open') ? close() : open();
+  });
+}
+
 let authToken = localStorage.getItem('trauma_token') || null;
 let socket = null;
 
@@ -510,6 +551,7 @@ async function init(){
   connectSocket();
   await initSessions();
   initTabs();
+  initNavToggle();
   initChips(saveAllDebounced);
   initAutoActivate(saveAllDebounced);
   initActions(saveAllDebounced);
