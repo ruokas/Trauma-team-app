@@ -111,6 +111,7 @@ input.invalid,select.invalid{border-color:var(--red)}
 .tool.active{background:var(--accent);color:#fff;border-color:#2d74b8}
 #bodySvg{width:100%;max-width:400px;height:auto;border:1px solid var(--line);border-radius:12px;background:#0b141e}
 .silhouette{fill:#0f1822;stroke:#36506a;stroke-width:2}
+.body-point{fill:#748ba1;pointer-events:none}
 .label{fill:#a9b6c5;font:bold 16px system-ui}
 .mark-w{stroke:#ef5350;stroke-width:3;fill:none}
 .mark-b{fill:#64b5f6}
