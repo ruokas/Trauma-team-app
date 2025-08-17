@@ -159,4 +159,18 @@ describe('patient fields', () => {
     expect(svg).not.toBeNull();
     openMock.mockRestore();
   });
+
+  test('validation flags out-of-range values', () => {
+    const { initValidation } = require('./validation.js');
+    initValidation();
+    const age = document.getElementById('patient_age');
+    age.setAttribute('min','0');
+    age.setAttribute('max','120');
+    age.value = '130';
+    age.dispatchEvent(new Event('input', { bubbles: true }));
+    expect(age.classList.contains('invalid')).toBe(true);
+    const err = age.nextElementSibling;
+    expect(err).not.toBeNull();
+    expect(err.textContent).toContain('Leistina');
+  });
 });
