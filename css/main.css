@@ -88,6 +88,8 @@ label.chip input{
 section[data-tab="B – Kvėpavimas"] h3{margin:12px 0 4px;font-size:14px;color:var(--muted)}
 section[data-tab="B – Kvėpavimas"] h3:first-of-type{margin-top:0}
 .hint{color:var(--muted);font-size:12px}
+.error-msg{color:var(--red);font-size:12px}
+input.invalid,select.invalid{border-color:var(--red)}
 .badge{padding:2px 8px;border-radius:8px;font-size:12px;border:1px solid var(--line);background:#152231;color:var(--muted)}
 .activation-dot{width:12px;height:12px;border-radius:50%;display:none;margin-left:8px}
 .activation-dot.red{background:var(--red);display:inline-block}

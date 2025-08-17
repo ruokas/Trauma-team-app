@@ -131,6 +131,10 @@ describe('patient fields', () => {
 
   test('PDF button generates file via jsPDF', async () => {
     require('./app.js');
+    document.getElementById('patient_name').value='Jonas';
+    document.getElementById('patient_age').value='25';
+    document.getElementById('patient_sex').value='M';
+    document.getElementById('patient_id').value='ID123';
     document.getElementById('btnPdf').click();
     await new Promise(resolve => setTimeout(resolve, 0));
     expect(mockJsPDF).toHaveBeenCalled();
@@ -146,6 +150,10 @@ describe('patient fields', () => {
       close: jest.fn()
     });
     require('./app.js');
+    document.getElementById('patient_name').value='Jonas';
+    document.getElementById('patient_age').value='25';
+    document.getElementById('patient_sex').value='M';
+    document.getElementById('patient_id').value='ID123';
     document.getElementById('btnPrint').click();
     const svg = newDoc.querySelector('#bodySvg');
     expect(svg).not.toBeNull();
