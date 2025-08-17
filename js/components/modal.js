@@ -8,7 +8,9 @@ export function promptModal(message, defaultValue = '') {
     box.setAttribute('role', 'dialog');
     box.setAttribute('aria-modal', 'true');
     const p = document.createElement('p');
+    p.id = 'modalMsg';
     p.textContent = message;
+    box.setAttribute('aria-labelledby', p.id);
     box.appendChild(p);
     const input = document.createElement('input');
     input.type = 'text';
@@ -62,7 +64,9 @@ export function confirmModal(message){
     box.setAttribute('role', 'dialog');
     box.setAttribute('aria-modal', 'true');
     const p = document.createElement('p');
+    p.id = 'modalMsg';
     p.textContent = message;
+    box.setAttribute('aria-labelledby', p.id);
     box.appendChild(p);
     const actions = document.createElement('div');
     actions.className = 'actions';
