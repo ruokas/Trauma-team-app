@@ -24,7 +24,7 @@ nav .tab{display:block;padding:10px 12px;border:1px solid var(--line);border-rad
 nav .tab:hover{background:color-mix(in srgb,#152231,white 10%);color:color-mix(in srgb,var(--ink),white 10%)}
 nav .tab.active{background:#1f2e44;border-color:#2b405c}
 nav .tab:focus{outline:2px solid var(--accent)}
-section.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
+section.card{background:rgba(18,26,36,.6);backdrop-filter:blur(10px);border:1px solid color-mix(in srgb,var(--line),white 20%);border-radius:14px;padding:14px;color:var(--ink)}
 section.card h2{font-size:1rem;margin:0 0 10px}
 section.card .grid{display:grid;gap:10px}
 label{display:block;color:var(--muted);font-size:0.8125rem;margin-bottom:4px}
