@@ -159,4 +159,18 @@ describe('patient fields', () => {
     expect(svg).not.toBeNull();
     openMock.mockRestore();
   });
+
+  test('invalid vitals show error message', () => {
+    const { initValidation } = require('./validation.js');
+    initValidation();
+    const age = document.getElementById('patient_age');
+    age.value = '200';
+    age.dispatchEvent(new Event('input', { bubbles: true }));
+    expect(age.classList.contains('invalid')).toBe(true);
+    expect(document.getElementById('patient_age_error')).not.toBeNull();
+    age.value = '20';
+    age.dispatchEvent(new Event('input', { bubbles: true }));
+    expect(age.classList.contains('invalid')).toBe(false);
+    expect(document.getElementById('patient_age_error')).toBeNull();
+  });
 });

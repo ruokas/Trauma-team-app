@@ -4,6 +4,7 @@ import { initChips, listChips, setChipActive, isChipActive } from './chips.js';
 import { initAutoActivate } from './autoActivate.js';
 import { initActions } from './actions.js';
 import { logEvent, initTimeline } from './timeline.js';
+import { initValidation, validateAll } from './validation.js';
 
 let authToken = localStorage.getItem('trauma_token') || null;
 let socket = null;
@@ -494,40 +495,6 @@ function clampNumberInputs(){
   });
 }
 
-function showInlineError(el,msg){
-  let err = el.nextElementSibling;
-  if(!err || !err.classList.contains('input-error')){
-    err = document.createElement('span');
-    err.className = 'input-error';
-    err.style.color = 'var(--danger)';
-    err.style.fontSize = '12px';
-    err.style.marginLeft = '4px';
-    el.insertAdjacentElement('afterend', err);
-  }
-  err.textContent = msg;
-  err.style.display = msg ? 'inline' : 'none';
-}
-
-export function validateVitals(){
-  const fields=['#gmp_hr','#gmp_rr','#gmp_spo2','#gmp_sbp','#gmp_dbp','#gmp_gksa','#gmp_gksk','#gmp_gksm','#d_gksa','#d_gksk','#d_gksm'];
-  fields.forEach(sel=>{
-    const el=$(sel);
-    if(!el) return;
-    const val=el.value.trim();
-    let msg='';
-    if(val!==''){
-      const num=parseFloat(val);
-      const min=el.getAttribute('min');
-      const max=el.getAttribute('max');
-      if((min!==null && num<parseFloat(min)) || (max!==null && num>parseFloat(max))){
-        msg=`Leistina ${min}–${max}`;
-      }
-    }
-    showInlineError(el,msg);
-  });
-  return true;
-}
-window.validateVitals=validateVitals;
 
 /* ===== Init modules ===== */
 async function init(){
@@ -542,6 +509,7 @@ async function init(){
   setupActivationControls();
   fields = $$(FIELD_SELECTORS);
   document.addEventListener('input', saveAllDebounced);
+  initValidation();
 
   const vitals = {
     '#gmp_hr': 'GMP ŠSD',
@@ -595,24 +563,21 @@ async function init(){
       saveAll();
     });
     $('#output').addEventListener('input', expandOutput);
-    const vitalSelectors=['#gmp_hr','#gmp_rr','#gmp_spo2','#gmp_sbp','#gmp_dbp','#gmp_gksa','#gmp_gksk','#gmp_gksm','#d_gksa','#d_gksk','#d_gksm'];
-    vitalSelectors.forEach(sel=>{ const el=$(sel); if(el) el.addEventListener('input', validateVitals); });
     loadAll();
     clampNumberInputs();
-    validateVitals();
+    validateAll();
     updateDGksTotal();
     updateGmpGksTotal();
   }
   window.addEventListener('DOMContentLoaded', init);
 
 function validateForm(){
+  let ok=validateAll();
   const fields=[
     {el:$('#patient_name'),check:e=>e.value.trim()!=='',msg:'Vardas privalomas'},
-    {el:$('#patient_age'),check:e=>e.value!=='' && +e.value>=0 && +e.value<=120,msg:'Amžius 0-120'},
     {el:$('#patient_sex'),check:e=>e.value!=='',msg:'Pasirinkite lytį'},
     {el:$('#patient_id'),check:e=>e.value.trim()!=='',msg:'ID privalomas'}
   ];
-  let ok=true;
   fields.forEach(({el,check,msg})=>{
     if(!el) return;
     if(!el.dataset.hint && el.getAttribute('aria-describedby')) el.dataset.hint=el.getAttribute('aria-describedby');
