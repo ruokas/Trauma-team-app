@@ -95,6 +95,9 @@ input.invalid,select.invalid{border-color:var(--red)}
 .activation-dot{width:12px;height:12px;border-radius:50%;display:none;margin-left:8px}
 .activation-dot.red{background:var(--red);display:inline-block}
 .activation-dot.yellow{background:var(--yellow);display:inline-block}
+#saveStatus{color:var(--muted);font-size:13px;margin-top:4px}
+#saveStatus.offline{color:var(--yellow)}
+#saveStatus.offline::before{content:'⚠ ';}
 .split{display:flex;gap:12px;flex-wrap:wrap}
 .split>div{flex:1}
 .interv-groups{display:flex;gap:8px;flex-wrap:wrap}
