@@ -8,24 +8,24 @@
 }
 
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;font-size:16px;line-height:1.5}
 header{position:sticky;top:0;z-index:10;background:#0d151fdd;backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
 .wrap{max-width:1200px;margin:0 auto;padding:14px 16px}
-h1{font-size:20px;margin:4px 0}
-.sub{color:var(--muted);font-size:13px}
+h1{font-size:1.25rem;margin:4px 0}
+.sub{color:var(--muted);font-size:0.8125rem}
 .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
 main{max-width:1200px;margin:12px auto;padding:0 16px;display:grid;grid-template-columns:220px 1fr;gap:12px}
 nav{position:sticky;top:68px;align-self:start}
 #navToggle{display:none}
-nav .tab{display:block;padding:10px 12px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;background:#152231;color:var(--ink);cursor:pointer;font-weight:600;text-align:left;text-transform:none;font-size:16px}
+nav .tab{display:block;padding:10px 12px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;background:#152231;color:var(--ink);cursor:pointer;font-weight:600;text-align:left;text-transform:none;font-size:1rem}
 nav .tab.active{background:#1f2e44;border-color:#2b405c}
 nav .tab:focus{outline:2px solid var(--accent)}
 section.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px}
-section.card h2{font-size:16px;margin:0 0 10px}
+section.card h2{font-size:1rem;margin:0 0 10px}
 section.card .grid{display:grid;gap:10px}
-label{display:block;color:var(--muted);font-size:13px;margin-bottom:4px}
+label{display:block;color:var(--muted);font-size:0.8125rem;margin-bottom:4px}
 input[type="text"],input[type="number"],input[type="time"],input[type="date"],textarea,select{
-  width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:10px;background:#0f1620;color:var(--ink);font-size:14px;outline:none
+  width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:10px;background:#0f1620;color:var(--ink);font-size:0.875rem;outline:none
 }
 input::placeholder,
 textarea::placeholder{color:var(--muted)}
