@@ -29,7 +29,7 @@ function buildActionCard(group, name, saveAll, opts={}){
   card.style.padding='6px';
   card.style.borderRadius='10px';
   const slug=name.toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'');
-  const gridClass=(includeDose || custom)?'cols-3':'cols-2';
+  const gridClass='cols';
   card.innerHTML=`<label class="pill"><input type="checkbox" class="act_chk" data-field="${group}_${slug}_chk"><span class="act_name">${name}</span></label>
     <div class="detail collapsed">
       <div class="grid ${gridClass}" style="margin-top:4px">
