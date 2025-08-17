@@ -25,6 +25,7 @@ h1{font-size:20px;margin:4px 0}
 .btn.ghost{background:transparent;color:var(--muted);border-style:dashed}
 main{max-width:1200px;margin:12px auto;padding:0 16px;display:grid;grid-template-columns:220px 1fr;gap:12px}
 nav{position:sticky;top:68px;align-self:start}
+#navToggle{display:none}
 nav .tab{display:block;padding:10px 12px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;background:#152231;color:var(--ink);cursor:pointer;font-weight:600;text-align:left;text-transform:none;font-size:16px}
 nav .tab.active{background:#1f2e44;border-color:#2b405c}
 nav .tab:focus{outline:2px solid var(--accent)}
@@ -118,7 +119,26 @@ input.invalid,select.invalid{border-color:var(--red)}
 .hidden{display:none}
 .detail{overflow:hidden;max-height:200px;opacity:1;transition:max-height .3s ease,opacity .3s ease}
 .collapsed{max-height:0;opacity:0;pointer-events:none}
-@media (max-width:980px){ main{grid-template-columns:1fr} nav{position:static} .cols-3{grid-template-columns:1fr 1fr} .cols-2{grid-template-columns:1fr} .cols-4{grid-template-columns:1fr 1fr} }
+@media (max-width:980px){
+  #navToggle{display:inline-block;margin-bottom:8px}
+  main{grid-template-columns:1fr}
+  nav{
+    position:fixed;
+    top:0;left:0;bottom:0;
+    width:220px;
+    background:#0d151f;
+    transform:translateX(-100%);
+    transition:transform .3s ease;
+    padding:14px 16px;
+    overflow:auto;
+    z-index:20;
+    pointer-events:none;
+  }
+  body.nav-open nav{transform:translateX(0);pointer-events:auto}
+  .cols-3{grid-template-columns:1fr 1fr}
+  .cols-2{grid-template-columns:1fr}
+  .cols-4{grid-template-columns:1fr 1fr}
+}
 @media print{ header,nav,.toolbar{display:none!important} body{background:#fff;color:#000} section.card{break-inside:avoid} }
 
 /* Interventions compact layout */
