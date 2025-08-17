@@ -16,7 +16,7 @@
     <h1>Traumos forma – Desktop v10</h1>
     <div class="sub">Aktyvacija · ABCDE · LT · SVG kūno žemėlapis <span id="activationIndicator" class="activation-dot"></span></div>
     <div class="toolbar" id="sessionBar">
-      <select id="sessionSelect" style="width:auto"></select>
+      <select id="sessionSelect" class="w-auto"></select>
       <button type="button" class="btn" id="btnNewSession">Nauja sesija</button>
       <button type="button" class="btn" id="btnRenameSession">Pervadinti</button>
     </div>
@@ -71,16 +71,16 @@
           <div><label>GMP KD (k./min)</label><input id="gmp_rr" type="number" min="0" max="80"></div>
           <div><label>GMP SpO₂ (%)</label><input id="gmp_spo2" type="number" min="0" max="100"></div>
       </div>
-      <div class="grid cols-3" style="margin-top:8px">
-          <div class="row"><div style="flex:1"><label>GMP AKS s</label><input id="gmp_sbp" type="number" min="0" max="300"></div><div style="flex:1"><label>GMP AKS d</label><input id="gmp_dbp" type="number" min="0" max="200"></div></div>
+      <div class="grid cols-3 mt-8">
+          <div class="row"><div class="flex-1"><label>GMP AKS s</label><input id="gmp_sbp" type="number" min="0" max="300"></div><div class="flex-1"><label>GMP AKS d</label><input id="gmp_dbp" type="number" min="0" max="200"></div></div>
           <div><label>GMP GKS (A-K-M)</label><div class="row"><input id="gmp_gksa" type="number" min="1" max="4" placeholder="A"><input id="gmp_gksk" type="number" min="1" max="5" placeholder="K"><input id="gmp_gksm" type="number" min="1" max="6" placeholder="M"><span id="gmp_gks_total"></span></div></div>
-          <div><label>GMP pranešimo laikas</label><div class="row" style="gap:8px;align-items:center;"><input id="gmp_time" type="time"><button type="button" class="btn ghost" id="btnGmpNow">Dabar</button></div></div>
+          <div><label>GMP pranešimo laikas</label><div class="row"><input id="gmp_time" type="time"><button type="button" class="btn ghost" id="btnGmpNow">Dabar</button></div></div>
       </div>
-      <div class="grid cols-2" style="margin-top:8px">
+      <div class="grid cols-2 mt-8">
           <div><label>Traumos mechanizmas</label><input id="gmp_mechanism" type="text"></div>
           <div><label>Pastabos</label><input id="gmp_notes" type="text" placeholder="Trumpai..."></div>
       </div>
-      <div class="split" style="margin-top:12px">
+      <div class="split mt-12">
         <div>
           <label><strong>RAUDONA</strong></label>
           <div class="chip-group" id="chips_red" aria-label="RAUDONA">
@@ -108,7 +108,7 @@
           </div>
         </div>
       </div>
-        <div class="hint" style="margin-top:6px">Auto-aktyvacija – tik iš GMP rodiklių; rankiniai pakeitimai išlieka.</div>
+        <div class="hint mt-6">Auto-aktyvacija – tik iš GMP rodiklių; rankiniai pakeitimai išlieka.</div>
     </section>
 
     <!-- A -->
@@ -122,7 +122,7 @@
         <button type="button" class="chip red" data-value="Intubuotas" aria-pressed="false">Intubuotas</button>
         <button type="button" class="chip red" data-value="Kita" aria-pressed="false">Kita</button>
       </div>
-      <div class="row" style="margin-top:8px"><label style="margin:0">Pastabos</label><input id="a_notes" type="text" placeholder="Trumpai..."></div>
+      <div class="row mt-8"><label class="m-0">Pastabos</label><input id="a_notes" type="text" placeholder="Trumpai..."></div>
     </section>
 
     <!-- B -->
@@ -139,11 +139,11 @@
         <div><div class="subtle">Dešinė</div><div class="chip-group" id="b_breath_right_group" data-single="true" aria-label="Alsavimas – Dešinė"><button type="button" class="chip breath-chip" data-value="+" aria-pressed="false" aria-label="Girdimi kvėpavimo garsai" title="Girdimi kvėpavimo garsai">+</button><button type="button" class="chip breath-chip red" data-value="-" aria-pressed="false" aria-label="Kvėpavimo garsai negirdimi" title="Kvėpavimo garsai negirdimi">-</button></div></div>
       </div>
       <h3>Pagalbinė ventiliacija</h3>
-      <div class="row" style="flex-wrap:wrap">
-        <div class="row" style="gap:8px;align-items:center;">
+      <div class="row flex-wrap">
+        <div class="row">
           <button type="button" class="btn" id="btnOxygen">O2</button>
-          <div id="oxygenFields" class="row" style="display:none;gap:8px;">
-            <input id="b_oxygen_liters" type="number" min="0" max="25" placeholder="L/min" style="width:80px">
+          <div id="oxygenFields" class="row hidden">
+            <input id="b_oxygen_liters" type="number" min="0" max="25" placeholder="L/min" class="w-80">
             <select id="b_oxygen_type">
               <option value="Kaukė su rez.">Kaukė su rez.</option>
               <option value="Kaukė">Kaukė</option>
@@ -151,9 +151,9 @@
             </select>
           </div>
         </div>
-        <div class="row" style="gap:8px;align-items:center;">
+        <div class="row">
           <button type="button" class="btn" id="btnDPV">DPV</button>
-          <div id="dpvFields" class="row" style="display:none;gap:8px;">
+          <div id="dpvFields" class="row hidden">
             <input id="b_dpv_fio2" type="number" step="0.01" min="0" max="1" placeholder="FiO₂">
           </div>
         </div>
@@ -165,7 +165,7 @@
       <h2>C – Kraujotaka</h2>
       <div class="grid cols-3">
         <div><label>ŠSD (k./min)</label><input id="c_hr" type="number" min="0" max="250"></div>
-        <div class="row"><div style="flex:1"><label>AKS s</label><input id="c_sbp" type="number" min="0" max="300"></div><div style="flex:1"><label>AKS d</label><input id="c_dbp" type="number" min="0" max="200"></div></div>
+        <div class="row"><div class="flex-1"><label>AKS s</label><input id="c_sbp" type="number" min="0" max="300"></div><div class="flex-1"><label>AKS d</label><input id="c_dbp" type="number" min="0" max="200"></div></div>
         <div><label>KPL (sek.)</label><input id="c_caprefill" type="number" step="0.1" min="0" max="20"></div>
       </div>
     </section>
@@ -183,7 +183,7 @@
             <button type="button" class="btn" id="btnGCSCalc">Skaičiuoti</button>
             <span id="d_gks_total"></span>
         </div>
-        <div id="d_gcs_calc" class="gcs-calc" style="display:none">
+        <div id="d_gcs_calc" class="gcs-calc hidden">
           <div class="grid cols-3">
             <div>
               <label>Akių atmerkimas (A)</label>
@@ -219,23 +219,23 @@
               </select>
             </div>
           </div>
-          <div class="row" style="margin-top:8px">
+          <div class="row mt-8">
             <button type="button" class="btn" id="d_gcs_apply">Taikyti</button>
             <span id="d_gcs_calc_total"></span>
           </div>
         </div>
       </div>
-      <div style="margin-top:8px">
+      <div class="mt-8">
         <label>Vyzdžiai – Kairė</label>
         <div class="chip-group" id="d_pupil_left_group" data-single="true" aria-label="Vyzdžiai – Kairė"><button type="button" class="chip" data-value="n.y." aria-pressed="false">n.y.</button><button type="button" class="chip red" data-value="kita" aria-pressed="false">kita</button></div>
-        <input id="d_pupil_left_note" type="text" placeholder="Pastabos..." style="margin-top:6px;display:none">
+        <input id="d_pupil_left_note" type="text" placeholder="Pastabos..." class="hidden mt-6">
       </div>
-      <div style="margin-top:8px">
+      <div class="mt-8">
         <label>Vyzdžiai – Dešinė</label>
         <div class="chip-group" id="d_pupil_right_group" data-single="true" aria-label="Vyzdžiai – Dešinė"><button type="button" class="chip" data-value="n.y." aria-pressed="false">n.y.</button><button type="button" class="chip red" data-value="kita" aria-pressed="false">kita</button></div>
-        <input id="d_pupil_right_note" type="text" placeholder="Pastabos..." style="margin-top:6px;display:none">
+        <input id="d_pupil_right_note" type="text" placeholder="Pastabos..." class="hidden mt-6">
       </div>
-      <div class="row" style="margin-top:8px"><label style="margin:0">Pastabos</label><input id="d_notes" type="text" placeholder="Trumpai..."></div>
+      <div class="row mt-8"><label class="m-0">Pastabos</label><input id="d_notes" type="text" placeholder="Trumpai..."></div>
     </section>
 
     <!-- E -->
@@ -248,12 +248,12 @@
       </div>
 
       <div class="divider"></div>
-      <h3 style="font-size:14px;margin:0 0 6px;color:var(--muted)">Kūno žemėlapis (SVG) – Žaizda (Ž), Sumušimas (S), Nudegimas (N)</h3>
+      <h3 class="h3-muted m-0 mb-6">Kūno žemėlapis (SVG) – Žaizda (Ž), Sumušimas (S), Nudegimas (N)</h3>
       <div class="map-toolbar">
         <button type="button" class="tool" data-tool="Ž">Žaizda</button>
         <button type="button" class="tool" data-tool="S">Sumušimas</button>
         <button type="button" class="tool" data-tool="N">Nudegimas</button>
-        <span style="flex:1"></span>
+        <span class="flex-1"></span>
         <button type="button" class="tool" id="btnSide">↺ Rodyti: Priekis</button>
         <button type="button" class="tool" id="btnUndo">↩ Anuliuoti</button>
         <button type="button" class="tool" id="btnClearMap">🧹 Išvalyti</button>
@@ -338,20 +338,20 @@
           <div class="grid cols-3" id="procedures"></div>
         </section>
       </div>
-      <div class="hint" style="margin-top:6px">Paspaudus ant vaisto automatiškai užpildomi laikas ir standartinė dozė (galima koreguoti), o ant procedūros – tik laikas.</div>
+      <div class="hint mt-6">Paspaudus ant vaisto automatiškai užpildomi laikas ir standartinė dozė (galima koreguoti), o ant procedūros – tik laikas.</div>
     </section>
 
     <!-- Vaizdai / Laboratorija / Komanda / Sprendimas / Ataskaita -->
     <section class="card view" id="view-vaizdiniai-tyrimai" data-tab="Vaizdiniai tyrimai">
       <h2>Vaizdiniai tyrimai</h2>
-      <h3 style="font-size:14px;color:var(--muted)">KT</h3>
+      <h3 class="h3-muted">KT</h3>
       <div class="chip-group" id="imaging_ct" aria-label="KT"></div>
-      <h3 style="margin-top:8px;font-size:14px;color:var(--muted)">Rentgenogramos</h3>
+      <h3 class="h3-muted mt-8">Rentgenogramos</h3>
       <div class="chip-group" id="imaging_xray" aria-label="Rentgenogramos"></div>
-      <h3 style="margin-top:8px;font-size:14px;color:var(--muted)">Kiti</h3>
+      <h3 class="h3-muted mt-8">Kiti</h3>
       <div class="chip-group" id="imaging_other_group" aria-label="Kiti vaizdiniai tyrimai"></div>
-      <input id="imaging_other" type="text" placeholder="Įvesti kitą tyrimą" style="display:none;margin-top:8px;">
-      <h3 style="margin-top:12px;font-size:14px;color:var(--muted)">FAST</h3>
+      <input id="imaging_other" type="text" placeholder="Įvesti kitą tyrimą" class="hidden mt-8">
+      <h3 class="h3-muted mt-12">FAST</h3>
       <div class="grid cols-3" id="fastGrid"></div>
     </section>
     <section class="card view" id="view-laboratorija" data-tab="Laboratorija">
@@ -359,8 +359,8 @@
       <div class="chip-group" id="labs_basic" aria-label="Laboratoriniai tyrimai"></div>
       <div class="blood-order-box">
         <label>Kraujo užsakymas</label>
-        <div class="row" style="gap:8px;flex-wrap:wrap;align-items:center;">
-          <input type="number" id="bloodUnits" placeholder="Vnt" style="width:80px;">
+        <div class="row flex-wrap">
+          <input type="number" id="bloodUnits" placeholder="Vnt" class="w-80">
           <div class="chip-group" id="bloodGroup" data-single="true" aria-label="Kraujo grupė"></div>
           <button type="button" class="btn" id="addBloodOrder">Pridėti</button>
         </div>
@@ -369,8 +369,8 @@
     <section class="card view" id="view-komanda" data-tab="Komanda"><h2>Komandos nariai</h2><div class="grid cols-3" id="teamGrid"></div></section>
     <section class="card view" id="view-sprendimas" data-tab="Sprendimas">
       <h2>Sprendimas</h2>
-      <div><label>Laikas</label><div class="row" style="gap:8px;align-items:center;"><input id="spr_time" type="time"><button type="button" class="btn ghost" id="btnSprNow">Dabar</button></div></div>
-      <div style="margin-top:8px">
+      <div><label>Laikas</label><div class="row"><input id="spr_time" type="time"><button type="button" class="btn ghost" id="btnSprNow">Dabar</button></div></div>
+      <div class="mt-8">
         <label>Sprendimas</label>
         <div class="chip-group" id="spr_decision_group" data-single="true" aria-label="Sprendimas">
           <button type="button" class="chip" data-value="Stacionarizavimas" aria-pressed="false">Stacionarizavimas</button>
@@ -380,7 +380,7 @@
           <button type="button" class="chip" data-value="Pervežimas į kitą ligoninę" aria-pressed="false">Pervežimas į kitą ligoninę</button>
         </div>
       </div>
-      <div id="spr_skyrius_container" style="margin-top:8px;display:none;">
+      <div id="spr_skyrius_container" class="hidden mt-8">
         <label>Skyrius</label>
         <select id="spr_skyrius">
           <option value=""></option>
@@ -390,22 +390,22 @@
           <option value="Neurochirurgijos">Neurochirurgijos</option>
           <option value="Kita">Kita</option>
         </select>
-        <input id="spr_skyrius_kita" type="text" placeholder="Kitas skyrius" style="display:none;margin-top:4px;">
+        <input id="spr_skyrius_kita" type="text" placeholder="Kitas skyrius" class="hidden mt-4">
       </div>
-      <div id="spr_ligonine_container" style="margin-top:8px;display:none;">
+      <div id="spr_ligonine_container" class="hidden mt-8">
         <label>Ligoninė</label>
         <input id="spr_ligonine" type="text" placeholder="Ligoninė">
       </div>
-      <div class="grid cols-3" style="margin-top:8px">
+      <div class="grid cols-3 mt-8">
         <div><label>ŠSD (k./min)</label><input id="spr_hr" type="number" min="0" max="250"></div>
         <div><label>KD (k./min)</label><input id="spr_rr" type="number" min="0" max="80"></div>
         <div><label>SpO₂ (%)</label><input id="spr_spo2" type="number" min="0" max="100"></div>
       </div>
-      <div class="row" style="margin-top:8px">
-        <div style="flex:1"><label>AKS s</label><input id="spr_sbp" type="number" min="0" max="300"></div>
-        <div style="flex:1"><label>AKS d</label><input id="spr_dbp" type="number" min="0" max="200"></div>
+      <div class="row mt-8">
+        <div class="flex-1"><label>AKS s</label><input id="spr_sbp" type="number" min="0" max="300"></div>
+        <div class="flex-1"><label>AKS d</label><input id="spr_dbp" type="number" min="0" max="200"></div>
       </div>
-      <div style="margin-top:8px">
+      <div class="mt-8">
         <label>GKS (A-K-M)</label>
         <div class="row">
           <input id="spr_gksa" type="number" min="1" max="4" placeholder="A">
@@ -414,7 +414,7 @@
           <button type="button" class="btn" id="btnSprGCSCalc">Skaičiuoti</button>
           <span id="spr_gks_total"></span>
         </div>
-        <div id="spr_gcs_calc" class="gcs-calc" style="display:none">
+        <div id="spr_gcs_calc" class="gcs-calc hidden">
           <div class="grid cols-3">
             <div>
               <label>Akių atmerkimas (A)</label>
@@ -450,7 +450,7 @@
               </select>
             </div>
           </div>
-          <div class="row" style="margin-top:8px">
+          <div class="row mt-8">
             <button type="button" class="btn" id="spr_gcs_apply">Taikyti</button>
             <span id="spr_gcs_calc_total"></span>
           </div>
@@ -459,7 +459,7 @@
     </section>
     <section class="card view" id="view-laiko-juosta" data-tab="Laiko juosta">
       <h2>Laiko juosta</h2>
-      <div class="row" style="gap:8px;margin-bottom:8px;">
+      <div class="row mb-8">
         <select id="timelineFilter">
           <option value="">Visi</option>
           <option value="med">Vaistai</option>
