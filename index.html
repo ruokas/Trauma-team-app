@@ -71,16 +71,16 @@
           <div><label>GMP KD (k./min)</label><input id="gmp_rr" type="number" min="0" max="80"></div>
           <div><label>GMP SpO₂ (%)</label><input id="gmp_spo2" type="number" min="0" max="100"></div>
       </div>
-      <div class="grid cols-3 mt-8">
+      <div class="grid cols-3 mt" style="--space:var(--space-md)">
           <div class="row"><div class="flex-1"><label>GMP AKS s</label><input id="gmp_sbp" type="number" min="0" max="300"></div><div class="flex-1"><label>GMP AKS d</label><input id="gmp_dbp" type="number" min="0" max="200"></div></div>
           <div><label>GMP GKS (A-K-M)</label><div class="row"><input id="gmp_gksa" type="number" min="1" max="4" placeholder="A"><input id="gmp_gksk" type="number" min="1" max="5" placeholder="K"><input id="gmp_gksm" type="number" min="1" max="6" placeholder="M"><span id="gmp_gks_total"></span></div></div>
           <div><label>GMP pranešimo laikas</label><div class="row"><input id="gmp_time" type="time"><button type="button" class="btn ghost" id="btnGmpNow">Dabar</button></div></div>
       </div>
-      <div class="grid cols-2 mt-8">
+      <div class="grid cols-2 mt" style="--space:var(--space-md)">
           <div><label>Traumos mechanizmas</label><input id="gmp_mechanism" type="text"></div>
           <div><label>Pastabos</label><input id="gmp_notes" type="text" placeholder="Trumpai..."></div>
       </div>
-      <div class="split mt-12">
+      <div class="split mt" style="--space:var(--space-lg)">
         <div>
           <label><strong>RAUDONA</strong></label>
           <div class="chip-group" id="chips_red" aria-label="RAUDONA">
@@ -108,7 +108,7 @@
           </div>
         </div>
       </div>
-        <div class="hint mt-6">Auto-aktyvacija – tik iš GMP rodiklių; rankiniai pakeitimai išlieka.</div>
+        <div class="hint mt" style="--space:var(--space-sm)">Auto-aktyvacija – tik iš GMP rodiklių; rankiniai pakeitimai išlieka.</div>
     </section>
 
     <!-- A -->
@@ -122,7 +122,7 @@
         <button type="button" class="chip red" data-value="Intubuotas" aria-pressed="false">Intubuotas</button>
         <button type="button" class="chip red" data-value="Kita" aria-pressed="false">Kita</button>
       </div>
-      <div class="row mt-8"><label class="m-0">Pastabos</label><input id="a_notes" type="text" placeholder="Trumpai..."></div>
+      <div class="row mt" style="--space:var(--space-md)"><label class="m-0">Pastabos</label><input id="a_notes" type="text" placeholder="Trumpai..."></div>
     </section>
 
     <!-- B -->
@@ -219,23 +219,23 @@
               </select>
             </div>
           </div>
-          <div class="row mt-8">
+          <div class="row mt" style="--space:var(--space-md)">
             <button type="button" class="btn" id="d_gcs_apply">Taikyti</button>
             <span id="d_gcs_calc_total"></span>
           </div>
         </div>
       </div>
-      <div class="mt-8">
+      <div class="mt" style="--space:var(--space-md)">
         <label>Vyzdžiai – Kairė</label>
         <div class="chip-group" id="d_pupil_left_group" data-single="true" aria-label="Vyzdžiai – Kairė"><button type="button" class="chip" data-value="n.y." aria-pressed="false">n.y.</button><button type="button" class="chip red" data-value="kita" aria-pressed="false">kita</button></div>
-        <input id="d_pupil_left_note" type="text" placeholder="Pastabos..." class="hidden mt-6">
+        <input id="d_pupil_left_note" type="text" placeholder="Pastabos..." class="hidden mt" style="--space:var(--space-sm)">
       </div>
-      <div class="mt-8">
+      <div class="mt" style="--space:var(--space-md)">
         <label>Vyzdžiai – Dešinė</label>
         <div class="chip-group" id="d_pupil_right_group" data-single="true" aria-label="Vyzdžiai – Dešinė"><button type="button" class="chip" data-value="n.y." aria-pressed="false">n.y.</button><button type="button" class="chip red" data-value="kita" aria-pressed="false">kita</button></div>
-        <input id="d_pupil_right_note" type="text" placeholder="Pastabos..." class="hidden mt-6">
+        <input id="d_pupil_right_note" type="text" placeholder="Pastabos..." class="hidden mt" style="--space:var(--space-sm)">
       </div>
-      <div class="row mt-8"><label class="m-0">Pastabos</label><input id="d_notes" type="text" placeholder="Trumpai..."></div>
+      <div class="row mt" style="--space:var(--space-md)"><label class="m-0">Pastabos</label><input id="d_notes" type="text" placeholder="Trumpai..."></div>
     </section>
 
     <!-- E -->
@@ -360,7 +360,7 @@
           <div class="grid cols-3" id="procedures"></div>
         </section>
       </div>
-      <div class="hint mt-6">Paspaudus ant vaisto automatiškai užpildomi laikas ir standartinė dozė (galima koreguoti), o ant procedūros – tik laikas.</div>
+      <div class="hint mt" style="--space:var(--space-sm)">Paspaudus ant vaisto automatiškai užpildomi laikas ir standartinė dozė (galima koreguoti), o ant procedūros – tik laikas.</div>
     </section>
 
     <!-- Vaizdai / Laboratorija / Komanda / Sprendimas / Ataskaita -->
@@ -368,12 +368,12 @@
       <h2>Vaizdiniai tyrimai</h2>
       <h3 class="h3-muted">KT</h3>
       <div class="chip-group" id="imaging_ct" aria-label="KT"></div>
-      <h3 class="h3-muted mt-8">Rentgenogramos</h3>
+      <h3 class="h3-muted mt" style="--space:var(--space-md)">Rentgenogramos</h3>
       <div class="chip-group" id="imaging_xray" aria-label="Rentgenogramos"></div>
-      <h3 class="h3-muted mt-8">Kiti</h3>
+      <h3 class="h3-muted mt" style="--space:var(--space-md)">Kiti</h3>
       <div class="chip-group" id="imaging_other_group" aria-label="Kiti vaizdiniai tyrimai"></div>
-      <input id="imaging_other" type="text" placeholder="Įvesti kitą tyrimą" class="hidden mt-8">
-      <h3 class="h3-muted mt-12">FAST</h3>
+      <input id="imaging_other" type="text" placeholder="Įvesti kitą tyrimą" class="hidden mt" style="--space:var(--space-md)">
+      <h3 class="h3-muted mt" style="--space:var(--space-lg)">FAST</h3>
       <div class="grid cols-3" id="fastGrid"></div>
     </section>
     <section class="card view" id="view-laboratorija" data-tab="Laboratorija">
@@ -392,7 +392,7 @@
     <section class="card view" id="view-sprendimas" data-tab="Sprendimas">
       <h2>Sprendimas</h2>
       <div><label>Laikas</label><div class="row"><input id="spr_time" type="time"><button type="button" class="btn ghost" id="btnSprNow">Dabar</button></div></div>
-      <div class="mt-8">
+      <div class="mt" style="--space:var(--space-md)">
         <label>Sprendimas</label>
         <div class="chip-group" id="spr_decision_group" data-single="true" aria-label="Sprendimas">
           <button type="button" class="chip" data-value="Stacionarizavimas" aria-pressed="false">Stacionarizavimas</button>
@@ -402,7 +402,7 @@
           <button type="button" class="chip" data-value="Pervežimas į kitą ligoninę" aria-pressed="false">Pervežimas į kitą ligoninę</button>
         </div>
       </div>
-      <div id="spr_skyrius_container" class="hidden mt-8">
+      <div id="spr_skyrius_container" class="hidden mt" style="--space:var(--space-md)">
         <label>Skyrius</label>
         <select id="spr_skyrius">
           <option value=""></option>
@@ -412,22 +412,22 @@
           <option value="Neurochirurgijos">Neurochirurgijos</option>
           <option value="Kita">Kita</option>
         </select>
-        <input id="spr_skyrius_kita" type="text" placeholder="Kitas skyrius" class="hidden mt-4">
+        <input id="spr_skyrius_kita" type="text" placeholder="Kitas skyrius" class="hidden mt" style="--space:var(--space-xs)">
       </div>
-      <div id="spr_ligonine_container" class="hidden mt-8">
+      <div id="spr_ligonine_container" class="hidden mt" style="--space:var(--space-md)">
         <label>Ligoninė</label>
         <input id="spr_ligonine" type="text" placeholder="Ligoninė">
       </div>
-      <div class="grid cols-3 mt-8">
+      <div class="grid cols-3 mt" style="--space:var(--space-md)">
         <div><label>ŠSD (k./min)</label><input id="spr_hr" type="number" min="0" max="250"></div>
         <div><label>KD (k./min)</label><input id="spr_rr" type="number" min="0" max="80"></div>
         <div><label>SpO₂ (%)</label><input id="spr_spo2" type="number" min="0" max="100"></div>
       </div>
-      <div class="row mt-8">
+      <div class="row mt" style="--space:var(--space-md)">
         <div class="flex-1"><label>AKS s</label><input id="spr_sbp" type="number" min="0" max="300"></div>
         <div class="flex-1"><label>AKS d</label><input id="spr_dbp" type="number" min="0" max="200"></div>
       </div>
-      <div class="mt-8">
+      <div class="mt" style="--space:var(--space-md)">
         <label>GKS (A-K-M)</label>
         <div class="row">
           <input id="spr_gksa" type="number" min="1" max="4" placeholder="A">
@@ -472,7 +472,7 @@
               </select>
             </div>
           </div>
-          <div class="row mt-8">
+          <div class="row mt" style="--space:var(--space-md)">
             <button type="button" class="btn" id="spr_gcs_apply">Taikyti</button>
             <span id="spr_gcs_calc_total"></span>
           </div>

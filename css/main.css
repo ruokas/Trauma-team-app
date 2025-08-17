@@ -1,4 +1,12 @@
-:root{color-scheme:dark}
+/* Base variables */
+:root{
+  color-scheme:dark;
+  --space-xs:4px;
+  --space-sm:6px;
+  --space-md:8px;
+  --space-lg:12px;
+  --space:0;
+}
 
 :root.dark{
   --bg:#0c1218;--card:#121a24;--ink:#e9f2fb;
@@ -101,10 +109,7 @@ input.invalid,select.invalid{border-color:var(--red)}
 .med-search{margin-bottom:8px;width:100%}
 .subtle{font-size:12px;color:var(--muted)}
 .divider{height:1px;background:var(--line);margin:10px 0}
-.mt-4{margin-top:4px}
-.mt-6{margin-top:6px}
-.mt-8{margin-top:8px}
-.mt-12{margin-top:12px}
+.mt{margin-top:var(--space)}
 .mb-6{margin-bottom:6px}
 .mb-8{margin-bottom:8px}
 .m-0{margin:0}
