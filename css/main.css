@@ -1,4 +1,4 @@
-:root{color-scheme:light dark}
+:root{color-scheme:dark}
 
 :root.dark{
   --bg:#0c1218;--card:#121a24;--ink:#e9f2fb;
@@ -7,11 +7,6 @@
   --accent:#4ea0f5;--red:#e53935;--yellow:#ffcc00;--green:#00c853;--ink2:#d7ecff;
 }
 
-:root.light{
-  --bg:#ffffff;--card:#f5f7fa;--ink:#0c1218;
-  --muted:#5b6b7c;--line:#d0d7e2;
-  --accent:#0066cc;--red:#e53935;--yellow:#ffcc00;--green:#00c853;--ink2:#0c1218;
-}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif}
 header{position:sticky;top:0;z-index:10;background:#0d151fdd;backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
