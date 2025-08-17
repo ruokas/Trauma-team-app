@@ -48,6 +48,9 @@ function initNavToggle(){
   toggle.addEventListener('click', () => {
     document.body.classList.contains('nav-open') ? close() : open();
   });
+  nav.addEventListener('click', e => {
+    if(e.target.closest('.tab')) close();
+  });
 }
 
 let authToken = localStorage.getItem('trauma_token') || null;
