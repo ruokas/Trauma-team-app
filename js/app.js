@@ -6,6 +6,8 @@ import { initActions } from './actions.js';
 import { logEvent, initTimeline } from './timeline.js';
 import { promptModal, confirmModal } from './components/modal.js';
 import { showToast } from './components/toast.js';
+import { initValidation, validateVitals } from './validation.js';
+export { validateVitals };
 
 function initNavToggle(){
   const toggle = document.getElementById('navToggle');
@@ -540,40 +542,6 @@ function clampNumberInputs(){
   });
 }
 
-function showInlineError(el,msg){
-  let err = el.nextElementSibling;
-  if(!err || !err.classList.contains('input-error')){
-    err = document.createElement('span');
-    err.className = 'input-error';
-    err.style.color = 'var(--danger)';
-    err.style.fontSize = '12px';
-    err.style.marginLeft = '4px';
-    el.insertAdjacentElement('afterend', err);
-  }
-  err.textContent = msg;
-  err.style.display = msg ? 'inline' : 'none';
-}
-
-export function validateVitals(){
-  const fields=['#gmp_hr','#gmp_rr','#gmp_spo2','#gmp_sbp','#gmp_dbp','#gmp_gksa','#gmp_gksk','#gmp_gksm','#d_gksa','#d_gksk','#d_gksm'];
-  fields.forEach(sel=>{
-    const el=$(sel);
-    if(!el) return;
-    const val=el.value.trim();
-    let msg='';
-    if(val!==''){
-      const num=parseFloat(val);
-      const min=el.getAttribute('min');
-      const max=el.getAttribute('max');
-      if((min!==null && num<parseFloat(min)) || (max!==null && num>parseFloat(max))){
-        msg=`Leistina ${min}–${max}`;
-      }
-    }
-    showInlineError(el,msg);
-  });
-  return true;
-}
-window.validateVitals=validateVitals;
 
 /* ===== Init modules ===== */
 async function init(){
@@ -642,10 +610,9 @@ async function init(){
       saveAll();
     });
     $('#output').addEventListener('input', expandOutput);
-    const vitalSelectors=['#gmp_hr','#gmp_rr','#gmp_spo2','#gmp_sbp','#gmp_dbp','#gmp_gksa','#gmp_gksk','#gmp_gksm','#d_gksa','#d_gksk','#d_gksm'];
-    vitalSelectors.forEach(sel=>{ const el=$(sel); if(el) el.addEventListener('input', validateVitals); });
     loadAll();
     clampNumberInputs();
+    initValidation();
     validateVitals();
     updateDGksTotal();
     updateGmpGksTotal();
