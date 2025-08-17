@@ -50,28 +50,9 @@ function initNavToggle(){
 
 let authToken = localStorage.getItem('trauma_token') || null;
 let socket = null;
-
-function applyTheme(t){
-  document.documentElement.classList.remove('light','dark');
-  document.documentElement.classList.add(t);
-}
-
 function initTheme(){
-  let theme = localStorage.getItem('trauma_theme');
-  if(!theme){
-    theme = document.documentElement.classList.contains('light') ? 'light' :
-      document.documentElement.classList.contains('dark') ? 'dark' :
-      ((typeof window.matchMedia==='function' && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light');
-  }
-  applyTheme(theme);
-  const btn = document.getElementById('themeToggle');
-  if(btn){
-    btn.addEventListener('click',()=>{
-      const next = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
-      applyTheme(next);
-      localStorage.setItem('trauma_theme', next);
-    });
-  }
+  document.documentElement.classList.remove('light');
+  document.documentElement.classList.add('dark');
 }
 
 initTheme();
