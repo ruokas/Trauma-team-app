@@ -1,5 +1,6 @@
 import { $, $$ } from './utils.js';
 import { setChipActive } from './chips.js';
+import { validateAll } from './validation.js';
 
 function gmpGKS(){
   const a = +($('#gmp_gksa')?.value || 0);
@@ -44,12 +45,12 @@ export function initAutoActivate(saveAll){
     .forEach(sel=>{
       const el = $(sel);
       if(el) el.addEventListener('input', ()=>{
-        if(typeof window !== 'undefined' && typeof window.validateVitals === 'function') window.validateVitals();
+        validateAll();
         autoActivateFromGMP();
         if(typeof saveAll==='function') saveAll();
       });
     });
-    if(typeof window !== 'undefined' && typeof window.validateVitals === 'function') window.validateVitals();
+    validateAll();
 }
 
 export { autoActivateFromGMP };
