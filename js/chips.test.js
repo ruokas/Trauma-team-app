@@ -66,6 +66,41 @@ describe('chips', () => {
     expect(isChipActive(chip)).toBe(false);
   });
 
+  test('navigates and activates chips with arrow keys in radiogroups', () => {
+    document.body.innerHTML = `
+      <div id="group" data-single="true">
+        <span class="chip" data-value="a"></span>
+        <span class="chip" data-value="b"></span>
+      </div>
+    `;
+    const { initChips, isChipActive } = require('./chips.js');
+    initChips();
+    const [chip1, chip2] = document.querySelectorAll('#group .chip');
+    chip1.focus();
+    chip1.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));
+    expect(document.activeElement).toBe(chip2);
+    expect(isChipActive(chip2)).toBe(true);
+    expect(isChipActive(chip1)).toBe(false);
+  });
+
+  test('moves focus with arrow keys without toggling in multiselect groups', () => {
+    document.body.innerHTML = `
+      <div id="group">
+        <span class="chip" data-value="a"></span>
+        <span class="chip" data-value="b"></span>
+      </div>
+    `;
+    const { initChips, isChipActive } = require('./chips.js');
+    initChips();
+    const [chip1, chip2] = document.querySelectorAll('#group .chip');
+    chip1.click(); // activate first chip
+    chip1.focus();
+    chip1.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));
+    expect(document.activeElement).toBe(chip2);
+    expect(isChipActive(chip1)).toBe(true);
+    expect(isChipActive(chip2)).toBe(false);
+  });
+
   test('shows hospital field when transfer decision selected', () => {
     document.body.innerHTML = `
       <div id="spr_decision_group" data-single="true">

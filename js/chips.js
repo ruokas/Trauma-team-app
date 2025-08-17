@@ -93,12 +93,39 @@ export function initChips(saveAll){
     handleChip(chip);
   }, true);
 
+  // Support keyboard interaction:
+  // * Enter/Space toggles the active state of a chip
+  // * Arrow keys move focus within a chip group. For radiogroups the
+  //   newly focused chip is activated automatically to mirror native
+  //   radio behaviour.
   document.addEventListener('keydown', e => {
-    if(e.key !== 'Enter' && e.key !== ' ') return;
     const chip = e.target.closest('.chip');
     if(!chip) return;
-    e.preventDefault();
-    handleChip(chip);
+
+    if(e.key === 'Enter' || e.key === ' '){
+      e.preventDefault();
+      handleChip(chip);
+      return;
+    }
+
+    if(['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key)){
+      const group = chip.parentElement;
+      if(!group) return;
+      const chips = $$('.chip', group);
+      const activeIndex = chips.findIndex(isChipActive);
+      let index = activeIndex !== -1 ? activeIndex : chips.indexOf(chip);
+      if(e.key === 'ArrowLeft' || e.key === 'ArrowUp'){
+        index = (index - 1 + chips.length) % chips.length;
+      } else {
+        index = (index + 1) % chips.length;
+      }
+      const nextChip = chips[index];
+      e.preventDefault();
+      nextChip.focus();
+      if(group.dataset?.single === 'true'){
+        handleChip(nextChip);
+      }
+    }
   }, true);
 }
 
