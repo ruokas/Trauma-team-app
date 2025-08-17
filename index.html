@@ -36,16 +36,30 @@
         <h2>Traumos komandos aktyvacija <span class="badge">GMP rodikliai → auto</span></h2>
       <h3>Pacientas</h3>
       <div class="grid cols-4">
-        <div><label>Vardas</label><input id="patient_name" type="text"></div>
-        <div><label>Amžius</label><input id="patient_age" type="number" min="0"></div>
-        <div><label>Lytis</label>
-          <select id="patient_sex">
+        <div>
+          <label>Vardas</label>
+          <input id="patient_name" type="text" required aria-describedby="patient_name_hint" title="Būtinas laukas">
+          <div class="hint" id="patient_name_hint">Privalomas laukas</div>
+        </div>
+        <div>
+          <label>Amžius</label>
+          <input id="patient_age" type="number" min="0" max="120" required aria-describedby="patient_age_hint" title="Amžius 0-120">
+          <div class="hint" id="patient_age_hint">0–120 metų</div>
+        </div>
+        <div>
+          <label>Lytis</label>
+          <select id="patient_sex" required aria-describedby="patient_sex_hint" title="Pasirinkite lytį">
             <option value=""></option>
             <option value="M">Vyras</option>
             <option value="F">Moteris</option>
           </select>
+          <div class="hint" id="patient_sex_hint">Pasirinkite lytį</div>
         </div>
-        <div><label>Paciento ID</label><input id="patient_id" type="text"></div>
+        <div>
+          <label>Paciento ID</label>
+          <input id="patient_id" type="text" required aria-describedby="patient_id_hint" title="Įveskite paciento ID">
+          <div class="hint" id="patient_id_hint">Privalomas laukas</div>
+        </div>
       </div>
       <div class="grid cols-3">
           <div><label>GMP ŠSD (k./min)</label><input id="gmp_hr" type="number" min="0" max="250"></div>

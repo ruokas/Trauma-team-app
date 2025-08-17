@@ -580,6 +580,41 @@ async function init(){
   }
   window.addEventListener('DOMContentLoaded', init);
 
+function validateForm(){
+  const fields=[
+    {el:$('#patient_name'),check:e=>e.value.trim()!=='',msg:'Vardas privalomas'},
+    {el:$('#patient_age'),check:e=>e.value!=='' && +e.value>=0 && +e.value<=120,msg:'Amžius 0-120'},
+    {el:$('#patient_sex'),check:e=>e.value!=='',msg:'Pasirinkite lytį'},
+    {el:$('#patient_id'),check:e=>e.value.trim()!=='',msg:'ID privalomas'}
+  ];
+  let ok=true;
+  fields.forEach(({el,check,msg})=>{
+    if(!el) return;
+    if(!el.dataset.hint && el.getAttribute('aria-describedby')) el.dataset.hint=el.getAttribute('aria-describedby');
+    let err=document.getElementById(el.id+'_error');
+    const hintId=el.dataset.hint||'';
+    if(!check(el)){
+      ok=false;
+      if(!err){
+        err=document.createElement('div');
+        err.id=el.id+'_error';
+        err.className='error-msg';
+        err.textContent=msg;
+        el.parentElement.appendChild(err);
+      }
+      el.classList.add('invalid');
+      el.setAttribute('aria-invalid','true');
+      el.setAttribute('aria-describedby', (hintId+' '+err.id).trim());
+    }else{
+      if(err) err.remove();
+      el.classList.remove('invalid');
+      el.removeAttribute('aria-invalid');
+      if(hintId) el.setAttribute('aria-describedby', hintId); else el.removeAttribute('aria-describedby');
+    }
+  });
+  return ok;
+}
+
 /* ===== Report ===== */
 function gksSum(a,k,m){ a=+a||0;k=+k||0;m=+m||0; return (a&&k&&m)?(a+k+m):''; }
 const getSingleValue=sel=>listChips(sel)[0]||'';
@@ -682,12 +717,13 @@ export function generateReport(){
     showTab('Ataskaita');
     saveAll();
 }
-document.getElementById('btnGen').addEventListener('click', generateReport);
+document.getElementById('btnGen').addEventListener('click',()=>{ if(validateForm()) generateReport(); });
 
 document.getElementById('btnCopy').addEventListener('click',async()=>{ try{ await navigator.clipboard.writeText($('#output').value||''); alert('Nukopijuota.'); }catch(e){ alert('Nepavyko nukopijuoti.'); }});
-document.getElementById('btnSave').addEventListener('click',()=>{ saveAll(); alert('Išsaugota naršyklėje.');});
+document.getElementById('btnSave').addEventListener('click',()=>{ if(validateForm()){ saveAll(); alert('Išsaugota naršyklėje.'); }});
 document.getElementById('btnClear').addEventListener('click',()=>{ if(confirm('Išvalyti viską?')){ localStorage.removeItem(sessionKey()); location.reload(); }});
 document.getElementById('btnPdf').addEventListener('click', async () => {
+  if(!validateForm()) return;
   generateReport();
   const text = $('#output').value || '';
   try {
@@ -703,6 +739,7 @@ document.getElementById('btnPdf').addEventListener('click', async () => {
   }
 });
 document.getElementById('btnPrint').addEventListener('click',()=>{
+  if(!validateForm()) return;
   const prevTab=localStorage.getItem('v10_activeTab');
   generateReport();
   const text=$('#output').value||'';
