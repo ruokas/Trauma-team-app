@@ -12,23 +12,29 @@
 <body>
 <header>
   <div class="wrap">
-    <button type="button" class="btn" id="navToggle" aria-controls="tabs" aria-expanded="false" aria-label="Navigation menu">☰</button>
-    <h1>Traumos forma – Desktop v10</h1>
-    <div class="sub">Aktyvacija · ABCDE · LT · SVG kūno žemėlapis <span id="activationIndicator" class="activation-dot"></span></div>
-    <div class="toolbar" id="sessionBar">
-      <select id="sessionSelect" class="w-auto"></select>
-      <button type="button" class="btn" id="btnNewSession">Nauja sesija</button>
-      <button type="button" class="btn" id="btnRenameSession">Pervadinti</button>
+    <div class="header-left">
+      <button type="button" class="btn" id="navToggle" aria-controls="tabs" aria-expanded="false" aria-label="Navigation menu">☰</button>
+      <div class="title">
+        <h1>Traumos forma – Desktop v10</h1>
+        <div class="sub">Aktyvacija · ABCDE · LT · SVG kūno žemėlapis <span id="activationIndicator" class="activation-dot"></span></div>
+      </div>
     </div>
-    <div class="toolbar">
-      <button type="button" class="btn primary" id="btnGen">Sugeneruoti ataskaitą</button>
-      <button type="button" class="btn" id="btnCopy">Kopijuoti</button>
-      <button type="button" class="btn" id="btnSave">Išsaugoti</button>
-      <button type="button" class="btn ghost" id="btnClear">Išvalyti</button>
-      <button type="button" class="btn" id="btnPdf">PDF</button>
-      <button type="button" class="btn warn" id="btnPrint">🖨 Spausdinti</button>
+    <div class="header-actions">
+      <div class="toolbar" id="sessionBar">
+        <select id="sessionSelect" class="w-auto"></select>
+        <button type="button" class="btn" id="btnNewSession">Nauja sesija</button>
+        <button type="button" class="btn" id="btnRenameSession">Pervadinti</button>
+      </div>
+      <div class="toolbar">
+        <button type="button" class="btn primary" id="btnGen">Sugeneruoti ataskaitą</button>
+        <button type="button" class="btn" id="btnCopy">Kopijuoti</button>
+        <button type="button" class="btn" id="btnSave">Išsaugoti</button>
+        <button type="button" class="btn ghost" id="btnClear">Išvalyti</button>
+        <button type="button" class="btn" id="btnPdf">PDF</button>
+        <button type="button" class="btn warn" id="btnPrint">🖨 Spausdinti</button>
+      </div>
+      <div id="saveStatus" aria-live="polite"></div>
     </div>
-    <div id="saveStatus" aria-live="polite"></div>
   </div>
 </header>
 

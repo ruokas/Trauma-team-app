@@ -10,7 +10,10 @@
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif}
 header{position:sticky;top:0;z-index:10;background:#0d151fdd;backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
-.wrap{max-width:1200px;margin:0 auto;padding:14px 16px}
+.wrap{max-width:1200px;margin:0 auto;padding:14px 16px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between}
+.header-left{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.header-left .title{display:flex;flex-direction:column}
+.header-actions{margin-left:auto;display:flex;flex-wrap:wrap;align-items:center;gap:8px;justify-content:flex-end}
 h1{font-size:20px;margin:4px 0}
 .sub{color:var(--muted);font-size:13px}
 .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
