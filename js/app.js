@@ -4,6 +4,7 @@ import { initChips, listChips, setChipActive, isChipActive } from './chips.js';
 import { initAutoActivate } from './autoActivate.js';
 import { initActions } from './actions.js';
 import { logEvent, initTimeline } from './timeline.js';
+import { initArrivalTimer } from './arrivalTimer.js';
 import { promptModal, confirmModal } from './components/modal.js';
 import { showToast } from './components/toast.js';
 import { initValidation, validateVitals } from './validation.js';
@@ -557,6 +558,7 @@ async function init(){
   initAutoActivate(saveAllDebounced);
   initActions(saveAllDebounced);
   initTimeline();
+  initArrivalTimer(currentSessionId);
   setupActivationControls();
   fields = $$(FIELD_SELECTORS);
   document.addEventListener('input', saveAllDebounced);
