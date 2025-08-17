@@ -4,6 +4,8 @@ import { initChips, listChips, setChipActive, isChipActive } from './chips.js';
 import { initAutoActivate } from './autoActivate.js';
 import { initActions } from './actions.js';
 import { logEvent, initTimeline } from './timeline.js';
+import { promptModal, confirmModal } from './components/modal.js';
+import { showToast } from './components/toast.js';
 
 function initNavToggle(){
   const toggle = document.getElementById('navToggle');
@@ -75,9 +77,9 @@ function initTheme(){
 initTheme();
 
 async function ensureLogin(){
-  if(authToken || typeof fetch !== 'function' || typeof prompt !== 'function') return;
+  if(authToken || typeof fetch !== 'function') return;
   try{
-    const name = prompt('Įveskite vardą dalyvauti bendroje sesijoje');
+    const name = await promptModal('Įveskite vardą dalyvauti bendroje sesijoje');
     if(!name) return;
     const res = await fetch('/api/login', {
       method: 'POST',
@@ -152,8 +154,8 @@ async function initSessions(){
   populateSessionSelect(select, sessions);
   select.value=currentSessionId;
 
-  $('#btnNewSession').addEventListener('click',()=>{
-    const name=prompt('Sesijos pavadinimas');
+  $('#btnNewSession').addEventListener('click',async()=>{
+    const name=await promptModal('Sesijos pavadinimas');
     if(!name) return;
     const id=Date.now().toString(36);
     sessions.push({id,name});
@@ -165,10 +167,10 @@ async function initSessions(){
     localStorage.setItem('v10_activeTab','Aktyvacija');
     location.reload();
   });
-  $('#btnRenameSession').addEventListener('click',()=>{
+  $('#btnRenameSession').addEventListener('click',async()=>{
     const sess=sessions.find(s=>s.id===select.value);
     if(!sess) return;
-    const name=prompt('Naujas pavadinimas', sess.name);
+    const name=await promptModal('Naujas pavadinimas', sess.name);
     if(!name) return;
     sess.name=name;
     saveSessions(sessions);
@@ -272,7 +274,12 @@ const BodySVG=(function(){
     const list=[...marks.querySelectorAll('use')].filter(u=>u.dataset.side===side);
     const last=list.pop(); if(last){ last.remove(); saveAll(); }
   });
-  btnClear.addEventListener('click',()=>{ if(confirm('Išvalyti visas žymas (priekis ir nugara)?')){ marks.innerHTML=''; saveAll(); }});
+  btnClear.addEventListener('click',async()=>{
+    if(await confirmModal('Išvalyti visas žymas (priekis ir nugara)?')){
+      marks.innerHTML='';
+      saveAll();
+    }
+  });
 
   btnExport.addEventListener('click',()=>{
     const clone=svg.cloneNode(true);
@@ -786,9 +793,16 @@ export function generateReport(){
 }
 document.getElementById('btnGen').addEventListener('click',()=>{ if(validateForm()) generateReport(); });
 
-document.getElementById('btnCopy').addEventListener('click',async()=>{ try{ await navigator.clipboard.writeText($('#output').value||''); alert('Nukopijuota.'); }catch(e){ alert('Nepavyko nukopijuoti.'); }});
-document.getElementById('btnSave').addEventListener('click',()=>{ if(validateForm()){ saveAll(); alert('Išsaugota naršyklėje.'); }});
-document.getElementById('btnClear').addEventListener('click',()=>{ if(confirm('Išvalyti viską?')){ localStorage.removeItem(sessionKey()); location.reload(); }});
+document.getElementById('btnCopy').addEventListener('click',async()=>{
+  try{
+    await navigator.clipboard.writeText($('#output').value||'');
+    showToast('Nukopijuota.','success');
+  }catch(e){
+    showToast('Nepavyko nukopijuoti.','error');
+  }
+});
+document.getElementById('btnSave').addEventListener('click',()=>{ if(validateForm()){ saveAll(); showToast('Išsaugota naršyklėje.','success'); }});
+document.getElementById('btnClear').addEventListener('click',async()=>{ if(await confirmModal('Išvalyti viską?')){ localStorage.removeItem(sessionKey()); location.reload(); }});
 document.getElementById('btnPdf').addEventListener('click', async () => {
   if(!validateForm()) return;
   generateReport();
@@ -801,7 +815,7 @@ document.getElementById('btnPdf').addEventListener('click', async () => {
     doc.text(lines, 10, 10);
     doc.save('report.pdf');
   } catch (e) {
-    alert('Nepavyko sugeneruoti PDF.');
+    showToast('Nepavyko sugeneruoti PDF.','error');
     console.error('PDF generation failed', e);
   }
 });
