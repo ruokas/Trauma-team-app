@@ -8,10 +8,10 @@
 .pill{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border:1px solid var(--line);border-radius:999px;background:#152231;color:#fff;font-weight:700}
 .pill:has(input:checked){background:var(--accent);border-color:#2d74b8}
 .pill.red:has(input:checked){background:var(--red);border-color:#a52623}
-#fastGrid .pill{
-  padding:10px 16px;
-  font-size:16px;
-}
+  #fastGrid .pill{
+    padding:10px 16px;
+    font-size:1rem;
+  }
 select option.red{color:var(--red)}
 .chip{
   display:inline-flex;
@@ -45,17 +45,17 @@ label.chip input{
 .gcs-calc .grid{margin-bottom:8px}
 .blood-order-box{margin-top:8px;border:1px solid var(--line);border-radius:10px;padding:8px}
 .blood-order-box .row{gap:8px;flex-wrap:wrap;align-items:center}
-.breath-chip{padding:12px 20px;font-size:24px}
-section[data-tab="B – Kvėpavimas"] h3{margin:12px 0 4px;font-size:14px;color:var(--muted)}
+  .breath-chip{padding:12px 20px;font-size:1.5rem}
+  section[data-tab="B – Kvėpavimas"] h3{margin:12px 0 4px;font-size:0.875rem;color:var(--muted)}
 section[data-tab="B – Kvėpavimas"] h3:first-of-type{margin-top:0}
-.hint{color:var(--muted);font-size:12px}
-.error-msg{color:var(--red);font-size:12px}
+  .hint{color:var(--muted);font-size:0.75rem}
+  .error-msg{color:var(--red);font-size:0.75rem}
 input.invalid,select.invalid{border-color:var(--red)}
-.badge{padding:2px 8px;border-radius:8px;font-size:12px;border:1px solid var(--line);background:#152231;color:var(--muted)}
+  .badge{padding:2px 8px;border-radius:8px;font-size:0.75rem;border:1px solid var(--line);background:#152231;color:var(--muted)}
 .activation-dot{width:12px;height:12px;border-radius:50%;display:none;margin-left:8px}
 .activation-dot.red{background:var(--red);display:inline-block}
 .activation-dot.yellow{background:var(--yellow);display:inline-block}
-#saveStatus{color:var(--muted);font-size:13px;margin-top:4px}
+  #saveStatus{color:var(--muted);font-size:0.8125rem;margin-top:4px}
 #saveStatus.offline{color:var(--yellow)}
 #saveStatus.offline::before{content:'⚠ ';}
 .split{display:flex;gap:12px;flex-wrap:wrap}
@@ -73,7 +73,7 @@ input.invalid,select.invalid{border-color:var(--red)}
 .tool.active{background:var(--accent);color:#fff;border-color:#2d74b8}
 #bodySvg{width:100%;max-width:400px;height:auto;border:1px solid var(--line);border-radius:12px;background:#0b141e}
 .silhouette{fill:#0f1822;stroke:#36506a;stroke-width:2}
-.label{fill:#a9b6c5;font:bold 16px system-ui}
+  .label{fill:#a9b6c5;font:bold 1rem system-ui}
 .mark-w{stroke:#ef5350;stroke-width:3;fill:none}
 .mark-b{fill:#64b5f6}
 .mark-n{fill:#ffd54f;stroke:#6b540e;stroke-width:2}
@@ -99,7 +99,7 @@ input.invalid,select.invalid{border-color:var(--red)}
 section[data-tab="Intervencijos"] .card{padding:8px}
 section[data-tab="Intervencijos"] .card .detail .grid{gap:4px}
 section[data-tab="Intervencijos"] .med-search{margin-bottom:8px}
-section[data-tab="Intervencijos"] h3{margin:0 0 8px;font-size:13px;color:var(--muted);display:flex;align-items:center;gap:4px}
+  section[data-tab="Intervencijos"] h3{margin:0 0 8px;font-size:0.8125rem;color:var(--muted);display:flex;align-items:center;gap:4px}
 /* Modal and toast components */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:1000}
 .modal{background:var(--card);color:var(--ink);padding:20px;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,0.3);max-width:90%;width:320px}
