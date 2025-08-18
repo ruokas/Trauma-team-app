@@ -36,7 +36,7 @@ export function initTabs(){
     b.className='tab'+(i===0?' active':'');
     b.dataset.tab = t.name;
     const label = t.name;
-    b.innerHTML = t.icon ? `${t.icon} ${label}` : label;
+    b.innerHTML = `<span class="tab-icon">${t.icon ? t.icon : ''}</span><span class="tab-label">${label}</span>`;
     b.setAttribute('role','tab');
     b.setAttribute('tabindex','0');
     b.setAttribute('aria-selected', i===0 ? 'true' : 'false');
