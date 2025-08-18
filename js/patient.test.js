@@ -13,6 +13,7 @@ const setupDom = () => {
     <button id="btnClear"></button>
     <button id="btnPrint"></button>
     <button id="btnPdf"></button>
+    <button id="btnAtvyko"></button>
     <button id="btnGCS15"></button>
     <button id="btnGCSCalc"></button>
     <div id="d_gcs_calc" style="display:none">
