@@ -613,6 +613,7 @@ function validateForm(){
       if(hintId) el.setAttribute('aria-describedby', hintId); else el.removeAttribute('aria-describedby');
     }
   });
+  if(!validateVitals()) ok=false;
   return ok;
 }
 
