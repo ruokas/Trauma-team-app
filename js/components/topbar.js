@@ -1,17 +1,7 @@
-export async function initTopbar(){
-  const header=document.getElementById('appHeader');
-  if(!header || typeof fetch !== 'function') return;
-  try{
-    const res=await fetch('assets/partials/topbar.html');
-    if(res.ok){
-      header.innerHTML=await res.text();
-    }
-  }catch(e){
-    console.error('Failed to load topbar', e);
-  }
-  const toggle=document.getElementById('navToggle');
-  const nav=document.querySelector('nav');
+export function initNavToggle(toggle, nav){
   if(!toggle || !nav) return;
+  toggle.setAttribute('aria-controls', nav.id);
+  toggle.setAttribute('aria-expanded','false');
   nav.setAttribute('aria-hidden','true');
   const focusableSel='a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
   function close(){
@@ -50,4 +40,20 @@ export async function initTopbar(){
   nav.addEventListener('click',e=>{
     if(e.target.closest('.tab')) close();
   });
+}
+
+export async function initTopbar(){
+  const header=document.getElementById('appHeader');
+  if(!header || typeof fetch!=='function') return;
+  try{
+    const res=await fetch('assets/partials/topbar.html');
+    if(res.ok){
+      header.innerHTML=await res.text();
+    }
+  }catch(e){
+    console.error('Failed to load topbar', e);
+  }
+  const toggle=document.getElementById('navToggle');
+  const nav=document.querySelector('nav');
+  initNavToggle(toggle, nav);
 }

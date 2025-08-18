@@ -21,3 +21,5 @@
 .hidden{display:none}
 .detail{overflow:hidden;max-height:200px;opacity:1;transition:max-height .3s ease,opacity .3s ease}
 .collapsed{max-height:0;opacity:0;pointer-events:none}
+.skip-link{position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden}
+.skip-link:focus{left:0;top:0;width:auto;height:auto;padding:8px;background:var(--bg);z-index:1000}
