@@ -5,7 +5,8 @@
   "main": "server/index.js",
   "scripts": {
     "test": "jest --passWithNoTests",
-    "build:css": "sass --no-source-map --style=compressed css/scss/main.scss css/main.css"
+    "build:css": "sass --no-source-map --style=compressed css/scss/main.scss css/main.css",
+    "start": "node server/index.js"
   },
   "keywords": [],
   "author": "",
