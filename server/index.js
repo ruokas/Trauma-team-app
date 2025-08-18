@@ -49,7 +49,7 @@ function auth(req, res, next){
 }
 
 /* ===== Sessions ===== */
-app.get('/api/sessions', (req, res) => {
+app.get('/api/sessions', auth, (req, res) => {
   res.json(db.sessions);
 });
 
