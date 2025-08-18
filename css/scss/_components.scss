@@ -101,6 +101,9 @@ section[data-tab="Intervencijos"] .card{padding:8px}
 section[data-tab="Intervencijos"] .card .detail .grid{gap:4px}
 section[data-tab="Intervencijos"] .med-search{margin-bottom:8px}
   section[data-tab="Intervencijos"] h3{margin:0 0 8px;font-size:0.8125rem;color:var(--muted);display:flex;align-items:center;gap:4px}
+/* Pain meds list layout */
+#pain_meds{grid-template-columns:1fr;gap:4px}
+#pain_meds .chip{width:100%;justify-content:flex-start;text-align:left;padding:4px 8px;white-space:normal}
 /* Modal and toast components */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:1000}
 .modal{background:var(--card);color:var(--ink);padding:20px;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,0.3);max-width:90%;width:320px}
