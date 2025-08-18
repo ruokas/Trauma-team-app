@@ -9,7 +9,7 @@
 
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;font-size:16px;line-height:1.5}
-header{position:sticky;top:0;z-index:10;background:#0d151fdd;backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+header{--header-height:68px;position:sticky;top:0;z-index:10;background:#0d151fdd;backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
 .wrap{max-width:1200px;margin:0 auto;padding:14px 16px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between}
 .header-left{display:flex;align-items:center;gap:8px}
 .header-actions{
@@ -38,7 +38,7 @@ h1{font-size:1.25rem;margin:4px 0}
 .toolbar--scroll{flex-wrap:nowrap;overflow-x:auto}
 .header-actions .toolbar:first-child{margin-top:0}
 main{max-width:1200px;margin:12px auto;padding:0 16px;display:grid;grid-template-columns:220px 1fr;gap:12px}
-nav{position:sticky;top:68px;align-self:start}
+nav{position:sticky;top:var(--header-height);align-self:start}
 #navToggle{display:none}
 nav .tab{display:flex;align-items:center;gap:8px;width:100%;white-space:nowrap;padding:10px 12px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;background:#152231;color:var(--ink);cursor:pointer;font-weight:600;text-align:left;text-transform:none;font-size:1rem;transition:background-color .2s,color .2s}
 nav .tab:hover{background:color-mix(in srgb,#152231,white 10%);color:color-mix(in srgb,var(--ink),white 10%)}
