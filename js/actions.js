@@ -30,18 +30,78 @@ function buildActionCard(group, name, saveAll, opts={}){
   card.style.borderRadius='10px';
   const slug=name.toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'');
   const gridClass=(includeDose || custom)?'cols-3':'cols-2';
-  card.innerHTML=`<label class="pill"><input type="checkbox" class="act_chk" data-field="${group}_${slug}_chk"><span class="act_name">${name}</span></label>
-    <div class="detail collapsed">
-      <div class="grid ${gridClass}" style="margin-top:4px">
-        ${custom?`<div><label>Pavadinimas</label><input type="text" class="act_custom_name" data-field="${group}_${slug}_custom"></div>`:''}
-        <div><label>Laikas</label><input type="time" class="act_time" data-field="${group}_${slug}_time"></div>
-        ${includeDose?`<div><label>Dozė/kiekis</label><input type="text" class="act_dose" data-field="${group}_${slug}_dose"></div>`:''}
-        <div><label>Pastabos</label><input type="text" class="act_note" data-field="${group}_${slug}_note"></div>
-      </div>
-    </div>`;
 
-  const chk=card.querySelector('.act_chk');
-  const detail=card.querySelector('.detail');
+  // Build label section
+  const label=document.createElement('label');
+  label.className='pill';
+  const chk=document.createElement('input');
+  chk.type='checkbox';
+  chk.className='act_chk';
+  chk.dataset.field=`${group}_${slug}_chk`;
+  const nameSpan=document.createElement('span');
+  nameSpan.className='act_name';
+  nameSpan.textContent=name;
+  label.appendChild(chk);
+  label.appendChild(nameSpan);
+
+  // Detail section
+  const detail=document.createElement('div');
+  detail.className='detail collapsed';
+  const grid=document.createElement('div');
+  grid.className=`grid ${gridClass}`;
+  grid.style.marginTop='4px';
+
+  if(custom){
+    const customDiv=document.createElement('div');
+    const customLabel=document.createElement('label');
+    customLabel.textContent='Pavadinimas';
+    const customInput=document.createElement('input');
+    customInput.type='text';
+    customInput.className='act_custom_name';
+    customInput.dataset.field=`${group}_${slug}_custom`;
+    customDiv.appendChild(customLabel);
+    customDiv.appendChild(customInput);
+    grid.appendChild(customDiv);
+  }
+
+  const timeDiv=document.createElement('div');
+  const timeLabel=document.createElement('label');
+  timeLabel.textContent='Laikas';
+  const timeInput=document.createElement('input');
+  timeInput.type='time';
+  timeInput.className='act_time';
+  timeInput.dataset.field=`${group}_${slug}_time`;
+  timeDiv.appendChild(timeLabel);
+  timeDiv.appendChild(timeInput);
+  grid.appendChild(timeDiv);
+
+  if(includeDose){
+    const doseDiv=document.createElement('div');
+    const doseLabel=document.createElement('label');
+    doseLabel.textContent='Dozė/kiekis';
+    const doseInput=document.createElement('input');
+    doseInput.type='text';
+    doseInput.className='act_dose';
+    doseInput.dataset.field=`${group}_${slug}_dose`;
+    doseDiv.appendChild(doseLabel);
+    doseDiv.appendChild(doseInput);
+    grid.appendChild(doseDiv);
+  }
+
+  const noteDiv=document.createElement('div');
+  const noteLabel=document.createElement('label');
+  noteLabel.textContent='Pastabos';
+  const noteInput=document.createElement('input');
+  noteInput.type='text';
+  noteInput.className='act_note';
+  noteInput.dataset.field=`${group}_${slug}_note`;
+  noteDiv.appendChild(noteLabel);
+  noteDiv.appendChild(noteInput);
+  grid.appendChild(noteDiv);
+
+  detail.appendChild(grid);
+  card.appendChild(label);
+  card.appendChild(detail);
 
   function update(){
     if(chk.checked || card.classList.contains('expanded')) detail.classList.remove('collapsed');
