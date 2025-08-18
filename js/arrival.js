@@ -1,6 +1,7 @@
 import { $ } from './utils.js';
 
 let arrivalTime = null;
+let timerId = null;
 
 export function recordArrivalTime(){
   const stored = localStorage.getItem('arrival_time');
@@ -31,5 +32,11 @@ export function startArrivalTimer(){
     el.textContent = formatElapsed(diff);
   };
   update();
-  setInterval(update, 1000);
+  clearInterval(timerId);
+  timerId = setInterval(update, 1000);
+}
+
+export function stopArrivalTimer(){
+  clearInterval(timerId);
+  timerId = null;
 }
