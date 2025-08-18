@@ -8,51 +8,8 @@ import { promptModal, confirmModal } from './components/modal.js';
 import { showToast } from './components/toast.js';
 import { initValidation, validateVitals } from './validation.js';
 import { startArrivalTimer } from './arrival.js';
+import { initTopbar } from './components/topbar.js';
 export { validateVitals };
-
-function initNavToggle(){
-  const toggle = document.getElementById('navToggle');
-  const nav = document.querySelector('nav');
-  if(!toggle || !nav) return;
-  nav.setAttribute('aria-hidden','true');
-  const focusableSel = 'a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
-  const trap = e => {
-    if(e.key === 'Tab'){
-      const items = nav.querySelectorAll(focusableSel);
-      if(!items.length) return;
-      const first = items[0];
-      const last = items[items.length - 1];
-      if(e.shiftKey){
-        if(document.activeElement === first){ e.preventDefault(); last.focus(); }
-      }else{
-        if(document.activeElement === last){ e.preventDefault(); first.focus(); }
-      }
-    }else if(e.key === 'Escape'){
-      close();
-    }
-  };
-  const open = () => {
-    document.body.classList.add('nav-open');
-    toggle.setAttribute('aria-expanded','true');
-    nav.removeAttribute('aria-hidden');
-    const items = nav.querySelectorAll(focusableSel);
-    if(items.length) items[0].focus();
-    document.addEventListener('keydown', trap);
-  };
-  const close = () => {
-    document.body.classList.remove('nav-open');
-    toggle.setAttribute('aria-expanded','false');
-    nav.setAttribute('aria-hidden','true');
-    document.removeEventListener('keydown', trap);
-    toggle.focus();
-  };
-  toggle.addEventListener('click', () => {
-    document.body.classList.contains('nav-open') ? close() : open();
-  });
-  nav.addEventListener('click', e => {
-    if(e.target.closest('.tab')) close();
-  });
-}
 
 let authToken = localStorage.getItem('trauma_token') || null;
 let socket = null;
@@ -549,11 +506,12 @@ function clampNumberInputs(){
 
 /* ===== Init modules ===== */
 async function init(){
+  await initTopbar();
+  setupHeaderActions();
   await ensureLogin();
   connectSocket();
   await initSessions();
   initTabs();
-  initNavToggle();
   initChips(saveAllDebounced);
   initAutoActivate(saveAllDebounced);
   initActions(saveAllDebounced);
@@ -760,60 +718,76 @@ export function generateReport(){
   showTab('Ataskaita');
   saveAll();
 }
-document.getElementById('btnAtvyko').addEventListener('click', startArrivalTimer);
-document.getElementById('btnGen').addEventListener('click',()=>{ if(validateForm()) generateReport(); });
+function setupHeaderActions(){
+  const btnAtvyko=document.getElementById('btnAtvyko');
+  if(btnAtvyko) btnAtvyko.addEventListener('click', startArrivalTimer);
 
-document.getElementById('btnCopy').addEventListener('click',async()=>{
-  try{
-    await navigator.clipboard.writeText($('#output').value||'');
-    showToast('Nukopijuota.','success');
-  }catch(e){
-    showToast('Nepavyko nukopijuoti.','error');
-  }
-});
-document.getElementById('btnSave').addEventListener('click',()=>{ if(validateForm()){ saveAll(); showToast('Išsaugota naršyklėje.','success'); }});
-document.getElementById('btnClear').addEventListener('click',async()=>{ if(await confirmModal('Išvalyti viską?')){ localStorage.removeItem(sessionKey()); location.reload(); }});
-document.getElementById('btnPdf').addEventListener('click', async () => {
-  if(!validateForm()) return;
-  generateReport();
-  const text = $('#output').value || '';
-  try {
-    const module = await import('./lib/jspdf.umd.min.js');
-    const { jsPDF } = module.default;
-    const doc = new jsPDF();
-    const lines = doc.splitTextToSize(text, 180);
-    doc.text(lines, 10, 10);
-    doc.save('report.pdf');
-  } catch (e) {
-    showToast('Nepavyko sugeneruoti PDF.','error');
-    console.error('PDF generation failed', e);
-  }
-});
-document.getElementById('btnPrint').addEventListener('click',()=>{
-  if(!validateForm()) return;
-  const prevTab=localStorage.getItem('v10_activeTab');
-  generateReport();
-  const text=$('#output').value||'';
-  const printWin=window.open('','_blank');
-  if(printWin){
-    const doc=printWin.document;
-    doc.open();
-    doc.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>Ataskaita</title><link rel="stylesheet" href="/css/main.css"><style>body{font-family:sans-serif;padding:20px;} pre{white-space:pre-wrap;}</style></head><body></body></html>');
-    doc.close();
-    const svg=doc.importNode(document.getElementById('bodySvg'), true);
-    const front=svg.querySelector('#layer-front');
-    const back=svg.querySelector('#layer-back');
-    if(front) front.classList.remove('hidden');
-    if(back) back.classList.remove('hidden');
-    const pre=doc.createElement('pre');
-    pre.textContent=text;
-    doc.body.appendChild(pre);
-    doc.body.appendChild(svg);
-    printWin.focus();
-    printWin.print();
-    printWin.close();
-  }else{
-    window.print();
-  }
-  if(prevTab) showTab(prevTab);
-});
+  const btnGen=document.getElementById('btnGen');
+  if(btnGen) btnGen.addEventListener('click',()=>{ if(validateForm()) generateReport(); });
+
+  const btnCopy=document.getElementById('btnCopy');
+  if(btnCopy) btnCopy.addEventListener('click',async()=>{
+    try{
+      await navigator.clipboard.writeText($('#output').value||'');
+      showToast('Nukopijuota.','success');
+    }catch(e){
+      showToast('Nepavyko nukopijuoti.','error');
+    }
+  });
+
+  const btnSave=document.getElementById('btnSave');
+  if(btnSave) btnSave.addEventListener('click',()=>{ if(validateForm()){ saveAll(); showToast('Išsaugota naršyklėje.','success'); }});
+
+  const btnClear=document.getElementById('btnClear');
+  if(btnClear) btnClear.addEventListener('click',async()=>{ if(await confirmModal('Išvalyti viską?')){ localStorage.removeItem(sessionKey()); location.reload(); }});
+
+  const btnPdf=document.getElementById('btnPdf');
+  if(btnPdf) btnPdf.addEventListener('click', async () => {
+    if(!validateForm()) return;
+    generateReport();
+    const text = $('#output').value || '';
+    try {
+      const module = await import('./lib/jspdf.umd.min.js');
+      const { jsPDF } = module.default;
+      const doc = new jsPDF();
+      const lines = doc.splitTextToSize(text, 180);
+      doc.text(lines, 10, 10);
+      doc.save('report.pdf');
+    } catch (e) {
+      showToast('Nepavyko sugeneruoti PDF.','error');
+      console.error('PDF generation failed', e);
+    }
+  });
+
+  const btnPrint=document.getElementById('btnPrint');
+  if(btnPrint) btnPrint.addEventListener('click',()=>{
+    if(!validateForm()) return;
+    const prevTab=localStorage.getItem('v10_activeTab');
+    generateReport();
+    const text=$('#output').value||'';
+    const printWin=window.open('','_blank');
+    if(printWin){
+      const doc=printWin.document;
+      doc.open();
+      doc.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>Ataskaita</title><link rel="stylesheet" href="/css/main.css"><style>body{font-family:sans-serif;padding:20px;} pre{white-space:pre-wrap;}</style></head><body></body></html>');
+      doc.close();
+      const svg=doc.importNode(document.getElementById('bodySvg'), true);
+      const front=svg.querySelector('#layer-front');
+      const back=svg.querySelector('#layer-back');
+      if(front) front.classList.remove('hidden');
+      if(back) back.classList.remove('hidden');
+      const pre=doc.createElement('pre');
+      pre.textContent=text;
+      doc.body.appendChild(pre);
+      doc.body.appendChild(svg);
+      printWin.focus();
+      printWin.print();
+      printWin.close();
+    }else{
+      window.print();
+    }
+    if(prevTab) showTab(prevTab);
+  });
+}
+
+setupHeaderActions();
