@@ -117,19 +117,20 @@ export function initActions(saveAll){
   const bleedingWrap=$('#bleeding_meds');
   const otherWrap=$('#other_meds');
   const procsWrap=$('#procedures');
-  PAIN_MEDS.sort((a,b)=>a.localeCompare(b));
-  BLEEDING_MEDS.sort((a,b)=>a.localeCompare(b));
-  OTHER_MEDS.sort((a,b)=>a.localeCompare(b));
+  const sortedPainMeds = PAIN_MEDS.slice().sort((a,b)=>a.localeCompare(b));
+  const sortedBleedingMeds = BLEEDING_MEDS.slice().sort((a,b)=>a.localeCompare(b));
+  const sortedOtherMeds = OTHER_MEDS.slice().sort((a,b)=>a.localeCompare(b));
+
   const painFrag=document.createDocumentFragment();
-  PAIN_MEDS.forEach(n=>painFrag.appendChild(buildActionCard('med', n, saveAll)));
+  sortedPainMeds.forEach(n=>painFrag.appendChild(buildActionCard('med', n, saveAll)));
   painWrap.appendChild(painFrag);
 
   const bleedingFrag=document.createDocumentFragment();
-  BLEEDING_MEDS.forEach(n=>bleedingFrag.appendChild(buildActionCard('med', n, saveAll)));
+  sortedBleedingMeds.forEach(n=>bleedingFrag.appendChild(buildActionCard('med', n, saveAll)));
   bleedingWrap.appendChild(bleedingFrag);
 
   const otherFrag=document.createDocumentFragment();
-  OTHER_MEDS.forEach(n=>otherFrag.appendChild(buildActionCard('med', n, saveAll)));
+  sortedOtherMeds.forEach(n=>otherFrag.appendChild(buildActionCard('med', n, saveAll)));
   otherFrag.appendChild(buildActionCard('med','Kita', saveAll, {custom:true}));
   otherWrap.appendChild(otherFrag);
 
