@@ -35,11 +35,15 @@ export function validateField(el) {
 
 export function validateVitals() {
   const fields = ['#gmp_hr','#gmp_rr','#gmp_spo2','#gmp_sbp','#gmp_dbp','#gmp_gksa','#gmp_gksk','#gmp_gksm','#d_gksa','#d_gksk','#d_gksm','#patient_age'];
+  let ok = true;
   fields.forEach(sel => {
     const el = $(sel);
-    if (el) validateField(el);
+    if (el) {
+      validateField(el);
+      if (el.classList.contains('invalid')) ok = false;
+    }
   });
-  return true;
+  return ok;
 }
 
 export function initValidation() {
