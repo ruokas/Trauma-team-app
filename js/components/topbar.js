@@ -53,6 +53,13 @@ export async function initTopbar(){
   }catch(e){
     console.error('Failed to load topbar', e);
   }
+  const setHeight=()=>{
+    const h=header.offsetHeight+'px';
+    header.style.setProperty('--header-height', h);
+    document.documentElement.style.setProperty('--header-height', h);
+  };
+  setHeight();
+  window.addEventListener('resize', setHeight);
   const toggle=document.getElementById('navToggle');
   const nav=document.querySelector('nav');
   initNavToggle(toggle, nav);
