@@ -3,11 +3,14 @@ export function initNavToggle(toggle, nav){
   toggle.setAttribute('aria-controls', nav.id);
   toggle.setAttribute('aria-expanded','false');
   nav.setAttribute('aria-hidden','true');
+  const overlay=document.querySelector('.nav-overlay');
   const focusableSel='a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
   function close(){
     document.body.classList.remove('nav-open');
     toggle.setAttribute('aria-expanded','false');
     nav.setAttribute('aria-hidden','true');
+    if(overlay) overlay.hidden=true;
+    document.body.style.overflow='';
     document.removeEventListener('keydown', trap);
     toggle.focus();
   }
@@ -30,6 +33,8 @@ export function initNavToggle(toggle, nav){
     document.body.classList.add('nav-open');
     toggle.setAttribute('aria-expanded','true');
     nav.removeAttribute('aria-hidden');
+    if(overlay) overlay.hidden=false;
+    document.body.style.overflow='hidden';
     const items=nav.querySelectorAll(focusableSel);
     if(items.length) items[0].focus();
     document.addEventListener('keydown', trap);

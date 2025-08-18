@@ -78,6 +78,9 @@ input.invalid,select.invalid{border-color:var(--red)}
 .mark-w{stroke:#ef5350;stroke-width:3;fill:none}
 .mark-b{fill:#64b5f6}
 .mark-n{fill:#ffd54f;stroke:#6b540e;stroke-width:2}
+.nav-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:10}
+body.nav-open .nav-overlay{display:block}
+body.nav-open{overflow:hidden}
 @media (max-width:980px){
   #navToggle{display:inline-block;margin-bottom:8px}
   main{grid-template-columns:1fr}
