@@ -7,6 +7,7 @@ import { logEvent, initTimeline } from './timeline.js';
 import { promptModal, confirmModal } from './components/modal.js';
 import { showToast } from './components/toast.js';
 import { initValidation, validateVitals } from './validation.js';
+import { startArrivalTimer } from './arrival.js';
 export { validateVitals };
 
 function initNavToggle(){
@@ -557,6 +558,7 @@ async function init(){
   initAutoActivate(saveAllDebounced);
   initActions(saveAllDebounced);
   initTimeline();
+  startArrivalTimer();
   setupActivationControls();
   fields = $$(FIELD_SELECTORS);
   document.addEventListener('input', saveAllDebounced);
