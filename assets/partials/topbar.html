@@ -18,11 +18,16 @@
     </div>
     <div class="toolbar">
       <button type="button" class="btn primary" id="btnGen">Sugeneruoti ataskaitą</button>
-      <button type="button" class="btn" id="btnCopy">Kopijuoti</button>
-      <button type="button" class="btn" id="btnSave">Išsaugoti</button>
-      <button type="button" class="btn ghost" id="btnClear">Išvalyti</button>
-      <button type="button" class="btn" id="btnPdf">PDF</button>
-      <button type="button" class="btn warn" id="btnPrint">🖨 Spausdinti</button>
+      <details class="more-actions">
+        <summary class="btn">More ▾</summary>
+        <div class="menu">
+          <button type="button" class="btn" id="btnCopy">Kopijuoti</button>
+          <button type="button" class="btn" id="btnSave">Išsaugoti</button>
+          <button type="button" class="btn ghost" id="btnClear">Išvalyti</button>
+          <button type="button" class="btn" id="btnPdf">PDF</button>
+          <button type="button" class="btn warn" id="btnPrint">🖨 Spausdinti</button>
+        </div>
+      </details>
     </div>
     <div id="saveStatus" aria-live="polite"></div>
   </div>
