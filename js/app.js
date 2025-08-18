@@ -558,7 +558,6 @@ async function init(){
   initAutoActivate(saveAllDebounced);
   initActions(saveAllDebounced);
   initTimeline();
-  startArrivalTimer();
   setupActivationControls();
   fields = $$(FIELD_SELECTORS);
   document.addEventListener('input', saveAllDebounced);
@@ -757,10 +756,11 @@ export function generateReport(){
     }
 
     $('#output').value=out.filter(Boolean).join('\n');
-    expandOutput();
-    showTab('Ataskaita');
-    saveAll();
+  expandOutput();
+  showTab('Ataskaita');
+  saveAll();
 }
+document.getElementById('btnAtvyko').addEventListener('click', startArrivalTimer);
 document.getElementById('btnGen').addEventListener('click',()=>{ if(validateForm()) generateReport(); });
 
 document.getElementById('btnCopy').addEventListener('click',async()=>{
