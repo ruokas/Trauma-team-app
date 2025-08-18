@@ -29,7 +29,7 @@ function buildActionCard(group, name, saveAll, opts={}){
   card.style.padding='6px';
   card.style.borderRadius='10px';
   const slug=name.toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'');
-  const gridClass=(includeDose || custom)?'cols-3':'cols-2';
+  const gridClass=(includeDose || custom)?'cols-3 cols-auto':'cols-2 cols-auto';
 
   // Build label section
   const label=document.createElement('label');
