@@ -21,6 +21,10 @@
       </div>
     </div>
     <div class="header-actions">
+      <div class="toolbar" id="arrivalBar">
+        <button type="button" class="btn primary" id="btnAtvyko">ATVYKO</button>
+        <div id="arrivalTimer" class="btn primary arrival-timer" aria-live="polite"></div>
+      </div>
       <div class="toolbar" id="sessionBar">
         <select id="sessionSelect" class="w-auto"></select>
         <button type="button" class="btn" id="btnNewSession">Nauja sesija</button>
@@ -38,9 +42,6 @@
     </div>
   </div>
 </header>
-
-<button type="button" class="btn" id="btnAtvyko">ATVYKO</button>
-<div id="arrivalTimer" class="arrival-timer" aria-live="polite"></div>
 
 <main>
   <nav id="tabs"></nav>
