@@ -17,6 +17,7 @@ header{position:sticky;top:0;z-index:10;background:#0d151fdd;backdrop-filter:blu
 h1{font-size:1.25rem;margin:4px 0}
 .sub{color:var(--muted);font-size:0.8125rem}
 .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.header-actions .toolbar:first-child{margin-top:0}
 main{max-width:1200px;margin:12px auto;padding:0 16px;display:grid;grid-template-columns:220px 1fr;gap:12px}
 nav{position:sticky;top:68px;align-self:start}
 #navToggle{display:none}

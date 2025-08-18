@@ -114,4 +114,4 @@ section[data-tab="Intervencijos"] .med-search{margin-bottom:8px}
 .toast.success{background:var(--green);color:#fff}
 .toast.error{background:var(--red);color:#fff}
 .toast.hide{opacity:0;transform:translateY(10px)}
-.arrival-timer{position:fixed;top:8px;right:8px;background:var(--card);color:var(--ink);padding:4px 8px;border:1px solid var(--line);border-radius:6px;font-family:monospace;z-index:1000}
+.arrival-timer{font-family:monospace;pointer-events:none;cursor:default}
