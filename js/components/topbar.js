@@ -78,8 +78,8 @@ function initActionsMenu(){
   const menu=document.getElementById('actionsMenu');
   const arrival=document.getElementById('arrivalBar');
   const session=document.getElementById('sessionBar');
-  const actionsWrap=document.querySelector('.header-actions');
-  if(!container || !toggle || !menu || !arrival || !session || !actionsWrap) return;
+  const centerWrap=document.querySelector('.header-center');
+  if(!container || !toggle || !menu || !arrival || !session || !centerWrap) return;
   const mq=window.matchMedia('(max-width: 480px)');
   const update=()=>{
     if(mq.matches){
@@ -87,8 +87,7 @@ function initActionsMenu(){
       menu.appendChild(session);
       container.hidden=false;
     }else{
-      actionsWrap.insertBefore(arrival, container);
-      actionsWrap.insertBefore(session, container);
+      centerWrap.append(arrival, session);
       container.hidden=true;
       menu.hidden=true;
       toggle.setAttribute('aria-expanded','false');
