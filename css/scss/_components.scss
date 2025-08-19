@@ -48,7 +48,7 @@ label.chip input{
   .gcs-calc .grid{margin-bottom:$space-8}
   .blood-order-box{margin-top:$space-8;border:1px solid var(--line);border-radius:$space-10;padding:$space-8}
   .blood-order-box .row{gap:$space-8;flex-wrap:wrap;align-items:center}
-    .breath-chip{padding:$space-12 $space-20;font-size:$font-xxl}
+    .breath-chip{padding:$space-8 $space-10;font-size:$font-lg}
     section[data-tab="B – Kvėpavimas"] h3{margin:$space-12 0 $space-4;font-size:$font-md;color:var(--muted)}
 section[data-tab="B – Kvėpavimas"] h3:first-of-type{margin-top:0}
     .hint{color:var(--muted);font-size:0.875rem}
