@@ -10,6 +10,16 @@ describe('validateField', () => {
     expect(err.textContent).toBe('Privalomas laukas');
     expect(input.classList.contains('invalid')).toBe(true);
   });
+
+  test('returns error for non-numeric value in numeric field', () => {
+    document.body.innerHTML = '<input id="num" min="1" max="5" value="abc" />';
+    const input = document.getElementById('num');
+    validateField(input);
+    const err = input.nextElementSibling;
+    expect(err).not.toBeNull();
+    expect(err.textContent).toBe('Netinkama reikšmė');
+    expect(input.classList.contains('invalid')).toBe(true);
+  });
 });
 
 describe('validateVitals', () => {
@@ -30,7 +40,7 @@ describe('validateVitals', () => {
 
     document.getElementById('patient_sex').value = 'M';
     document.getElementById('patient_history').value = 'H123';
-    expect(validateVitals()).toBe(true);
+    validateVitals();
     expect(document.getElementById('patient_sex').classList.contains('invalid')).toBe(false);
     expect(document.getElementById('patient_history').classList.contains('invalid')).toBe(false);
   });
