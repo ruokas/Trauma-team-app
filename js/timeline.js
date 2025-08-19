@@ -42,6 +42,9 @@ export function initTimeline() {
     a.click();
     URL.revokeObjectURL(url);
   });
+  $('#timelineClear')?.addEventListener('click', () => {
+    if (confirm('Ar tikrai ištrinti visus įrašus?')) clearTimeline();
+  });
   renderTimeline();
 }
 
