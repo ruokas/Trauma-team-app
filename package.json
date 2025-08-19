@@ -6,7 +6,8 @@
   "scripts": {
     "test": "jest --passWithNoTests",
     "build:css": "sass --no-source-map --style=compressed css/scss/main.scss css/main.css",
-    "start": "node server/index.js"
+    "start": "node server/index.js",
+    "prepare": "husky install"
   },
   "keywords": [],
   "author": "",
@@ -21,6 +22,7 @@
     "@babel/preset-env": "^7.28.3",
     "jest": "^27.5.1",
     "jsdom": "^26.1.0",
-    "sass": "^1.90.0"
+    "sass": "^1.90.0",
+    "husky": "^9.0.0"
   }
 }
