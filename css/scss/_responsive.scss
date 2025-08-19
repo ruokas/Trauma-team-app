@@ -14,6 +14,16 @@
 
 @media (max-width: 768px) {
   .header-actions {
+    flex-wrap:wrap;
+    .toolbar{
+      flex-wrap:wrap;
+      flex:1 1 220px;
+      min-width:220px;
+      .btn{
+        flex:1 1 100px;
+        min-width:100px;
+      }
+    }
     .more-actions {
       position:relative;
       > summary {
