@@ -1,3 +1,5 @@
+@use 'variables' as *;
+
 :root{color-scheme:dark}
 
 :root.dark{
@@ -8,7 +10,7 @@
 }
 
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;font-size:100%;line-height:1.5}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;font-size:$font-base;line-height:1.5}
 header{--header-height:68px;position:sticky;top:0;z-index:10;background:#0d151fdd;backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
 .wrap{max-width:1200px;margin:0 auto;padding:14px 16px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between}
 .header-left{display:flex;align-items:center;gap:8px}
@@ -31,8 +33,8 @@ header{--header-height:68px;position:sticky;top:0;z-index:10;background:#0d151fd
   }
 }
 #saveStatus{width:100%}
-h1{font-size:1.25rem;margin:4px 0}
-.sub{color:var(--muted);font-size:0.8125rem}
+h1{font-size:$font-xl;margin:4px 0}
+.sub{color:var(--muted);font-size:$font-sm}
 .btn{min-width:4rem}
 .toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
 .toolbar--scroll{flex-wrap:nowrap;overflow-x:auto}
@@ -40,18 +42,18 @@ h1{font-size:1.25rem;margin:4px 0}
 main{max-width:1200px;margin:12px auto;padding:0 16px;display:grid;grid-template-columns:220px 1fr;gap:12px}
 nav{position:sticky;top:var(--header-height);align-self:start}
 #navToggle{display:none}
-nav .tab{display:flex;align-items:center;gap:8px;width:100%;white-space:nowrap;padding:10px 12px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;background:#152231;color:var(--ink);cursor:pointer;font-weight:600;text-align:left;text-transform:none;font-size:1rem;transition:background-color .2s,color .2s}
+nav .tab{display:flex;align-items:center;gap:8px;width:100%;white-space:nowrap;padding:10px 12px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;background:#152231;color:var(--ink);cursor:pointer;font-weight:600;text-align:left;text-transform:none;font-size:$font-lg;transition:background-color .2s,color .2s}
 nav .tab:hover{background:color-mix(in srgb,#152231,white 10%);color:color-mix(in srgb,var(--ink),white 10%)}
 nav .tab.active{background:#1f2e44;border-color:#2b405c}
 nav .tab:focus{outline:none}
 nav .tab:focus-visible{outline:2px solid var(--accent)}
 .tab-icon{width:1.5rem}
 section.card{background:rgba(18,26,36,.6);backdrop-filter:blur(10px);border:1px solid color-mix(in srgb,var(--line),white 20%);border-radius:14px;padding:14px;color:var(--ink)}
-section.card h2{font-size:1rem;margin:0 0 10px}
+section.card h2{font-size:$font-lg;margin:0 0 10px}
 section.card .grid{display:grid;gap:10px}
-label{display:block;color:var(--muted);font-size:0.8125rem;margin-bottom:4px}
+label{display:block;color:var(--muted);font-size:$font-sm;margin-bottom:4px}
 input[type="text"],input[type="number"],input[type="time"],input[type="date"],textarea,select{
-  width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:10px;background:#0f1620;color:var(--ink);font-size:0.875rem
+  width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:10px;background:#0f1620;color:var(--ink);font-size:$font-md
 }
 input[type="text"]:focus-visible,input[type="number"]:focus-visible,input[type="time"]:focus-visible,input[type="date"]:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid var(--accent)}
 input::placeholder,
