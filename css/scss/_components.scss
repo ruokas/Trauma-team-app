@@ -65,7 +65,8 @@ input.invalid,select.invalid{border-color:var(--red)}
 .split>div{flex:1}
 .interv-groups{display:grid;gap:$space-12;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
 .interv-group{display:flex;flex-direction:column;gap:$space-8;background:var(--bg);border:1px solid var(--line);border-radius:$space-10;padding:$space-8}
-.interv-group>.grid{grid-template-columns:repeat(auto-fill,minmax(120px,1fr))}
+.interv-group>.grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
+.interv-group.collapsed>.grid{display:none}
 .med-search{margin-bottom:$space-8;width:100%}
   .timeline-list{border:1px solid var(--line);border-radius:$space-10;padding:$space-8;max-height:18.75rem;overflow-y:auto}
 .timeline-entry{padding:$space-4 0;border-bottom:1px solid var(--line)}
@@ -105,7 +106,7 @@ body.nav-open{overflow:hidden}
 section[data-tab="Intervencijos"] .card{padding:$space-8}
 section[data-tab="Intervencijos"] .card .detail .grid{gap:$space-4}
 section[data-tab="Intervencijos"] .med-search{margin-bottom:$space-8}
-    section[data-tab="Intervencijos"] h3{margin:0 0 $space-8;font-size:$font-sm;color:var(--muted);display:flex;align-items:center;gap:$space-4}
+    section[data-tab="Intervencijos"] .interv-toggle{margin:0 0 $space-8;font-size:$font-sm;color:var(--muted);display:flex;align-items:center;gap:$space-4;background:none;border:none;cursor:pointer;padding:0;text-align:left}
 /* Pain meds list layout */
 #pain_meds{grid-template-columns:1fr;gap:$space-4}
 #pain_meds .chip{width:100%;justify-content:flex-start;text-align:left;padding:$space-4 $space-8;white-space:normal}
