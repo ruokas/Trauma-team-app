@@ -80,7 +80,7 @@ function initActionsMenu(){
   const session=document.getElementById('sessionBar');
   const centerWrap=document.querySelector('.header-center');
   if(!container || !toggle || !menu || !arrival || !session || !centerWrap) return;
-  const mq=window.matchMedia('(max-width: 480px)');
+  const mq=window.matchMedia('(max-width: 768px)');
   const update=()=>{
     if(mq.matches){
       menu.appendChild(arrival);

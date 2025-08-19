@@ -51,13 +51,13 @@
   }
 }
 
-/* Mobile actions menu for very small screens */
+/* Mobile actions menu for small screens */
 #mobileActions {
   display:none;
   position:relative;
 }
 
-@media (max-width: 480px) {
+@media (max-width: 768px) {
   #mobileActions {
     display:flex;
   }
