@@ -39,20 +39,30 @@ initTheme();
 
 async function ensureLogin(){
   if(authToken || typeof fetch !== 'function') return;
-  try{
-    const name = await promptModal('Įveskite vardą dalyvauti bendroje sesijoje');
-    if(!name) return;
-    const res = await fetch('/api/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name })
-    });
-    const data = await res.json();
-    authToken = data.token;
-    localStorage.setItem('trauma_token', authToken);
-    setupHeaderActions();
-  }catch(e){
-    // ignore
+  while(true){
+    try{
+      const name=await promptModal('Įveskite vardą dalyvauti bendroje sesijoje');
+      if(!name) return;
+      const res=await fetch('/api/login',{
+        method:'POST',
+        headers:{ 'Content-Type':'application/json' },
+        body:JSON.stringify({ name })
+      });
+      if(!res.ok){
+        showToast('Prisijungti nepavyko: '+res.status,'error');
+        if(await confirmModal('Bandysite dar kartą?')) continue;
+        return;
+      }
+      const data=await res.json();
+      authToken=data.token;
+      localStorage.setItem('trauma_token',authToken);
+      setupHeaderActions();
+      break;
+    }catch(e){
+      showToast('Prisijungti nepavyko: '+(e&&e.message||e),'error');
+      if(await confirmModal('Bandysite dar kartą?')) continue;
+      return;
+    }
   }
 }
 
