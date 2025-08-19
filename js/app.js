@@ -33,6 +33,7 @@ async function ensureLogin(){
     const data = await res.json();
     authToken = data.token;
     localStorage.setItem('trauma_token', authToken);
+    setupHeaderActions();
   }catch(e){
     // ignore
   }
@@ -830,6 +831,24 @@ function setupHeaderActions(){
     }
     if(prevTab) showTab(prevTab);
   });
+
+  const menu=document.querySelector('.more-actions .menu');
+  if(menu && authToken && !document.getElementById('btnLogout')){
+    const btn=document.createElement('button');
+    btn.type='button';
+    btn.className='btn';
+    btn.id='btnLogout';
+    btn.textContent='Logout';
+    btn.addEventListener('click',async()=>{
+      if(authToken && typeof fetch==='function'){
+        try{ await fetch('/api/logout',{ method:'POST', headers:{ 'Authorization':authToken } }); }catch(e){ /* ignore */ }
+      }
+      authToken=null;
+      localStorage.removeItem('trauma_token');
+      location.reload();
+    });
+    menu.appendChild(btn);
+  }
 }
 
 setupHeaderActions();
