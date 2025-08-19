@@ -32,7 +32,15 @@ header{
   align-items:center;
   gap:$space-12;
 }
-.header-left{display:flex;align-items:center;gap:$space-12}
+.header-left{
+  display:flex;
+  align-items:center;
+  gap:$space-12;
+  > div{
+    flex:1;
+    min-width:0;
+  }
+}
 .header-center,
 .header-actions{
   display:flex;
@@ -40,6 +48,7 @@ header{
   overflow-x:auto;
   gap:$space-12;
   align-items:center;
+  min-width:0;
   .toolbar{
     display:flex;
     flex-wrap:nowrap;
