@@ -101,7 +101,8 @@ async function initSessions(){
       const btn=document.createElement('button');
       btn.type='button';
       btn.textContent='✖';
-      btn.className='btn';
+      btn.className='btn ghost';
+      btn.setAttribute('aria-label','Delete session');
       btn.addEventListener('click',async()=>{
         if(authToken && typeof fetch==='function'){
           try{ await fetch(`/api/sessions/${s.id}`, { method:'DELETE', headers:{ 'Authorization': authToken } }); }catch(e){ /* ignore */ }
