@@ -25,11 +25,15 @@ export function validateField(el) {
   if (el.hasAttribute('required') && val === '') {
     msg = 'Privalomas laukas';
   } else if (val !== '') {
-    const num = parseFloat(val);
     const min = el.getAttribute('min');
     const max = el.getAttribute('max');
-    if ((min !== null && num < parseFloat(min)) || (max !== null && num > parseFloat(max))) {
-      msg = `Leistina ${min}–${max}`;
+    if (min !== null || max !== null) {
+      const num = parseFloat(val);
+      if (Number.isNaN(num)) {
+        msg = 'Netinkama reikšmė';
+      } else if ((min !== null && num < parseFloat(min)) || (max !== null && num > parseFloat(max))) {
+        msg = `Leistina ${min}–${max}`;
+      }
     }
   }
   showInlineError(el, msg);
