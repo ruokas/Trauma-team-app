@@ -22,12 +22,7 @@
     <section class="card view" id="view-aktivacija" data-tab="Aktyvacija">
         <h2>Traumos komandos aktyvacija <span class="badge">GMP rodikliai → auto</span></h2>
       <h3>Pacientas</h3>
-      <div class="grid cols-4 cols-auto">
-        <div>
-          <label for="patient_name">Vardas</label>
-          <input id="patient_name" type="text" required aria-describedby="patient_name_hint" title="Būtinas laukas">
-          <div class="hint" id="patient_name_hint">Privalomas laukas</div>
-        </div>
+      <div class="grid cols-3 cols-auto">
         <div>
           <label for="patient_age">Amžius</label>
           <input id="patient_age" type="number" min="0" max="120" required aria-describedby="patient_age_hint" title="Amžius 0-120">
@@ -39,13 +34,14 @@
             <option value=""></option>
             <option value="M">Vyras</option>
             <option value="F">Moteris</option>
+            <option value="O">Kita / nenurodyta</option>
           </select>
           <div class="hint" id="patient_sex_hint">Pasirinkite lytį</div>
         </div>
         <div>
-          <label for="patient_id">Paciento ID</label>
-          <input id="patient_id" type="text" required aria-describedby="patient_id_hint" title="Įveskite paciento ID">
-          <div class="hint" id="patient_id_hint">Privalomas laukas</div>
+          <label for="patient_history">Ligos istorijos nr.</label>
+          <input id="patient_history" type="text" required aria-describedby="patient_history_hint" title="Įveskite ligos istorijos numerį">
+          <div class="hint" id="patient_history_hint">Privalomas laukas</div>
         </div>
       </div>
       <div class="grid cols-3 cols-auto">
@@ -436,7 +432,7 @@
       </div>
       <div id="timelineList" class="timeline-list"></div>
     </section>
-    <section class="card view" id="view-ataskaita" data-tab="Ataskaita"><h2>Sugeneruotas tekstas</h2><textarea id="output" placeholder="Spauskite „Sugeneruoti ataskaitą“..."></textarea><div class="hint">Tekstą galima įklijuoti į LIS/ESIS.</div></section>
+    <section class="card view" id="view-ataskaita" data-tab="Ataskaita"><h2>Sugeneruotas tekstas</h2><textarea id="output" placeholder="Ataskaita sugeneruojama automatiškai"></textarea><div class="hint">Tekstą galima įklijuoti į LIS/ESIS.</div></section>
   </div>
 </main>
 
