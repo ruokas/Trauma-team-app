@@ -71,11 +71,12 @@ app.get('/api/sessions', auth, (req, res) => {
 });
 
 app.put('/api/sessions', auth, async (req, res) => {
-  if(Array.isArray(req.body)){
-    db.sessions = req.body;
-    await saveDB();
-    io.emit('sessions', db.sessions);
+  if(!Array.isArray(req.body)){
+    return res.status(400).json({ error: 'Invalid session list' });
   }
+  db.sessions = req.body;
+  await saveDB();
+  io.emit('sessions', db.sessions);
   res.json({ ok: true });
 });
 
@@ -127,6 +128,8 @@ app.put('/api/sessions/:id/data', auth, async (req, res) => {
 
 const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: '*' } });
+
+module.exports = { app, server };
 
 io.use((socket, next) => {
   const token = socket.handshake.auth && socket.handshake.auth.token;
