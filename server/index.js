@@ -30,7 +30,8 @@ let db;
 
 const app = express();
 app.use(express.json());
-app.use(express.static(path.join(__dirname, '..')));
+// Serve static assets from the public directory
+app.use(express.static(path.join(__dirname, '..', 'public')));
 
 /* ===== Auth ===== */
 app.post('/api/login', async (req, res) => {
