@@ -309,7 +309,7 @@ window.updateActivationIndicator=updateActivationIndicator;
 window.ensureSingleTeam=ensureSingleTeam;
 
 /* ===== Save / Load ===== */
-const FIELD_SELECTORS='input[type="text"],input[type="number"],input[type="time"],input[type="date"],textarea,select,#patient_name,#patient_age,#patient_sex,#patient_id';
+const FIELD_SELECTORS='input[type="text"],input[type="number"],input[type="time"],input[type="date"],textarea,select';
 let fields=[];
 const getFields=()=>fields.length?fields:(fields=$$(FIELD_SELECTORS));
 
@@ -583,10 +583,9 @@ async function init(){
 
 function validateForm(){
   const fields=[
-    {el:$('#patient_name'),check:e=>e.value.trim()!=='',msg:'Vardas privalomas'},
     {el:$('#patient_age'),check:e=>e.value!=='' && +e.value>=0 && +e.value<=120,msg:'Amžius 0-120'},
     {el:$('#patient_sex'),check:e=>e.value!=='',msg:'Pasirinkite lytį'},
-    {el:$('#patient_id'),check:e=>e.value.trim()!=='',msg:'ID privalomas'}
+    {el:$('#patient_history'),check:e=>e.value.trim()!=='',msg:'Ligos istorijos nr. privalomas'}
   ];
   let ok=true;
   fields.forEach(({el,check,msg})=>{
@@ -634,8 +633,8 @@ function bodymapSummary(){
 
 export function generateReport(){
   const out=[];
-  const patient={ name:$('#patient_name').value, age:$('#patient_age').value, sex:$('#patient_sex').value, id:$('#patient_id').value };
-  const patientLine=[patient.name?`Vardas: ${patient.name}`:null, patient.age?`Amžius ${patient.age}`:null, patient.sex?`Lytis ${patient.sex}`:null, patient.id?`ID ${patient.id}`:null].filter(Boolean).join('; ');
+  const patient={ age:$('#patient_age').value, sex:$('#patient_sex').value, history:$('#patient_history').value };
+  const patientLine=[patient.age?`Amžius ${patient.age}`:null, patient.sex?`Lytis ${patient.sex}`:null, patient.history?`Ligos istorijos nr. ${patient.history}`:null].filter(Boolean).join('; ');
   if(patientLine){ out.push('--- Pacientas ---'); out.push(patientLine); }
   const red=listChips('#chips_red'), yellow=listChips('#chips_yellow');
   const gmp={ hr:$('#gmp_hr').value, rr:$('#gmp_rr').value, spo2:$('#gmp_spo2').value, sbp:$('#gmp_sbp').value, dbp:$('#gmp_dbp').value, gksa:$('#gmp_gksa').value, gksk:$('#gmp_gksk').value, gksm:$('#gmp_gksm').value, time:$('#gmp_time').value, mechanism:$('#gmp_mechanism').value, notes:$('#gmp_notes').value };
@@ -714,17 +713,13 @@ export function generateReport(){
       if(sprVitals) out.push(sprVitals);
     }
 
-    $('#output').value=out.filter(Boolean).join('\n');
+  $('#output').value=out.filter(Boolean).join('\n');
   expandOutput();
-  showTab('Ataskaita');
   saveAll();
 }
 function setupHeaderActions(){
   const btnAtvyko=document.getElementById('btnAtvyko');
   if(btnAtvyko) btnAtvyko.addEventListener('click', startArrivalTimer);
-
-  const btnGen=document.getElementById('btnGen');
-  if(btnGen) btnGen.addEventListener('click',()=>{ if(validateForm()) generateReport(); });
 
   const btnCopy=document.getElementById('btnCopy');
   if(btnCopy) btnCopy.addEventListener('click',async()=>{
@@ -745,7 +740,7 @@ function setupHeaderActions(){
   const btnPdf=document.getElementById('btnPdf');
   if(btnPdf) btnPdf.addEventListener('click', async () => {
     if(!validateForm()) return;
-    generateReport();
+    showTab('Ataskaita');
     const text = $('#output').value || '';
     try {
       const module = await import('./lib/jspdf.umd.min.js');
@@ -764,7 +759,7 @@ function setupHeaderActions(){
   if(btnPrint) btnPrint.addEventListener('click',()=>{
     if(!validateForm()) return;
     const prevTab=localStorage.getItem('v10_activeTab');
-    generateReport();
+    showTab('Ataskaita');
     const text=$('#output').value||'';
     const printWin=window.open('','_blank');
     if(printWin){
@@ -792,3 +787,9 @@ function setupHeaderActions(){
 }
 
 setupHeaderActions();
+
+document.addEventListener('tabShown',e=>{
+  if(e.detail==='Ataskaita'){
+    if(validateForm()) generateReport();
+  }
+});

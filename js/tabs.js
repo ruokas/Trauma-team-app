@@ -25,6 +25,7 @@ export function showTab(name){
   });
   document.querySelectorAll('.view').forEach(v=>v.style.display = (v.dataset.tab===name)?'block':'none');
   localStorage.setItem('v10_activeTab', name);
+  document.dispatchEvent(new CustomEvent('tabShown',{detail:name}));
 }
 
 export function initTabs(){
