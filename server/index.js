@@ -41,6 +41,16 @@ app.post('/api/login', async (req, res) => {
   res.json({ token });
 });
 
+app.post('/api/logout', auth, async (req, res) => {
+  const token = req.headers['authorization'];
+  const index = db.users.findIndex(u => u.token === token);
+  if(index !== -1){
+    db.users.splice(index, 1);
+    await saveDB();
+  }
+  res.json({ ok: true });
+});
+
 function auth(req, res, next){
   const token = req.headers['authorization'];
   if(!token) return res.status(401).json({ error: 'No token' });
