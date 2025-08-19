@@ -44,7 +44,7 @@ app.post('/api/login', async (req, res) => {
 });
 
 app.post('/api/logout', auth, async (req, res) => {
-  const token = req.headers['authorization'];
+  const token = req.token;
   const index = db.users.findIndex(u => u.token === token);
   if(index !== -1){
     db.users.splice(index, 1);
@@ -59,9 +59,12 @@ app.get('/api/users', auth, (req, res) => {
 });
 
 function auth(req, res, next){
-  const token = req.headers['authorization'];
-  if(!token) return res.status(401).json({ error: 'No token' });
+  const header = req.headers['authorization'] || '';
+  const prefix = 'Bearer ';
+  if(!header.startsWith(prefix)) return res.status(401).json({ error: 'No token' });
+  const token = header.slice(prefix.length);
   if(!db.users.some(u => u.token === token)) return res.status(401).json({ error: 'Invalid token' });
+  req.token = token;
   next();
 }
 
@@ -132,7 +135,9 @@ const io = new Server(server, { cors: { origin: '*' } });
 module.exports = { app, server };
 
 io.use((socket, next) => {
-  const token = socket.handshake.auth && socket.handshake.auth.token;
+  const raw = socket.handshake.auth && socket.handshake.auth.token;
+  const prefix = 'Bearer ';
+  const token = (typeof raw === 'string' && raw.startsWith(prefix)) ? raw.slice(prefix.length) : null;
   if(token && db.users.some(u => u.token === token)) return next();
   next(new Error('unauthorized'));
 });
