@@ -766,7 +766,10 @@ export function generateReport(){
 }
 function setupHeaderActions(){
   const btnAtvyko=document.getElementById('btnAtvyko');
-  if(btnAtvyko) btnAtvyko.addEventListener('click', startArrivalTimer);
+  if(btnAtvyko) btnAtvyko.addEventListener('click', ()=>startArrivalTimer(true));
+
+  const arrivalTimer=document.getElementById('arrivalTimer');
+  if(arrivalTimer) arrivalTimer.addEventListener('dblclick',()=>startArrivalTimer(true));
 
   const btnCopy=document.getElementById('btnCopy');
   if(btnCopy) btnCopy.addEventListener('click',async()=>{
