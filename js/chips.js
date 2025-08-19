@@ -30,6 +30,20 @@ function togglePupilNote(side, chip){
   if(!show) note.value='';
 }
 
+function updateBreathGroups(){
+  ['b_breath_left_group','b_breath_right_group'].forEach(id=>{
+    const group = $('#'+id);
+    if(!group) return;
+    const toggle = group.querySelector('.breath-toggle');
+    const options = $$('.breath-option', group);
+    const show = (toggle && isChipActive(toggle)) || options.some(isChipActive);
+    options.forEach(opt=>{
+      opt.classList.toggle('hidden', !show);
+      if(!show) setChipActive(opt,false);
+    });
+  });
+}
+
 export function initChips(saveAll){
   $$('.chip').forEach(chip => {
     const group = chip.parentElement;
@@ -45,6 +59,7 @@ export function initChips(saveAll){
     }
     setChipActive(chip, isChipActive(chip));
   });
+  updateBreathGroups();
   if(listenersAdded) return;
   listenersAdded = true;
 
@@ -83,6 +98,7 @@ export function initChips(saveAll){
         $('#spr_ligonine').value='';
       }
     }
+    updateBreathGroups();
     delete chip.dataset.auto;
     if(typeof saveAll === 'function') saveAll();
   }
