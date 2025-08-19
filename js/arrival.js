@@ -3,9 +3,9 @@ import { $ } from './utils.js';
 let arrivalTime = null;
 let timerId = null;
 
-export function recordArrivalTime(){
+export function recordArrivalTime(force = false){
   const stored = localStorage.getItem('arrival_time');
-  if(stored){
+  if(stored && !force){
     arrivalTime = new Date(stored);
   }else{
     arrivalTime = new Date();
@@ -22,10 +22,10 @@ function formatElapsed(ms){
   return `${pad(h)}:${pad(m)}:${pad(s)}`;
 }
 
-export function startArrivalTimer(){
+export function startArrivalTimer(force = false){
   const el = $('#arrivalTimer');
   if(!el) return;
-  recordArrivalTime();
+  recordArrivalTime(force);
   const update = () => {
     if(!arrivalTime) return;
     const diff = Date.now() - arrivalTime.getTime();
@@ -39,4 +39,8 @@ export function startArrivalTimer(){
 export function stopArrivalTimer(){
   clearInterval(timerId);
   timerId = null;
+}
+
+export function resetArrivalTimer(){
+  startArrivalTimer(true);
 }
