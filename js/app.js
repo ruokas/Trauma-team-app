@@ -84,6 +84,49 @@ function populateSessionSelect(sel, sessions){
 async function initSessions(){
   const select=$('#sessionSelect');
   let sessions=await getSessions();
+  let delWrap=$('#sessionDeleteList');
+  if(!delWrap){
+    delWrap=document.createElement('div');
+    delWrap.id='sessionDeleteList';
+    select.parentNode.appendChild(delWrap);
+  }
+  function renderDeleteButtons(){
+    delWrap.innerHTML='';
+    sessions.forEach(s=>{
+      const row=document.createElement('div');
+      row.className='session-item';
+      const label=document.createElement('span');
+      label.textContent=s.name;
+      const btn=document.createElement('button');
+      btn.type='button';
+      btn.textContent='✖';
+      btn.className='btn';
+      btn.addEventListener('click',async()=>{
+        if(authToken && typeof fetch==='function'){
+          try{ await fetch(`/api/sessions/${s.id}`, { method:'DELETE', headers:{ 'Authorization': authToken } }); }catch(e){ /* ignore */ }
+        }
+        const wasCurrent=currentSessionId===s.id;
+        sessions=sessions.filter(x=>x.id!==s.id);
+        localStorage.removeItem('trauma_v10_'+s.id);
+        localStorage.setItem('trauma_sessions', JSON.stringify(sessions));
+        if(wasCurrent){
+          currentSessionId=sessions[0]?.id||null;
+          if(currentSessionId) localStorage.setItem('trauma_current_session', currentSessionId); else localStorage.removeItem('trauma_current_session');
+        }
+        populateSessionSelect(select, sessions);
+        if(currentSessionId){ select.value=currentSessionId; } else { select.value=''; }
+        if(wasCurrent){
+          localStorage.setItem('v10_activeTab','Aktyvacija');
+          location.reload();
+        }else{
+          renderDeleteButtons();
+        }
+      });
+      row.appendChild(label);
+      row.appendChild(btn);
+      delWrap.appendChild(row);
+    });
+  }
   if(!sessions.length){
     const id=Date.now().toString(36);
     sessions=[{id,name:'Case 1'}];
@@ -97,6 +140,7 @@ async function initSessions(){
   }
   populateSessionSelect(select, sessions);
   select.value=currentSessionId;
+  renderDeleteButtons();
 
   $('#btnNewSession').addEventListener('click',async()=>{
     const name=await promptModal('Sesijos pavadinimas');
@@ -108,6 +152,7 @@ async function initSessions(){
     currentSessionId=id;
     populateSessionSelect(select, sessions);
     select.value=id;
+    renderDeleteButtons();
     localStorage.setItem('v10_activeTab','Aktyvacija');
     location.reload();
   });
@@ -120,6 +165,7 @@ async function initSessions(){
     saveSessions(sessions);
     populateSessionSelect(select, sessions);
     select.value=currentSessionId;
+    renderDeleteButtons();
   });
   select.addEventListener('change',()=>{
     const id=select.value;
