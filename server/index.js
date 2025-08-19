@@ -38,6 +38,7 @@ app.post('/api/login', async (req, res) => {
   const token = crypto.randomBytes(8).toString('hex');
   db.users.push({ token, name });
   await saveDB();
+  io.emit('users', db.users.map(u => u.name));
   res.json({ token });
 });
 
@@ -47,8 +48,13 @@ app.post('/api/logout', auth, async (req, res) => {
   if(index !== -1){
     db.users.splice(index, 1);
     await saveDB();
+    io.emit('users', db.users.map(u => u.name));
   }
   res.json({ ok: true });
+});
+
+app.get('/api/users', auth, (req, res) => {
+  res.json(db.users.map(u => u.name));
 });
 
 function auth(req, res, next){
@@ -125,6 +131,10 @@ io.use((socket, next) => {
   const token = socket.handshake.auth && socket.handshake.auth.token;
   if(token && db.users.some(u => u.token === token)) return next();
   next(new Error('unauthorized'));
+});
+
+io.on('connection', socket => {
+  socket.emit('users', db.users.map(u => u.name));
 });
 
 (async () => {
