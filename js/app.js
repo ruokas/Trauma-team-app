@@ -116,6 +116,29 @@ async function initSessions(){
       row.className='session-item';
       const label=document.createElement('span');
       label.textContent=s.name;
+      const rename=document.createElement('button');
+      rename.type='button';
+      rename.textContent='✎';
+      rename.className='btn ghost';
+      rename.setAttribute('aria-label','Rename session');
+      rename.addEventListener('click',async()=>{
+        const name=await promptModal('Naujas pavadinimas', s.name);
+        if(!name) return;
+        s.name=name;
+        localStorage.setItem('trauma_sessions', JSON.stringify(sessions));
+        populateSessionSelect(select, sessions);
+        if(currentSessionId){ select.value=currentSessionId; }
+        renderDeleteButtons();
+        if(authToken && typeof fetch==='function'){
+          try{
+            await fetch(`/api/sessions/${s.id}`, {
+              method:'PUT',
+              headers:{ 'Content-Type':'application/json','Authorization':authToken },
+              body:JSON.stringify({name})
+            });
+          }catch(e){ /* ignore */ }
+        }
+      });
       const btn=document.createElement('button');
       btn.type='button';
       btn.textContent='✖';
@@ -143,6 +166,7 @@ async function initSessions(){
         }
       });
       row.appendChild(label);
+      row.appendChild(rename);
       row.appendChild(btn);
       delWrap.appendChild(row);
     });
