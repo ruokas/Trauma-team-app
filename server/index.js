@@ -83,6 +83,17 @@ app.put('/api/sessions/:id', auth, async (req, res) => {
   res.json({ ok: true });
 });
 
+app.delete('/api/sessions/:id', auth, async (req, res) => {
+  const id = req.params.id;
+  const index = db.sessions.findIndex(s => s.id === id);
+  if(index === -1) return res.status(404).json({ error: 'Not found' });
+  db.sessions.splice(index, 1);
+  delete db.data[id];
+  await saveDB();
+  io.emit('sessions', db.sessions);
+  res.json({ ok: true });
+});
+
 /* ===== Session data ===== */
 app.get('/api/sessions/:id/data', auth, (req, res) => {
   const id = req.params.id;
