@@ -18,6 +18,16 @@ node server/index.js
 
 You can also create an `npm start` script for convenience.
 
+## Development Server
+
+Run the backend with automatic restarts and watch Sass files for changes:
+
+```bash
+npm run dev
+```
+
+This uses `nodemon` and `sass` via `concurrently` to streamline development.
+
 ## Testing
 
 Execute the test suite:
