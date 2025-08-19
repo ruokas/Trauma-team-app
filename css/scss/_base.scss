@@ -11,29 +11,39 @@
 
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;font-size:$font-base;line-height:1.5}
-header{--header-height:68px;position:sticky;top:0;z-index:10;background:#0d151fdd;backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+header{
+  --header-height:68px;
+  --line:color-mix(in srgb,#2d3b4f,white 20%);
+  --ink:color-mix(in srgb,#e9f2fb,white 10%);
+  position:sticky;
+  top:0;
+  z-index:10;
+  background:#0d151fdd;
+  backdrop-filter:blur(6px);
+  border-bottom:1px solid var(--line);
+}
 .wrap{
   width:100%;
   max-width:1200px;
   margin-inline:auto;
-  padding:$space-14 $space-16;
+  padding:$space-16 $space-20;
   display:grid;
   grid-template-columns:auto 1fr auto;
   align-items:center;
-  gap:$space-8;
+  gap:$space-12;
 }
-.header-left{display:flex;align-items:center;gap:$space-8}
+.header-left{display:flex;align-items:center;gap:$space-12}
 .header-center,
 .header-actions{
   display:flex;
   flex-wrap:nowrap;
   overflow-x:auto;
-  gap:$space-8;
+  gap:$space-12;
   align-items:center;
   .toolbar{
     display:flex;
     flex-wrap:nowrap;
-    gap:$space-8;
+    gap:$space-10;
     flex:0 0 auto;
     min-width:auto;
   }
@@ -41,6 +51,12 @@ header{--header-height:68px;position:sticky;top:0;z-index:10;background:#0d151fd
     flex:0 0 auto;
     min-width:auto;
   }
+}
+.header-center .toolbar + .toolbar,
+.header-actions .toolbar + .toolbar{
+  border-left:1px solid var(--line);
+  padding-left:$space-8;
+  margin-left:$space-8;
 }
 
 .header-center{
@@ -85,7 +101,7 @@ header{--header-height:68px;position:sticky;top:0;z-index:10;background:#0d151fd
 #saveStatus{width:100%}
 // Use fluid typography for headings
 h1{font-size:clamp(1.25rem,5vw,2rem);margin:$space-4 0}
-.sub{color:var(--muted);font-size:$font-sm}
+.sub{color:color-mix(in srgb,var(--muted),white 20%);font-size:$font-xs}
 .btn{min-width:4rem}
 .btn-icon{width:1em;height:1em;margin-right:$space-4}
 .toolbar{display:flex;gap:$space-8;flex-wrap:wrap;margin-top:$space-8}
