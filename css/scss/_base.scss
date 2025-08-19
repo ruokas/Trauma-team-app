@@ -87,6 +87,7 @@ header{--header-height:68px;position:sticky;top:0;z-index:10;background:#0d151fd
 h1{font-size:clamp(1.25rem,5vw,2rem);margin:$space-4 0}
 .sub{color:var(--muted);font-size:$font-sm}
 .btn{min-width:4rem}
+.btn-icon{width:1em;height:1em;margin-right:$space-4}
 .toolbar{display:flex;gap:$space-8;flex-wrap:wrap;margin-top:$space-8}
 .toolbar--scroll{flex-wrap:nowrap;overflow-x:auto}
 .header-actions .toolbar:first-child,
