@@ -281,22 +281,22 @@
     <!-- Intervencijos -->
     <section class="card view" id="view-intervencijos" data-tab="Intervencijos">
       <h2>Intervencijos</h2>
-      <input id="medSearch" type="text" placeholder="Ieškoti medikamentų..." class="med-search">
+      <input id="medSearch" type="text" placeholder="Ieškoti intervencijų…" aria-label="Ieškoti intervencijų" class="med-search">
       <div class="interv-groups">
         <section class="interv-group">
-          <h3>💊 Medikamentai – skausmo kontrolė</h3>
+          <button class="interv-toggle" aria-expanded="true">💊 Medikamentai – skausmo kontrolė</button>
           <div class="grid" id="pain_meds"></div>
         </section>
         <section class="interv-group">
-          <h3>💊 Medikamentai – kraujavimo kontrolė</h3>
+          <button class="interv-toggle" aria-expanded="true">💊 Medikamentai – kraujavimo kontrolė</button>
           <div class="grid cols-3 cols-auto" id="bleeding_meds"></div>
         </section>
         <section class="interv-group">
-          <h3>💊 Medikamentai – kita</h3>
+          <button class="interv-toggle" aria-expanded="true">💊 Medikamentai – kita</button>
           <div class="grid cols-3 cols-auto" id="other_meds"></div>
         </section>
         <section class="interv-group">
-          <h3>🛠 Procedūros</h3>
+          <button class="interv-toggle" aria-expanded="true">🛠 Procedūros</button>
           <div class="grid cols-3 cols-auto" id="procedures"></div>
         </section>
       </div>

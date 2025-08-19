@@ -1,4 +1,4 @@
-import { $, nowHM } from './utils.js';
+import { $, $$, nowHM } from './utils.js';
 import { logEvent } from './timeline.js';
 
 export const PAIN_MEDS = ['Fentanilis','Paracetamolis','Ketoprofenas'];
@@ -41,6 +41,7 @@ function buildActionCard(group, name, saveAll, opts={}){
   const nameSpan=document.createElement('span');
   nameSpan.className='act_name';
   nameSpan.textContent=name;
+  nameSpan.title = DEFAULT_DOSES[name] || '';
   label.appendChild(chk);
   label.appendChild(nameSpan);
 
@@ -179,7 +180,7 @@ export function initActions(saveAll){
 
   const medSearch=$('#medSearch');
   if(medSearch){
-    const medWraps=[painWrap,bleedingWrap,otherWrap];
+    const medWraps=[painWrap,bleedingWrap,otherWrap,procsWrap];
     medSearch.addEventListener('input',()=>{
       const q=medSearch.value.trim().toLowerCase();
       medWraps.forEach(wrap=>{
@@ -190,4 +191,12 @@ export function initActions(saveAll){
       });
     });
   }
+
+  $$('.interv-toggle').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const group=btn.closest('.interv-group');
+      const collapsed=group.classList.toggle('collapsed');
+      btn.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+    });
+  });
 }
