@@ -22,7 +22,7 @@ function updateUserList(users){
 async function fetchUsers(){
   if(authToken && typeof fetch==='function'){
     try{
-      const res=await fetch('/api/users',{ headers:{ 'Authorization':authToken } });
+      const res=await fetch('/api/users',{ headers:{ 'Authorization':'Bearer '+authToken } });
       if(res.ok){
         const data=await res.json();
         updateUserList(data);
@@ -68,7 +68,7 @@ async function ensureLogin(){
 
 function connectSocket(){
   if(typeof io === 'undefined' || socket || !authToken) return;
-  socket = io({ auth: { token: authToken } });
+  socket = io({ auth: { token: 'Bearer '+authToken } });
   socket.on('sessions', list => {
     const sel = $('#sessionSelect');
     if(sel) populateSessionSelect(sel, list);
@@ -86,7 +86,7 @@ const sessionKey = () => 'trauma_v10_' + currentSessionId;
 async function getSessions(){
   if(authToken && typeof fetch === 'function'){
     try{
-      const res = await fetch('/api/sessions', { headers: { 'Authorization': authToken } });
+      const res = await fetch('/api/sessions', { headers: { 'Authorization': 'Bearer ' + authToken } });
       if(res.ok){
         const data = await res.json();
         localStorage.setItem('trauma_sessions', JSON.stringify(data));
@@ -101,7 +101,7 @@ function saveSessions(list){
   if(authToken && typeof fetch === 'function'){
     fetch('/api/sessions', {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json', 'Authorization': authToken },
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
       body: JSON.stringify(list)
     }).catch(()=>{});
   }
@@ -143,7 +143,7 @@ async function initSessions(){
           try{
             await fetch(`/api/sessions/${s.id}`, {
               method:'PUT',
-              headers:{ 'Content-Type':'application/json','Authorization':authToken },
+              headers:{ 'Content-Type':'application/json','Authorization':'Bearer '+authToken },
               body:JSON.stringify({name})
             });
           }catch(e){ /* ignore */ }
@@ -156,7 +156,7 @@ async function initSessions(){
       btn.setAttribute('aria-label','Delete session');
       btn.addEventListener('click',async()=>{
         if(authToken && typeof fetch==='function'){
-          try{ await fetch(`/api/sessions/${s.id}`, { method:'DELETE', headers:{ 'Authorization': authToken } }); }catch(e){ /* ignore */ }
+          try{ await fetch(`/api/sessions/${s.id}`, { method:'DELETE', headers:{ 'Authorization': 'Bearer ' + authToken } }); }catch(e){ /* ignore */ }
         }
         const wasCurrent=currentSessionId===s.id;
         sessions=sessions.filter(x=>x.id!==s.id);
@@ -451,7 +451,7 @@ export function saveAll(){
   if(authToken && typeof fetch === 'function'){
     fetch(`/api/sessions/${currentSessionId}/data`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json', 'Authorization': authToken },
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
       body: JSON.stringify(data)
     }).then(()=>{
       if(statusEl){
@@ -510,7 +510,7 @@ export function loadAll(){
     const raw=localStorage.getItem(sessionKey()); if(!raw) return; try{ apply(JSON.parse(raw)); }catch(e){}
   };
   if(authToken && typeof fetch === 'function'){
-    fetch(`/api/sessions/${currentSessionId}/data`, { headers:{ 'Authorization': authToken }})
+    fetch(`/api/sessions/${currentSessionId}/data`, { headers:{ 'Authorization': 'Bearer ' + authToken }})
       .then(r=>r.json()).then(d=>{ localStorage.setItem(sessionKey(), JSON.stringify(d)); apply(d); })
       .catch(fallback);
   } else {
@@ -898,7 +898,7 @@ function setupHeaderActions(){
     btn.textContent='Logout';
     btn.addEventListener('click',async()=>{
       if(authToken && typeof fetch==='function'){
-        try{ await fetch('/api/logout',{ method:'POST', headers:{ 'Authorization':authToken } }); }catch(e){ /* ignore */ }
+        try{ await fetch('/api/logout',{ method:'POST', headers:{ 'Authorization':'Bearer '+authToken } }); }catch(e){ /* ignore */ }
       }
       authToken=null;
       localStorage.removeItem('trauma_token');
