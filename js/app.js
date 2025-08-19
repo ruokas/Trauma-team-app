@@ -13,6 +13,23 @@ export { validateVitals };
 
 let authToken = localStorage.getItem('trauma_token') || null;
 let socket = null;
+
+function updateUserList(users){
+  const el=document.getElementById('userList');
+  if(el) el.textContent=users.length?`Prisijungę: ${users.join(', ')}`:'';
+}
+
+async function fetchUsers(){
+  if(authToken && typeof fetch==='function'){
+    try{
+      const res=await fetch('/api/users',{ headers:{ 'Authorization':authToken } });
+      if(res.ok){
+        const data=await res.json();
+        updateUserList(data);
+      }
+    }catch(e){ /* ignore */ }
+  }
+}
 function initTheme(){
   document.documentElement.classList.remove('light');
   document.documentElement.classList.add('dark');
@@ -49,6 +66,7 @@ function connectSocket(){
   socket.on('sessionData', ({id}) => {
     if(id === currentSessionId) loadAll();
   });
+  socket.on('users', list=>updateUserList(list));
 }
 
 /* ===== Sessions ===== */
@@ -558,6 +576,7 @@ async function init(){
   setupHeaderActions();
   await ensureLogin();
   connectSocket();
+  await fetchUsers();
   await initSessions();
   initTabs();
   initChips(saveAllDebounced);
