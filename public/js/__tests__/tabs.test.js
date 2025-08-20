@@ -29,8 +29,8 @@ describe('tabs', () => {
     expect(setSpy).toHaveBeenCalledWith('v10_activeTab', tabs.TABS[1].name);
   });
 
-  test('showTab saves active tab and initTabs restores it', () => {
-    const store = {};
+    test('showTab saves active tab and initTabs restores it', () => {
+      const store = {};
     Object.defineProperty(window, 'localStorage', {
       value: {
         setItem: jest.fn((k, v) => { store[k] = v; }),
@@ -60,6 +60,15 @@ describe('tabs', () => {
     tabs.initTabs();
     expect(window.localStorage.getItem).toHaveBeenCalledWith('v10_activeTab');
     const active = document.querySelector('nav .tab.active');
-    expect(active.dataset.tab).toBe('A – Kvėpavimo takai');
+      expect(active.dataset.tab).toBe('A – Kvėpavimo takai');
+    });
+
+    test('includes timeline tab before report', () => {
+      const tabs = require('../tabs.js');
+      const timelineIndex = tabs.TABS.findIndex(t => t.name === 'Laiko juosta');
+      const reportIndex = tabs.TABS.findIndex(t => t.name === 'Ataskaita');
+      expect(timelineIndex).toBeGreaterThan(-1);
+      expect(reportIndex).toBeGreaterThan(-1);
+      expect(timelineIndex).toBeLessThan(reportIndex);
+    });
   });
-});

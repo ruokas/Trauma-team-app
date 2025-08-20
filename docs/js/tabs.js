@@ -12,6 +12,7 @@ export const TABS = [
   { name: 'Laboratorija', icon: '🧪' },
   { name: 'Komanda', icon: '👥' },
   { name: 'Sprendimas', icon: '⚖️' },
+  { name: 'Laiko juosta', icon: '🕒' },
   { name: 'Ataskaita', icon: '📝' }
 ];
 
