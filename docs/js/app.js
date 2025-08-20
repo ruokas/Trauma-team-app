@@ -156,6 +156,7 @@ async function initSessions(){
       btn.className='btn ghost';
       btn.setAttribute('aria-label','Delete session');
       btn.addEventListener('click',async()=>{
+        if(!await notify({type:'confirm', message:'Ar tikrai norite ištrinti pacientą?'})) return;
         if(authToken && typeof fetch==='function'){
           try{ await fetch(`/api/sessions/${s.id}`, { method:'DELETE', headers:{ 'Authorization': 'Bearer ' + authToken } }); }catch(e){ /* ignore */ }
         }
