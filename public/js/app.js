@@ -1,6 +1,6 @@
 import { $, $$, nowHM } from './utils.js';
-import { initTabs, showTab } from './tabs.js';
-import { initChips, listChips, setChipActive, isChipActive, addChipIndicators } from './chips.js';
+import { initTabs } from './tabs.js';
+import { initChips, setChipActive, isChipActive, addChipIndicators } from './chips.js';
 import { initAutoActivate } from './autoActivate.js';
 import { initActions } from './actions.js';
 import { logEvent, initTimeline } from './timeline.js';
@@ -48,8 +48,6 @@ if(bloodUnitsInput && bloodGroupWrap && addBloodOrderBtn){
     $$('.chip',bloodGroupWrap).forEach(c=>setChipActive(c,false));
   });
 }
-const IMAGING_GROUPS=['#imaging_ct','#imaging_xray','#imaging_other_group'];
-const CHIP_GROUPS=['#chips_red','#chips_yellow',...IMAGING_GROUPS,'#labs_basic','#a_airway_group','#b_breath_left_group','#b_breath_right_group','#d_pupil_left_group','#d_pupil_right_group','#spr_decision_group'];
 const fastAreas=[
   {name:'Perikardas', marker:'skystis'},
   {name:'Dešinė pleura', marker:'skystis ar oras'},

@@ -1,4 +1,4 @@
-import { $, $$ } from './utils.js';
+import { $ } from './utils.js';
 import { listChips } from './chips.js';
 import { counts as bodyMapCounts } from './bodyMap.js';
 
