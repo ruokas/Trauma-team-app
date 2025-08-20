@@ -95,7 +95,44 @@ describe('server API', () => {
       .set('Authorization', `Bearer ${token}`)
       .send({});
     expect(res.statusCode).toBe(400);
-    expect(res.body).toEqual({ error: 'Name required' });
+    expect(res.body).toEqual({ error: '"name" is required' });
+  });
+
+  test('rejects invalid login data', async () => {
+    const res = await request(app).post('/api/login').send({});
+    expect(res.statusCode).toBe(400);
+    expect(res.body).toEqual({ error: '"name" is required' });
+  });
+
+  test('rejects session update with invalid name', async () => {
+    const token = await login('frank');
+    const create = await request(app)
+      .post('/api/sessions')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ name: 'valid' });
+    const id = create.body.id;
+    const update = await request(app)
+      .put(`/api/sessions/${id}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ name: '' });
+    expect(update.statusCode).toBe(400);
+    expect(update.body).toEqual({ error: '"name" is not allowed to be empty' });
+  });
+
+  test('rejects session data update with non-object', async () => {
+    const token = await login('george');
+    const session = await request(app)
+      .post('/api/sessions')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ name: 'data session' });
+    const id = session.body.id;
+    const res = await request(app)
+      .put(`/api/sessions/${id}/data`)
+      .set('Authorization', `Bearer ${token}`)
+      .set('Content-Type', 'application/json')
+      .send('[]');
+    expect(res.statusCode).toBe(400);
+    expect(res.body).toEqual({ error: '"value" must be of type object' });
   });
 
   test('returns 404 for missing session on update/delete', async () => {
