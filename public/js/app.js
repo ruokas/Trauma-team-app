@@ -9,6 +9,7 @@ import { showToast } from './components/toast.js';
 import { initValidation, validateVitals } from './validation.js';
 import { startArrivalTimer } from './arrival.js';
 import { initTopbar } from './components/topbar.js';
+import { initCollapsibles } from './sections.js';
 export { validateVitals };
 
 let authToken = localStorage.getItem('trauma_token') || null;
@@ -613,6 +614,7 @@ async function init(){
   await fetchUsers();
   await initSessions();
   initTabs();
+  initCollapsibles();
   initChips(saveAllDebounced);
   initAutoActivate(saveAllDebounced);
   initActions(saveAllDebounced);
