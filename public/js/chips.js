@@ -2,6 +2,28 @@ import { $, $$ } from './utils.js';
 
 let listenersAdded = false;
 
+export function addChipIndicators(chip){
+  if(!chip || chip.querySelector('.chip-status-icon')) return;
+  const tpl=document.getElementById('chip-template');
+  if(tpl){
+    const fragment=tpl.content.cloneNode(true);
+    const icon=fragment.querySelector('.chip-status-icon');
+    const sr=fragment.querySelector('.chip-status-text');
+    chip.prepend(icon);
+    chip.appendChild(sr);
+  } else {
+    const icon=document.createElement('span');
+    icon.className='chip-status-icon';
+    icon.setAttribute('aria-hidden','true');
+    chip.prepend(icon);
+    const sr=document.createElement('span');
+    sr.className='chip-status-text sr-only';
+    sr.setAttribute('aria-live','polite');
+    sr.textContent='not selected';
+    chip.appendChild(sr);
+  }
+}
+
 export function isChipActive(chip){
   if(chip.tagName === 'BUTTON') return chip.getAttribute('aria-pressed') === 'true';
   const input = chip.querySelector('input');
@@ -10,6 +32,7 @@ export function isChipActive(chip){
 }
 
 export function setChipActive(chip, active){
+  addChipIndicators(chip);
   chip.setAttribute('aria-pressed', active ? 'true' : 'false');
   if(chip.tagName !== 'BUTTON'){
     const input = chip.querySelector('input');
@@ -19,6 +42,10 @@ export function setChipActive(chip, active){
   if(chip.getAttribute('role') === 'radio'){
     chip.setAttribute('aria-checked', active ? 'true' : 'false');
   }
+  const icon=chip.querySelector('.chip-status-icon');
+  const sr=chip.querySelector('.chip-status-text');
+  if(icon) icon.textContent=active?'✓':'✗';
+  if(sr) sr.textContent=active?'selected':'not selected';
 }
 
 function togglePupilNote(side, chip){
@@ -46,6 +73,7 @@ function updateBreathGroups(){
 
 export function initChips(saveAll){
   $$('.chip').forEach(chip => {
+    addChipIndicators(chip);
     const group = chip.parentElement;
     const single = group?.dataset?.single === 'true';
     if(group){
