@@ -3,7 +3,7 @@ describe('chips', () => {
     document.body.innerHTML = `
       <div id="labs_basic"><span class="chip" data-value="Hgb"></span></div>
     `;
-    const { initChips, isChipActive } = require('./chips.js');
+    const { initChips, isChipActive } = require('../chips.js');
     initChips();
     const chip = document.querySelector('#labs_basic .chip');
     chip.click();
@@ -17,7 +17,7 @@ describe('chips', () => {
       <div id="multi"><span class="chip" data-value="a"></span><span class="chip" data-value="b"></span></div>
       <div id="single" data-single="true"><span class="chip" data-value="1"></span><span class="chip" data-value="2"></span></div>
     `;
-    const { initChips } = require('./chips.js');
+    const { initChips } = require('../chips.js');
     initChips();
     const multi = document.getElementById('multi');
     const single = document.getElementById('single');
@@ -43,7 +43,7 @@ describe('chips', () => {
     document.body.innerHTML = `
       <div id="group"><span class="chip" data-value="x"></span></div>
     `;
-    const { initChips } = require('./chips.js');
+    const { initChips } = require('../chips.js');
     initChips();
     const chip = document.querySelector('#group .chip');
     expect(chip.getAttribute('role')).toBe('button');
@@ -57,7 +57,7 @@ describe('chips', () => {
     document.body.innerHTML = `
       <div id="group"><span class="chip" data-value="x"></span></div>
     `;
-    const { initChips, isChipActive } = require('./chips.js');
+    const { initChips, isChipActive } = require('../chips.js');
     initChips();
     const chip = document.querySelector('#group .chip');
     chip.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
@@ -73,7 +73,7 @@ describe('chips', () => {
         <span class="chip" data-value="b"></span>
       </div>
     `;
-    const { initChips, isChipActive } = require('./chips.js');
+    const { initChips, isChipActive } = require('../chips.js');
     initChips();
     const [chip1, chip2] = document.querySelectorAll('#group .chip');
     chip1.focus();
@@ -90,7 +90,7 @@ describe('chips', () => {
         <span class="chip" data-value="b"></span>
       </div>
     `;
-    const { initChips, isChipActive } = require('./chips.js');
+    const { initChips, isChipActive } = require('../chips.js');
     initChips();
     const [chip1, chip2] = document.querySelectorAll('#group .chip');
     chip1.click(); // activate first chip
@@ -115,7 +115,7 @@ describe('chips', () => {
         <input id="spr_ligonine" />
       </div>
     `;
-    const { initChips } = require('./chips.js');
+    const { initChips } = require('../chips.js');
     initChips();
     const [transferChip, otherChip] = document.querySelectorAll('#spr_decision_group .chip');
     const container = document.getElementById('spr_ligonine_container');
@@ -135,7 +135,7 @@ describe('chips', () => {
       </div>
       <input id="imaging_other" style="display:none;" />
     `;
-    const { initChips } = require('./chips.js');
+    const { initChips } = require('../chips.js');
     initChips();
     const normalChip = document.querySelector('#imaging_ct .chip');
     const otherChip = document.querySelector('#imaging_other_group .chip');
@@ -156,7 +156,7 @@ describe('chips', () => {
       </div>
       <input id="d_pupil_left_note" style="display:none;" />
     `;
-    const { initChips } = require('./chips.js');
+    const { initChips } = require('../chips.js');
     initChips();
     const [nyChip, otherChip] = document.querySelectorAll('#d_pupil_left_group .chip');
     const note = document.getElementById('d_pupil_left_note');

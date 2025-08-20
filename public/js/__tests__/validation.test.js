@@ -1,4 +1,4 @@
-import { validateField, validateVitals } from './validation.js';
+import { validateField, validateVitals } from '../validation.js';
 
 describe('validateField', () => {
   test('returns error for required empty field', () => {

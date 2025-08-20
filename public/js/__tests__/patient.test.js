@@ -4,7 +4,7 @@ const mockJsPDF = jest.fn().mockImplementation(() => ({
   text: jest.fn(),
   save: mockSave
 }));
-jest.mock('./lib/jspdf.umd.min.js', () => ({ __esModule: true, default: { jsPDF: mockJsPDF } }));
+jest.mock('../lib/jspdf.umd.min.js', () => ({ __esModule: true, default: { jsPDF: mockJsPDF } }));
 
 const setupDom = () => {
   document.body.innerHTML = `
@@ -63,8 +63,12 @@ describe('patient fields', () => {
     mockSave.mockClear();
   });
 
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
   test('persist with saveAll/loadAll', () => {
-    const { saveAll, loadAll } = require('./app.js');
+    const { saveAll, loadAll } = require('../app.js');
     document.getElementById('patient_age').value='25';
     document.getElementById('patient_sex').value='M';
     document.getElementById('patient_history').value='H123';
@@ -83,7 +87,7 @@ describe('patient fields', () => {
   });
 
   test('report includes patient info', () => {
-    const { generateReport } = require('./app.js');
+    const { generateReport } = require('../app.js');
     document.getElementById('patient_age').value='25';
     document.getElementById('patient_sex').value='M';
     document.getElementById('patient_history').value='H123';
@@ -96,7 +100,7 @@ describe('patient fields', () => {
   });
 
   test('GCS panel focuses first select and closes on Escape', () => {
-    require('./app.js');
+    require('../app.js');
     const btn=document.getElementById('btnGCSCalc');
     const panel=document.getElementById('d_gcs_calc');
     const selA=document.getElementById('d_gcs_calc_a');
@@ -111,7 +115,7 @@ describe('patient fields', () => {
   });
 
   test('GCS panel closes when clicking outside', () => {
-    require('./app.js');
+    require('../app.js');
     const btn=document.getElementById('btnGCSCalc');
     const panel=document.getElementById('d_gcs_calc');
 
@@ -123,8 +127,8 @@ describe('patient fields', () => {
     expect(document.activeElement).toBe(btn);
   });
 
-  test.skip('PDF button generates file via jsPDF', async () => {
-    require('./app.js');
+  test('PDF button generates file via jsPDF', async () => {
+    require('../app.js');
     document.getElementById('patient_age').value='25';
     document.getElementById('patient_sex').value='M';
     document.getElementById('patient_history').value='H123';
@@ -134,26 +138,30 @@ describe('patient fields', () => {
     expect(mockSave).toHaveBeenCalledWith('report.pdf');
   });
 
-  test.skip('print window contains body map', () => {
+  test('print window contains body map', () => {
     const newDoc = document.implementation.createHTMLDocument();
-    const openMock = jest.spyOn(window, 'open').mockReturnValue({
+    const win = {
       document: newDoc,
       focus: jest.fn(),
       print: jest.fn(),
       close: jest.fn()
-    });
-    require('./app.js');
+    };
+    const openMock = jest.spyOn(window, 'open').mockReturnValue(win);
+    require('../app.js');
     document.getElementById('patient_age').value='25';
     document.getElementById('patient_sex').value='M';
     document.getElementById('patient_history').value='H123';
     document.getElementById('btnPrint').click();
+    expect(openMock).toHaveBeenCalled();
+    expect(win.focus).toHaveBeenCalled();
+    expect(win.print).toHaveBeenCalled();
+    expect(win.close).toHaveBeenCalled();
     const svg = newDoc.querySelector('#bodySvg');
     expect(svg).not.toBeNull();
-    openMock.mockRestore();
   });
 
   test('validation flags out-of-range values', () => {
-    const { initValidation } = require('./validation.js');
+    const { initValidation } = require('../validation.js');
     initValidation();
     const age = document.getElementById('patient_age');
     age.setAttribute('min','0');

@@ -6,8 +6,8 @@ describe('autoActivateFromGMP', () => {
         <button type="button" class="chip red" data-value="AKS < 90 mmHg" aria-pressed="false"></button>
       </div>
     `;
-    const { autoActivateFromGMP } = require('./autoActivate.js');
-    const { isChipActive } = require('./chips.js');
+    const { autoActivateFromGMP } = require('../autoActivate.js');
+    const { isChipActive } = require('../chips.js');
     const input = document.getElementById('gmp_sbp');
     const chip = document.querySelector('#chips_red .chip');
     input.value = '80';
