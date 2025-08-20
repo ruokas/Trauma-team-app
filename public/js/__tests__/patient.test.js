@@ -6,6 +6,8 @@ const mockJsPDF = jest.fn().mockImplementation(() => ({
 }));
 jest.mock('../lib/jspdf.umd.min.js', () => ({ __esModule: true, default: { jsPDF: mockJsPDF } }));
 
+let saveAll, loadAll, generateReport, setupHeaderActions, initBodyMap, setCurrentSessionId;
+
 const setupDom = () => {
   document.body.innerHTML = `
     <button id="btnCopy"></button>
@@ -59,6 +61,14 @@ describe('patient fields', () => {
     localStorage.clear();
     setupDom();
     localStorage.setItem('trauma_current_session','test');
+    ({ saveAll, loadAll, setCurrentSessionId } = require('../sessionManager.js'));
+    ({ generateReport } = require('../report.js'));
+    ({ setupHeaderActions } = require('../headerActions.js'));
+    ({ initBodyMap } = require('../bodyMap.js'));
+    setCurrentSessionId('test');
+    initBodyMap(()=>{});
+    setupHeaderActions({ validateForm: () => true, saveAll });
+    require('../app.js');
     mockJsPDF.mockClear();
     mockSave.mockClear();
   });
@@ -68,7 +78,6 @@ describe('patient fields', () => {
   });
 
   test('persist with saveAll/loadAll', () => {
-    const { saveAll, loadAll } = require('../app.js');
     document.getElementById('patient_age').value='25';
     document.getElementById('patient_sex').value='M';
     document.getElementById('patient_history').value='H123';
@@ -87,7 +96,6 @@ describe('patient fields', () => {
   });
 
   test('report includes patient info', () => {
-    const { generateReport } = require('../app.js');
     document.getElementById('patient_age').value='25';
     document.getElementById('patient_sex').value='M';
     document.getElementById('patient_history').value='H123';
@@ -100,7 +108,6 @@ describe('patient fields', () => {
   });
 
   test('GCS panel focuses first select and closes on Escape', () => {
-    require('../app.js');
     const btn=document.getElementById('btnGCSCalc');
     const panel=document.getElementById('d_gcs_calc');
     const selA=document.getElementById('d_gcs_calc_a');
@@ -115,7 +122,6 @@ describe('patient fields', () => {
   });
 
   test('GCS panel closes when clicking outside', () => {
-    require('../app.js');
     const btn=document.getElementById('btnGCSCalc');
     const panel=document.getElementById('d_gcs_calc');
 
@@ -128,7 +134,6 @@ describe('patient fields', () => {
   });
 
   test('PDF button generates file via jsPDF', async () => {
-    require('../app.js');
     document.getElementById('patient_age').value='25';
     document.getElementById('patient_sex').value='M';
     document.getElementById('patient_history').value='H123';
@@ -147,7 +152,6 @@ describe('patient fields', () => {
       close: jest.fn()
     };
     const openMock = jest.spyOn(window, 'open').mockReturnValue(win);
-    require('../app.js');
     document.getElementById('patient_age').value='25';
     document.getElementById('patient_sex').value='M';
     document.getElementById('patient_history').value='H123';
