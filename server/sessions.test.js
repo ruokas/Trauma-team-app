@@ -3,16 +3,20 @@
  */
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 const http = require('http');
 
 describe('auth middleware', () => {
-  const dbPath = path.join(__dirname, 'db.json');
-  let originalDB;
+  let tempDir;
+  let dbPath;
   let server;
   let base;
 
   beforeAll(async () => {
-    originalDB = await fs.promises.readFile(dbPath, 'utf8');
+    tempDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), 'db-'));
+    dbPath = path.join(tempDir, 'db.json');
+    await fs.promises.writeFile(dbPath, JSON.stringify({ sessions: [], data: {}, users: [] }));
+    process.env.DB_FILE = dbPath;
     process.env.PORT = 0;
     server = require('./index.js').server;
     await new Promise(resolve => {
@@ -24,8 +28,8 @@ describe('auth middleware', () => {
   });
 
   afterAll(async () => {
-    await fs.promises.writeFile(dbPath, originalDB);
     await new Promise(resolve => server.close(resolve));
+    await fs.promises.rm(tempDir, { recursive: true, force: true });
   });
 
   function httpRequest(method, path, { headers = {}, body } = {}) {
@@ -84,5 +88,28 @@ describe('auth middleware', () => {
     expect(res.status).toBe(401);
     const body = JSON.parse(res.data);
     expect(body).toEqual({ error: 'Invalid token' });
+  });
+
+  test('allows creating and listing sessions', async () => {
+    const loginRes = await httpRequest('POST', '/api/login', {
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: 'tester' })
+    });
+    const token = JSON.parse(loginRes.data).token;
+    const createRes = await httpRequest('POST', '/api/sessions', {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({ name: 'first' })
+    });
+    expect(createRes.status).toBe(200);
+    const created = JSON.parse(createRes.data);
+    const listRes = await httpRequest('GET', '/api/sessions', {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    expect(listRes.status).toBe(200);
+    const sessions = JSON.parse(listRes.data);
+    expect(sessions).toContainEqual(created);
   });
 });

@@ -1,4 +1,4 @@
-import { logEvent, clearTimeline } from './timeline.js';
+import { logEvent, clearTimeline } from '../timeline.js';
 
 describe('timeline timezone', () => {
   beforeEach(() => {

@@ -10,12 +10,12 @@ describe('$ and $$ when document is undefined', () => {
   });
 
   test('$ returns null when document is undefined', () => {
-    const { $ } = require('./utils.js');
+    const { $ } = require('../utils.js');
     expect($('div')).toBeNull();
   });
 
   test('$$ returns [] when document is undefined', () => {
-    const { $$ } = require('./utils.js');
+    const { $$ } = require('../utils.js');
     expect($$('div')).toEqual([]);
   });
 });

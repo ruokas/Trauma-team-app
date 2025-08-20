@@ -19,6 +19,7 @@ describe('server API', () => {
   let server;
   let fakeDB;
   let fsPromises;
+  let originalPort;
 
   beforeEach(async () => {
     jest.resetModules();
@@ -28,6 +29,7 @@ describe('server API', () => {
     fsPromises.writeFile.mockImplementation(async (_path, data) => {
       fakeDB = JSON.parse(data);
     });
+    originalPort = process.env.PORT;
     process.env.PORT = 0;
     ({ app, server } = require('./index'));
     await new Promise(resolve => {
@@ -38,6 +40,7 @@ describe('server API', () => {
 
   afterEach(async () => {
     await new Promise(resolve => server.close(resolve));
+    process.env.PORT = originalPort;
   });
 
   async function login(name = 'tester') {
@@ -83,6 +86,30 @@ describe('server API', () => {
       .set('Authorization', `Bearer ${token}`);
     expect(del.statusCode).toBe(200);
     expect(fakeDB.sessions).toHaveLength(0);
+  });
+
+  test('requires name when creating session', async () => {
+    const token = await login('dave');
+    const res = await request(app)
+      .post('/api/sessions')
+      .set('Authorization', `Bearer ${token}`)
+      .send({});
+    expect(res.statusCode).toBe(400);
+    expect(res.body).toEqual({ error: 'Name required' });
+  });
+
+  test('returns 404 for missing session on update/delete', async () => {
+    const token = await login('erin');
+    const badId = 'doesnotexist';
+    const update = await request(app)
+      .put(`/api/sessions/${badId}`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ name: 'new' });
+    expect(update.statusCode).toBe(404);
+    const del = await request(app)
+      .delete(`/api/sessions/${badId}`)
+      .set('Authorization', `Bearer ${token}`);
+    expect(del.statusCode).toBe(404);
   });
 
   test('session data endpoints', async () => {

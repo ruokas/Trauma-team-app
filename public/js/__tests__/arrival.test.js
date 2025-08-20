@@ -1,4 +1,4 @@
-import { recordArrivalTime, startArrivalTimer } from './arrival.js';
+import { recordArrivalTime, startArrivalTimer } from '../arrival.js';
 
 jest.useFakeTimers('modern');
 

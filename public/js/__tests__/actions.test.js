@@ -1,4 +1,4 @@
-import { DEFAULT_DOSES, initActions } from './actions.js';
+import { DEFAULT_DOSES, initActions } from '../actions.js';
 
 describe('initActions default doses', () => {
   test('fills default dose on check and allows edits', () => {

@@ -6,7 +6,7 @@ const { Server } = require('socket.io');
 const crypto = require('crypto');
 
 const PORT = process.env.PORT || 3000;
-const DB_FILE = path.join(__dirname, 'db.json');
+const DB_FILE = process.env.DB_FILE || path.join(__dirname, 'db.json');
 
 async function loadDB(){
   try {

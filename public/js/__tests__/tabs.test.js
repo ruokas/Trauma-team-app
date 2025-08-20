@@ -11,7 +11,7 @@ describe('tabs', () => {
       <div class="view" data-tab="A – Kvėpavimo takai"></div>
     `;
     const setSpy = jest.spyOn(Storage.prototype, 'setItem');
-    const tabs = require('./tabs.js');
+    const tabs = require('../tabs.js');
     tabs.initTabs();
 
     const nav = document.getElementById('tabs');
@@ -45,7 +45,7 @@ describe('tabs', () => {
       <div class="view" data-tab="A – Kvėpavimo takai"></div>
     `;
 
-    const tabs = require('./tabs.js');
+    const tabs = require('../tabs.js');
 
     tabs.initTabs();
     tabs.showTab('A – Kvėpavimo takai');
