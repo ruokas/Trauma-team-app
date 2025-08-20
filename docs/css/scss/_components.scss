@@ -1,0 +1,132 @@
+@use 'variables' as *;
+
+.btn{border:1px solid var(--line);background:#152231;color:var(--ink);padding:$space-8 $space-12;border-radius:$space-10;cursor:pointer;font-weight:600;transition:background-color .2s,color .2s}
+.btn:hover{filter:brightness(1.1)}
+.btn:active{filter:brightness(.9)}
+.btn:focus-visible{outline:$space-3 solid var(--accent);outline-offset:$space-2;transition:background-color .2s,color .2s}
+.btn.primary{background:var(--accent);color:#fff;border-color:#2d74b8}
+.btn.warn{background:#ffb74d;color:#271400;border-color:#bf7d19}
+.btn.ghost{background:transparent;color:var(--muted);border-style:dashed}
+#d_gks_total{margin-left:auto;font-weight:700}
+.pill{display:inline-flex;align-items:center;gap:$space-8;padding:$space-6 $space-10;border:1px solid var(--line);border-radius:999px;background:#152231;color:#fff;font-weight:700}
+.pill:has(input:checked){background:var(--accent);border-color:#2d74b8}
+.pill.red:has(input:checked){background:var(--red);border-color:#a52623}
+  #fastGrid .pill{
+    padding:$space-10 $space-16;
+    font-size:$font-lg;
+  }
+select option.red{color:var(--red)}
+.chip{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+    padding:$space-8 $space-10;
+  border:1px solid var(--line);
+  border-radius:999px;
+  background:#152231;
+  color:var(--ink);
+  cursor:pointer;
+  user-select:none;
+  font:inherit;
+  outline:none;
+}
+label.chip input{
+  position:absolute;
+  opacity:0;
+  pointer-events:none;
+}
+  .chip:focus-visible,
+  .chip:focus-within{
+    outline:$space-2 solid var(--accent);
+    outline-offset:$space-2;
+  }
+.chip.active{background:var(--accent);color:#fff;border-color:#2d74b8}
+.chip.red.active{background:var(--red);color:#fff;border-color:#a52623}
+.chip.yellow.active{background:var(--yellow);color:#231b00;border-color:#8a7400}
+  .chip-group{display:flex;flex-wrap:wrap;gap:$space-8}
+  .gcs-calc{margin-top:$space-8;border:1px solid var(--line);border-radius:$space-10;padding:$space-8;background:#152231}
+  .gcs-calc .grid{margin-bottom:$space-8}
+  .blood-order-box{margin-top:$space-8;border:1px solid var(--line);border-radius:$space-10;padding:$space-8}
+  .blood-order-box .row{gap:$space-8;flex-wrap:wrap;align-items:center}
+    .breath-chip{padding:$space-8 $space-10;font-size:$font-lg}
+    section[data-tab="B – Kvėpavimas"] h3{margin:$space-12 0 $space-4;font-size:$font-md;color:var(--muted)}
+section[data-tab="B – Kvėpavimas"] h3:first-of-type{margin-top:0}
+    .hint{color:var(--muted);font-size:0.875rem}
+    .error-msg{color:var(--red);font-size:0.875rem}
+input.invalid,select.invalid{border-color:var(--red)}
+      .badge{padding:$space-2 $space-8;border-radius:$space-8;font-size:$font-xs;border:1px solid var(--line);background:#152231;color:var(--muted)}
+  .activation-dot{width:0.75rem;height:0.75rem;border-radius:50%;display:none;margin-left:$space-8}
+.activation-dot.red{background:var(--red);display:inline-block}
+.activation-dot.yellow{background:var(--yellow);display:inline-block}
+      #saveStatus{color:var(--muted);font-size:$font-sm;margin-top:$space-4}
+#saveStatus.offline{color:var(--yellow)}
+#saveStatus.offline::before{content:'⚠ ';}
+.split{display:flex;gap:$space-12;flex-wrap:wrap}
+.split>div{flex:1}
+.interv-groups{display:grid;gap:$space-12;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.interv-group{display:flex;flex-direction:column;gap:$space-8;background:var(--bg);border:1px solid var(--line);border-radius:$space-10;padding:$space-8}
+.interv-group>.grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
+.interv-group.collapsed>.grid{display:none}
+.med-search{margin-bottom:$space-8;width:100%}
+  .timeline-list{border:1px solid var(--line);border-radius:$space-10;padding:$space-8;max-height:18.75rem;overflow-y:auto}
+.timeline-entry{padding:$space-4 0;border-bottom:1px solid var(--line)}
+.timeline-entry:last-child{border-bottom:none}
+/* SVG body map */
+.map-toolbar{display:flex;gap:$space-8;flex-wrap:wrap;align-items:center;margin:$space-6 0}
+  .tool{padding:$space-8 $space-10;border-radius:$space-10;border:1px solid var(--line);background:#152231;color:var(--ink);min-height:2.25rem;cursor:pointer;font-weight:700}
+.tool.active{background:var(--accent);color:#fff;border-color:#2d74b8}
+  #bodySvg{width:100%;max-width:18.75rem;max-height:80vh;height:auto;border:1px solid var(--line);border-radius:$space-12;background:#0b141e}
+.silhouette{fill:#0f1822;stroke:#36506a;stroke-width:2}
+    .label{fill:#a9b6c5;font:bold $font-lg system-ui}
+.mark-w{stroke:#ef5350;stroke-width:3;fill:none}
+.mark-b{fill:#64b5f6}
+.mark-n{fill:#ffd54f;stroke:#6b540e;stroke-width:2}
+.nav-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:10}
+body.nav-open .nav-overlay{display:block}
+body.nav-open{overflow:hidden}
+  @media (max-width:61.25rem){
+  #navToggle{display:inline-block;margin-bottom:$space-8}
+  main{grid-template-columns:1fr}
+  nav{
+    position:fixed;
+    top:0;left:0;bottom:0;
+    width:13.75rem;
+    background:#0d151f;
+    transform:translateX(-100%);
+    transition:transform .3s ease;
+    padding:$space-14 $space-16;
+    overflow:auto;
+    z-index:20;
+    pointer-events:none;
+  }
+  body.nav-open nav{transform:translateX(0);pointer-events:auto}
+}
+@media print{ header,nav,.toolbar{display:none!important} body{background:#fff;color:#000} section.card{break-inside:avoid} }
+/* Interventions compact layout */
+section[data-tab="Intervencijos"] .card{padding:$space-8}
+section[data-tab="Intervencijos"] .card .detail .grid{gap:$space-4}
+section[data-tab="Intervencijos"] .med-search{margin-bottom:$space-8}
+    section[data-tab="Intervencijos"] .interv-toggle{margin:0 0 $space-8;font-size:$font-sm;color:var(--muted);display:flex;align-items:center;gap:$space-4;background:none;border:none;cursor:pointer;padding:0;text-align:left}
+/* Pain meds list layout */
+#pain_meds{grid-template-columns:1fr;gap:$space-4}
+#pain_meds .chip{width:100%;justify-content:flex-start;text-align:left;padding:$space-4 $space-8;white-space:normal}
+/* Modal and toast components */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:1000}
+  .modal{background:var(--card);color:var(--ink);padding:$space-20;border-radius:$space-10;box-shadow:0 2px 10px rgba(0,0,0,0.3);max-width:90%;width:20rem}
+.modal p{margin-top:0}
+.modal .actions{display:flex;justify-content:flex-end;gap:$space-8;margin-top:$space-16}
+.toast-container{position:fixed;bottom:$space-20;right:$space-20;display:flex;flex-direction:column;gap:$space-8;z-index:1000}
+.toast{background:var(--card);color:var(--ink);border:1px solid var(--line);padding:$space-10 $space-16;border-radius:$space-6;box-shadow:0 2px 6px rgba(0,0,0,0.2);transition:opacity .3s,transform .3s}
+.toast.success{background:var(--green);color:#fff}
+.toast.error{background:var(--red);color:#fff}
+.toast.hide{opacity:0;transform:translateY($space-10)}
+.arrival-timer{
+  font-family:monospace;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  font-size:$font-lg;
+  min-width:6ch;
+}
