@@ -1,4 +1,6 @@
-export function promptModal(message, defaultValue = '') {
+import { register } from '../alerts.js';
+
+function promptHandler({ message, defaultValue = '' }) {
   return new Promise(resolve => {
     const prev = document.activeElement;
     const overlay = document.createElement('div');
@@ -54,7 +56,7 @@ export function promptModal(message, defaultValue = '') {
   });
 }
 
-export function confirmModal(message){
+function confirmHandler({ message }){
   return new Promise(resolve => {
     const prev = document.activeElement;
     const overlay = document.createElement('div');
@@ -104,3 +106,6 @@ export function confirmModal(message){
     first.focus();
   });
 }
+
+register('prompt', promptHandler);
+register('confirm', confirmHandler);
