@@ -4,7 +4,9 @@
   "description": "",
   "main": "server/index.js",
   "scripts": {
-    "test": "jest --passWithNoTests",
+    "test": "npm run test:client && npm run test:server",
+    "test:client": "jest --config jest.config.js --passWithNoTests --testPathIgnorePatterns server",
+    "test:server": "jest server --passWithNoTests",
     "build:css": "sass --no-source-map --style=compressed public/css/scss/main.scss public/css/main.css",
     "start": "node server/index.js"
   },
@@ -21,6 +23,7 @@
     "@babel/preset-env": "^7.28.3",
     "jest": "^27.5.1",
     "jsdom": "^26.1.0",
-    "sass": "^1.90.0"
+    "sass": "^1.90.0",
+    "supertest": "^6.3.3"
   }
 }
