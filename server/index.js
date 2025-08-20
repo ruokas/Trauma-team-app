@@ -8,6 +8,7 @@ const Joi = require('joi');
 
 const PORT = process.env.PORT || 3000;
 const DB_FILE = process.env.DB_FILE || path.join(__dirname, 'db.json');
+const DISABLE_AUTH = process.env.DISABLE_AUTH === 'true';
 
 async function loadDB(){
   try {
@@ -54,6 +55,9 @@ const sessionDataSchema = Joi.object().unknown(true);
 
 /* ===== Auth ===== */
 app.post('/api/login', async (req, res) => {
+  if (DISABLE_AUTH) {
+    return res.json({ token: 'dev-token' });
+  }
   const { error, value } = loginSchema.validate(req.body);
   if (error) return res.status(400).json({ error: error.message });
   const { name } = value;
@@ -65,6 +69,7 @@ app.post('/api/login', async (req, res) => {
 });
 
 app.post('/api/logout', auth, async (req, res) => {
+  if (DISABLE_AUTH) return res.json({ ok: true });
   const token = req.token;
   const index = db.users.findIndex(u => u.token === token);
   if(index !== -1){
@@ -80,6 +85,7 @@ app.get('/api/users', auth, (req, res) => {
 });
 
 function auth(req, res, next){
+  if (DISABLE_AUTH) return next();
   const header = req.headers['authorization'] || '';
   const prefix = 'Bearer ';
   if(!header.startsWith(prefix)) return res.status(401).json({ error: 'No token' });
@@ -160,6 +166,7 @@ const io = new Server(server, { cors: { origin: '*' } });
 module.exports = { app, server };
 
 io.use((socket, next) => {
+  if (DISABLE_AUTH) return next();
   const raw = socket.handshake.auth && socket.handshake.auth.token;
   const prefix = 'Bearer ';
   const token = (typeof raw === 'string' && raw.startsWith(prefix)) ? raw.slice(prefix.length) : null;
@@ -175,6 +182,7 @@ io.on('connection', socket => {
   db = await loadDB();
   server.listen(PORT, () => {
     console.log('Server listening on', PORT);
+    if (DISABLE_AUTH) console.warn('Authentication disabled');
   });
 })().catch(err => {
   console.error('Failed to start server', err);
