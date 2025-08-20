@@ -290,13 +290,12 @@ const teamWrap=$('#teamGrid'); TEAM_ROLES.forEach(r=>{
 
 /* ===== SVG Body Map (no canvas) ===== */
 const BodySVG=(function(){
-  const svg=$('#bodySvg'); const front=$('#layer-front'), back=$('#layer-back'), marks=$('#marks');
-  const btnSide=$('#btnSide'), btnUndo=$('#btnUndo'), btnClear=$('#btnClearMap'), btnExport=$('#btnExportSvg');
-  const tools=$$('.map-toolbar .tool[data-tool]'); let activeTool='Ž', side='front';
+  const svg=$('#bodySvg'); const front=$('#layer-front'), back=$('#layer-back');
+  const marksFront=$('#marks-front'), marksBack=$('#marks-back');
+  const btnUndo=$('#btnUndo'), btnClear=$('#btnClearMap'), btnExport=$('#btnExportSvg');
+  const tools=$$('.map-toolbar .tool[data-tool]'); let activeTool='Ž';
   function setTool(t){ activeTool=t; tools.forEach(b=>b.classList.toggle('active', b.dataset.tool===t)); }
   tools.forEach(b=>b.addEventListener('click',()=>setTool(b.dataset.tool))); setTool('Ž');
-
-  btnSide.addEventListener('click',()=>{ side=(side==='front')?'back':'front'; front.classList.toggle('hidden', side!=='front'); back.classList.toggle('hidden', side!=='back'); btnSide.textContent='↺ Rodyti: '+(side==='front'?'Priekis':'Nugara'); saveAll(); });
 
   function svgPoint(evt){
     const pt=svg.createSVGPoint(); pt.x=evt.clientX; pt.y=evt.clientY; return pt.matrixTransform(svg.getScreenCTM().inverse());
@@ -308,60 +307,58 @@ const BodySVG=(function(){
     if(t==='N') use.setAttributeNS('http://www.w3.org/1999/xlink','href','#sym-burn');
     use.setAttribute('transform',`translate(${x},${y})`);
     use.dataset.type=t; use.dataset.side=s;
-    marks.appendChild(use); saveAll();
+    (s==='front'?marksFront:marksBack).appendChild(use); saveAll();
   }
-  ['front-shape','back-shape'].forEach(id=>{
-    $('#'+id).addEventListener('click',evt=>{
-      const p=svgPoint(evt); addMark(p.x,p.y,activeTool,side);
-    });
+  $('#front-shape').addEventListener('click',evt=>{
+    const p=svgPoint(evt); addMark(p.x,p.y,activeTool,'front');
+  });
+  $('#back-shape').addEventListener('click',evt=>{
+    const p=svgPoint(evt); addMark(p.x-400,p.y,activeTool,'back');
   });
 
   btnUndo.addEventListener('click',()=>{
-    const list=[...marks.querySelectorAll('use')].filter(u=>u.dataset.side===side);
+    const list=[...marksFront.querySelectorAll('use'), ...marksBack.querySelectorAll('use')];
     const last=list.pop(); if(last){ last.remove(); saveAll(); }
   });
   btnClear.addEventListener('click',async()=>{
     if(await notify({type:'confirm', message:'Išvalyti visas žymas (priekis ir nugara)?'})){
-      marks.innerHTML='';
+      marksFront.innerHTML=''; marksBack.innerHTML='';
       saveAll();
     }
   });
 
   btnExport.addEventListener('click',()=>{
     const clone=svg.cloneNode(true);
-    (clone.querySelector('#layer-front')).classList.toggle('hidden', side!=='front');
-    (clone.querySelector('#layer-back')).classList.toggle('hidden', side!=='back');
     const ser=new XMLSerializer(); const src=ser.serializeToString(clone);
     const url='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(src);
-    const a=document.createElement('a'); a.href=url; a.download=('kuno-zemelapis-'+side+'.svg'); a.click();
+    const a=document.createElement('a'); a.href=url; a.download('kuno-zemelapis.svg'); a.click();
   });
 
   function serialize(){
-    const arr=[...marks.querySelectorAll('use')].map(u=>{
+    const collect=(grp,side)=>[...grp.querySelectorAll('use')].map(u=>{
       const tr=u.getAttribute('transform'); const m=/translate\(([-\d.]+),([-\d.]+)\)/.exec(tr)||[0,0,0];
-      return {x:+m[1], y:+m[2], type:u.dataset.type, side:u.dataset.side};
+      return {x:+m[1], y:+m[2], type:u.dataset.type, side};
     });
-    return JSON.stringify({side,tool:activeTool,marks:arr});
+    const arr=[...collect(marksFront,'front'), ...collect(marksBack,'back')];
+    return JSON.stringify({tool:activeTool,marks:arr});
   }
   function load(raw){
     try{
       const o=typeof raw==='string'?JSON.parse(raw):raw;
-      side=o.side||'front'; activeTool=o.tool||'Ž';
-      front.classList.toggle('hidden', side!=='front'); back.classList.toggle('hidden', side!=='back');
-      btnSide.textContent='↺ Rodyti: '+(side==='front'?'Priekis':'Nugara');
+      activeTool=o.tool||'Ž';
       setTool(activeTool);
-      marks.innerHTML='';
+      marksFront.innerHTML=''; marksBack.innerHTML='';
       (o.marks||[]).forEach(m=>addMark(m.x,m.y,m.type,m.side));
     }catch(e){}
   }
   function counts(){
-    const arr=[...marks.querySelectorAll('use')].map(u=>({type:u.dataset.type, side:u.dataset.side}));
+    const arr=[...marksFront.querySelectorAll('use'), ...marksBack.querySelectorAll('use')].map(u=>({type:u.dataset.type, side:u.dataset.side}));
     const cnt={front:{Ž:0,S:0,N:0}, back:{Ž:0,S:0,N:0}};
     arr.forEach(m=>{ if(cnt[m.side] && (m.type in cnt[m.side])) cnt[m.side][m.type]++; });
     return cnt;
   }
 
-  return {serialize,load,counts,get side(){return side;},get tool(){return activeTool;}};
+  return {serialize,load,counts,get tool(){return activeTool;}};
 })();
 
 /* ===== Activation indicator ===== */
