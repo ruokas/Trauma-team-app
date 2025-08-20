@@ -6,7 +6,7 @@
   "scripts": {
     "test": "npm run test:client && npm run test:server",
     "test:client": "jest --config jest.config.js --passWithNoTests",
-    "test:server": "jest server --passWithNoTests",
+    "test:server": "jest --config jest.server.config.js",
     "build:css": "sass --no-source-map --style=compressed public/css/scss/main.scss public/css/main.css",
     "start": "node server/index.js"
   },
