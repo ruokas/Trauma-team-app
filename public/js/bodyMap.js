@@ -103,7 +103,7 @@ export function load(raw){
     setTool(activeTool);
     marks.innerHTML='';
     (o.marks||[]).forEach(m=>addMark(m.x,m.y,m.type,m.side));
-  }catch(e){}
+  }catch(e){ /* ignore */ }
 }
 
 export function counts(){

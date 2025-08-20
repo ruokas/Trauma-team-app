@@ -1,6 +1,7 @@
 import { $, $$ } from './utils.js';
 import { notify } from './alerts.js';
 import { serialize as bodyMapSerialize, load as bodyMapLoad } from './bodyMap.js';
+/* global io */
 
 let authToken = localStorage.getItem('trauma_token') || null;
 let socket = null;
@@ -30,7 +31,7 @@ export function initTheme(){
 
 export async function ensureLogin(){
   if(authToken || typeof fetch !== 'function') return;
-  while(true){
+  for(;;){
     try{
       const name=await notify({type:'prompt', message:'Įveskite vardą dalyvauti bendroje sesijoje'});
       if(!name) return;
@@ -311,7 +312,7 @@ export function loadAll(){
     $('#imaging_other').style.display = (IMAGING_GROUPS.some(sel=>$$('.chip.active', $(sel)).some(c=>c.dataset.value==='Kita')))?'block':'none';
   };
   const fallback=()=>{
-    const raw=localStorage.getItem(sessionKey()); if(!raw) return; try{ apply(JSON.parse(raw)); }catch(e){}
+    const raw=localStorage.getItem(sessionKey()); if(!raw) return; try{ apply(JSON.parse(raw)); }catch(e){ /* ignore */ }
   };
   if(authToken && typeof fetch === 'function'){
     fetch(`/api/sessions/${currentSessionId}/data`, { headers:{ 'Authorization': 'Bearer ' + authToken }})
