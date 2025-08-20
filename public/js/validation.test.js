@@ -8,6 +8,7 @@ describe('validateField', () => {
     const err = input.nextElementSibling;
     expect(err).not.toBeNull();
     expect(err.textContent).toBe('Privalomas laukas');
+    expect(err.style.color).toBe('var(--danger)');
     expect(input.classList.contains('invalid')).toBe(true);
   });
 
