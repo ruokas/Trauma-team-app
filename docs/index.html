@@ -254,13 +254,14 @@
         <button type="button" class="tool" data-tool="S">Sumušimas</button>
         <button type="button" class="tool" data-tool="N">Nudegimas</button>
         <span class="flex-1"></span>
+        <button type="button" class="tool" id="btnSide">↺ Rodyti: Priekis</button>
         <button type="button" class="tool" id="btnUndo">↩ Anuliuoti</button>
         <button type="button" class="tool" id="btnClearMap">🧹 Išvalyti</button>
         <button type="button" class="tool" id="btnExportSvg">⬇ Eksportuoti SVG</button>
       </div>
 
       <!-- SVG BODY MAP -->
-      <svg id="bodySvg" viewBox="0 0 800 900" xmlns="http://www.w3.org/2000/svg">
+      <svg id="bodySvg" viewBox="0 0 400 900" xmlns="http://www.w3.org/2000/svg">
         <!-- Marker symbols -->
         <defs>
           <g id="sym-wound">
@@ -280,24 +281,23 @@
           <text x="16" y="28" class="label">PRIEKIS</text>
           <g class="silhouette" id="front-shape">
             <!-- Silhouette path from Font Awesome Free 6.x (CC BY 4.0) -->
-            <path transform="translate(3,0) scale(1.7578125)" d="M112 48a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm40 304l0 128c0 17.7-14.3 32-32 32s-32-14.3-32-32l0-223.1L59.4 304.5c-9.1 15.1-28.8 20-43.9 10.9s-20-28.8-10.9-43.9l58.3-97c17.4-28.9 48.6-46.6 82.3-46.6l29.7 0c33.7 0 64.9 17.7 82.3 46.6l58.3 97c9.1 15.1 4.2 34.8-10.9 43.9s-34.8 4.2-43.9-10.9L232 256.9 232 480c0 17.7-14.3 32-32 32s-32-14.3-32-32l0-128-16 0z"/>
+            <path transform="scale(1.25,1.7578125)" d="M112 48a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm40 304l0 128c0 17.7-14.3 32-32 32s-32-14.3-32-32l0-223.1L59.4 304.5c-9.1 15.1-28.8 20-43.9 10.9s-20-28.8-10.9-43.9l58.3-97c17.4-28.9 48.6-46.6 82.3-46.6l29.7 0c33.7 0 64.9 17.7 82.3 46.6l58.3 97c9.1 15.1 4.2 34.8-10.9 43.9s-34.8 4.2-43.9-10.9L232 256.9 232 480c0 17.7-14.3 32-32 32s-32-14.3-32-32l0-128-16 0z"/>
           </g>
         </g>
 
         <!-- BACK silhouette -->
-        <g id="layer-back" transform="translate(400,0)">
+        <g id="layer-back" class="hidden">
           <text x="16" y="28" class="label">NUGARA</text>
           <g class="silhouette" id="back-shape">
             <!-- Silhouette path from Font Awesome Free 6.x (CC BY 4.0) -->
-            <path transform="translate(3,0) scale(1.7578125)" d="M112 48a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm40 304l0 128c0 17.7-14.3 32-32 32s-32-14.3-32-32l0-223.1L59.4 304.5c-9.1 15.1-28.8 20-43.9 10.9s-20-28.8-10.9-43.9l58.3-97c17.4-28.9 48.6-46.6 82.3-46.6l29.7 0c33.7 0 64.9 17.7 82.3 46.6l58.3 97c9.1 15.1 4.2 34.8-10.9 43.9s-34.8 4.2-43.9-10.9L232 256.9 232 480c0 17.7-14.3 32-32 32s-32-14.3-32-32l0-128-16 0z"/>
+            <path transform="scale(1.25,1.7578125)" d="M112 48a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm40 304l0 128c0 17.7-14.3 32-32 32s-32-14.3-32-32l0-223.1L59.4 304.5c-9.1 15.1-28.8 20-43.9 10.9s-20-28.8-10.9-43.9l58.3-97c17.4-28.9 48.6-46.6 82.3-46.6l29.7 0c33.7 0 64.9 17.7 82.3 46.6l58.3 97c9.1 15.1 4.2 34.8-10.9 43.9s-34.8 4.2-43.9-10.9L232 256.9 232 480c0 17.7-14.3 32-32 32s-32-14.3-32-32l0-128-16 0z"/>
           </g>
         </g>
 
-        <!-- MARKS containers -->
-        <g id="marks-front"></g>
-        <g id="marks-back" transform="translate(400,0)"></g>
+        <!-- MARKS container -->
+        <g id="marks"></g>
       </svg>
-      <div class="hint">Spragtelėkite ant figūros – įdedama pasirinkta žyma. Priekis ir nugara matomi kartu.</div>
+      <div class="hint">Spragtelėkite ant figūros – įdedama pasirinkta žyma. Priekis/Nugara – perjungimas viršuje.</div>
     </section>
 
     <!-- Intervencijos -->
