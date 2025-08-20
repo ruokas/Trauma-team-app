@@ -4,6 +4,7 @@ const path = require('path');
 const http = require('http');
 const { Server } = require('socket.io');
 const crypto = require('crypto');
+const Joi = require('joi');
 
 const PORT = process.env.PORT || 3000;
 const DB_FILE = process.env.DB_FILE || path.join(__dirname, 'db.json');
@@ -33,9 +34,29 @@ app.use(express.json());
 // Serve static assets from the public directory
 app.use(express.static(path.join(__dirname, '..', 'public')));
 
+/* ===== Validation Schemas ===== */
+const loginSchema = Joi.object({
+  name: Joi.string().min(1).max(50).required()
+});
+
+const sessionSchema = Joi.object({
+  name: Joi.string().min(1).max(100).required()
+});
+
+const sessionsListSchema = Joi.array().items(
+  Joi.object({
+    id: Joi.string().required(),
+    name: Joi.string().min(1).max(100).required()
+  })
+);
+
+const sessionDataSchema = Joi.object().unknown(true);
+
 /* ===== Auth ===== */
 app.post('/api/login', async (req, res) => {
-  const name = (req.body && req.body.name) || 'anonymous';
+  const { error, value } = loginSchema.validate(req.body);
+  if (error) return res.status(400).json({ error: error.message });
+  const { name } = value;
   const token = crypto.randomBytes(8).toString('hex');
   db.users.push({ token, name });
   await saveDB();
@@ -74,18 +95,18 @@ app.get('/api/sessions', auth, (req, res) => {
 });
 
 app.put('/api/sessions', auth, async (req, res) => {
-  if(!Array.isArray(req.body)){
-    return res.status(400).json({ error: 'Invalid session list' });
-  }
-  db.sessions = req.body;
+  const { error, value } = sessionsListSchema.validate(req.body);
+  if (error) return res.status(400).json({ error: error.message });
+  db.sessions = value;
   await saveDB();
   io.emit('sessions', db.sessions);
   res.json({ ok: true });
 });
 
 app.post('/api/sessions', auth, async (req, res) => {
-  const name = req.body && req.body.name;
-  if(!name) return res.status(400).json({ error: 'Name required' });
+  const { error, value } = sessionSchema.validate(req.body);
+  if (error) return res.status(400).json({ error: error.message });
+  const { name } = value;
   const id = crypto.randomBytes(6).toString('hex');
   const session = { id, name };
   db.sessions.push(session);
@@ -98,7 +119,9 @@ app.put('/api/sessions/:id', auth, async (req, res) => {
   const id = req.params.id;
   const session = db.sessions.find(s => s.id === id);
   if(!session) return res.status(404).json({ error: 'Not found' });
-  if(req.body && req.body.name) session.name = req.body.name;
+  const { error, value } = sessionSchema.validate(req.body);
+  if (error) return res.status(400).json({ error: error.message });
+  session.name = value.name;
   await saveDB();
   io.emit('sessions', db.sessions);
   res.json({ ok: true });
@@ -123,7 +146,9 @@ app.get('/api/sessions/:id/data', auth, (req, res) => {
 
 app.put('/api/sessions/:id/data', auth, async (req, res) => {
   const id = req.params.id;
-  db.data[id] = req.body || {};
+  const { error, value } = sessionDataSchema.validate(req.body);
+  if (error) return res.status(400).json({ error: error.message });
+  db.data[id] = value;
   await saveDB();
   io.emit('sessionData', { id, data: db.data[id] });
   res.json({ ok: true });

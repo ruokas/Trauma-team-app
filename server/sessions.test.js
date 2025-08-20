@@ -57,7 +57,22 @@ describe('auth middleware', () => {
     });
     expect(res.status).toBe(400);
     const body = JSON.parse(res.data);
-    expect(body).toEqual({ error: 'Invalid session list' });
+    expect(body).toEqual({ error: '"value" must be an array' });
+  });
+
+  test('returns 400 when session list items are invalid', async () => {
+    const loginRes = await httpRequest('POST', '/api/login', {
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: 'tester' })
+    });
+    const token = JSON.parse(loginRes.data).token;
+    const res = await httpRequest('PUT', '/api/sessions', {
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify([{ id: 5 }])
+    });
+    expect(res.status).toBe(400);
+    const body = JSON.parse(res.data);
+    expect(body.error).toBeDefined();
   });
 
   test('rejects requests without authorization header', async () => {
