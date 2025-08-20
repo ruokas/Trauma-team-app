@@ -13,39 +13,53 @@
 }
 
 @media (max-width: 768px) {
+  header .wrap {
+    grid-template-columns: 1fr;
+  }
+
+  .header-left,
   .header-actions {
-    flex-wrap:wrap;
+    grid-column: 1 / -1;
+  }
+
+  .header-center {
+    display: none;
+  }
+
+  .header-actions {
+    justify-self: end;
+    flex-wrap: wrap;
     .toolbar{
-      flex-wrap:wrap;
-      flex:1 1 220px;
-      min-width:220px;
+      flex-wrap: wrap;
+      flex: 1 1 220px;
+      min-width: 220px;
       .btn{
-        flex:1 1 100px;
-        min-width:100px;
+        flex: 1 1 100px;
+        min-width: 100px;
       }
     }
     .more-actions {
-      position:relative;
+      position: relative;
       > summary {
-        display:inline-flex;
-        align-items:center;
-        cursor:pointer;
+        display: inline-flex;
+        align-items: center;
+        cursor: pointer;
       }
       .menu {
-        display:none;
-        position:absolute;
-        right:0;
-        top:100%;
-        flex-direction:column;
-        background:var(--card);
-        border:1px solid var(--line);
-        border-radius:10px;
-        padding:8px;
-        min-width:160px;
-        z-index:1000;
+        display: none;
+        position: absolute;
+        right: 0;
+        top: 100%;
+        flex-direction: column;
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 8px;
+        min-width: 160px;
+        z-index: 1000;
       }
       &[open] .menu {
-        display:flex;
+        display: flex;
       }
     }
   }
