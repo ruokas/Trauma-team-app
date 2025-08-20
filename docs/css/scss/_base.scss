@@ -1,0 +1,139 @@
+@use 'variables' as *;
+
+:root{color-scheme:dark}
+
+:root.dark{
+  --bg:#0c1218;--card:#121a24;--ink:#e9f2fb;
+  /* brighten supporting colours for better contrast */
+  --muted:#c2d0e0;--line:#2d3b4f;
+  --accent:#4ea0f5;--red:#e53935;--yellow:#ffcc00;--green:#00c853;--ink2:#d7ecff;
+}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;font-size:$font-base;line-height:1.5}
+header{
+  --header-height:68px;
+  --line:color-mix(in srgb,#2d3b4f,white 20%);
+  --ink:color-mix(in srgb,#e9f2fb,white 10%);
+  position:sticky;
+  top:0;
+  z-index:10;
+  background:#0d151fdd;
+  backdrop-filter:blur(6px);
+  border-bottom:1px solid var(--line);
+}
+.wrap{
+  width:100%;
+  max-width:1200px;
+  margin-inline:auto;
+  padding:$space-16 $space-20;
+  display:grid;
+  grid-template-columns:auto 1fr auto;
+  align-items:center;
+  gap:$space-12;
+}
+.header-left{
+  display:flex;
+  align-items:center;
+  gap:$space-12;
+  > div{
+    flex:1;
+    min-width:0;
+  }
+}
+.header-center,
+.header-actions{
+  display:flex;
+  flex-wrap:nowrap;
+  overflow-x:auto;
+  gap:$space-12;
+  align-items:center;
+  min-width:0;
+  .toolbar{
+    display:flex;
+    flex-wrap:nowrap;
+    gap:$space-10;
+    flex:0 0 auto;
+    min-width:auto;
+  }
+  .btn{
+    flex:0 0 auto;
+    min-width:auto;
+  }
+}
+.header-center .toolbar + .toolbar,
+.header-actions .toolbar + .toolbar{
+  border-left:1px solid var(--line);
+  padding-left:$space-8;
+  margin-left:$space-8;
+}
+
+.header-center{
+  grid-column:2;
+  justify-self:center;
+  justify-content:center;
+}
+
+.header-actions{
+  grid-column:3;
+  justify-self:end;
+  justify-content:flex-end;
+  text-align:right;
+
+  #sessionDeleteList{
+    width:100%;
+    display:flex;
+    flex-wrap:wrap;
+    gap:$space-4;
+    margin-top:$space-4;
+    .session-item{
+      display:flex;
+      align-items:center;
+      gap:$space-2;
+      .btn{
+        flex:0 0 auto;
+        min-width:auto;
+        padding:$space-4;
+      }
+    }
+  }
+}
+#arrivalBar{
+  flex:0 0 auto;
+  min-width:auto;
+  .btn{
+    flex:0 0 auto;
+    min-width:80px;
+    padding:$space-6 $space-8;
+  }
+}
+#saveStatus{width:100%}
+// Use fluid typography for headings
+h1{font-size:clamp(1.25rem,5vw,2rem);margin:$space-4 0}
+.sub{color:color-mix(in srgb,var(--muted),white 20%);font-size:$font-xs}
+.btn{min-width:4rem}
+.btn-icon{width:1em;height:1em;margin-right:$space-4}
+.toolbar{display:flex;gap:$space-8;flex-wrap:wrap;margin-top:$space-8}
+.toolbar--scroll{flex-wrap:nowrap;overflow-x:auto}
+.header-actions .toolbar:first-child,
+.header-center .toolbar:first-child{margin-top:0}
+main{max-width:1200px;margin:$space-12 auto;padding:0 $space-16;display:grid;grid-template-columns:220px 1fr;gap:$space-12}
+nav{position:sticky;top:var(--header-height);align-self:start}
+#navToggle{display:none}
+nav .tab{display:flex;align-items:center;gap:$space-8;width:100%;white-space:nowrap;padding:$space-10 $space-12;border:1px solid var(--line);border-radius:$space-10;margin-bottom:$space-8;background:#152231;color:var(--ink);cursor:pointer;font-weight:600;text-align:left;text-transform:none;font-size:$font-lg;transition:background-color .2s,color .2s}
+nav .tab:hover{background:color-mix(in srgb,#152231,white 10%);color:color-mix(in srgb,var(--ink),white 10%)}
+nav .tab.active{background:#1f2e44;border-color:#2b405c}
+nav .tab:focus{outline:none}
+nav .tab:focus-visible{outline:$space-2 solid var(--accent)}
+.tab-icon{width:1.5rem}
+section.card{background:rgba(18,26,36,.6);backdrop-filter:blur(10px);border:1px solid color-mix(in srgb,var(--line),white 20%);border-radius:$space-14;padding:$space-14;color:var(--ink)}
+section.card h2{font-size:clamp(1rem,3.5vw,1.5rem);margin:0 0 $space-10}
+section.card .grid{display:grid;gap:$space-10}
+label{display:block;color:var(--muted);font-size:$font-sm;margin-bottom:$space-4}
+input[type="text"],input[type="number"],input[type="time"],input[type="date"],textarea,select{
+  width:100%;padding:$space-9 $space-10;border:1px solid var(--line);border-radius:$space-10;background:#0f1620;color:var(--ink);font-size:$font-md
+}
+input[type="text"]:focus-visible,input[type="number"]:focus-visible,input[type="time"]:focus-visible,input[type="date"]:focus-visible,textarea:focus-visible,select:focus-visible{outline:$space-2 solid var(--accent)}
+input::placeholder,
+textarea::placeholder{color:var(--muted)}
+textarea{min-height:80px;resize:vertical}
