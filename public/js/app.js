@@ -4,8 +4,9 @@ import { initChips, listChips, setChipActive, isChipActive, addChipIndicators } 
 import { initAutoActivate } from './autoActivate.js';
 import { initActions } from './actions.js';
 import { logEvent, initTimeline } from './timeline.js';
-import { promptModal, confirmModal } from './components/modal.js';
-import { showToast } from './components/toast.js';
+import { notify } from './alerts.js';
+import './components/toast.js';
+import './components/modal.js';
 import { initValidation, validateVitals } from './validation.js';
 import { startArrivalTimer } from './arrival.js';
 import { initTopbar } from './components/topbar.js';
@@ -42,7 +43,7 @@ async function ensureLogin(){
   if(authToken || typeof fetch !== 'function') return;
   while(true){
     try{
-      const name=await promptModal('Įveskite vardą dalyvauti bendroje sesijoje');
+      const name=await notify({type:'prompt', message:'Įveskite vardą dalyvauti bendroje sesijoje'});
       if(!name) return;
       const res=await fetch('/api/login',{
         method:'POST',
@@ -50,8 +51,8 @@ async function ensureLogin(){
         body:JSON.stringify({ name })
       });
       if(!res.ok){
-        showToast('Prisijungti nepavyko: '+res.status,'error');
-        if(await confirmModal('Bandysite dar kartą?')) continue;
+        notify({message:'Prisijungti nepavyko: '+res.status,type:'error'});
+        if(await notify({type:'confirm',message:'Bandysite dar kartą?'})) continue;
         return;
       }
       const data=await res.json();
@@ -60,8 +61,8 @@ async function ensureLogin(){
       setupHeaderActions();
       break;
     }catch(e){
-      showToast('Prisijungti nepavyko: '+(e&&e.message||e),'error');
-      if(await confirmModal('Bandysite dar kartą?')) continue;
+      notify({message:'Prisijungti nepavyko: '+(e&&e.message||e),type:'error'});
+      if(await notify({type:'confirm',message:'Bandysite dar kartą?'})) continue;
       return;
     }
   }
@@ -133,7 +134,7 @@ async function initSessions(){
       rename.className='btn ghost';
       rename.setAttribute('aria-label','Rename session');
       rename.addEventListener('click',async()=>{
-        const name=await promptModal('Naujas pavadinimas', s.name);
+        const name=await notify({type:'prompt', message:'Naujas pavadinimas', defaultValue:s.name});
         if(!name) return;
         s.name=name;
         localStorage.setItem('trauma_sessions', JSON.stringify(sessions));
@@ -198,7 +199,7 @@ async function initSessions(){
   renderDeleteButtons();
 
   $('#btnNewSession').addEventListener('click',async()=>{
-    const name=await promptModal('Sesijos pavadinimas');
+    const name=await notify({type:'prompt', message:'Sesijos pavadinimas'});
     if(!name) return;
     const id=Date.now().toString(36);
     sessions.push({id,name});
@@ -214,7 +215,7 @@ async function initSessions(){
   $('#btnRenameSession').addEventListener('click',async()=>{
     const sess=sessions.find(s=>s.id===select.value);
     if(!sess) return;
-    const name=await promptModal('Naujas pavadinimas', sess.name);
+    const name=await notify({type:'prompt', message:'Naujas pavadinimas', defaultValue:sess.name});
     if(!name) return;
     sess.name=name;
     saveSessions(sessions);
@@ -321,7 +322,7 @@ const BodySVG=(function(){
     const last=list.pop(); if(last){ last.remove(); saveAll(); }
   });
   btnClear.addEventListener('click',async()=>{
-    if(await confirmModal('Išvalyti visas žymas (priekis ir nugara)?')){
+    if(await notify({type:'confirm', message:'Išvalyti visas žymas (priekis ir nugara)?'})){
       marks.innerHTML='';
       saveAll();
     }
@@ -832,17 +833,17 @@ function setupHeaderActions(){
   if(btnCopy) btnCopy.addEventListener('click',async()=>{
     try{
       await navigator.clipboard.writeText($('#output').value||'');
-      showToast('Nukopijuota.','success');
+      notify({message:'Nukopijuota.', type:'success'});
     }catch(e){
-      showToast('Nepavyko nukopijuoti.','error');
+      notify({message:'Nepavyko nukopijuoti.', type:'error'});
     }
   });
 
   const btnSave=document.getElementById('btnSave');
-  if(btnSave) btnSave.addEventListener('click',()=>{ if(validateForm()){ saveAll(); showToast('Išsaugota naršyklėje.','success'); }});
+  if(btnSave) btnSave.addEventListener('click',()=>{ if(validateForm()){ saveAll(); notify({message:'Išsaugota naršyklėje.', type:'success'}); }});
 
   const btnClear=document.getElementById('btnClear');
-  if(btnClear) btnClear.addEventListener('click',async()=>{ if(await confirmModal('Išvalyti viską?')){ localStorage.removeItem(sessionKey()); location.reload(); }});
+  if(btnClear) btnClear.addEventListener('click',async()=>{ if(await notify({type:'confirm', message:'Išvalyti viską?'})){ localStorage.removeItem(sessionKey()); location.reload(); }});
 
   const btnPdf=document.getElementById('btnPdf');
   if(btnPdf) btnPdf.addEventListener('click', async () => {
@@ -857,7 +858,7 @@ function setupHeaderActions(){
       doc.text(lines, 10, 10);
       doc.save('report.pdf');
     } catch (e) {
-      showToast('Nepavyko sugeneruoti PDF.','error');
+      notify({message:'Nepavyko sugeneruoti PDF.', type:'error'});
       console.error('PDF generation failed', e);
     }
   });
