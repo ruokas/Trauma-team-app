@@ -11,15 +11,15 @@ export function setupHeaderActions({ validateForm, saveAll }){
   const arrivalTimer=document.getElementById('arrivalTimer');
   if(arrivalTimer) arrivalTimer.addEventListener('dblclick',()=>startArrivalTimer(true));
 
-  const btnCopy=$('#btnCopy');
-  if(btnCopy) btnCopy.addEventListener('click',async()=>{
+  const copyButtons=[$('#btnCopy'), $('#btnCopyReport')].filter(Boolean);
+  copyButtons.forEach(btn=>btn.addEventListener('click',async()=>{
     try{
       await navigator.clipboard.writeText($('#output').value||'');
       notify({message:'Nukopijuota.', type:'success'});
     }catch(e){
       notify({message:'Nepavyko nukopijuoti.', type:'error'});
     }
-  });
+  }));
 
   const btnSave=$('#btnSave');
   if(btnSave) btnSave.addEventListener('click',()=>{ if(validateForm()){ saveAll(); notify({message:'Išsaugota naršyklėje.', type:'success'}); }});
