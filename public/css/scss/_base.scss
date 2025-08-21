@@ -81,17 +81,33 @@ header{
   }
 }
 
-.header-actions{
-  grid-column:3;
-  justify-self:end;
-  justify-content:flex-end;
-  text-align:right;
+  .header-actions{
+    grid-column:3;
+    justify-self:end;
+    justify-content:flex-end;
+    text-align:right;
 
-  #sessionDeleteList{
-    width:100%;
-    display:flex;
-    flex-wrap:wrap;
-    gap:$space-4;
+    .status-wrap{
+      display:flex;
+      align-items:center;
+      gap:$space-8;
+      flex:1 1 auto;
+      min-width:0;
+
+      #userList,
+      #saveStatus{
+        min-width:0;
+        overflow:hidden;
+        white-space:nowrap;
+        text-overflow:ellipsis;
+      }
+    }
+
+    #sessionDeleteList{
+      width:100%;
+      display:flex;
+      flex-wrap:wrap;
+      gap:$space-4;
     margin-top:$space-4;
     .session-item{
       display:flex;
@@ -117,18 +133,17 @@ header{
         }
       }
     }
+    }
   }
-}
-#arrivalBar{
-  flex:0 0 auto;
-  min-width:auto;
-  .btn{
+  #arrivalBar{
     flex:0 0 auto;
-    min-width:80px;
-    padding:$space-6 $space-8;
+    min-width:auto;
+    .btn{
+      flex:0 0 auto;
+      min-width:80px;
+      padding:$space-6 $space-8;
+    }
   }
-}
-#saveStatus{width:100%}
 // Use fluid typography for headings
 h1{font-size:clamp(1.25rem,5vw,2rem);margin:$space-4 0}
 .sub{color:color-mix(in srgb,var(--muted),white 20%);font-size:$font-xs}
