@@ -295,6 +295,16 @@
         <!-- FRONT silhouette -->
         <g id="layer-front" transform="translate(0,0)">
           <text x="16" y="28" class="label">PRIEKIS</text>
+          <g id="zones-front" class="zones" transform="translate(0,50) scale(15.5,21.05) translate(-11,-6)">
+            <polygon class="zone" data-zone="head-front" data-area="4.5" points="19,0 29,0 29,14 19,14"/>
+            <polygon class="zone" data-zone="chest-front" data-area="9" points="14,14 34,14 34,26 14,26"/>
+            <polygon class="zone" data-zone="abdomen-front" data-area="9" points="14,26 34,26 34,38 14,38"/>
+            <polygon class="zone" data-zone="arm-left-front" data-area="4.5" points="5,14 14,14 14,38 5,38"/>
+            <polygon class="zone" data-zone="arm-right-front" data-area="4.5" points="34,14 43,14 43,38 34,38"/>
+            <polygon class="zone" data-zone="leg-left-front" data-area="9" points="18,38 26,38 26,48 18,48"/>
+            <polygon class="zone" data-zone="leg-right-front" data-area="9" points="26,38 34,38 34,48 26,48"/>
+            <polygon class="zone" data-zone="perineum-front" data-area="1" points="23,38 29,38 29,41 23,41"/>
+          </g>
           <g class="silhouette" id="front-shape" data-side="front" transform="translate(0,50) scale(15.5,21.05) translate(-11,-6)">
             <!-- Silhouette paths from Health Icons (CC0) -->
             <path fill-rule="evenodd" clip-rule="evenodd" d="M24 12C25.6569 12 27 10.6569 27 9C27 7.34315 25.6569 6 24 6C22.3431 6 21 7.34315 21 9C21 10.6569 22.3431 12 24 12ZM24 14C26.7614 14 29 11.7614 29 9C29 6.23858 26.7614 4 24 4C21.2386 4 19 6.23858 19 9C19 11.7614 21.2386 14 24 14Z"/>
@@ -305,6 +315,15 @@
         <!-- BACK silhouette -->
         <g id="layer-back" transform="translate(400,0)">
           <text x="16" y="28" class="label">NUGARA</text>
+          <g id="zones-back" class="zones" transform="translate(0,50) scale(15.5,21.05) translate(-11,-6)">
+            <polygon class="zone" data-zone="head-back" data-area="4.5" points="19,0 29,0 29,14 19,14"/>
+            <polygon class="zone" data-zone="upper-back" data-area="9" points="14,14 34,14 34,26 14,26"/>
+            <polygon class="zone" data-zone="lower-back" data-area="9" points="14,26 34,26 34,38 14,38"/>
+            <polygon class="zone" data-zone="arm-left-back" data-area="4.5" points="5,14 14,14 14,38 5,38"/>
+            <polygon class="zone" data-zone="arm-right-back" data-area="4.5" points="34,14 43,14 43,38 34,38"/>
+            <polygon class="zone" data-zone="leg-left-back" data-area="9" points="18,38 26,38 26,48 18,48"/>
+            <polygon class="zone" data-zone="leg-right-back" data-area="9" points="26,38 34,38 34,48 26,48"/>
+          </g>
           <g class="silhouette" id="back-shape" data-side="back" transform="translate(0,50) scale(15.5,21.05) translate(-11,-6)">
             <!-- Silhouette paths from Health Icons (CC0) -->
             <path fill-rule="evenodd" clip-rule="evenodd" d="M24 12C25.6569 12 27 10.6569 27 9C27 7.34315 25.6569 6 24 6C22.3431 6 21 7.34315 21 9C21 10.6569 22.3431 12 24 12ZM24 14C26.7614 14 29 11.7614 29 9C29 6.23858 26.7614 4 24 4C21.2386 4 19 6.23858 19 9C19 11.7614 21.2386 14 24 14Z"/>
@@ -315,6 +334,7 @@
         <!-- MARKS container -->
         <g id="marks"></g>
       </svg>
+      <div id="burnTotal" class="hint mt-2"></div>
       <div class="hint">Spragtelėkite ant figūros – įdedama pasirinkta žyma.</div>
     </section>
 
