@@ -18,6 +18,49 @@ describe('body map serialization', () => {
   });
 });
 
+test('selects and deletes marks', () => {
+  document.body.innerHTML = `
+    <svg id="bodySvg"><g id="layer-front"></g><g id="layer-back"></g><g id="marks"></g></svg>
+    <button id="btnUndo"></button>
+    <button id="btnClearMap"></button>
+    <button id="btnExportSvg"></button>
+    <button id="btnDelete"></button>
+    <div class="map-toolbar"><button class="tool" data-tool="Ž"></button></div>
+  `;
+  const show = jest.fn();
+  window.showWoundDetails = show;
+  initBodyMap(()=>{});
+  load({tool:'Ž', marks:[{id:1,x:1,y:2,type:'Ž',side:'front'},{id:2,x:3,y:4,type:'S',side:'front'}]});
+  const marksGroup=document.getElementById('marks');
+  const [m1] = marksGroup.querySelectorAll('use');
+  m1.dispatchEvent(new Event('click',{bubbles:true}));
+  expect(m1.classList.contains('selected')).toBe(true);
+  expect(show).toHaveBeenCalledWith('1');
+  document.getElementById('btnDelete').click();
+  expect(marksGroup.querySelectorAll('use').length).toBe(1);
+});
+
+test('undo removes selected mark first', () => {
+  document.body.innerHTML = `
+    <svg id="bodySvg"><g id="layer-front"></g><g id="layer-back"></g><g id="marks"></g></svg>
+    <button id="btnUndo"></button>
+    <button id="btnClearMap"></button>
+    <button id="btnExportSvg"></button>
+    <button id="btnDelete"></button>
+    <div class="map-toolbar"><button class="tool" data-tool="Ž"></button></div>
+  `;
+  initBodyMap(()=>{});
+  load({tool:'Ž', marks:[{id:1,x:0,y:0,type:'Ž',side:'front'},{id:2,x:1,y:1,type:'Ž',side:'front'}]});
+  const marksGroup=document.getElementById('marks');
+  const [m1] = marksGroup.querySelectorAll('use');
+  m1.dispatchEvent(new Event('click',{bubbles:true}));
+  document.getElementById('btnUndo').click();
+  expect(marksGroup.querySelectorAll('use').length).toBe(1);
+  expect(marksGroup.querySelector('use').dataset.id).toBe('2');
+  document.getElementById('btnUndo').click();
+  expect(marksGroup.querySelectorAll('use').length).toBe(0);
+});
+
 test('restores burn zones and counts area', () => {
   document.body.innerHTML = `
     <svg id="bodySvg">
