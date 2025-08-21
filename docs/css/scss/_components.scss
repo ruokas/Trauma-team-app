@@ -83,6 +83,9 @@ input.invalid,select.invalid{border-color:var(--red)}
 .mark-w{stroke:#ef5350;stroke-width:3;fill:none}
 .mark-b{fill:#64b5f6}
 .mark-n{fill:#ffd54f;stroke:#6b540e;stroke-width:2}
+.zone{fill:rgba(0,0,0,0);cursor:pointer}
+.zone:hover{fill:rgba(255,255,255,0.1)}
+.zone.burned{fill:rgba(255,87,34,0.4)}
 .nav-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:10}
 body.nav-open .nav-overlay{display:block}
 body.nav-open{overflow:hidden}
