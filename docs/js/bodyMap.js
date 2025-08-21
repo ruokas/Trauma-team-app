@@ -1,13 +1,32 @@
 import { $, $$ } from './utils.js';
 import { notify } from './alerts.js';
 
-let svg, marks, btnUndo, btnClear, btnExport, btnDelete, tools, burnTotalEl;
+let svg, marks, btnUndo, btnClear, btnExport, btnDelete, tools, burnTotalEl, selectedList;
 export const TOOLS = { WOUND: 'Ž', BRUISE: 'S', BURN: 'N' };
 let activeTool = TOOLS.WOUND;
 let saveCb = () => {};
 const burns = new Set();
 const zoneMap = new Map();
 let markIdSeq = 0;
+
+// Mapping of zone identifiers to human‑readable labels
+export const ZONE_LABELS = {
+  'head-front': 'Galva (priekis)',
+  'chest-front': 'Krūtinė (priekis)',
+  'abdomen-front': 'Pilvas (priekis)',
+  'arm-left-front': 'Kairė ranka (priekis)',
+  'arm-right-front': 'Dešinė ranka (priekis)',
+  'leg-left-front': 'Kairė koja (priekis)',
+  'leg-right-front': 'Dešinė koja (priekis)',
+  'perineum-front': 'Perinė sritis (priekis)',
+  'head-back': 'Galva (nugara)',
+  'upper-back': 'Viršutinė nugara',
+  'lower-back': 'Apatinė nugara',
+  'arm-left-back': 'Kairė ranka (nugara)',
+  'arm-right-back': 'Dešinė ranka (nugara)',
+  'leg-left-back': 'Kairė koja (nugara)',
+  'leg-right-back': 'Dešinė koja (nugara)'
+};
 
 function setTool(t){
   activeTool = t;
@@ -32,14 +51,26 @@ function addMark(x, y, t, s, zone, id){
   const mid = id || ++markIdSeq;
   use.dataset.id = mid;
   if(mid > markIdSeq) markIdSeq = mid;
-  if(zone) use.dataset.zone = zone;
+  if(zone){
+    use.dataset.zone = zone;
+    if(selectedList){
+      const el=document.createElement('div');
+      el.textContent = ZONE_LABELS[zone] || zone;
+      el.dataset.id = mid;
+      selectedList.appendChild(el);
+    }
+  }
   marks.appendChild(use);
   saveCb();
 }
 
 function burnArea(){
   let s=0;
-  burns.forEach(z=>{ const el=zoneMap.get(z); s+= el? +el.dataset.area : 0; });
+  burns.forEach(z=>{
+    const el = zoneMap.get(z);
+    const area = el ? parseFloat(el.dataset.area) : 0;
+    s += isNaN(area) ? 0 : area;
+  });
   return s;
 }
 
@@ -60,6 +91,7 @@ export function initBodyMap(saveAll){
   btnDelete = $('#btnDelete');
   tools = $$('.map-toolbar .tool[data-tool]');
   burnTotalEl = $('#burnTotal');
+  selectedList = $('#selectedLocations');
   if(!svg || !marks) return;
 
   tools.forEach(b=>b.addEventListener('click',()=>setTool(b.dataset.tool)));
@@ -100,8 +132,11 @@ export function initBodyMap(saveAll){
     if(typeof window.showWoundDetails === 'function') window.showWoundDetails(u.dataset.id);
   });
 
-  const removeMark = m => {
+  const removeMark = (m)=>{
     if(!m) return;
+    if(selectedList && m.dataset.zone){
+      selectedList.querySelector(`[data-id="${m.dataset.id}"]`)?.remove();
+    }
     m.remove();
     saveCb();
   };
@@ -127,6 +162,7 @@ export function initBodyMap(saveAll){
       burns.clear();
       $$('.zone').forEach(z=>z.classList.remove('burned'));
       updateBurnDisplay();
+      selectedList && (selectedList.innerHTML='');
       saveCb();
     }
   });
@@ -140,11 +176,11 @@ export function initBodyMap(saveAll){
 }
 
 export function serialize(){
-    const arr=[...marks.querySelectorAll('use')].map(u=>{
-      const tr=u.getAttribute('transform');
-      const m=/translate\(([-\d.]+),([-\d.]+)\)/.exec(tr)||[0,0,0];
-      return {id:+u.dataset.id, x:+m[1], y:+m[2], type:u.dataset.type, side:u.dataset.side, zone:u.dataset.zone};
-    });
+  const arr=[...marks.querySelectorAll('use')].map(u=>{
+    const tr=u.getAttribute('transform');
+    const m=/translate\(([-\d.]+),([-\d.]+)\)/.exec(tr)||[0,0,0];
+    return {id:+u.dataset.id, x:+m[1], y:+m[2], type:u.dataset.type, side:u.dataset.side, zone:u.dataset.zone};
+  });
   const burnArr=[...burns].map(z=>{
     const el=zoneMap.get(z);
     const side=el?.closest('#layer-back')?'back':'front';
@@ -161,7 +197,8 @@ export function load(raw){
     marks.innerHTML='';
     burns.clear();
     $$('.zone').forEach(z=>z.classList.remove('burned'));
-      (o.marks||[]).forEach(m=>addMark(m.x,m.y,m.type,m.side,m.zone,m.id));
+    selectedList && (selectedList.innerHTML='');
+    (o.marks||[]).forEach(m=>addMark(m.x,m.y,m.type,m.side,m.zone,m.id));
     (o.burns||[]).forEach(b=>{
       const el=zoneMap.get(b.zone);
       if(el){ el.classList.add('burned'); burns.add(b.zone); }
@@ -172,40 +209,26 @@ export function load(raw){
 
 export function counts(){
   const arr=[...marks.querySelectorAll('use')].map(u=>({type:u.dataset.type, side:u.dataset.side}));
-  const cnt={front:{[TOOLS.WOUND]:0,[TOOLS.BRUISE]:0,[TOOLS.BURN]:0}, back:{[TOOLS.WOUND]:0,[TOOLS.BRUISE]:0,[TOOLS.BURN]:0}};
+  const cnt={
+    front:{[TOOLS.WOUND]:0,[TOOLS.BRUISE]:0,[TOOLS.BURN]:0},
+    back:{[TOOLS.WOUND]:0,[TOOLS.BRUISE]:0,[TOOLS.BURN]:0}
+  };
   arr.forEach(m=>{ if(cnt[m.side] && (m.type in cnt[m.side])) cnt[m.side][m.type]++; });
   cnt.burned=burnArea();
   return cnt;
 }
 
-// Mapping of zone identifiers to human‑readable labels
-export const ZONE_LABELS = {
-  'head-front': 'Galva (priekis)',
-  'chest-front': 'Krūtinė (priekis)',
-  'abdomen-front': 'Pilvas (priekis)',
-  'arm-left-front': 'Kairė ranka (priekis)',
-  'arm-right-front': 'Dešinė ranka (priekis)',
-  'leg-left-front': 'Kairė koja (priekis)',
-  'leg-right-front': 'Dešinė koja (priekis)',
-  'perineum-front': 'Perinė sritis (priekis)',
-  'head-back': 'Galva (nugara)',
-  'upper-back': 'Viršutinė nugara',
-  'lower-back': 'Apatinė nugara',
-  'arm-left-back': 'Kairė ranka (nugara)',
-  'arm-right-back': 'Dešinė ranka (nugara)',
-  'leg-left-back': 'Kairė koja (nugara)',
-  'leg-right-back': 'Dešinė koja (nugara)'
-};
-
 // Returns counts of marks and burn areas grouped by body zones
 export function zoneCounts(){
   const zones={};
+  // accumulate mark counts per zone
   marks && [...marks.querySelectorAll('use')].forEach(u=>{
     const z=u.dataset.zone;
     if(!z) return;
     if(!zones[z]) zones[z]={[TOOLS.WOUND]:0,[TOOLS.BRUISE]:0,[TOOLS.BURN]:0,burned:0,label:ZONE_LABELS[z]||z};
     zones[z][u.dataset.type]=(zones[z][u.dataset.type]||0)+1;
   });
+  // add burned area per zone
   burns.forEach(z=>{
     if(!zones[z]) zones[z]={[TOOLS.WOUND]:0,[TOOLS.BRUISE]:0,[TOOLS.BURN]:0,burned:0,label:ZONE_LABELS[z]||z};
     const area=parseFloat(zoneMap.get(z)?.dataset.area);
