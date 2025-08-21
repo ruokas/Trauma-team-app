@@ -183,17 +183,6 @@ export async function initSessions(){
     localStorage.setItem('v10_activeTab','Aktyvacija');
     location.reload();
   });
-  $('#btnRenameSession').addEventListener('click',async()=>{
-    const sess=sessions.find(s=>s.id===select.value);
-    if(!sess) return;
-    const name=await notify({type:'prompt', message:'Naujas pavadinimas', defaultValue:sess.name});
-    if(!name) return;
-    sess.name=name;
-    saveSessions(sessions);
-    populateSessionSelect(select, sessions);
-    select.value=currentSessionId;
-    renderDeleteButtons();
-  });
   select.addEventListener('change',()=>{
     const id=select.value;
     saveAll();
