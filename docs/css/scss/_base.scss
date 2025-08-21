@@ -46,6 +46,7 @@ header{
   display:flex;
   flex-wrap:nowrap;
   overflow-x:auto;
+  overflow-y:visible;
   gap:$space-12;
   align-items:center;
   min-width:0;
