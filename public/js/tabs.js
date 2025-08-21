@@ -1,17 +1,17 @@
 export const TABS = [
-  { name: 'Aktyvacija', icon: '🚨' },
-  { name: 'A – Kvėpavimo takai' },
-  { name: 'B – Kvėpavimas' },
-  { name: 'C – Kraujotaka' },
-  { name: 'D – Sąmonė' },
-  { name: 'E – Kita' },
-  { name: 'Intervencijos', icon: '💉' },
-  { name: 'Vaizdiniai tyrimai', icon: '☢️' },
-  { name: 'Laboratorija', icon: '🧪' },
-  { name: 'Komanda', icon: '👥' },
-  { name: 'Sprendimas', icon: '⚖️' },
-  { name: 'Laiko juosta', icon: '🕒' },
-  { name: 'Ataskaita', icon: '📝' }
+  { name: 'Aktyvacija', icon: '🚨', path: '/' },
+  { name: 'A – Kvėpavimo takai', path: '/airway' },
+  { name: 'B – Kvėpavimas', path: '/breathing' },
+  { name: 'C – Kraujotaka', path: '/circulation' },
+  { name: 'D – Sąmonė', path: '/consciousness' },
+  { name: 'E – Kita', path: '/other' },
+  { name: 'Intervencijos', icon: '💉', path: '/interventions' },
+  { name: 'Vaizdiniai tyrimai', icon: '☢️', path: '/imaging' },
+  { name: 'Laboratorija', icon: '🧪', path: '/labs' },
+  { name: 'Komanda', icon: '👥', path: '/team' },
+  { name: 'Sprendimas', icon: '⚖️', path: '/decision' },
+  { name: 'Laiko juosta', icon: '🕒', path: '/timeline' },
+  { name: 'Ataskaita', icon: '📝', path: '/report' }
 ];
 
 export const TAB_NAMES = TABS.map(t => t.name);
@@ -24,6 +24,10 @@ export function showTab(name){
   });
   document.querySelectorAll('.view').forEach(v=>v.style.display = (v.dataset.tab===name)?'block':'none');
   localStorage.setItem('v10_activeTab', name);
+  const tab=TABS.find(t=>t.name===name);
+  if(tab&&tab.path){
+    history.replaceState(null,'',tab.path);
+  }
   document.dispatchEvent(new CustomEvent('tabShown',{detail:name}));
 }
 
@@ -69,6 +73,9 @@ export function initTabs(){
     }
   });
 
+  const pathSeg=window.location.pathname.split('/').filter(Boolean).pop()||'';
+  const pathTab=TABS.find(t=>t.path.replace(/^\//,'')===pathSeg);
   const savedTab = localStorage.getItem('v10_activeTab');
-  if(savedTab && TAB_NAMES.includes(savedTab)) showTab(savedTab);
+  if(pathTab) showTab(pathTab.name);
+  else if(savedTab && TAB_NAMES.includes(savedTab)) showTab(savedTab);
 }

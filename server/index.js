@@ -160,6 +160,12 @@ app.put('/api/sessions/:id/data', auth, async (req, res) => {
   res.json({ ok: true });
 });
 
+// Serve the app for all non-API routes so deep links like /breathing work
+app.get('*', (req, res) => {
+  if (req.path.startsWith('/api')) return res.status(404).json({ error: 'Not found' });
+  res.sendFile(path.join(__dirname, '..', 'public', 'index.html'));
+});
+
 const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: '*' } });
 
