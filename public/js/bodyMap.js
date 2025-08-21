@@ -1,9 +1,11 @@
 import { $, $$ } from './utils.js';
 import { notify } from './alerts.js';
 
-let svg, marks, btnUndo, btnClear, btnExport, tools;
+let svg, marks, btnUndo, btnClear, btnExport, tools, burnTotalEl;
 let activeTool = 'Ž';
 let saveCb = () => {};
+const burns = new Set();
+const zoneMap = new Map();
 
 function setTool(t){
   activeTool = t;
@@ -29,6 +31,19 @@ function addMark(x, y, t, s){
   saveCb();
 }
 
+function burnArea(){
+  let s=0;
+  burns.forEach(z=>{ const el=zoneMap.get(z); s+= el? +el.dataset.area : 0; });
+  return s;
+}
+
+function updateBurnDisplay(){
+  if(burnTotalEl){
+    const t=burnArea();
+    burnTotalEl.textContent = t?`Nudegimai: ${t}%`:'';
+  }
+}
+
 export function initBodyMap(saveAll){
   saveCb = saveAll || (()=>{});
   svg = $('#bodySvg');
@@ -37,6 +52,7 @@ export function initBodyMap(saveAll){
   btnClear = $('#btnClearMap');
   btnExport = $('#btnExportSvg');
   tools = $$('.map-toolbar .tool[data-tool]');
+  burnTotalEl = $('#burnTotal');
   if(!svg || !marks) return;
 
   tools.forEach(b=>b.addEventListener('click',()=>setTool(b.dataset.tool)));
@@ -49,6 +65,25 @@ export function initBodyMap(saveAll){
       addMark(p.x,p.y,activeTool,el.dataset.side);
     });
   });
+
+  $$('.zone').forEach(z=>{
+    const name=z.dataset.zone;
+    zoneMap.set(name,z);
+    z.addEventListener('click',evt=>{
+      const side=z.closest('#layer-back')?'back':'front';
+      if(activeTool==='N'){
+        z.classList.toggle('burned');
+        if(z.classList.contains('burned')) burns.add(name); else burns.delete(name);
+        updateBurnDisplay();
+        saveCb();
+      }else{
+        const p=svgPoint(evt);
+        addMark(p.x,p.y,activeTool,side);
+      }
+    });
+  });
+
+  updateBurnDisplay();
 
   btnUndo?.addEventListener('click',()=>{
     const list=[...marks.querySelectorAll('use')];
@@ -76,7 +111,12 @@ export function serialize(){
     const m=/translate\(([-\d.]+),([-\d.]+)\)/.exec(tr)||[0,0,0];
     return {x:+m[1], y:+m[2], type:u.dataset.type, side:u.dataset.side};
   });
-  return JSON.stringify({tool:activeTool,marks:arr});
+  const burnArr=[...burns].map(z=>{
+    const el=zoneMap.get(z);
+    const side=el?.closest('#layer-back')?'back':'front';
+    return {zone:z, side};
+  });
+  return JSON.stringify({tool:activeTool,marks:arr,burns:burnArr});
 }
 
 export function load(raw){
@@ -85,7 +125,14 @@ export function load(raw){
     activeTool=o.tool||'Ž';
     setTool(activeTool);
     marks.innerHTML='';
+    burns.clear();
+    $$('.zone').forEach(z=>z.classList.remove('burned'));
     (o.marks||[]).forEach(m=>addMark(m.x,m.y,m.type,m.side));
+    (o.burns||[]).forEach(b=>{
+      const el=zoneMap.get(b.zone);
+      if(el){ el.classList.add('burned'); burns.add(b.zone); }
+    });
+    updateBurnDisplay();
   }catch(e){ /* ignore */ }
 }
 
@@ -93,6 +140,7 @@ export function counts(){
   const arr=[...marks.querySelectorAll('use')].map(u=>({type:u.dataset.type, side:u.dataset.side}));
   const cnt={front:{Ž:0,S:0,N:0}, back:{Ž:0,S:0,N:0}};
   arr.forEach(m=>{ if(cnt[m.side] && (m.type in cnt[m.side])) cnt[m.side][m.type]++; });
+  cnt.burned=burnArea();
   return cnt;
 }
 
