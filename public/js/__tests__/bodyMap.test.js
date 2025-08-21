@@ -72,6 +72,7 @@ test('restores burn zones and counts area', () => {
       <g id="layer-back"></g>
       <g id="marks"></g>
     </svg>
+    <div id="burnTotal"></div>
     <div class="map-toolbar"><button class="tool" data-tool="Ž"></button></div>
     <button id="btnUndo"></button>
     <button id="btnClearMap"></button>
@@ -80,6 +81,30 @@ test('restores burn zones and counts area', () => {
   initBodyMap(()=>{});
   load({tool:'N', marks:[], burns:[{zone:'head-front', side:'front'}]});
   expect(counts().burned).toBe(4.5);
+  expect(document.getElementById('burnTotal').textContent).toBe('Nudegimai: 4.5%');
   const s=JSON.parse(serialize());
   expect(s.burns[0].zone).toBe('head-front');
+});
+
+test('ignores invalid burn areas when displaying total', () => {
+  document.body.innerHTML = `
+    <svg id="bodySvg">
+      <g id="layer-front">
+        <g id="zones-front">
+          <polygon class="zone" data-zone="head-front" data-area="abc"></polygon>
+        </g>
+      </g>
+      <g id="layer-back"></g>
+      <g id="marks"></g>
+    </svg>
+    <div id="burnTotal"></div>
+    <div class="map-toolbar"><button class="tool" data-tool="Ž"></button></div>
+    <button id="btnUndo"></button>
+    <button id="btnClearMap"></button>
+    <button id="btnExportSvg"></button>
+  `;
+  initBodyMap(()=>{});
+  load({tool:'N', marks:[], burns:[{zone:'head-front', side:'front'}]});
+  expect(counts().burned).toBe(0);
+  expect(document.getElementById('burnTotal').textContent).toBe('');
 });

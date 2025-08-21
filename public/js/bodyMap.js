@@ -65,7 +65,11 @@ function addMark(x, y, t, s, zone, id){
 
 function burnArea(){
   let s=0;
-  burns.forEach(z=>{ const el=zoneMap.get(z); s+= el? +el.dataset.area : 0; });
+  burns.forEach(z=>{
+    const el = zoneMap.get(z);
+    const area = el ? parseFloat(el.dataset.area) : 0;
+    s += isNaN(area) ? 0 : area;
+  });
   return s;
 }
 
