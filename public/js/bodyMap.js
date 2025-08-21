@@ -159,6 +159,9 @@ export function initBodyMap(saveAll){
   btnClear?.addEventListener('click', async ()=>{
     if(await notify({type:'confirm', message:'Išvalyti visas žymas (priekis ir nugara)?'})){
       marks.innerHTML='';
+      burns.clear();
+      $$('.zone').forEach(z=>z.classList.remove('burned'));
+      updateBurnDisplay();
       selectedList && (selectedList.innerHTML='');
       saveCb();
     }
