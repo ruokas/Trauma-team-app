@@ -1,11 +1,12 @@
 import { $, $$ } from './utils.js';
 import { notify } from './alerts.js';
 
-let svg, marks, btnUndo, btnClear, btnExport, tools, burnTotalEl, selectedList;
+let svg, marks, btnUndo, btnClear, btnExport, btnDelete, tools, burnTotalEl, selectedList;
 let activeTool = 'Ž';
 let saveCb = () => {};
 const burns = new Set();
 const zoneMap = new Map();
+let markIdSeq = 0;
 
 // Mapping of zone identifiers to human‑readable labels
 export const ZONE_LABELS = {
@@ -38,7 +39,7 @@ function svgPoint(evt){
   return pt.matrixTransform(svg.getScreenCTM().inverse());
 }
 
-function addMark(x, y, t, s, zone){
+function addMark(x, y, t, s, zone, id){
   const use = document.createElementNS('http://www.w3.org/2000/svg','use');
   if(t==='Ž') use.setAttributeNS('http://www.w3.org/1999/xlink','href','#sym-wound');
   if(t==='S') use.setAttributeNS('http://www.w3.org/1999/xlink','href','#sym-bruise');
@@ -46,11 +47,15 @@ function addMark(x, y, t, s, zone){
   use.setAttribute('transform',`translate(${x},${y})`);
   use.dataset.type = t;
   use.dataset.side = s;
+  const mid = id || ++markIdSeq;
+  use.dataset.id = mid;
+  if(mid > markIdSeq) markIdSeq = mid;
   if(zone){
     use.dataset.zone = zone;
     if(selectedList){
       const el=document.createElement('div');
       el.textContent = ZONE_LABELS[zone] || zone;
+      el.dataset.id = mid;
       selectedList.appendChild(el);
     }
   }
@@ -78,6 +83,7 @@ export function initBodyMap(saveAll){
   btnUndo = $('#btnUndo');
   btnClear = $('#btnClearMap');
   btnExport = $('#btnExportSvg');
+  btnDelete = $('#btnDelete');
   tools = $$('.map-toolbar .tool[data-tool]');
   burnTotalEl = $('#burnTotal');
   selectedList = $('#selectedLocations');
@@ -113,15 +119,36 @@ export function initBodyMap(saveAll){
 
   updateBurnDisplay();
 
-  btnUndo?.addEventListener('click',()=>{
-    const list=[...marks.querySelectorAll('use')];
-    const last=list.pop(); if(last){
-      if(selectedList && last.dataset.zone){
-        selectedList.lastElementChild?.remove();
-      }
-      last.remove();
-      saveCb();
+  marks.addEventListener('click', e => {
+    const u = e.target.closest('use');
+    if(!u) return;
+    marks.querySelector('.selected')?.classList.remove('selected');
+    u.classList.add('selected');
+    if(typeof window.showWoundDetails === 'function') window.showWoundDetails(u.dataset.id);
+  });
+
+  const removeMark = (m)=>{
+    if(!m) return;
+    if(selectedList && m.dataset.zone){
+      selectedList.querySelector(`[data-id="${m.dataset.id}"]`)?.remove();
     }
+    m.remove();
+    saveCb();
+  };
+
+  btnUndo?.addEventListener('click',()=>{
+    const sel = marks.querySelector('use.selected');
+    if(sel){
+      removeMark(sel);
+    }else{
+      const list=[...marks.querySelectorAll('use')];
+      removeMark(list.pop());
+    }
+  });
+
+  btnDelete?.addEventListener('click',()=>{
+    const sel = marks.querySelector('use.selected');
+    if(sel) removeMark(sel);
   });
 
   btnClear?.addEventListener('click', async ()=>{
@@ -144,7 +171,7 @@ export function serialize(){
   const arr=[...marks.querySelectorAll('use')].map(u=>{
     const tr=u.getAttribute('transform');
     const m=/translate\(([-\d.]+),([-\d.]+)\)/.exec(tr)||[0,0,0];
-    return {x:+m[1], y:+m[2], type:u.dataset.type, side:u.dataset.side, zone:u.dataset.zone};
+    return {id:+u.dataset.id, x:+m[1], y:+m[2], type:u.dataset.type, side:u.dataset.side, zone:u.dataset.zone};
   });
   const burnArr=[...burns].map(z=>{
     const el=zoneMap.get(z);
@@ -163,7 +190,7 @@ export function load(raw){
     burns.clear();
     $$('.zone').forEach(z=>z.classList.remove('burned'));
     selectedList && (selectedList.innerHTML='');
-    (o.marks||[]).forEach(m=>addMark(m.x,m.y,m.type,m.side,m.zone));
+    (o.marks||[]).forEach(m=>addMark(m.x,m.y,m.type,m.side,m.zone,m.id));
     (o.burns||[]).forEach(b=>{
       const el=zoneMap.get(b.zone);
       if(el){ el.classList.add('burned'); burns.add(b.zone); }
