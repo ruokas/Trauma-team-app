@@ -828,15 +828,18 @@ function setupHeaderActions(){
   const arrivalTimer=document.getElementById('arrivalTimer');
   if(arrivalTimer) arrivalTimer.addEventListener('dblclick',()=>startArrivalTimer(true));
 
-  const btnCopy=document.getElementById('btnCopy');
-  if(btnCopy) btnCopy.addEventListener('click',async()=>{
+  const handleCopy=async()=>{
     try{
       await navigator.clipboard.writeText($('#output').value||'');
       notify({message:'Nukopijuota.', type:'success'});
     }catch(e){
       notify({message:'Nepavyko nukopijuoti.', type:'error'});
     }
-  });
+  };
+  const btnCopy=document.getElementById('btnCopy');
+  if(btnCopy) btnCopy.addEventListener('click',handleCopy);
+  const btnCopyReport=document.getElementById('btnCopyReport');
+  if(btnCopyReport) btnCopyReport.addEventListener('click',handleCopy);
 
   const btnSave=document.getElementById('btnSave');
   if(btnSave) btnSave.addEventListener('click',()=>{ if(validateForm()){ saveAll(); notify({message:'Išsaugota naršyklėje.', type:'success'}); }});
