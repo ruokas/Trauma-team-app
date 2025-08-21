@@ -2,7 +2,8 @@ import { $, $$ } from './utils.js';
 import { notify } from './alerts.js';
 
 let svg, marks, btnUndo, btnClear, btnExport, btnDelete, tools, burnTotalEl;
-let activeTool = 'Ž';
+export const TOOLS = { WOUND: 'Ž', BRUISE: 'S', BURN: 'N' };
+let activeTool = TOOLS.WOUND;
 let saveCb = () => {};
 const burns = new Set();
 const zoneMap = new Map();
@@ -22,9 +23,9 @@ function svgPoint(evt){
 
 function addMark(x, y, t, s, zone, id){
   const use = document.createElementNS('http://www.w3.org/2000/svg','use');
-  if(t==='Ž') use.setAttributeNS('http://www.w3.org/1999/xlink','href','#sym-wound');
-  if(t==='S') use.setAttributeNS('http://www.w3.org/1999/xlink','href','#sym-bruise');
-  if(t==='N') use.setAttributeNS('http://www.w3.org/1999/xlink','href','#sym-burn');
+  if(t===TOOLS.WOUND) use.setAttributeNS('http://www.w3.org/1999/xlink','href','#sym-wound');
+  if(t===TOOLS.BRUISE) use.setAttributeNS('http://www.w3.org/1999/xlink','href','#sym-bruise');
+  if(t===TOOLS.BURN) use.setAttributeNS('http://www.w3.org/1999/xlink','href','#sym-burn');
   use.setAttribute('transform',`translate(${x},${y})`);
   use.dataset.type = t;
   use.dataset.side = s;
@@ -62,7 +63,7 @@ export function initBodyMap(saveAll){
   if(!svg || !marks) return;
 
   tools.forEach(b=>b.addEventListener('click',()=>setTool(b.dataset.tool)));
-  setTool('Ž');
+  setTool(TOOLS.WOUND);
 
   ['front-shape','back-shape'].forEach(id=>{
     const el = document.getElementById(id);
@@ -77,7 +78,7 @@ export function initBodyMap(saveAll){
     zoneMap.set(name,z);
     z.addEventListener('click',evt=>{
       const side=z.closest('#layer-back')?'back':'front';
-      if(activeTool==='N'){
+      if(activeTool===TOOLS.BURN){
         z.classList.toggle('burned');
         if(z.classList.contains('burned')) burns.add(name); else burns.delete(name);
         updateBurnDisplay();
@@ -155,7 +156,7 @@ export function serialize(){
 export function load(raw){
   try{
     const o=typeof raw==='string'?JSON.parse(raw):raw;
-    activeTool=o.tool||'Ž';
+    activeTool=o.tool||TOOLS.WOUND;
     setTool(activeTool);
     marks.innerHTML='';
     burns.clear();
@@ -171,8 +172,44 @@ export function load(raw){
 
 export function counts(){
   const arr=[...marks.querySelectorAll('use')].map(u=>({type:u.dataset.type, side:u.dataset.side}));
-  const cnt={front:{Ž:0,S:0,N:0}, back:{Ž:0,S:0,N:0}};
+  const cnt={front:{[TOOLS.WOUND]:0,[TOOLS.BRUISE]:0,[TOOLS.BURN]:0}, back:{[TOOLS.WOUND]:0,[TOOLS.BRUISE]:0,[TOOLS.BURN]:0}};
   arr.forEach(m=>{ if(cnt[m.side] && (m.type in cnt[m.side])) cnt[m.side][m.type]++; });
   cnt.burned=burnArea();
   return cnt;
+}
+
+// Mapping of zone identifiers to human‑readable labels
+export const ZONE_LABELS = {
+  'head-front': 'Galva (priekis)',
+  'chest-front': 'Krūtinė (priekis)',
+  'abdomen-front': 'Pilvas (priekis)',
+  'arm-left-front': 'Kairė ranka (priekis)',
+  'arm-right-front': 'Dešinė ranka (priekis)',
+  'leg-left-front': 'Kairė koja (priekis)',
+  'leg-right-front': 'Dešinė koja (priekis)',
+  'perineum-front': 'Perinė sritis (priekis)',
+  'head-back': 'Galva (nugara)',
+  'upper-back': 'Viršutinė nugara',
+  'lower-back': 'Apatinė nugara',
+  'arm-left-back': 'Kairė ranka (nugara)',
+  'arm-right-back': 'Dešinė ranka (nugara)',
+  'leg-left-back': 'Kairė koja (nugara)',
+  'leg-right-back': 'Dešinė koja (nugara)'
+};
+
+// Returns counts of marks and burn areas grouped by body zones
+export function zoneCounts(){
+  const zones={};
+  marks && [...marks.querySelectorAll('use')].forEach(u=>{
+    const z=u.dataset.zone;
+    if(!z) return;
+    if(!zones[z]) zones[z]={[TOOLS.WOUND]:0,[TOOLS.BRUISE]:0,[TOOLS.BURN]:0,burned:0,label:ZONE_LABELS[z]||z};
+    zones[z][u.dataset.type]=(zones[z][u.dataset.type]||0)+1;
+  });
+  burns.forEach(z=>{
+    if(!zones[z]) zones[z]={[TOOLS.WOUND]:0,[TOOLS.BRUISE]:0,[TOOLS.BURN]:0,burned:0,label:ZONE_LABELS[z]||z};
+    const area=parseFloat(zoneMap.get(z)?.dataset.area);
+    zones[z].burned+=isNaN(area)?0:area;
+  });
+  return zones;
 }

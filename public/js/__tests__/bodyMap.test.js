@@ -1,4 +1,4 @@
-import { initBodyMap, load, counts, serialize } from '../bodyMap.js';
+import { initBodyMap, load, counts, serialize, zoneCounts } from '../bodyMap.js';
 
 describe('body map serialization', () => {
   test('counts marks after load', () => {
@@ -59,6 +59,31 @@ test('undo removes selected mark first', () => {
   expect(marksGroup.querySelector('use').dataset.id).toBe('2');
   document.getElementById('btnUndo').click();
   expect(marksGroup.querySelectorAll('use').length).toBe(0);
+});
+
+test('zoneCounts groups marks and burns by zone', () => {
+  document.body.innerHTML = `
+    <svg id="bodySvg">
+      <g id="layer-front">
+        <g id="zones-front">
+          <polygon class="zone" data-zone="head-front" data-area="5"></polygon>
+        </g>
+      </g>
+      <g id="layer-back"></g>
+      <g id="marks"></g>
+    </svg>
+    <div id="burnTotal"></div>
+    <div class="map-toolbar"><button class="tool" data-tool="Ž"></button></div>
+    <button id="btnUndo"></button>
+    <button id="btnClearMap"></button>
+    <button id="btnExportSvg"></button>
+  `;
+  initBodyMap(()=>{});
+  load({tool:'Ž', marks:[{x:1,y:1,type:'Ž',side:'front',zone:'head-front'},{x:2,y:2,type:'S',side:'front',zone:'head-front'}], burns:[{zone:'head-front', side:'front'}]});
+  const z=zoneCounts();
+  expect(z['head-front']['Ž']).toBe(1);
+  expect(z['head-front']['S']).toBe(1);
+  expect(z['head-front'].burned).toBe(5);
 });
 
 test('restores burn zones and counts area', () => {

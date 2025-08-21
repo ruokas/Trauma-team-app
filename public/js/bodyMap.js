@@ -217,3 +217,22 @@ export function counts(){
   cnt.burned=burnArea();
   return cnt;
 }
+
+// Returns counts of marks and burn areas grouped by body zones
+export function zoneCounts(){
+  const zones={};
+  // accumulate mark counts per zone
+  marks && [...marks.querySelectorAll('use')].forEach(u=>{
+    const z=u.dataset.zone;
+    if(!z) return;
+    if(!zones[z]) zones[z]={[TOOLS.WOUND]:0,[TOOLS.BRUISE]:0,[TOOLS.BURN]:0,burned:0,label:ZONE_LABELS[z]||z};
+    zones[z][u.dataset.type]=(zones[z][u.dataset.type]||0)+1;
+  });
+  // add burned area per zone
+  burns.forEach(z=>{
+    if(!zones[z]) zones[z]={[TOOLS.WOUND]:0,[TOOLS.BRUISE]:0,[TOOLS.BURN]:0,burned:0,label:ZONE_LABELS[z]||z};
+    const area=parseFloat(zoneMap.get(z)?.dataset.area);
+    zones[z].burned+=isNaN(area)?0:area;
+  });
+  return zones;
+}

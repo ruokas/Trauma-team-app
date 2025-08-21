@@ -1,6 +1,6 @@
 import { $ } from './utils.js';
 import { listChips } from './chips.js';
-import { counts as bodyMapCounts } from './bodyMap.js';
+import { zoneCounts as bodyMapZoneCounts, TOOLS } from './bodyMap.js';
 
 const TEAM_ROLES=['Komandos vadovas','Raštininkas','ED gydytojas 1','ED gydytojas 2','Slaugytoja 1','Slaugytoja 2','Anesteziologas','Chirurgas','Ortopedas'];
 const fastAreas=[
@@ -16,11 +16,16 @@ export function gksSum(a,k,m){ a=+a||0;k=+k||0;m=+m||0; return (a&&k&&m)?(a+k+m)
 const getSingleValue=sel=>listChips(sel)[0]||'';
 
 export function bodymapSummary(){
-  const cnt=bodyMapCounts();
-  const total=(cnt.front['Ž']+cnt.front['S']+cnt.front['N'])+(cnt.back['Ž']+cnt.back['S']+cnt.back['N']);
-  if(!total) return '';
-  const pack=side=>`(${cnt[side]['Ž']} Ž, ${cnt[side]['S']} S, ${cnt[side]['N']} N)`;
-  return `Žemėlapis: Priekis ${pack('front')}, Nugara ${pack('back')} — viso ${total} žymos.`;
+  const zones=bodyMapZoneCounts();
+  const parts=Object.values(zones).map(z=>{
+    const seg=[];
+    if(z[TOOLS.WOUND]) seg.push(`${z[TOOLS.WOUND]} ${TOOLS.WOUND}`);
+    if(z[TOOLS.BRUISE]) seg.push(`${z[TOOLS.BRUISE]} ${TOOLS.BRUISE}`);
+    if(z[TOOLS.BURN]) seg.push(`${z[TOOLS.BURN]} ${TOOLS.BURN}`);
+    if(z.burned) seg.push(`Nudegimai ${z.burned}%`);
+    return `${z.label}: ${seg.join(', ')}`;
+  });
+  return parts.length?`Žemėlapis: ${parts.join('; ')}`:'';
 }
 
 export function generateReport(){
