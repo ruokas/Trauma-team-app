@@ -14,7 +14,7 @@ export function initCollapsibles(){
       legend.style.cursor = 'pointer';
       legend.setAttribute('role','button');
       legend.setAttribute('tabindex','0');
-      const collapsed = i > 0 && view.id !== 'view-aktivacija';
+      const collapsed = view.id !== 'view-aktivacija' && i > 0;
       if(collapsed){
         fs.classList.add('collapsed');
         content.style.display = 'none';
