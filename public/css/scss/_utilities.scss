@@ -23,6 +23,7 @@
 .hidden{display:none}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 .detail{overflow:hidden;max-height:200px;opacity:1;transition:max-height .3s ease,opacity .3s ease}
-.collapsed{max-height:0;opacity:0;pointer-events:none}
+.collapsed{max-height:0;opacity:0}
+.collapsed .fieldset-content{pointer-events:none}
 .skip-link{position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden}
 .skip-link:focus{left:0;top:0;width:auto;height:auto;padding:$space-8;background:var(--bg);z-index:1000}
