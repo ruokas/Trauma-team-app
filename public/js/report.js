@@ -1,6 +1,6 @@
 import { $ } from './utils.js';
 import { listChips } from './chips.js';
-import { counts as bodyMapCounts } from './bodyMap.js';
+import { counts as bodyMapCounts, TOOLS } from './bodyMap.js';
 
 const TEAM_ROLES=['Komandos vadovas','Raštininkas','ED gydytojas 1','ED gydytojas 2','Slaugytoja 1','Slaugytoja 2','Anesteziologas','Chirurgas','Ortopedas'];
 const fastAreas=[
@@ -17,9 +17,9 @@ const getSingleValue=sel=>listChips(sel)[0]||'';
 
 export function bodymapSummary(){
   const cnt=bodyMapCounts();
-  const total=(cnt.front['Ž']+cnt.front['S']+cnt.front['N'])+(cnt.back['Ž']+cnt.back['S']+cnt.back['N']);
+  const total=(cnt.front[TOOLS.WOUND]+cnt.front[TOOLS.BRUISE]+cnt.front[TOOLS.BURN])+(cnt.back[TOOLS.WOUND]+cnt.back[TOOLS.BRUISE]+cnt.back[TOOLS.BURN]);
   if(!total) return '';
-  const pack=side=>`(${cnt[side]['Ž']} Ž, ${cnt[side]['S']} S, ${cnt[side]['N']} N)`;
+  const pack=side=>`(${cnt[side][TOOLS.WOUND]} ${TOOLS.WOUND}, ${cnt[side][TOOLS.BRUISE]} ${TOOLS.BRUISE}, ${cnt[side][TOOLS.BURN]} ${TOOLS.BURN})`;
   return `Žemėlapis: Priekis ${pack('front')}, Nugara ${pack('back')} — viso ${total} žymos.`;
 }
 
