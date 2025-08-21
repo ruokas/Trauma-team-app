@@ -204,7 +204,7 @@ export function load(raw){
       if(el){ el.classList.add('burned'); burns.add(b.zone); }
     });
     updateBurnDisplay();
-  }catch(e){ /* ignore */ }
+  }catch(e){ console.error(e); }
 }
 
 export function counts(){

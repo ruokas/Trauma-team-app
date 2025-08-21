@@ -20,7 +20,7 @@ export async function fetchUsers(){
         const data=await res.json();
         updateUserList(data);
       }
-    }catch(e){ /* ignore */ }
+    }catch(e){ console.error(e); }
   }
 }
 
@@ -61,7 +61,7 @@ async function getSessions(){
         localStorage.setItem('trauma_sessions', JSON.stringify(data));
         return data;
       }
-    }catch(e){ /* ignore */ }
+    }catch(e){ console.error(e); }
   }
   try{ return JSON.parse(localStorage.getItem('trauma_sessions')||'[]'); }catch(e){ return []; }
 }
@@ -118,7 +118,7 @@ export async function initSessions(){
               headers:{ 'Content-Type':'application/json','Authorization':'Bearer '+authToken },
               body:JSON.stringify({name})
             });
-          }catch(e){ /* ignore */ }
+          }catch(e){ console.error(e); }
         }
       });
       const btn=document.createElement('button');
@@ -129,7 +129,7 @@ export async function initSessions(){
       btn.addEventListener('click',async()=>{
         if(!await notify({type:'confirm', message:'Ar tikrai norite ištrinti pacientą?'})) return;
         if(authToken && typeof fetch==='function'){
-          try{ await fetch(`/api/sessions/${s.id}`, { method:'DELETE', headers:{ 'Authorization': 'Bearer ' + authToken } }); }catch(e){ /* ignore */ }
+          try{ await fetch(`/api/sessions/${s.id}`, { method:'DELETE', headers:{ 'Authorization': 'Bearer ' + authToken } }); }catch(e){ console.error(e); }
         }
         const wasCurrent=currentSessionId===s.id;
         sessions=sessions.filter(x=>x.id!==s.id);
@@ -285,7 +285,7 @@ export function loadAll(){
     $('#imaging_other').style.display = (IMAGING_GROUPS.some(sel=>$$('.chip.active', $(sel)).some(c=>c.dataset.value==='Kita')))?'block':'none';
   };
   const fallback=()=>{
-    const raw=localStorage.getItem(sessionKey()); if(!raw) return; try{ apply(JSON.parse(raw)); }catch(e){ /* ignore */ }
+    const raw=localStorage.getItem(sessionKey()); if(!raw) return; try{ apply(JSON.parse(raw)); }catch(e){ console.error(e); }
   };
   if(authToken && typeof fetch === 'function'){
     fetch(`/api/sessions/${currentSessionId}/data`, { headers:{ 'Authorization': 'Bearer ' + authToken }})
@@ -300,7 +300,7 @@ export function getAuthToken(){ return authToken; }
 
 export async function logout(){
   if(authToken && typeof fetch==='function'){
-    try{ await fetch('/api/logout',{ method:'POST', headers:{ 'Authorization':'Bearer '+authToken } }); }catch(e){ /* ignore */ }
+    try{ await fetch('/api/logout',{ method:'POST', headers:{ 'Authorization':'Bearer '+authToken } }); }catch(e){ console.error(e); }
   }
   authToken=null;
   localStorage.removeItem('trauma_token');
