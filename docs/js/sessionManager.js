@@ -156,7 +156,7 @@ export async function initSessions(){
   }
   if(!sessions.length){
     const id=Date.now().toString(36);
-    sessions=[{id,name:'Case 1'}];
+    sessions=[{id,name:'Pacientas Nr.1'}];
     saveSessions(sessions);
     currentSessionId=id;
     localStorage.setItem('trauma_current_session', id);
