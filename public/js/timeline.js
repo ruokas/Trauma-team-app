@@ -1,4 +1,5 @@
 import { $, timeZoneOffset } from './utils.js';
+import { initTimelineGraph, renderTimelineGraph } from './timeline-visual.js';
 
 const entries = [];
 
@@ -35,13 +36,15 @@ export function renderTimeline() {
   const filter = $('#timelineFilter')?.value || '';
   const tz = timeZoneOffset();
   list.innerHTML = '';
-  getEntries(filter).forEach(e => {
+  const filtered = getEntries(filter);
+  filtered.forEach(e => {
     const div = document.createElement('div');
     div.className = 'timeline-entry';
     const t = formatTime(e.time);
     div.textContent = `${t} ${tz} – ${e.label}${e.value ? ': ' + e.value : ''}`;
     list.appendChild(div);
   });
+  renderTimelineGraph(filtered);
 }
 
 export function initTimeline() {
@@ -62,6 +65,7 @@ export function initTimeline() {
   $('#timelineClear')?.addEventListener('click', () => {
     if (confirm('Ar tikrai ištrinti visus įrašus?')) clearTimeline();
   });
+  initTimelineGraph();
   renderTimeline();
 }
 
