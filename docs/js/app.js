@@ -334,7 +334,7 @@ function validateForm(){
 
 
 document.addEventListener('tabShown', e => {
-  if(e.detail==='Ataskaita'){
+  if(e.detail==='Santrauka'){
     if(validateForm()){
       generateReport();
       expandOutput();
