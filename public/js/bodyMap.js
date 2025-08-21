@@ -1,11 +1,30 @@
 import { $, $$ } from './utils.js';
 import { notify } from './alerts.js';
 
-let svg, marks, btnUndo, btnClear, btnExport, tools, burnTotalEl;
+let svg, marks, btnUndo, btnClear, btnExport, tools, burnTotalEl, selectedList;
 let activeTool = 'Ž';
 let saveCb = () => {};
 const burns = new Set();
 const zoneMap = new Map();
+
+// Mapping of zone identifiers to human‑readable labels
+export const ZONE_LABELS = {
+  'head-front': 'Galva (priekis)',
+  'chest-front': 'Krūtinė (priekis)',
+  'abdomen-front': 'Pilvas (priekis)',
+  'arm-left-front': 'Kairė ranka (priekis)',
+  'arm-right-front': 'Dešinė ranka (priekis)',
+  'leg-left-front': 'Kairė koja (priekis)',
+  'leg-right-front': 'Dešinė koja (priekis)',
+  'perineum-front': 'Perinė sritis (priekis)',
+  'head-back': 'Galva (nugara)',
+  'upper-back': 'Viršutinė nugara',
+  'lower-back': 'Apatinė nugara',
+  'arm-left-back': 'Kairė ranka (nugara)',
+  'arm-right-back': 'Dešinė ranka (nugara)',
+  'leg-left-back': 'Kairė koja (nugara)',
+  'leg-right-back': 'Dešinė koja (nugara)'
+};
 
 function setTool(t){
   activeTool = t;
@@ -19,7 +38,7 @@ function svgPoint(evt){
   return pt.matrixTransform(svg.getScreenCTM().inverse());
 }
 
-function addMark(x, y, t, s){
+function addMark(x, y, t, s, zone){
   const use = document.createElementNS('http://www.w3.org/2000/svg','use');
   if(t==='Ž') use.setAttributeNS('http://www.w3.org/1999/xlink','href','#sym-wound');
   if(t==='S') use.setAttributeNS('http://www.w3.org/1999/xlink','href','#sym-bruise');
@@ -27,6 +46,14 @@ function addMark(x, y, t, s){
   use.setAttribute('transform',`translate(${x},${y})`);
   use.dataset.type = t;
   use.dataset.side = s;
+  if(zone){
+    use.dataset.zone = zone;
+    if(selectedList){
+      const el=document.createElement('div');
+      el.textContent = ZONE_LABELS[zone] || zone;
+      selectedList.appendChild(el);
+    }
+  }
   marks.appendChild(use);
   saveCb();
 }
@@ -53,6 +80,7 @@ export function initBodyMap(saveAll){
   btnExport = $('#btnExportSvg');
   tools = $$('.map-toolbar .tool[data-tool]');
   burnTotalEl = $('#burnTotal');
+  selectedList = $('#selectedLocations');
   if(!svg || !marks) return;
 
   tools.forEach(b=>b.addEventListener('click',()=>setTool(b.dataset.tool)));
@@ -78,7 +106,7 @@ export function initBodyMap(saveAll){
         saveCb();
       }else{
         const p=svgPoint(evt);
-        addMark(p.x,p.y,activeTool,side);
+        addMark(p.x,p.y,activeTool,side,name);
       }
     });
   });
@@ -87,12 +115,19 @@ export function initBodyMap(saveAll){
 
   btnUndo?.addEventListener('click',()=>{
     const list=[...marks.querySelectorAll('use')];
-    const last=list.pop(); if(last){ last.remove(); saveCb(); }
+    const last=list.pop(); if(last){
+      if(selectedList && last.dataset.zone){
+        selectedList.lastElementChild?.remove();
+      }
+      last.remove();
+      saveCb();
+    }
   });
 
   btnClear?.addEventListener('click', async ()=>{
     if(await notify({type:'confirm', message:'Išvalyti visas žymas (priekis ir nugara)?'})){
       marks.innerHTML='';
+      selectedList && (selectedList.innerHTML='');
       saveCb();
     }
   });
@@ -109,7 +144,7 @@ export function serialize(){
   const arr=[...marks.querySelectorAll('use')].map(u=>{
     const tr=u.getAttribute('transform');
     const m=/translate\(([-\d.]+),([-\d.]+)\)/.exec(tr)||[0,0,0];
-    return {x:+m[1], y:+m[2], type:u.dataset.type, side:u.dataset.side};
+    return {x:+m[1], y:+m[2], type:u.dataset.type, side:u.dataset.side, zone:u.dataset.zone};
   });
   const burnArr=[...burns].map(z=>{
     const el=zoneMap.get(z);
@@ -127,7 +162,8 @@ export function load(raw){
     marks.innerHTML='';
     burns.clear();
     $$('.zone').forEach(z=>z.classList.remove('burned'));
-    (o.marks||[]).forEach(m=>addMark(m.x,m.y,m.type,m.side));
+    selectedList && (selectedList.innerHTML='');
+    (o.marks||[]).forEach(m=>addMark(m.x,m.y,m.type,m.side,m.zone));
     (o.burns||[]).forEach(b=>{
       const el=zoneMap.get(b.zone);
       if(el){ el.classList.add('burned'); burns.add(b.zone); }
