@@ -30,7 +30,7 @@ export function setupHeaderActions({ validateForm, saveAll }){
   const btnPdf=$('#btnPdf');
   if(btnPdf) btnPdf.addEventListener('click', async () => {
     if(!validateForm()) return;
-    showTab('Ataskaita');
+    showTab('Santrauka');
     const text = $('#output').value || '';
     try {
       const module = await import('./lib/jspdf.umd.min.js');
@@ -49,13 +49,13 @@ export function setupHeaderActions({ validateForm, saveAll }){
   if(btnPrint) btnPrint.addEventListener('click',()=>{
     if(!validateForm()) return;
     const prevTab=localStorage.getItem('v10_activeTab');
-    showTab('Ataskaita');
+    showTab('Santrauka');
     const text=$('#output').value||'';
     const printWin=window.open('','_blank');
     if(printWin){
       const doc=printWin.document;
       doc.open();
-      doc.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>Ataskaita</title><link rel="stylesheet" href="/css/main.css"><style>body{font-family:sans-serif;padding:20px;} pre{white-space:pre-wrap;}</style></head><body></body></html>');
+      doc.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>Santrauka</title><link rel="stylesheet" href="/css/main.css"><style>body{font-family:sans-serif;padding:20px;} pre{white-space:pre-wrap;}</style></head><body></body></html>');
       doc.close();
       const svg=doc.importNode(document.getElementById('bodySvg'), true);
       const front=svg.querySelector('#layer-front');

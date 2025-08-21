@@ -11,7 +11,7 @@ export const TABS = [
   { name: 'Komanda', icon: '👥' },
   { name: 'Sprendimas', icon: '⚖️' },
   { name: 'Laiko juosta', icon: '🕒' },
-  { name: 'Ataskaita', icon: '📝' }
+  { name: 'Santrauka', icon: '📝' }
 ];
 
 export const TAB_NAMES = TABS.map(t => t.name);

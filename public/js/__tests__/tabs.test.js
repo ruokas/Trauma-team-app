@@ -66,7 +66,7 @@ describe('tabs', () => {
     test('includes timeline tab before report', () => {
       const tabs = require('../tabs.js');
       const timelineIndex = tabs.TABS.findIndex(t => t.name === 'Laiko juosta');
-      const reportIndex = tabs.TABS.findIndex(t => t.name === 'Ataskaita');
+      const reportIndex = tabs.TABS.findIndex(t => t.name === 'Santrauka');
       expect(timelineIndex).toBeGreaterThan(-1);
       expect(reportIndex).toBeGreaterThan(-1);
       expect(timelineIndex).toBeLessThan(reportIndex);
