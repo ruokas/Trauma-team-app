@@ -9,7 +9,7 @@ import './components/modal.js';
 import { initValidation, validateVitals } from './validation.js';
 import { initTopbar } from './components/topbar.js';
 import { initCollapsibles } from './sections.js';
-import { ensureLogin, connectSocket, initSessions, fetchUsers, initTheme, saveAll, loadAll } from './sessionManager.js';
+import { connectSocket, initSessions, fetchUsers, initTheme, saveAll, loadAll } from './sessionManager.js';
 import { initBodyMap } from './bodyMap.js';
 import { generateReport, gksSum } from './report.js';
 import { setupHeaderActions } from './headerActions.js';
@@ -219,8 +219,7 @@ function clampNumberInputs(){
 async function init(){
   initTheme();
   await initTopbar();
-  await ensureLogin();
-  setupHeaderActions({ validateForm, saveAll });
+    setupHeaderActions({ validateForm, saveAll });
   connectSocket();
   await fetchUsers();
   await initSessions();

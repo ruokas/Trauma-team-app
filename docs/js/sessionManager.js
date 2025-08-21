@@ -29,34 +29,6 @@ export function initTheme(){
   document.documentElement.classList.add('dark');
 }
 
-export async function ensureLogin(){
-  if(authToken || typeof fetch !== 'function') return;
-  for(;;){
-    try{
-      const name=await notify({type:'prompt', message:'Įveskite vardą dalyvauti bendroje sesijoje'});
-      if(!name) return;
-      const res=await fetch('/api/login',{
-        method:'POST',
-        headers:{ 'Content-Type':'application/json' },
-        body:JSON.stringify({ name })
-      });
-      if(!res.ok){
-        notify({message:'Prisijungti nepavyko: '+res.status,type:'error'});
-        if(await notify({type:'confirm',message:'Bandysite dar kartą?'})) continue;
-        return;
-      }
-      const data=await res.json();
-      authToken=data.token;
-      localStorage.setItem('trauma_token',authToken);
-      break;
-    }catch(e){
-      notify({message:'Prisijungti nepavyko: '+(e&&e.message||e),type:'error'});
-      if(await notify({type:'confirm',message:'Bandysite dar kartą?'})) continue;
-      return;
-    }
-  }
-}
-
 export function connectSocket(){
   if(typeof io === 'undefined' || socket || !authToken) return;
   socket = io({ auth: { token: 'Bearer '+authToken } });
@@ -198,7 +170,7 @@ export async function initSessions(){
   renderDeleteButtons();
 
   $('#btnNewSession').addEventListener('click',async()=>{
-    const name=await notify({type:'prompt', message:'Sesijos pavadinimas'});
+    const name=await notify({type:'prompt', message:'Paciento ID'});
     if(!name) return;
     const id=Date.now().toString(36);
     sessions.push({id,name});
