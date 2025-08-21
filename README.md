@@ -43,6 +43,19 @@ npm run build:css
 
 Contributors should edit the `.scss` files rather than `css/main.css`.
 
+## Building for Deployment
+
+All development takes place in the `public/` directory. To produce the
+deployable site used for publishing (e.g. GitHub Pages), run:
+
+```bash
+npm run build
+```
+
+This command compiles the stylesheets and copies everything from
+`public/` into `docs/`, removing any test files. Only `public/` should be
+edited directly; `docs/` is generated.
+
 ## Development Tips
 
 - Watch Sass for automatic recompilation:

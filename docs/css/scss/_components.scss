@@ -78,7 +78,7 @@ input.invalid,select.invalid{border-color:var(--red)}
   .tool{padding:$space-8 $space-10;border-radius:$space-10;border:1px solid var(--line);background:#152231;color:var(--ink);min-height:2.25rem;cursor:pointer;font-weight:700}
 .tool.active{background:var(--accent);color:#fff;border-color:#2d74b8}
   #bodySvg{width:100%;max-width:37.5rem;max-height:80vh;height:auto;border:1px solid var(--line);border-radius:$space-12;background:#0b141e}
-.silhouette{fill:#0f1822;stroke:#36506a;stroke-width:2}
+.silhouette{fill:#0f1822;stroke:var(--line);stroke-width:3}
     .label{fill:#a9b6c5;font:bold $font-lg system-ui}
 .mark-w{stroke:#ef5350;stroke-width:3;fill:none}
 .mark-b{fill:#64b5f6}
