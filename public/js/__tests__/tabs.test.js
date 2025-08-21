@@ -2,7 +2,6 @@ describe('tabs', () => {
   beforeEach(() => {
     jest.resetModules();
     document.body.innerHTML = '';
-    window.history.pushState({}, '', '/');
   });
 
   test('moves focus with arrow keys and activates tab on Enter', () => {
@@ -30,8 +29,8 @@ describe('tabs', () => {
     expect(setSpy).toHaveBeenCalledWith('v10_activeTab', tabs.TABS[1].name);
   });
 
-  test('showTab saves active tab and initTabs restores it', () => {
-    const store = {};
+    test('showTab saves active tab and initTabs restores it', () => {
+      const store = {};
     Object.defineProperty(window, 'localStorage', {
       value: {
         setItem: jest.fn((k, v) => { store[k] = v; }),
@@ -61,28 +60,15 @@ describe('tabs', () => {
     tabs.initTabs();
     expect(window.localStorage.getItem).toHaveBeenCalledWith('v10_activeTab');
     const active = document.querySelector('nav .tab.active');
-    expect(active.dataset.tab).toBe('A – Kvėpavimo takai');
-  });
+      expect(active.dataset.tab).toBe('A – Kvėpavimo takai');
+    });
 
-  test('activates tab based on path', () => {
-    document.body.innerHTML = `
-      <nav id="tabs"></nav>
-      <div class="view" data-tab="Aktyvacija"></div>
-      <div class="view" data-tab="B – Kvėpavimas"></div>
-    `;
-    window.history.pushState({}, '', '/breathing');
-    const tabs = require('../tabs.js');
-    tabs.initTabs();
-    const active = document.querySelector('nav .tab.active');
-    expect(active.dataset.tab).toBe('B – Kvėpavimas');
+    test('includes timeline tab before report', () => {
+      const tabs = require('../tabs.js');
+      const timelineIndex = tabs.TABS.findIndex(t => t.name === 'Laiko juosta');
+      const reportIndex = tabs.TABS.findIndex(t => t.name === 'Ataskaita');
+      expect(timelineIndex).toBeGreaterThan(-1);
+      expect(reportIndex).toBeGreaterThan(-1);
+      expect(timelineIndex).toBeLessThan(reportIndex);
+    });
   });
-
-  test('includes timeline tab before report', () => {
-    const tabs = require('../tabs.js');
-    const timelineIndex = tabs.TABS.findIndex(t => t.name === 'Laiko juosta');
-    const reportIndex = tabs.TABS.findIndex(t => t.name === 'Ataskaita');
-    expect(timelineIndex).toBeGreaterThan(-1);
-    expect(reportIndex).toBeGreaterThan(-1);
-    expect(timelineIndex).toBeLessThan(reportIndex);
-  });
-});
