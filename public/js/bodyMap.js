@@ -143,7 +143,3 @@ export function counts(){
   cnt.burned=burnArea();
   return cnt;
 }
-
-export function getState(){
-  return { tool: activeTool };
-}
