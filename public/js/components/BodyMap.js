@@ -104,6 +104,7 @@ export default class BodyMap {
     el.classList.toggle('burned');
     if(el.classList.contains('burned')) this.burns.add(name); else this.burns.delete(name);
     this.updateBurnDisplay();
+    this.saveCb();
   }
 
   burnArea(){
@@ -172,7 +173,6 @@ export default class BodyMap {
         const side=z.closest('#layer-back')?'back':'front';
         if(this.activeTool===TOOLS.BURN.char){
           this.toggleZoneBurn(name);
-          this.saveCb();
         }else{
           const p=this.svgPoint(evt);
           this.addMark(p.x,p.y,this.activeTool,side,name);
