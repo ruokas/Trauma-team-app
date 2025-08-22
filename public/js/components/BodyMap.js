@@ -153,12 +153,12 @@ export default class BodyMap {
           if(tr) container.setAttribute('transform', tr);
           layers[z.side].appendChild(container);
         }
-        const poly = document.createElementNS('http://www.w3.org/2000/svg','polygon');
-        poly.classList.add('zone');
-        poly.dataset.zone = z.id;
-        poly.dataset.area = z.area;
-        poly.setAttribute('points', z.polygonPoints);
-        container.appendChild(poly);
+        const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+        path.classList.add('zone');
+        path.dataset.zone = z.id;
+        path.dataset.area = z.area;
+        path.setAttribute('d', z.path);
+        container.appendChild(path);
       });
     }
 
