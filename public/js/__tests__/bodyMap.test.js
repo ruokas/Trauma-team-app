@@ -1,7 +1,8 @@
-import mockZones from '../__fixtures__/zoneConfig.js';
-jest.mock('../bodyMapZones.js', () => ({ __esModule: true, default: mockZones }));
+import zones from '../bodyMapZones.js';
 import BodyMap from '../components/BodyMap.js';
 import { TOOLS } from '../BodyMapTools.js';
+
+const headZone = zones.find(z => z.id === 'head-front');
 
 function setupDom() {
   document.body.innerHTML = `
@@ -43,7 +44,7 @@ describe('BodyMap instance', () => {
     const zone = document.querySelector('.zone[data-zone="head-front"]');
     expect(document.querySelectorAll('#marks use').length).toBe(1);
     expect(zone.classList.contains('burned')).toBe(true);
-    expect(bm.counts().burned).toBe(5);
+    expect(bm.counts().burned).toBe(headZone.area);
     const serialized = JSON.parse(bm.serialize());
     expect(serialized.burns[0].zone).toBe('head-front');
   });
@@ -58,9 +59,9 @@ describe('BodyMap instance', () => {
     zone.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     const z = bm.zoneCounts();
     expect(z['head-front'][TOOLS.WOUND.char]).toBe(1);
-    expect(z['head-front'].burned).toBe(5);
-    expect(z['head-front'].label).toBe('Head (front)');
-    expect(document.getElementById('burnTotal').textContent).toBe('Nudegimai: 5%');
+    expect(z['head-front'].burned).toBe(headZone.area);
+    expect(z['head-front'].label).toBe(headZone.label);
+    expect(document.getElementById('burnTotal').textContent).toBe(`Nudegimai: ${headZone.area}%`);
   });
 
   test('toggleZoneBurn toggles burn state and saves', () => {
