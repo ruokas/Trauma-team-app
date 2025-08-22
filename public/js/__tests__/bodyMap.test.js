@@ -121,4 +121,17 @@ describe('BodyMap instance', () => {
     expect(zone.classList.contains('burned')).toBe(true);
     expect(save).toHaveBeenCalledTimes(1);
   });
+
+  test('clicking silhouettes adds marks', () => {
+    setupDom();
+    document.querySelector('#layer-front').innerHTML = '<use id="front-shape" data-side="front"></use>';
+    document.querySelector('#layer-back').innerHTML = '<use id="back-shape" data-side="back"></use>';
+    const bm = new BodyMap();
+    bm.init(() => {});
+    // Provide deterministic coordinates
+    bm.svgPoint = () => ({ x: 1, y: 1 });
+    document.getElementById('front-shape').dispatchEvent(new MouseEvent('click'));
+    document.getElementById('back-shape').dispatchEvent(new MouseEvent('click'));
+    expect(document.querySelectorAll('#marks use').length).toBe(2);
+  });
 });
