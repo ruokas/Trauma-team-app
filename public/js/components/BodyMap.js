@@ -148,6 +148,9 @@ export default class BodyMap {
         if(!container){
           container = document.createElementNS('http://www.w3.org/2000/svg','g');
           container.classList.add('zones');
+          const shape = layers[z.side].querySelector(`#${z.side}-shape`);
+          const tr = shape?.getAttribute('transform');
+          if(tr) container.setAttribute('transform', tr);
           layers[z.side].appendChild(container);
         }
         const poly = document.createElementNS('http://www.w3.org/2000/svg','polygon');
