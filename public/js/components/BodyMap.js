@@ -170,7 +170,7 @@ export default class BodyMap {
       });
     });
 
-    $$('.zone').forEach(z=>{
+    $$('.zone', this.svg).forEach(z=>{
       const name=z.dataset.zone;
       this.zoneMap.set(name,z);
       z.addEventListener('click',evt=>{
@@ -222,7 +222,7 @@ export default class BodyMap {
       if(await notify({type:'confirm', message:'Išvalyti visas žymas (priekis ir nugara)?'})){
         this.marks.innerHTML='';
         this.burns.clear();
-        $$('.zone').forEach(z=>z.classList.remove('burned'));
+        $$('.zone', this.svg).forEach(z=>z.classList.remove('burned'));
         this.updateBurnDisplay();
         this.selectedList && (this.selectedList.innerHTML='');
         this.saveCb();
@@ -258,7 +258,7 @@ export default class BodyMap {
       this.setTool(this.activeTool);
       this.marks.innerHTML='';
       this.burns.clear();
-      $$('.zone').forEach(z=>z.classList.remove('burned'));
+      $$('.zone', this.svg).forEach(z=>z.classList.remove('burned'));
       this.selectedList && (this.selectedList.innerHTML='');
       (o.marks||[]).forEach(m=>this.addMark(m.x,m.y,m.type,m.side,m.zone,m.id));
       (o.burns||[]).forEach(b=>{
