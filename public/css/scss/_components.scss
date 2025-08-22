@@ -85,15 +85,16 @@ input.invalid,select.invalid{border-color:var(--red)}
   #btnClearMap{--btn-color:#ffb74d}
   #btnExportSvg{--btn-color:#81c784}
 .tool.active{background:color-mix(in srgb,var(--btn-color),#000 20%);color:#fff;border-color:color-mix(in srgb,var(--btn-color),#000 30%)}
-  #bodySvg{width:100%;max-height:80vh;height:auto;border:1px solid var(--line);border-radius:$space-12;background:#0b141e}
+  #bodySvg{display:block;width:100%;height:auto;aspect-ratio:850/900;max-width:40rem;max-height:80vh;border:1px solid var(--line);border-radius:$space-12;background:#0b141e}
 .silhouette{fill:none;stroke:var(--line);stroke-width:2}
     .label{fill:#a9b6c5;font:bold $font-lg system-ui}
 .mark-w{stroke:#ef5350;stroke-width:3;fill:none}
 .mark-b{fill:#64b5f6}
 .mark-n{fill:#ffd54f;stroke:#6b540e;stroke-width:2}
-.zone{fill:rgba(0,0,0,0);cursor:pointer}
-.zone:hover{fill:rgba(255,255,255,0.1)}
-.zone.burned{fill:rgba(255,87,34,0.4)}
+  .zone{fill:transparent;cursor:pointer;transition:fill .2s}
+  .zone:hover{fill:color-mix(in srgb,var(--accent) 60%,transparent)}
+  .zone.selected{fill:color-mix(in srgb,var(--accent) 80%,transparent)}
+  .zone.burned{fill:color-mix(in srgb,var(--red) 90%,transparent)}
 .nav-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:10}
 body.nav-open .nav-overlay{display:block}
 body.nav-open{overflow:hidden}
