@@ -61,6 +61,26 @@ test('undo removes selected mark first', () => {
   expect(marksGroup.querySelectorAll('use').length).toBe(0);
 });
 
+test('moves mark with pointer events and saves', () => {
+  const save = jest.fn();
+  document.body.innerHTML = `
+    <svg id="bodySvg"><g id="layer-front"></g><g id="layer-back"></g><g id="marks"></g></svg>
+    <button id="btnUndo"></button>
+    <button id="btnClearMap"></button>
+    <button id="btnExportSvg"></button>
+    <button id="btnDelete"></button>
+    <div class="map-toolbar"><button class="tool" data-tool="Ž"></button></div>
+  `;
+  initBodyMap(save);
+  load({tool:'Ž', marks:[{id:1,x:10,y:20,type:'Ž',side:'front'}]});
+  const mark=document.querySelector('#marks use');
+  mark.dispatchEvent(new MouseEvent('pointerdown',{clientX:10,clientY:20}));
+  document.dispatchEvent(new MouseEvent('pointermove',{clientX:30,clientY:40}));
+  document.dispatchEvent(new MouseEvent('pointerup',{clientX:30,clientY:40}));
+  expect(mark.getAttribute('transform')).toBe('translate(30,40)');
+  expect(save).toHaveBeenCalledTimes(2);
+});
+
 test('zoneCounts groups marks and burns by zone', () => {
   document.body.innerHTML = `
     <svg id="bodySvg">
