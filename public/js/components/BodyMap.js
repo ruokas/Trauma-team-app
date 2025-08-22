@@ -28,6 +28,7 @@ export default class BodyMap {
     this.dragStart = this.dragStart.bind(this);
     this.dragMove = this.dragMove.bind(this);
     this.dragEnd = this.dragEnd.bind(this);
+    this.initialized = false;
   }
 
   setTool(t) {
@@ -125,6 +126,8 @@ export default class BodyMap {
   }
 
   init(saveAll){
+    if(this.initialized) return;
+    this.zoneMap.clear();
     this.saveCb = saveAll || (()=>{});
     this.svg = $('#bodySvg');
     this.marks = $('#marks');
@@ -136,6 +139,7 @@ export default class BodyMap {
     this.burnTotalEl = $('#burnTotal');
     this.selectedList = $('#selectedLocations');
     if(!this.svg || !this.marks) return;
+    this.initialized = true;
 
     if(!this.svg.querySelector('.zone')){
       const layers = { front: $('#layer-front'), back: $('#layer-back') };
