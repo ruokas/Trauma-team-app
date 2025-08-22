@@ -76,9 +76,9 @@ export default class BodyMap {
   }
 
   addMark(x, y, t = this.activeTool, s, zone, id){
-    const use = document.createElementNS('http://www.w3.org/2000/svg','use');
+    const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
     const symbol = Object.values(TOOLS).find(tool => tool.char === t)?.symbol;
-    if(symbol) use.setAttributeNS('http://www.w3.org/1999/xlink','href',symbol);
+    if (symbol) use.setAttribute('href', symbol);
     use.setAttribute('transform',`translate(${x},${y})`);
     use.dataset.type = t;
     use.dataset.side = s;

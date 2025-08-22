@@ -28,6 +28,7 @@ describe('BodyMap instance', () => {
     bm.addMark(10, 20, TOOLS.WOUND.char, 'front', 'head-front');
     const mark = document.querySelector('#marks use');
     expect(mark.dataset.zone).toBe('head-front');
+    expect(mark.getAttribute('href')).toBe(TOOLS.WOUND.symbol);
     const data = JSON.parse(bm.serialize());
     expect(data.marks[0]).toMatchObject({ x: 10, y: 20, type: TOOLS.WOUND.char, side: 'front', zone: 'head-front' });
   });
