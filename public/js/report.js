@@ -1,6 +1,6 @@
 import { $ } from './utils.js';
 import { listChips } from './chips.js';
-import { zoneCounts as bodyMapZoneCounts, TOOLS } from './bodyMap.js';
+import bodyMap, { TOOLS } from './bodyMap.js';
 
 const TEAM_ROLES=['Komandos vadovas','Raštininkas','ED gydytojas 1','ED gydytojas 2','Slaugytoja 1','Slaugytoja 2','Anesteziologas','Chirurgas','Ortopedas'];
 const fastAreas=[
@@ -16,12 +16,12 @@ export function gksSum(a,k,m){ a=+a||0;k=+k||0;m=+m||0; return (a&&k&&m)?(a+k+m)
 const getSingleValue=sel=>listChips(sel)[0]||'';
 
 export function bodymapSummary(){
-  const zones=bodyMapZoneCounts();
+  const zones=bodyMap.zoneCounts();
   const parts=Object.values(zones).map(z=>{
     const seg=[];
-    if(z[TOOLS.WOUND]) seg.push(`${z[TOOLS.WOUND]} ${TOOLS.WOUND}`);
-    if(z[TOOLS.BRUISE]) seg.push(`${z[TOOLS.BRUISE]} ${TOOLS.BRUISE}`);
-    if(z[TOOLS.BURN]) seg.push(`${z[TOOLS.BURN]} ${TOOLS.BURN}`);
+    if(z[TOOLS.WOUND.char]) seg.push(`${z[TOOLS.WOUND.char]} ${TOOLS.WOUND.char}`);
+    if(z[TOOLS.BRUISE.char]) seg.push(`${z[TOOLS.BRUISE.char]} ${TOOLS.BRUISE.char}`);
+    if(z[TOOLS.BURN.char]) seg.push(`${z[TOOLS.BURN.char]} ${TOOLS.BURN.char}`);
     if(z.burned) seg.push(`Nudegimai ${z.burned}%`);
     return `${z.label}: ${seg.join(', ')}`;
   });
