@@ -1,5 +1,6 @@
 import { $, $$ } from './utils.js';
 import { notify } from './alerts.js';
+import zones from './bodyMapZones.js';
 
 let svg, marks, btnUndo, btnClear, btnExport, btnDelete, tools, burnTotalEl, selectedList;
 export const TOOLS = { WOUND: 'Ž', BRUISE: 'S', BURN: 'N' };
@@ -10,23 +11,10 @@ const zoneMap = new Map();
 let markIdSeq = 0;
 
 // Mapping of zone identifiers to human‑readable labels
-export const ZONE_LABELS = {
-  'head-front': 'Galva (priekis)',
-  'chest-front': 'Krūtinė (priekis)',
-  'abdomen-front': 'Pilvas (priekis)',
-  'arm-left-front': 'Kairė ranka (priekis)',
-  'arm-right-front': 'Dešinė ranka (priekis)',
-  'leg-left-front': 'Kairė koja (priekis)',
-  'leg-right-front': 'Dešinė koja (priekis)',
-  'perineum-front': 'Perinė sritis (priekis)',
-  'head-back': 'Galva (nugara)',
-  'upper-back': 'Viršutinė nugara',
-  'lower-back': 'Apatinė nugara',
-  'arm-left-back': 'Kairė ranka (nugara)',
-  'arm-right-back': 'Dešinė ranka (nugara)',
-  'leg-left-back': 'Kairė koja (nugara)',
-  'leg-right-back': 'Dešinė koja (nugara)'
-};
+export const ZONE_LABELS = zones.reduce((acc, z) => {
+  acc[z.id] = z.label;
+  return acc;
+}, {});
 
 function setTool(t){
   activeTool = t;
