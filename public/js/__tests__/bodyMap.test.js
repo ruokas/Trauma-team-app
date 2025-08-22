@@ -63,6 +63,20 @@ describe('BodyMap instance', () => {
     expect(document.getElementById('burnTotal').textContent).toBe('Nudegimai: 5%');
   });
 
+  test('toggleZoneBurn toggles burn state and saves', () => {
+    setupDom();
+    const save = jest.fn();
+    const bm = new BodyMap();
+    bm.init(save);
+    bm.toggleZoneBurn('head-front');
+    const zone = document.querySelector('.zone[data-zone="head-front"]');
+    expect(zone.classList.contains('burned')).toBe(true);
+    expect(save).toHaveBeenCalledTimes(1);
+    bm.toggleZoneBurn('head-front');
+    expect(zone.classList.contains('burned')).toBe(false);
+    expect(save).toHaveBeenCalledTimes(2);
+  });
+
   test('pointer events move mark and save', () => {
     setupDom();
     const save = jest.fn();
