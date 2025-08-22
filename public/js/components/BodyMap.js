@@ -25,6 +25,9 @@ export default class BodyMap {
     this.zoneMap = new Map();
     this.markIdSeq = 0;
     this.dragInfo = null;
+    this.dragStart = this.dragStart.bind(this);
+    this.dragMove = this.dragMove.bind(this);
+    this.dragEnd = this.dragEnd.bind(this);
   }
 
   setTool(t) {
@@ -39,7 +42,7 @@ export default class BodyMap {
     return pt.matrixTransform(this.svg.getScreenCTM().inverse());
   }
 
-  dragStart = (evt) => {
+  dragStart(evt) {
     const el = evt.currentTarget;
     const tr = el.getAttribute('transform');
     const m = /translate\(([-\d.]+),([-\d.]+)\)/.exec(tr) || [0,0,0];
@@ -52,24 +55,24 @@ export default class BodyMap {
     };
     document.addEventListener('pointermove', this.dragMove);
     document.addEventListener('pointerup', this.dragEnd);
-  };
+  }
 
-  dragMove = (evt) => {
+  dragMove(evt) {
     if(!this.dragInfo) return;
     const dx = evt.clientX - this.dragInfo.startX;
     const dy = evt.clientY - this.dragInfo.startY;
     const x = this.dragInfo.origX + dx;
     const y = this.dragInfo.origY + dy;
     this.dragInfo.el.setAttribute('transform', `translate(${x},${y})`);
-  };
+  }
 
-  dragEnd = () => {
+  dragEnd() {
     if(!this.dragInfo) return;
     document.removeEventListener('pointermove', this.dragMove);
     document.removeEventListener('pointerup', this.dragEnd);
     this.dragInfo = null;
     this.saveCb();
-  };
+  }
 
   addMark(x, y, t = this.activeTool, s, zone, id){
     const use = document.createElementNS('http://www.w3.org/2000/svg','use');
