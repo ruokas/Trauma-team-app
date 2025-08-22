@@ -1,5 +1,6 @@
 import { $, $$ } from './utils.js';
 import { notify } from './alerts.js';
+import zones from './bodyMapZones.js';
 
 let svg, marks, btnUndo, btnClear, btnExport, btnDelete, tools, burnTotalEl, selectedList;
 export const TOOLS = { WOUND: 'Ž', BRUISE: 'S', BURN: 'N' };
@@ -11,23 +12,10 @@ let markIdSeq = 0;
 let dragInfo = null;
 
 // Mapping of zone identifiers to human‑readable labels
-export const ZONE_LABELS = {
-  'head-front': 'Galva (priekis)',
-  'chest-front': 'Krūtinė (priekis)',
-  'abdomen-front': 'Pilvas (priekis)',
-  'arm-left-front': 'Kairė ranka (priekis)',
-  'arm-right-front': 'Dešinė ranka (priekis)',
-  'leg-left-front': 'Kairė koja (priekis)',
-  'leg-right-front': 'Dešinė koja (priekis)',
-  'perineum-front': 'Perinė sritis (priekis)',
-  'head-back': 'Galva (nugara)',
-  'upper-back': 'Viršutinė nugara',
-  'lower-back': 'Apatinė nugara',
-  'arm-left-back': 'Kairė ranka (nugara)',
-  'arm-right-back': 'Dešinė ranka (nugara)',
-  'leg-left-back': 'Kairė koja (nugara)',
-  'leg-right-back': 'Dešinė koja (nugara)'
-};
+export const ZONE_LABELS = zones.reduce((acc, z) => {
+  acc[z.id] = z.label;
+  return acc;
+}, {});
 
 function setTool(t){
   activeTool = t;
@@ -127,6 +115,25 @@ export function initBodyMap(saveAll){
   burnTotalEl = $('#burnTotal');
   selectedList = $('#selectedLocations');
   if(!svg || !marks) return;
+
+  // dynamically create zone polygons if not already present (allows tests to inject custom zones)
+  if(!svg.querySelector('.zone')){
+    const layers = { front: $('#layer-front'), back: $('#layer-back') };
+    zones.forEach(z => {
+      let container = layers[z.side].querySelector('.zones');
+      if(!container){
+        container = document.createElementNS('http://www.w3.org/2000/svg','g');
+        container.classList.add('zones');
+        layers[z.side].appendChild(container);
+      }
+      const poly = document.createElementNS('http://www.w3.org/2000/svg','polygon');
+      poly.classList.add('zone');
+      poly.dataset.zone = z.id;
+      poly.dataset.area = z.area;
+      poly.setAttribute('points', z.polygonPoints);
+      container.appendChild(poly);
+    });
+  }
 
   tools.forEach(b=>b.addEventListener('click',()=>setTool(b.dataset.tool)));
   setTool(TOOLS.WOUND);
