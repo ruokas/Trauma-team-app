@@ -8,6 +8,7 @@ let saveCb = () => {};
 const burns = new Set();
 const zoneMap = new Map();
 let markIdSeq = 0;
+let dragInfo = null;
 
 // Mapping of zone identifiers to human‑readable labels
 export const ZONE_LABELS = {
@@ -40,6 +41,38 @@ function svgPoint(evt){
   return pt.matrixTransform(svg.getScreenCTM().inverse());
 }
 
+function dragStart(evt){
+  const el = evt.currentTarget;
+  const tr = el.getAttribute('transform');
+  const m = /translate\(([-\d.]+),([-\d.]+)\)/.exec(tr) || [0,0,0];
+  dragInfo = {
+    el,
+    startX: evt.clientX,
+    startY: evt.clientY,
+    origX: +m[1],
+    origY: +m[2]
+  };
+  document.addEventListener('pointermove', dragMove);
+  document.addEventListener('pointerup', dragEnd);
+}
+
+function dragMove(evt){
+  if(!dragInfo) return;
+  const dx = evt.clientX - dragInfo.startX;
+  const dy = evt.clientY - dragInfo.startY;
+  const x = dragInfo.origX + dx;
+  const y = dragInfo.origY + dy;
+  dragInfo.el.setAttribute('transform', `translate(${x},${y})`);
+}
+
+function dragEnd(){
+  if(!dragInfo) return;
+  document.removeEventListener('pointermove', dragMove);
+  document.removeEventListener('pointerup', dragEnd);
+  dragInfo = null;
+  saveCb();
+}
+
 function addMark(x, y, t, s, zone, id){
   const use = document.createElementNS('http://www.w3.org/2000/svg','use');
   if(t===TOOLS.WOUND) use.setAttributeNS('http://www.w3.org/1999/xlink','href','#sym-wound');
@@ -61,6 +94,7 @@ function addMark(x, y, t, s, zone, id){
     }
   }
   marks.appendChild(use);
+  use.addEventListener('pointerdown', dragStart);
   saveCb();
 }
 
