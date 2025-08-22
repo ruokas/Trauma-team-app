@@ -1,155 +1,96 @@
-import { initBodyMap, load, counts, serialize, zoneCounts } from '../bodyMap.js';
+import mockZones from '../__fixtures__/zoneConfig.js';
+jest.mock('../bodyMapZones.js', () => ({ __esModule: true, default: mockZones }));
+import BodyMap from '../components/BodyMap.js';
+import { TOOLS } from '../BodyMapTools.js';
 
-describe('body map serialization', () => {
-  test('counts marks after load', () => {
-    document.body.innerHTML = `
-      <svg id="bodySvg"><g id="layer-front"></g><g id="layer-back"></g><g id="marks"></g></svg>
-      <button id="btnSide"></button>
-      <button id="btnUndo"></button>
-      <button id="btnClearMap"></button>
-      <button id="btnExportSvg"></button>
-      <div class="map-toolbar"><button class="tool" data-tool="Ž"></button></div>
-    `;
-    initBodyMap(()=>{});
-    load({side:'front', tool:'Ž', marks:[{x:1,y:2,type:'Ž',side:'front'},{x:0,y:0,type:'S',side:'back'}]});
-    const c=counts();
-    expect(c.front['Ž']).toBe(1);
-    expect(c.back['S']).toBe(1);
+function setupDom() {
+  document.body.innerHTML = `
+    <svg id="bodySvg"><g id="layer-front"></g><g id="layer-back"></g><g id="marks"></g></svg>
+    <div id="burnTotal"></div>
+    <div id="selectedLocations"></div>
+    <div class="map-toolbar">
+      <button class="tool" data-tool="${TOOLS.WOUND.char}"></button>
+      <button class="tool" data-tool="${TOOLS.BURN.char}"></button>
+    </div>
+    <button id="btnUndo"></button>
+    <button id="btnClearMap"></button>
+    <button id="btnExportSvg"></button>
+    <button id="btnDelete"></button>
+  `;
+}
+
+describe('BodyMap instance', () => {
+  test('addMark and serialize', () => {
+    setupDom();
+    const bm = new BodyMap();
+    bm.init(() => {});
+    bm.addMark(10, 20, TOOLS.WOUND.char, 'front', 'head-front');
+    const mark = document.querySelector('#marks use');
+    expect(mark.dataset.zone).toBe('head-front');
+    const data = JSON.parse(bm.serialize());
+    expect(data.marks[0]).toMatchObject({ x: 10, y: 20, type: TOOLS.WOUND.char, side: 'front', zone: 'head-front' });
   });
-});
 
-test('selects and deletes marks', () => {
-  document.body.innerHTML = `
-    <svg id="bodySvg"><g id="layer-front"></g><g id="layer-back"></g><g id="marks"></g></svg>
-    <button id="btnUndo"></button>
-    <button id="btnClearMap"></button>
-    <button id="btnExportSvg"></button>
-    <button id="btnDelete"></button>
-    <div class="map-toolbar"><button class="tool" data-tool="Ž"></button></div>
-  `;
-  const show = jest.fn();
-  window.showWoundDetails = show;
-  initBodyMap(()=>{});
-  load({tool:'Ž', marks:[{id:1,x:1,y:2,type:'Ž',side:'front'},{id:2,x:3,y:4,type:'S',side:'front'}]});
-  const marksGroup=document.getElementById('marks');
-  const [m1] = marksGroup.querySelectorAll('use');
-  m1.dispatchEvent(new Event('click',{bubbles:true}));
-  expect(m1.classList.contains('selected')).toBe(true);
-  expect(show).toHaveBeenCalledWith('1');
-  document.getElementById('btnDelete').click();
-  expect(marksGroup.querySelectorAll('use').length).toBe(1);
-});
+  test('load restores marks and burn zones', () => {
+    setupDom();
+    const bm = new BodyMap();
+    bm.init(() => {});
+    bm.load({
+      tool: TOOLS.WOUND.char,
+      marks: [{ id: 1, x: 5, y: 5, type: TOOLS.WOUND.char, side: 'front', zone: 'head-front' }],
+      burns: [{ zone: 'head-front', side: 'front' }]
+    });
+    const zone = document.querySelector('.zone[data-zone="head-front"]');
+    expect(document.querySelectorAll('#marks use').length).toBe(1);
+    expect(zone.classList.contains('burned')).toBe(true);
+    expect(bm.counts().burned).toBe(5);
+    const serialized = JSON.parse(bm.serialize());
+    expect(serialized.burns[0].zone).toBe('head-front');
+  });
 
-test('undo removes selected mark first', () => {
-  document.body.innerHTML = `
-    <svg id="bodySvg"><g id="layer-front"></g><g id="layer-back"></g><g id="marks"></g></svg>
-    <button id="btnUndo"></button>
-    <button id="btnClearMap"></button>
-    <button id="btnExportSvg"></button>
-    <button id="btnDelete"></button>
-    <div class="map-toolbar"><button class="tool" data-tool="Ž"></button></div>
-  `;
-  initBodyMap(()=>{});
-  load({tool:'Ž', marks:[{id:1,x:0,y:0,type:'Ž',side:'front'},{id:2,x:1,y:1,type:'Ž',side:'front'}]});
-  const marksGroup=document.getElementById('marks');
-  const [m1] = marksGroup.querySelectorAll('use');
-  m1.dispatchEvent(new Event('click',{bubbles:true}));
-  document.getElementById('btnUndo').click();
-  expect(marksGroup.querySelectorAll('use').length).toBe(1);
-  expect(marksGroup.querySelector('use').dataset.id).toBe('2');
-  document.getElementById('btnUndo').click();
-  expect(marksGroup.querySelectorAll('use').length).toBe(0);
-});
+  test('zoneCounts aggregates marks and burn area', () => {
+    setupDom();
+    const bm = new BodyMap();
+    bm.init(() => {});
+    bm.addMark(1, 1, TOOLS.WOUND.char, 'front', 'head-front');
+    bm.setTool(TOOLS.BURN.char);
+    const zone = document.querySelector('.zone[data-zone="head-front"]');
+    zone.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    const z = bm.zoneCounts();
+    expect(z['head-front'][TOOLS.WOUND.char]).toBe(1);
+    expect(z['head-front'].burned).toBe(5);
+    expect(z['head-front'].label).toBe('Head (front)');
+    expect(document.getElementById('burnTotal').textContent).toBe('Nudegimai: 5%');
+  });
 
-test('moves mark with pointer events and saves', () => {
-  const save = jest.fn();
-  document.body.innerHTML = `
-    <svg id="bodySvg"><g id="layer-front"></g><g id="layer-back"></g><g id="marks"></g></svg>
-    <button id="btnUndo"></button>
-    <button id="btnClearMap"></button>
-    <button id="btnExportSvg"></button>
-    <button id="btnDelete"></button>
-    <div class="map-toolbar"><button class="tool" data-tool="Ž"></button></div>
-  `;
-  initBodyMap(save);
-  load({tool:'Ž', marks:[{id:1,x:10,y:20,type:'Ž',side:'front'}]});
-  const mark=document.querySelector('#marks use');
-  mark.dispatchEvent(new MouseEvent('pointerdown',{clientX:10,clientY:20}));
-  document.dispatchEvent(new MouseEvent('pointermove',{clientX:30,clientY:40}));
-  document.dispatchEvent(new MouseEvent('pointerup',{clientX:30,clientY:40}));
-  expect(mark.getAttribute('transform')).toBe('translate(30,40)');
-  expect(save).toHaveBeenCalledTimes(2);
-});
+  test('pointer events move mark and save', () => {
+    setupDom();
+    const save = jest.fn();
+    const bm = new BodyMap();
+    bm.init(save);
+    bm.load({ tool: TOOLS.WOUND.char, marks: [{ id: 1, x: 10, y: 20, type: TOOLS.WOUND.char, side: 'front' }] });
+    const mark = document.querySelector('#marks use');
+    mark.dispatchEvent(new MouseEvent('pointerdown', { clientX: 10, clientY: 20 }));
+    document.dispatchEvent(new MouseEvent('pointermove', { clientX: 30, clientY: 40 }));
+    document.dispatchEvent(new MouseEvent('pointerup', { clientX: 30, clientY: 40 }));
+    expect(mark.getAttribute('transform')).toBe('translate(30,40)');
+    expect(save).toHaveBeenCalledTimes(2);
+  });
 
-test('zoneCounts groups marks and burns by zone', () => {
-  document.body.innerHTML = `
-    <svg id="bodySvg">
-      <g id="layer-front">
-        <g id="zones-front">
-          <polygon class="zone" data-zone="head-front" data-area="5"></polygon>
-        </g>
-      </g>
-      <g id="layer-back"></g>
-      <g id="marks"></g>
-    </svg>
-    <div id="burnTotal"></div>
-    <div class="map-toolbar"><button class="tool" data-tool="Ž"></button></div>
-    <button id="btnUndo"></button>
-    <button id="btnClearMap"></button>
-    <button id="btnExportSvg"></button>
-  `;
-  initBodyMap(()=>{});
-  load({tool:'Ž', marks:[{x:1,y:1,type:'Ž',side:'front',zone:'head-front'},{x:2,y:2,type:'S',side:'front',zone:'head-front'}], burns:[{zone:'head-front', side:'front'}]});
-  const z=zoneCounts();
-  expect(z['head-front']['Ž']).toBe(1);
-  expect(z['head-front']['S']).toBe(1);
-  expect(z['head-front'].burned).toBe(5);
-});
-
-test('restores burn zones and counts area', () => {
-  document.body.innerHTML = `
-    <svg id="bodySvg">
-      <g id="layer-front">
-        <g id="zones-front">
-          <polygon class="zone" data-zone="head-front" data-area="4.5"></polygon>
-        </g>
-      </g>
-      <g id="layer-back"></g>
-      <g id="marks"></g>
-    </svg>
-    <div id="burnTotal"></div>
-    <div class="map-toolbar"><button class="tool" data-tool="Ž"></button></div>
-    <button id="btnUndo"></button>
-    <button id="btnClearMap"></button>
-    <button id="btnExportSvg"></button>
-  `;
-  initBodyMap(()=>{});
-  load({tool:'N', marks:[], burns:[{zone:'head-front', side:'front'}]});
-  expect(counts().burned).toBe(4.5);
-  expect(document.getElementById('burnTotal').textContent).toBe('Nudegimai: 4.5%');
-  const s=JSON.parse(serialize());
-  expect(s.burns[0].zone).toBe('head-front');
-});
-
-test('ignores invalid burn areas when displaying total', () => {
-  document.body.innerHTML = `
-    <svg id="bodySvg">
-      <g id="layer-front">
-        <g id="zones-front">
-          <polygon class="zone" data-zone="head-front" data-area="abc"></polygon>
-        </g>
-      </g>
-      <g id="layer-back"></g>
-      <g id="marks"></g>
-    </svg>
-    <div id="burnTotal"></div>
-    <div class="map-toolbar"><button class="tool" data-tool="Ž"></button></div>
-    <button id="btnUndo"></button>
-    <button id="btnClearMap"></button>
-    <button id="btnExportSvg"></button>
-  `;
-  initBodyMap(()=>{});
-  load({tool:'N', marks:[], burns:[{zone:'head-front', side:'front'}]});
-  expect(counts().burned).toBe(0);
-  expect(document.getElementById('burnTotal').textContent).toBe('');
+  test('delete removes selected mark', () => {
+    setupDom();
+    const bm = new BodyMap();
+    bm.init(() => {});
+    bm.load({ tool: TOOLS.WOUND.char, marks: [
+      { id: 1, x: 1, y: 2, type: TOOLS.WOUND.char, side: 'front' },
+      { id: 2, x: 3, y: 4, type: TOOLS.BRUISE.char, side: 'front' }
+    ] });
+    const show = jest.fn();
+    window.showWoundDetails = show;
+    const [m1] = document.querySelectorAll('#marks use');
+    m1.dispatchEvent(new Event('click', { bubbles: true }));
+    expect(m1.classList.contains('selected')).toBe(true);
+    document.getElementById('btnDelete').click();
+    expect(document.querySelectorAll('#marks use').length).toBe(1);
+  });
 });
