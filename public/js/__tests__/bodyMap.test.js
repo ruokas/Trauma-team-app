@@ -107,4 +107,17 @@ describe('BodyMap instance', () => {
     document.getElementById('btnDelete').click();
     expect(document.querySelectorAll('#marks use').length).toBe(1);
   });
+
+  test('init only runs once and avoids duplicating listeners', () => {
+    setupDom();
+    const save = jest.fn();
+    const bm = new BodyMap();
+    bm.init(save);
+    bm.init(save);
+    bm.setTool(TOOLS.BURN.char);
+    const zone = document.querySelector('.zone[data-zone="head-front"]');
+    zone.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    expect(zone.classList.contains('burned')).toBe(true);
+    expect(save).toHaveBeenCalledTimes(1);
+  });
 });
