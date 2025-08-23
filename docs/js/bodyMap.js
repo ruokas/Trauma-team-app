@@ -184,10 +184,9 @@ export function initBodyMap(saveAll){
 
   $$('.zone').forEach(z=>{
     const name=z.dataset.zone;
-    z.dataset.side = z.dataset.side || (z.closest('#layer-back') ? 'back' : 'front');
     zoneMap.set(name,z);
     z.addEventListener('click',evt=>{
-      const side=z.dataset.side;
+      const side=z.closest('#layer-back')?'back':'front';
       if(activeTool===TOOLS.BURN){
         toggleZoneBurn(name);
       }else{
@@ -242,7 +241,7 @@ export function serialize(){
   });
   const burnArr=[...burns].map(z=>{
     const el=zoneMap.get(z);
-    const side=el?.dataset.side;
+    const side=el?.closest('#layer-back')?'back':'front';
     return {zone:z, side};
   });
   return JSON.stringify({tool:activeTool,marks:arr,burns:burnArr});
