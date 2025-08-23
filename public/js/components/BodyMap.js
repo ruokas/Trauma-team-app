@@ -13,6 +13,7 @@ export default class BodyMap {
     this.svg = null;
     this.marks = null;
     this.btnUndo = null;
+    this.btnRedo = null;
     this.btnClear = null;
     this.btnExport = null;
     this.btnDelete = null;
@@ -30,6 +31,8 @@ export default class BodyMap {
     this.dragEnd = this.dragEnd.bind(this);
     this.initialized = false;
     this.tooltip = null;
+    this.undoStack = [];
+    this.redoStack = [];
   }
 
   setTool(t) {
@@ -76,7 +79,7 @@ export default class BodyMap {
     this.saveCb();
   }
 
-  addMark(x, y, t = this.activeTool, s, zone, id){
+  addMark(x, y, t = this.activeTool, s, zone, id, record = true){
     const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
     const symbol = Object.values(TOOLS).find(tool => tool.char === t)?.symbol;
     if (symbol) use.setAttribute('href', symbol);
@@ -97,14 +100,24 @@ export default class BodyMap {
     }
     this.marks.appendChild(use);
     use.addEventListener('pointerdown', this.dragStart);
+    if(record){
+      this.undoStack.push({type:'addMark', mark:{id:mid,x,y,type:t,side:s,zone}});
+      this.redoStack = [];
+      this.updateUndoRedoButtons();
+    }
     this.saveCb();
   }
 
-  toggleZoneBurn(name){
+  toggleZoneBurn(name, record = true){
     const el = this.zoneMap.get(name);
     if(!el) return;
     el.classList.toggle('burned');
     if(el.classList.contains('burned')) this.burns.add(name); else this.burns.delete(name);
+    if(record){
+      this.undoStack.push({type:'toggleBurn', zone:name});
+      this.redoStack = [];
+      this.updateUndoRedoButtons();
+    }
     this.updateBurnDisplay();
     this.saveCb();
   }
@@ -117,6 +130,72 @@ export default class BodyMap {
       s += isNaN(area) ? 0 : area;
     });
     return s;
+  }
+
+  updateUndoRedoButtons(){
+    if(this.btnUndo) this.btnUndo.disabled = this.undoStack.length === 0;
+    if(this.btnRedo) this.btnRedo.disabled = this.redoStack.length === 0;
+  }
+
+  removeMark(m, record = true){
+    if(!m) return;
+    if(this.selectedList && m.dataset.zone){
+      this.selectedList.querySelector(`[data-id="${m.dataset.id}"]`)?.remove();
+    }
+    const tr = m.getAttribute('transform');
+    const r = /translate\(([-\d.]+),([-\d.]+)\)/.exec(tr) || [0,0,0];
+    const data = {id:+m.dataset.id, x:+r[1], y:+r[2], type:m.dataset.type, side:m.dataset.side, zone:m.dataset.zone};
+    m.remove();
+    if(record){
+      this.undoStack.push({type:'deleteMark', mark:data});
+      this.redoStack = [];
+      this.updateUndoRedoButtons();
+    }
+    this.saveCb();
+  }
+
+  undo(){
+    const action = this.undoStack.pop();
+    if(!action) return;
+    switch(action.type){
+      case 'addMark':{
+        const m = this.marks.querySelector(`use[data-id="${action.mark.id}"]`);
+        this.removeMark(m, false);
+        break;
+      }
+      case 'deleteMark':{
+        const a = action.mark;
+        this.addMark(a.x, a.y, a.type, a.side, a.zone, a.id, false);
+        break;
+      }
+      case 'toggleBurn':
+        this.toggleZoneBurn(action.zone, false);
+        break;
+    }
+    this.redoStack.push(action);
+    this.updateUndoRedoButtons();
+  }
+
+  redo(){
+    const action = this.redoStack.pop();
+    if(!action) return;
+    switch(action.type){
+      case 'addMark':{
+        const a = action.mark;
+        this.addMark(a.x, a.y, a.type, a.side, a.zone, a.id, false);
+        break;
+      }
+      case 'deleteMark':{
+        const m = this.marks.querySelector(`use[data-id="${action.mark.id}"]`);
+        this.removeMark(m, false);
+        break;
+      }
+      case 'toggleBurn':
+        this.toggleZoneBurn(action.zone, false);
+        break;
+    }
+    this.undoStack.push(action);
+    this.updateUndoRedoButtons();
   }
 
     updateBurnDisplay(){
@@ -159,6 +238,7 @@ export default class BodyMap {
     this.svg = $('#bodySvg');
     this.marks = $('#marks');
     this.btnUndo = $('#btnUndo');
+    this.btnRedo = $('#btnRedo');
     this.btnClear = $('#btnClearMap');
     this.btnExport = $('#btnExportSvg');
     this.btnDelete = $('#btnDelete');
@@ -198,6 +278,7 @@ export default class BodyMap {
 
     this.tools.forEach(b=>b.addEventListener('click',()=>this.setTool(b.dataset.tool)));
     this.setTool(this.activeTool);
+    this.updateUndoRedoButtons();
 
     ['front-shape','back-shape'].forEach(id=>{
       const el = document.getElementById(id);
@@ -231,28 +312,12 @@ export default class BodyMap {
       if(typeof window.showWoundDetails === 'function') window.showWoundDetails(u.dataset.id);
     });
 
-    const removeMark = (m)=>{
-      if(!m) return;
-      if(this.selectedList && m.dataset.zone){
-        this.selectedList.querySelector(`[data-id="${m.dataset.id}"]`)?.remove();
-      }
-      m.remove();
-      this.saveCb();
-    };
-
-    this.btnUndo?.addEventListener('click',()=>{
-      const sel = this.marks.querySelector('use.selected');
-      if(sel){
-        removeMark(sel);
-      }else{
-        const list=[...this.marks.querySelectorAll('use')];
-        removeMark(list.pop());
-      }
-    });
+    this.btnUndo?.addEventListener('click',()=>this.undo());
+    this.btnRedo?.addEventListener('click',()=>this.redo());
 
     this.btnDelete?.addEventListener('click',()=>{
       const sel = this.marks.querySelector('use.selected');
-      if(sel) removeMark(sel);
+      if(sel) this.removeMark(sel);
     });
 
     this.btnClear?.addEventListener('click', async ()=>{
@@ -297,12 +362,15 @@ export default class BodyMap {
       this.burns.clear();
       $$('.zone', this.svg).forEach(z=>z.classList.remove('burned'));
       this.selectedList && (this.selectedList.innerHTML='');
-      (o.marks||[]).forEach(m=>this.addMark(m.x,m.y,m.type,m.side,m.zone,m.id));
+      this.undoStack = [];
+      this.redoStack = [];
+      (o.marks||[]).forEach(m=>this.addMark(m.x,m.y,m.type,m.side,m.zone,m.id,false));
       (o.burns||[]).forEach(b=>{
         const el=this.zoneMap.get(b.zone);
         if(el){ el.classList.add('burned'); this.burns.add(b.zone); }
       });
       this.updateBurnDisplay();
+      this.updateUndoRedoButtons();
     }catch(e){ console.error(e); }
   }
 
