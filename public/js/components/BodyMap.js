@@ -47,6 +47,27 @@ export default class BodyMap {
     return pt.matrixTransform(this.svg.getScreenCTM().inverse());
   }
 
+  clampToBody(x, y, side) {
+    const target = side ? this.svg.querySelector(`#layer-${side}`) : this.svg;
+    let bbox;
+    if (typeof target?.getBBox === 'function') {
+      try {
+        bbox = target.getBBox();
+      } catch {
+        bbox = null;
+      }
+    }
+    if (!bbox || (bbox.width === 0 && bbox.height === 0)) {
+      const vb = this.svg.getAttribute('viewBox')?.split(/\s+/).map(Number);
+      bbox = vb ? { x: vb[0], y: vb[1], width: vb[2], height: vb[3] } : null;
+    }
+    if (!bbox) return { x, y };
+    return {
+      x: Math.min(Math.max(x, bbox.x), bbox.x + bbox.width),
+      y: Math.min(Math.max(y, bbox.y), bbox.y + bbox.height)
+    };
+  }
+
   dragStart(evt) {
     const el = evt.currentTarget;
     const tr = el.getAttribute('transform');
@@ -66,8 +87,9 @@ export default class BodyMap {
     if(!this.dragInfo) return;
     const dx = evt.clientX - this.dragInfo.startX;
     const dy = evt.clientY - this.dragInfo.startY;
-    const x = this.dragInfo.origX + dx;
-    const y = this.dragInfo.origY + dy;
+    let x = this.dragInfo.origX + dx;
+    let y = this.dragInfo.origY + dy;
+    ({ x, y } = this.clampToBody(x, y, this.dragInfo.el.dataset.side));
     this.dragInfo.el.setAttribute('transform', `translate(${x},${y})`);
   }
 
@@ -80,6 +102,7 @@ export default class BodyMap {
   }
 
   addMark(x, y, t = this.activeTool, s, zone, id, record = true){
+    ({ x, y } = this.clampToBody(x, y, s));
     const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
     const symbol = Object.values(TOOLS).find(tool => tool.char === t)?.symbol;
     if (symbol) use.setAttribute('href', symbol);
