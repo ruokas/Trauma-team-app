@@ -14,6 +14,7 @@ function setupDom() {
       <button class="tool" data-tool="${TOOLS.BURN.char}"></button>
     </div>
     <button id="btnUndo"></button>
+    <button id="btnRedo"></button>
     <button id="btnClearMap"></button>
     <button id="btnExportSvg"></button>
     <button id="btnDelete"></button>
@@ -134,5 +135,23 @@ describe('BodyMap instance', () => {
     document.getElementById('front-shape').dispatchEvent(new MouseEvent('click'));
     document.getElementById('back-shape').dispatchEvent(new MouseEvent('click'));
     expect(document.querySelectorAll('#marks use').length).toBe(2);
+  });
+
+  test('undo and redo actions manage stacks and buttons', () => {
+    setupDom();
+    const bm = new BodyMap();
+    bm.init(() => {});
+    const undoBtn = document.getElementById('btnUndo');
+    const redoBtn = document.getElementById('btnRedo');
+    expect(undoBtn.disabled).toBe(true);
+    bm.addMark(5, 5, TOOLS.WOUND.char, 'front');
+    expect(undoBtn.disabled).toBe(false);
+    bm.undo();
+    expect(document.querySelectorAll('#marks use').length).toBe(0);
+    expect(undoBtn.disabled).toBe(true);
+    expect(redoBtn.disabled).toBe(false);
+    bm.redo();
+    expect(document.querySelectorAll('#marks use').length).toBe(1);
+    expect(redoBtn.disabled).toBe(true);
   });
 });
