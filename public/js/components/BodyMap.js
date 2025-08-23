@@ -29,6 +29,7 @@ export default class BodyMap {
     this.dragMove = this.dragMove.bind(this);
     this.dragEnd = this.dragEnd.bind(this);
     this.initialized = false;
+    this.tooltip = null;
   }
 
   setTool(t) {
@@ -118,12 +119,38 @@ export default class BodyMap {
     return s;
   }
 
-  updateBurnDisplay(){
-    if(this.burnTotalEl){
-      const t=this.burnArea();
-      this.burnTotalEl.textContent = t?`Nudegimai: ${t}%`:'';
+    updateBurnDisplay(){
+      if(this.burnTotalEl){
+        const t=this.burnArea();
+        this.burnTotalEl.textContent = t?`Nudegimai: ${t}%`:'';
+      }
     }
-  }
+
+    showTooltip(evt, label){
+      if(!this.tooltip){
+        this.tooltip = document.createElement('div');
+        this.tooltip.className = 'zone-tooltip';
+        Object.assign(this.tooltip.style, {
+          position: 'absolute',
+          pointerEvents: 'none',
+          background: 'rgba(0,0,0,0.75)',
+          color: '#fff',
+          padding: '2px 4px',
+          borderRadius: '3px',
+          fontSize: '0.75rem',
+          display: 'none'
+        });
+        document.body.appendChild(this.tooltip);
+      }
+      this.tooltip.textContent = label;
+      this.tooltip.style.display = 'block';
+      this.tooltip.style.left = `${evt.pageX + 10}px`;
+      this.tooltip.style.top = `${evt.pageY + 10}px`;
+    }
+
+    hideTooltip(){
+      if(this.tooltip) this.tooltip.style.display = 'none';
+    }
 
   init(saveAll){
     if(this.initialized) return;
@@ -158,6 +185,13 @@ export default class BodyMap {
         path.dataset.zone = z.id;
         path.dataset.area = z.area;
         path.setAttribute('d', z.path);
+        path.setAttribute('aria-label', z.label);
+        const title = document.createElementNS('http://www.w3.org/2000/svg','title');
+        title.textContent = z.label;
+        path.appendChild(title);
+        path.addEventListener('pointerenter', e => this.showTooltip(e, z.label));
+        path.addEventListener('pointermove', e => this.showTooltip(e, z.label));
+        path.addEventListener('pointerleave', () => this.hideTooltip());
         container.appendChild(path);
       });
     }
