@@ -8,6 +8,50 @@ const ZONE_LABELS = zones.reduce((acc, z) => {
   return acc;
 }, {});
 
+function parseTransform(str){
+  if(!str) return { a:1, b:0, c:0, d:1, e:0, f:0 };
+  const m = str.match(/matrix\(([^)]+)\)/);
+  if(m){
+    const [a,b,c,d,e,f] = m[1].split(/[,\s]+/).map(Number);
+    return { a,b,c,d,e,f };
+  }
+  const ops = str.match(/\w+\([^)]+\)/g);
+  let cur = { a:1, b:0, c:0, d:1, e:0, f:0 };
+  ops?.forEach(op=>{
+    const [name, argsStr] = op.split('(');
+    const args = argsStr.slice(0,-1).split(/[,\s]+/).map(Number);
+    let t;
+    switch(name){
+      case 'translate':{
+        const tx=args[0]||0, ty=args[1]||0;
+        t={a:1,b:0,c:0,d:1,e:tx,f:ty};
+        break;
+      }
+      case 'scale':{
+        const sx=args[0], sy=args[1]??args[0];
+        t={a:sx,b:0,c:0,d:sy,e:0,f:0};
+        break;
+      }
+      case 'rotate':{
+        const ang=(args[0]||0)*Math.PI/180; const cos=Math.cos(ang); const sin=Math.sin(ang);
+        t={a:cos,b:sin,c:-sin,d:cos,e:0,f:0};
+        break;
+      }
+      default:
+        t={a:1,b:0,c:0,d:1,e:0,f:0};
+    }
+    cur={
+      a: cur.a*t.a + cur.c*t.b,
+      b: cur.b*t.a + cur.d*t.b,
+      c: cur.a*t.c + cur.c*t.d,
+      d: cur.b*t.c + cur.d*t.d,
+      e: cur.a*t.e + cur.c*t.f + cur.e,
+      f: cur.b*t.e + cur.d*t.f + cur.f
+    };
+  });
+  return cur;
+}
+
 export default class BodyMap {
   constructor() {
     this.svg = null;
@@ -44,7 +88,8 @@ export default class BodyMap {
     const pt = this.svg.createSVGPoint();
     pt.x = evt.clientX;
     pt.y = evt.clientY;
-    return pt.matrixTransform(this.svg.getScreenCTM().inverse());
+    const ctm = typeof this.svg.getScreenCTM === 'function' ? this.svg.getScreenCTM() : null;
+    return ctm ? pt.matrixTransform(ctm.inverse()) : { x: pt.x, y: pt.y };
   }
 
   clampToBody(x, y, side) {
@@ -61,6 +106,20 @@ export default class BodyMap {
       const vb = this.svg.getAttribute('viewBox')?.split(/\s+/).map(Number);
       bbox = vb ? { x: vb[0], y: vb[1], width: vb[2], height: vb[3] } : null;
     }
+    if (!bbox) {
+      const rect = target?.getBoundingClientRect?.();
+      const ctm = typeof this.svg.getScreenCTM === 'function' ? this.svg.getScreenCTM() : null;
+      if (rect && ctm) {
+        const pt1 = this.svg.createSVGPoint();
+        pt1.x = rect.left; pt1.y = rect.top;
+        const pt2 = this.svg.createSVGPoint();
+        pt2.x = rect.right; pt2.y = rect.bottom;
+        const inv = ctm.inverse();
+        const tl = pt1.matrixTransform(inv);
+        const br = pt2.matrixTransform(inv);
+        bbox = { x: tl.x, y: tl.y, width: br.x - tl.x, height: br.y - tl.y };
+      }
+    }
     if (!bbox) return { x, y };
     return {
       x: Math.min(Math.max(x, bbox.x), bbox.x + bbox.width),
@@ -70,14 +129,14 @@ export default class BodyMap {
 
   dragStart(evt) {
     const el = evt.currentTarget;
-    const tr = el.getAttribute('transform');
-    const m = /translate\(([-\d.]+),([-\d.]+)\)/.exec(tr) || [0,0,0];
+    const base = el.transform?.baseVal?.consolidate();
+    const matrix = base ? base.matrix : parseTransform(el.getAttribute('transform'));
     this.dragInfo = {
       el,
       startX: evt.clientX,
       startY: evt.clientY,
-      origX: +m[1],
-      origY: +m[2]
+      matrix,
+      hasTransformList: !!el.transform?.baseVal
     };
     document.addEventListener('pointermove', this.dragMove);
     document.addEventListener('pointerup', this.dragEnd);
@@ -85,12 +144,21 @@ export default class BodyMap {
 
   dragMove(evt) {
     if(!this.dragInfo) return;
-    const dx = evt.clientX - this.dragInfo.startX;
-    const dy = evt.clientY - this.dragInfo.startY;
-    let x = this.dragInfo.origX + dx;
-    let y = this.dragInfo.origY + dy;
-    ({ x, y } = this.clampToBody(x, y, this.dragInfo.el.dataset.side));
-    this.dragInfo.el.setAttribute('transform', `translate(${x},${y})`);
+    const { el, startX, startY, matrix, hasTransformList } = this.dragInfo;
+    const dx = evt.clientX - startX;
+    const dy = evt.clientY - startY;
+    let x = matrix.e + dx;
+    let y = matrix.f + dy;
+    ({ x, y } = this.clampToBody(x, y, el.dataset.side));
+    const newMatrix = { a: matrix.a, b: matrix.b, c: matrix.c, d: matrix.d, e: x, f: y };
+    if (hasTransformList && el.transform?.baseVal && this.svg.createSVGTransformFromMatrix && this.svg.createSVGMatrix) {
+      const m = this.svg.createSVGMatrix();
+      m.a = newMatrix.a; m.b = newMatrix.b; m.c = newMatrix.c; m.d = newMatrix.d; m.e = newMatrix.e; m.f = newMatrix.f;
+      const t = this.svg.createSVGTransformFromMatrix(m);
+      el.transform.baseVal.initialize(t);
+    } else {
+      el.setAttribute('transform', `matrix(${newMatrix.a} ${newMatrix.b} ${newMatrix.c} ${newMatrix.d} ${newMatrix.e} ${newMatrix.f})`);
+    }
   }
 
   dragEnd() {
@@ -105,7 +173,10 @@ export default class BodyMap {
     ({ x, y } = this.clampToBody(x, y, s));
     const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
     const symbol = Object.values(TOOLS).find(tool => tool.char === t)?.symbol;
-    if (symbol) use.setAttribute('href', symbol);
+    if (symbol) {
+      use.setAttribute('href', symbol);
+      use.setAttributeNS('http://www.w3.org/1999/xlink', 'href', symbol);
+    }
     use.setAttribute('transform',`translate(${x},${y})`);
     use.dataset.type = t;
     use.dataset.side = s;
@@ -274,14 +345,19 @@ export default class BodyMap {
     if(!this.svg.querySelector('.zone')){
       const layers = { front: $('#layer-front'), back: $('#layer-back') };
       zones.forEach(z => {
-        let container = layers[z.side].querySelector('.zones');
+        const layer = layers[z.side];
+        if(!layer){
+          console.warn(`Missing layer for side ${z.side}`);
+          return;
+        }
+        let container = layer.querySelector('.zones');
         if(!container){
           container = document.createElementNS('http://www.w3.org/2000/svg','g');
           container.classList.add('zones');
-          const shape = layers[z.side].querySelector(`#${z.side}-shape`);
+          const shape = layer.querySelector(`#${z.side}-shape`);
           const tr = shape?.getAttribute('transform');
           if(tr) container.setAttribute('transform', tr);
-          layers[z.side].appendChild(container);
+          layer.appendChild(container);
         }
         const path = document.createElementNS('http://www.w3.org/2000/svg','path');
         path.classList.add('zone');
