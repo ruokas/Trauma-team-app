@@ -286,6 +286,7 @@ export default class BodyMap {
         const path = document.createElementNS('http://www.w3.org/2000/svg','path');
         path.classList.add('zone');
         path.dataset.zone = z.id;
+        path.dataset.side = z.side;
         path.dataset.area = z.area;
         path.setAttribute('d', z.path);
         path.setAttribute('aria-label', z.label);
@@ -311,19 +312,20 @@ export default class BodyMap {
       });
     });
 
-    $$('.zone', this.svg).forEach(z=>{
-      const name=z.dataset.zone;
-      this.zoneMap.set(name,z);
-      z.addEventListener('click',evt=>{
-        const side=z.closest('#layer-back')?'back':'front';
-        if(this.activeTool===TOOLS.BURN.char){
-          this.toggleZoneBurn(name);
-        }else{
-          const p=this.svgPoint(evt);
-          this.addMark(p.x,p.y,this.activeTool,side,name);
-        }
+      $$('.zone', this.svg).forEach(z=>{
+        const name=z.dataset.zone;
+        z.dataset.side = z.dataset.side || (z.closest('#layer-back') ? 'back' : 'front');
+        this.zoneMap.set(name,z);
+        z.addEventListener('click',evt=>{
+          const side=z.dataset.side;
+          if(this.activeTool===TOOLS.BURN.char){
+            this.toggleZoneBurn(name);
+          }else{
+            const p=this.svgPoint(evt);
+            this.addMark(p.x,p.y,this.activeTool,side,name);
+          }
+        });
       });
-    });
 
     this.updateBurnDisplay();
 
@@ -368,11 +370,11 @@ export default class BodyMap {
       const m=/translate\(([-\d.]+),([-\d.]+)\)/.exec(tr)||[0,0,0];
       return {id:+u.dataset.id, x:+m[1], y:+m[2], type:u.dataset.type, side:u.dataset.side, zone:u.dataset.zone};
     });
-    const burnArr=[...this.burns].map(z=>{
-      const el=this.zoneMap.get(z);
-      const side=el?.closest('#layer-back')?'back':'front';
-      return {zone:z, side};
-    });
+      const burnArr=[...this.burns].map(z=>{
+        const el=this.zoneMap.get(z);
+        const side=el?.dataset.side;
+        return {zone:z, side};
+      });
     return JSON.stringify({tool:this.activeTool,marks:arr,burns:burnArr});
   }
 
