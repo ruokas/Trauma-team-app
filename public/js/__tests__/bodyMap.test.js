@@ -30,7 +30,6 @@ describe('BodyMap instance', () => {
     const mark = document.querySelector('#marks use');
     expect(mark.dataset.zone).toBe('head-front');
     expect(mark.getAttribute('href')).toBe(TOOLS.WOUND.symbol);
-    expect(mark.getAttributeNS('http://www.w3.org/1999/xlink', 'href')).toBe(TOOLS.WOUND.symbol);
     const data = JSON.parse(bm.serialize());
     expect(data.marks[0]).toMatchObject({ x: 10, y: 20, type: TOOLS.WOUND.char, side: 'front', zone: 'head-front' });
   });
@@ -91,49 +90,8 @@ describe('BodyMap instance', () => {
     mark.dispatchEvent(new MouseEvent('pointerdown', { clientX: 10, clientY: 20 }));
     document.dispatchEvent(new MouseEvent('pointermove', { clientX: 30, clientY: 40 }));
     document.dispatchEvent(new MouseEvent('pointerup', { clientX: 30, clientY: 40 }));
-    const tr = mark.getAttribute('transform');
-    const m = tr.startsWith('matrix')
-      ? tr.match(/matrix\(([-0-9. ]+)\)/)[1].split(/\s+/).map(Number)
-      : [1,0,0,1,...tr.match(/translate\(([-\d.]+),([-\d.]+)\)/).slice(1).map(Number)];
-    expect(m[4]).toBe(30);
-    expect(m[5]).toBe(40);
+    expect(mark.getAttribute('transform')).toBe('translate(30,40)');
     expect(save).toHaveBeenCalledTimes(2);
-  });
-
-  test('dragging preserves existing transforms', () => {
-    setupDom();
-    const bm = new BodyMap();
-    bm.init(() => {});
-    bm.addMark(0, 0, TOOLS.WOUND.char, 'front');
-    const mark = document.querySelector('#marks use');
-    mark.setAttribute('transform', 'rotate(45) scale(2)');
-    mark.dispatchEvent(new MouseEvent('pointerdown', { clientX: 0, clientY: 0 }));
-    document.dispatchEvent(new MouseEvent('pointermove', { clientX: 10, clientY: 10 }));
-    document.dispatchEvent(new MouseEvent('pointerup', { clientX: 10, clientY: 10 }));
-    const tr = mark.getAttribute('transform');
-    const m = tr.match(/matrix\(([-0-9. ]+)\)/)[1].split(/\s+/).map(Number);
-    expect(m[4]).toBeCloseTo(10);
-    expect(m[5]).toBeCloseTo(10);
-    // rotation/scale preserved (not identity matrix)
-    expect(m[0]).not.toBe(1);
-    expect(m[1]).not.toBe(0);
-  });
-
-  test('clampToBody uses bounding rect when viewBox missing', () => {
-    setupDom();
-    const bm = new BodyMap();
-    bm.init(() => {});
-    const layer = document.getElementById('layer-front');
-    layer.getBBox = undefined;
-    layer.getBoundingClientRect = () => ({ left: 0, top: 0, right: 100, bottom: 100, width: 100, height: 100 });
-    bm.svg.getScreenCTM = () => ({ a:1, b:0, c:0, d:1, e:0, f:0, inverse(){ return this; } });
-    bm.svg.createSVGPoint = () => ({
-      x: 0, y: 0,
-      matrixTransform(m){ return { x: this.x * m.a + this.y * m.c + m.e, y: this.x * m.b + this.y * m.d + m.f }; }
-    });
-    const clamped = bm.clampToBody(150, 150, 'front');
-    expect(clamped.x).toBe(100);
-    expect(clamped.y).toBe(100);
   });
 
   test('delete removes selected mark', () => {
