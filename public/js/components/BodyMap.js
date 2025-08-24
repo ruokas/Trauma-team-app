@@ -158,15 +158,7 @@ export default class BodyMap {
         this.saveCb();
       }
     });
-    this.btnExport?.addEventListener('click', () => {
-      const clone = this.svg.cloneNode(true);
-      const ser = new XMLSerializer();
-      const url = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(ser.serializeToString(clone));
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'kuno-zemelapis.svg';
-      a.click();
-    });
+    this.btnExport?.addEventListener('click', () => this.exportSvg());
 
     this.updateBurnDisplay();
     this.updateUndoRedoButtons();
@@ -323,6 +315,41 @@ export default class BodyMap {
   updateUndoRedoButtons() {
     if (this.btnUndo) this.btnUndo.disabled = this.undoStack.length === 0;
     if (this.btnRedo) this.btnRedo.disabled = this.redoStack.length === 0;
+  }
+
+  /** Export a self-contained SVG with embedded silhouettes. */
+  async exportSvg() {
+    const clone = this.svg.cloneNode(true);
+    const uses = [...clone.querySelectorAll('use[data-src]')];
+    for (const u of uses) {
+      const ref = u.dataset.src;
+      if (!ref) continue;
+      const [url, hash] = ref.split('#');
+      try {
+        const res = await fetch(url);
+        if (!res.ok) continue;
+        const txt = await res.text();
+        const doc = new DOMParser().parseFromString(txt, 'image/svg+xml');
+        const el = doc.getElementById(hash);
+        if (!el) continue;
+        const replacement = el.cloneNode(true);
+        // Copy non-href attributes from original <use>
+        [...u.attributes].forEach(attr => {
+          if (!['href', 'xlink:href', 'data-src'].includes(attr.name)) {
+            replacement.setAttribute(attr.name, attr.value);
+          }
+        });
+        u.replaceWith(replacement);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    const ser = new XMLSerializer();
+    const url = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(ser.serializeToString(clone));
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'kuno-zemelapis.svg';
+    a.click();
   }
 
   /** Undo the last action. */
