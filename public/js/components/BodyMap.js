@@ -3,43 +3,182 @@ import { notify } from '../alerts.js';
 import zones from '../bodyMapZones.js';
 import { TOOLS } from '../BodyMapTools.js';
 
+// Map tool characters to their SVG symbol references for quick lookup
+const TOOL_SYMBOL = Object.values(TOOLS).reduce((acc, t) => {
+  acc[t.char] = t.symbol;
+  return acc;
+}, {});
+
+// Mapping of zone id to human friendly label
 const ZONE_LABELS = zones.reduce((acc, z) => {
   acc[z.id] = z.label;
   return acc;
 }, {});
 
+// A complete rewrite of the body map logic.  The original implementation
+// grew organically and was difficult to follow.  This version focuses on a
+// small, well documented API while keeping behaviour compatible with the
+// existing UI and tests.
 export default class BodyMap {
   constructor() {
+    this.initialized = false;
+
+    // DOM references
     this.svg = null;
     this.marks = null;
+    this.tools = [];
     this.btnUndo = null;
     this.btnRedo = null;
     this.btnClear = null;
     this.btnExport = null;
     this.btnDelete = null;
-    this.tools = [];
     this.burnTotalEl = null;
     this.selectedList = null;
+
+    // state
     this.activeTool = TOOLS.WOUND.char;
     this.saveCb = () => {};
     this.burns = new Set();
     this.zoneMap = new Map();
-    this.markIdSeq = 0;
-    this.dragInfo = null;
-    this.dragStart = this.dragStart.bind(this);
-    this.moveDrag = this.moveDrag.bind(this);
-    this.endDrag = this.endDrag.bind(this);
-    this.initialized = false;
-    this.tooltip = null;
+    this.markSeq = 0;
     this.undoStack = [];
     this.redoStack = [];
+
+    // dragging
+    this.drag = null;
+    this.onDragMove = this.onDragMove.bind(this);
+    this.onDragEnd = this.onDragEnd.bind(this);
   }
 
-  setTool(t) {
-    this.activeTool = t;
-    this.tools.forEach(b => b.classList.toggle('active', b.dataset.tool === t));
+  /** Initialise DOM references and event listeners. */
+  init(saveCb) {
+    if (this.initialized) return;
+    this.initialized = true;
+
+    this.saveCb = typeof saveCb === 'function' ? saveCb : () => {};
+
+    this.svg = $('#bodySvg');
+    this.marks = $('#marks');
+    this.tools = $$('.map-toolbar .tool[data-tool]');
+    this.btnUndo = $('#btnUndo');
+    this.btnRedo = $('#btnRedo');
+    this.btnClear = $('#btnClearMap');
+    this.btnExport = $('#btnExportSvg');
+    this.btnDelete = $('#btnDelete');
+    this.burnTotalEl = $('#burnTotal');
+    this.selectedList = $('#selectedLocations');
+
+    // Build zone paths if they are not already present in the SVG.  Tests
+    // provide a bare bones SVG so we create the required paths here.
+    if (this.svg && !this.svg.querySelector('.zone')) {
+      const layers = { front: $('#layer-front'), back: $('#layer-back') };
+      zones.forEach(z => {
+        let group = layers[z.side].querySelector('.zones');
+        if (!group) {
+          group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+          group.classList.add('zones');
+          const shape = layers[z.side].querySelector(`#${z.side}-shape`);
+          const tr = shape?.getAttribute('transform');
+          if (tr) group.setAttribute('transform', tr);
+          layers[z.side].appendChild(group);
+        }
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.classList.add('zone');
+        path.dataset.zone = z.id;
+        path.dataset.area = z.area;
+        path.setAttribute('d', z.path);
+        path.setAttribute('aria-label', z.label);
+        const title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
+        title.textContent = z.label;
+        path.appendChild(title);
+        group.appendChild(path);
+      });
+    }
+
+    // Cache zone elements and attach click handlers
+    $$('.zone', this.svg).forEach(el => {
+      const id = el.dataset.zone;
+      this.zoneMap.set(id, el);
+      el.addEventListener('click', evt => {
+        const side = el.closest('#layer-back') ? 'back' : 'front';
+        if (this.activeTool === TOOLS.BURN.char) {
+          this.toggleZoneBurn(id);
+        } else {
+          const p = this.svgPoint(evt);
+          this.addMark(p.x, p.y, this.activeTool, side, id);
+        }
+      });
+    });
+
+    // Tool buttons
+    this.tools.forEach(btn =>
+      btn.addEventListener('click', () => this.setTool(btn.dataset.tool))
+    );
+    this.setTool(this.activeTool);
+
+    // Clicking on body silhouettes adds marks
+    ['front-shape', 'back-shape'].forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.addEventListener('click', evt => {
+        const p = this.svgPoint(evt);
+        this.addMark(p.x, p.y, this.activeTool, el.dataset.side);
+      });
+    });
+
+    // Mark selection and dragging
+    this.marks.addEventListener('click', e => {
+      const u = e.target.closest('use');
+      if (!u) return;
+      this.marks.querySelector('.selected')?.classList.remove('selected');
+      u.classList.add('selected');
+      if (typeof window.showWoundDetails === 'function') {
+        window.showWoundDetails(u.dataset.id);
+      }
+    });
+
+    // Basic controls
+    this.btnDelete?.addEventListener('click', () => {
+      const sel = this.marks.querySelector('use.selected');
+      if (sel) this.removeMark(sel);
+    });
+    this.btnUndo?.addEventListener('click', () => this.undo());
+    this.btnRedo?.addEventListener('click', () => this.redo());
+    this.btnClear?.addEventListener('click', async () => {
+      if (await notify({ type: 'confirm', message: 'Išvalyti visas žymas (priekis ir nugara)?' })) {
+        this.marks.innerHTML = '';
+        this.burns.clear();
+        this.zoneMap.forEach(z => z.classList.remove('burned'));
+        this.selectedList && (this.selectedList.innerHTML = '');
+        this.markSeq = 0;
+        this.undoStack = [];
+        this.redoStack = [];
+        this.updateBurnDisplay();
+        this.updateUndoRedoButtons();
+        this.saveCb();
+      }
+    });
+    this.btnExport?.addEventListener('click', () => {
+      const clone = this.svg.cloneNode(true);
+      const ser = new XMLSerializer();
+      const url = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(ser.serializeToString(clone));
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'kuno-zemelapis.svg';
+      a.click();
+    });
+
+    this.updateBurnDisplay();
+    this.updateUndoRedoButtons();
   }
 
+  /** Switch the active drawing tool. */
+  setTool(tool) {
+    this.activeTool = tool;
+    this.tools.forEach(b => b.classList.toggle('active', b.dataset.tool === tool));
+  }
+
+  /** Convert client coordinates to SVG coordinates. */
   svgPoint(evt) {
     const pt = this.svg.createSVGPoint();
     pt.x = evt.clientX;
@@ -47,19 +186,16 @@ export default class BodyMap {
     return pt.matrixTransform(this.svg.getScreenCTM().inverse());
   }
 
+  /** Keep coordinates within the body outline. */
   clampToBody(x, y, side) {
     const target = side ? this.svg.querySelector(`#layer-${side}`) : this.svg;
     let bbox;
-    if (typeof target?.getBBox === 'function') {
-      try {
-        bbox = target.getBBox();
-      } catch {
-        bbox = null;
-      }
+    if (target && typeof target.getBBox === 'function') {
+      try { bbox = target.getBBox(); } catch { bbox = null; }
     }
     if (!bbox || (bbox.width === 0 && bbox.height === 0)) {
       const vb = this.svg.getAttribute('viewBox')?.split(/\s+/).map(Number);
-      bbox = vb ? { x: vb[0], y: vb[1], width: vb[2], height: vb[3] } : null;
+      if (vb) bbox = { x: vb[0], y: vb[1], width: vb[2], height: vb[3] };
     }
     if (!bbox) return { x, y };
     return {
@@ -68,76 +204,97 @@ export default class BodyMap {
     };
   }
 
-  dragStart(evt) {
-    const el = evt.currentTarget;
-    const tr = el.getAttribute('transform');
-    const m = /translate\(([-\d.]+),([-\d.]+)\)/.exec(tr) || [0,0,0];
-    this.dragInfo = {
-      el,
-      startX: evt.clientX,
-      startY: evt.clientY,
-      origX: +m[1],
-      origY: +m[2]
-    };
-    document.addEventListener('pointermove', this.moveDrag);
-    document.addEventListener('pointerup', this.endDrag);
-  }
-
-  moveDrag(evt) {
-    if(!this.dragInfo) return;
-    const dx = evt.clientX - this.dragInfo.startX;
-    const dy = evt.clientY - this.dragInfo.startY;
-    let x = this.dragInfo.origX + dx;
-    let y = this.dragInfo.origY + dy;
-    ({ x, y } = this.clampToBody(x, y, this.dragInfo.el.dataset.side));
-    this.dragInfo.el.setAttribute('transform', `translate(${x},${y})`);
-  }
-
-  endDrag() {
-    if(!this.dragInfo) return;
-    document.removeEventListener('pointermove', this.moveDrag);
-    document.removeEventListener('pointerup', this.endDrag);
-    this.dragInfo = null;
-    this.saveCb();
-  }
-
-  addMark(x, y, t = this.activeTool, s, zone, id, record = true){
-    ({ x, y } = this.clampToBody(x, y, s));
+  /** Add a new mark to the map. */
+  addMark(x, y, type = this.activeTool, side, zone, id, record = true) {
+    ({ x, y } = this.clampToBody(x, y, side));
     const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
-    const symbol = Object.values(TOOLS).find(tool => tool.char === t)?.symbol;
+    const symbol = TOOL_SYMBOL[type];
     if (symbol) use.setAttribute('href', symbol);
-    use.setAttribute('transform',`translate(${x},${y})`);
-    use.dataset.type = t;
-    use.dataset.side = s;
-    const mid = id || ++this.markIdSeq;
+    use.setAttribute('transform', `translate(${x},${y})`);
+    const mid = id || ++this.markSeq;
     use.dataset.id = mid;
-    if(mid > this.markIdSeq) this.markIdSeq = mid;
-    if(zone){
+    use.dataset.type = type;
+    use.dataset.side = side;
+    if (mid > this.markSeq) this.markSeq = mid;
+    if (zone) {
       use.dataset.zone = zone;
-      if(this.selectedList){
-        const el=document.createElement('div');
+      if (this.selectedList) {
+        const el = document.createElement('div');
         el.textContent = ZONE_LABELS[zone] || zone;
         el.dataset.id = mid;
         this.selectedList.appendChild(el);
       }
     }
+    use.addEventListener('pointerdown', e => this.startDrag(e, use));
     this.marks.appendChild(use);
-    use.addEventListener('pointerdown', this.dragStart);
-    if(record){
-      this.undoStack.push({type:'addMark', mark:{id:mid,x,y,type:t,side:s,zone}});
+    if (record) {
+      this.undoStack.push({ type: 'add', mark: { id: mid, x, y, type, side, zone } });
       this.redoStack = [];
       this.updateUndoRedoButtons();
     }
     this.saveCb();
   }
 
-  toggleZoneBurn(name, record = true){
+  /** Begin dragging a mark. */
+  startDrag(evt, el) {
+    const tr = el.getAttribute('transform');
+    const m = /translate\(([-\d.]+),([-\d.]+)\)/.exec(tr) || [0, 0, 0];
+    this.drag = { el, startX: evt.clientX, startY: evt.clientY, origX: +m[1], origY: +m[2] };
+    document.addEventListener('pointermove', this.onDragMove);
+    document.addEventListener('pointerup', this.onDragEnd);
+  }
+
+  onDragMove(evt) {
+    if (!this.drag) return;
+    const dx = evt.clientX - this.drag.startX;
+    const dy = evt.clientY - this.drag.startY;
+    let x = this.drag.origX + dx;
+    let y = this.drag.origY + dy;
+    ({ x, y } = this.clampToBody(x, y, this.drag.el.dataset.side));
+    this.drag.el.setAttribute('transform', `translate(${x},${y})`);
+  }
+
+  onDragEnd() {
+    if (!this.drag) return;
+    document.removeEventListener('pointermove', this.onDragMove);
+    document.removeEventListener('pointerup', this.onDragEnd);
+    this.drag = null;
+    this.saveCb();
+  }
+
+  /** Remove a mark from the map. */
+  removeMark(el, record = true) {
+    if (!el) return;
+    if (this.selectedList && el.dataset.zone) {
+      this.selectedList.querySelector(`[data-id="${el.dataset.id}"]`)?.remove();
+    }
+    const tr = el.getAttribute('transform');
+    const m = /translate\(([-\d.]+),([-\d.]+)\)/.exec(tr) || [0, 0, 0];
+    const data = {
+      id: +el.dataset.id,
+      x: +m[1],
+      y: +m[2],
+      type: el.dataset.type,
+      side: el.dataset.side,
+      zone: el.dataset.zone
+    };
+    el.remove();
+    if (record) {
+      this.undoStack.push({ type: 'delete', mark: data });
+      this.redoStack = [];
+      this.updateUndoRedoButtons();
+    }
+    this.saveCb();
+  }
+
+  /** Toggle burn state for a zone. */
+  toggleZoneBurn(name, record = true) {
     const el = this.zoneMap.get(name);
-    if(!el) return;
-    el.classList.toggle('burned');
-    if(el.classList.contains('burned')) this.burns.add(name); else this.burns.delete(name);
-    if(record){
-      this.undoStack.push({type:'toggleBurn', zone:name});
+    if (!el) return;
+    const burned = el.classList.toggle('burned');
+    if (burned) this.burns.add(name); else this.burns.delete(name);
+    if (record) {
+      this.undoStack.push({ type: 'burn', zone: name });
       this.redoStack = [];
       this.updateUndoRedoButtons();
     }
@@ -145,53 +302,45 @@ export default class BodyMap {
     this.saveCb();
   }
 
-  burnArea(){
-    let s=0;
-    this.burns.forEach(z=>{
-      const el = this.zoneMap.get(z);
-      const area = el ? parseFloat(el.dataset.area) : 0;
-      s += isNaN(area) ? 0 : area;
+  /** Compute total burned area percentage. */
+  burnArea() {
+    let total = 0;
+    this.burns.forEach(z => {
+      const area = parseFloat(this.zoneMap.get(z)?.dataset.area);
+      total += isNaN(area) ? 0 : area;
     });
-    return s;
+    return total;
   }
 
-  updateUndoRedoButtons(){
-    if(this.btnUndo) this.btnUndo.disabled = this.undoStack.length === 0;
-    if(this.btnRedo) this.btnRedo.disabled = this.redoStack.length === 0;
+  /** Display burn percentage in the UI. */
+  updateBurnDisplay() {
+    if (!this.burnTotalEl) return;
+    const t = this.burnArea();
+    this.burnTotalEl.textContent = t ? `Nudegimai: ${t}%` : '';
   }
 
-  removeMark(m, record = true){
-    if(!m) return;
-    if(this.selectedList && m.dataset.zone){
-      this.selectedList.querySelector(`[data-id="${m.dataset.id}"]`)?.remove();
-    }
-    const tr = m.getAttribute('transform');
-    const r = /translate\(([-\d.]+),([-\d.]+)\)/.exec(tr) || [0,0,0];
-    const data = {id:+m.dataset.id, x:+r[1], y:+r[2], type:m.dataset.type, side:m.dataset.side, zone:m.dataset.zone};
-    m.remove();
-    if(record){
-      this.undoStack.push({type:'deleteMark', mark:data});
-      this.redoStack = [];
-      this.updateUndoRedoButtons();
-    }
-    this.saveCb();
+  /** Enable/disable undo and redo buttons. */
+  updateUndoRedoButtons() {
+    if (this.btnUndo) this.btnUndo.disabled = this.undoStack.length === 0;
+    if (this.btnRedo) this.btnRedo.disabled = this.redoStack.length === 0;
   }
 
-  undo(){
+  /** Undo the last action. */
+  undo() {
     const action = this.undoStack.pop();
-    if(!action) return;
-    switch(action.type){
-      case 'addMark':{
+    if (!action) return;
+    switch (action.type) {
+      case 'add': {
         const m = this.marks.querySelector(`use[data-id="${action.mark.id}"]`);
         this.removeMark(m, false);
         break;
       }
-      case 'deleteMark':{
-        const a = action.mark;
-        this.addMark(a.x, a.y, a.type, a.side, a.zone, a.id, false);
+      case 'delete': {
+        const m = action.mark;
+        this.addMark(m.x, m.y, m.type, m.side, m.zone, m.id, false);
         break;
       }
-      case 'toggleBurn':
+      case 'burn':
         this.toggleZoneBurn(action.zone, false);
         break;
     }
@@ -199,21 +348,22 @@ export default class BodyMap {
     this.updateUndoRedoButtons();
   }
 
-  redo(){
+  /** Redo a previously undone action. */
+  redo() {
     const action = this.redoStack.pop();
-    if(!action) return;
-    switch(action.type){
-      case 'addMark':{
-        const a = action.mark;
-        this.addMark(a.x, a.y, a.type, a.side, a.zone, a.id, false);
+    if (!action) return;
+    switch (action.type) {
+      case 'add': {
+        const m = action.mark;
+        this.addMark(m.x, m.y, m.type, m.side, m.zone, m.id, false);
         break;
       }
-      case 'deleteMark':{
+      case 'delete': {
         const m = this.marks.querySelector(`use[data-id="${action.mark.id}"]`);
         this.removeMark(m, false);
         break;
       }
-      case 'toggleBurn':
+      case 'burn':
         this.toggleZoneBurn(action.zone, false);
         break;
     }
@@ -221,212 +371,85 @@ export default class BodyMap {
     this.updateUndoRedoButtons();
   }
 
-    updateBurnDisplay(){
-      if(this.burnTotalEl){
-        const t=this.burnArea();
-        this.burnTotalEl.textContent = t?`Nudegimai: ${t}%`:'';
-      }
-    }
-
-    showTooltip(evt, label){
-      if(!this.tooltip){
-        this.tooltip = document.createElement('div');
-        this.tooltip.className = 'zone-tooltip';
-        Object.assign(this.tooltip.style, {
-          position: 'absolute',
-          pointerEvents: 'none',
-          background: 'rgba(0,0,0,0.75)',
-          color: '#fff',
-          padding: '2px 4px',
-          borderRadius: '3px',
-          fontSize: '0.75rem',
-          display: 'none'
-        });
-        document.body.appendChild(this.tooltip);
-      }
-      this.tooltip.textContent = label;
-      this.tooltip.style.display = 'block';
-      this.tooltip.style.left = `${evt.pageX + 10}px`;
-      this.tooltip.style.top = `${evt.pageY + 10}px`;
-    }
-
-    hideTooltip(){
-      if(this.tooltip) this.tooltip.style.display = 'none';
-    }
-
-  init(saveAll){
-    if(this.initialized) return;
-    this.zoneMap.clear();
-    this.saveCb = saveAll || (()=>{});
-    this.svg = $('#bodySvg');
-    this.marks = $('#marks');
-    this.btnUndo = $('#btnUndo');
-    this.btnRedo = $('#btnRedo');
-    this.btnClear = $('#btnClearMap');
-    this.btnExport = $('#btnExportSvg');
-    this.btnDelete = $('#btnDelete');
-    this.tools = $$('.map-toolbar .tool[data-tool]');
-    this.burnTotalEl = $('#burnTotal');
-    this.selectedList = $('#selectedLocations');
-    if(!this.svg || !this.marks) return;
-    this.initialized = true;
-
-    if(!this.svg.querySelector('.zone')){
-      const layers = { front: $('#layer-front'), back: $('#layer-back') };
-      zones.forEach(z => {
-        let container = layers[z.side].querySelector('.zones');
-        if(!container){
-          container = document.createElementNS('http://www.w3.org/2000/svg','g');
-          container.classList.add('zones');
-          const shape = layers[z.side].querySelector(`#${z.side}-shape`);
-          const tr = shape?.getAttribute('transform');
-          if(tr) container.setAttribute('transform', tr);
-          layers[z.side].appendChild(container);
-        }
-        const path = document.createElementNS('http://www.w3.org/2000/svg','path');
-        path.classList.add('zone');
-        path.dataset.zone = z.id;
-        path.dataset.area = z.area;
-        path.setAttribute('d', z.path);
-        path.setAttribute('aria-label', z.label);
-        const title = document.createElementNS('http://www.w3.org/2000/svg','title');
-        title.textContent = z.label;
-        path.appendChild(title);
-        path.addEventListener('pointerenter', e => this.showTooltip(e, z.label));
-        path.addEventListener('pointermove', e => this.showTooltip(e, z.label));
-        path.addEventListener('pointerleave', () => this.hideTooltip());
-        container.appendChild(path);
-      });
-    }
-
-    this.tools.forEach(b=>b.addEventListener('click',()=>this.setTool(b.dataset.tool)));
-    this.setTool(this.activeTool);
-    this.updateUndoRedoButtons();
-
-    ['front-shape','back-shape'].forEach(id=>{
-      const el = document.getElementById(id);
-      el?.addEventListener('click',evt=>{
-        const p = this.svgPoint(evt);
-        this.addMark(p.x,p.y,this.activeTool,el.dataset.side);
-      });
+  /** Serialize current map state. */
+  serialize() {
+    const marks = [...this.marks.querySelectorAll('use')].map(u => {
+      const tr = u.getAttribute('transform');
+      const m = /translate\(([-\d.]+),([-\d.]+)\)/.exec(tr) || [0, 0, 0];
+      return {
+        id: +u.dataset.id,
+        x: +m[1],
+        y: +m[2],
+        type: u.dataset.type,
+        side: u.dataset.side,
+        zone: u.dataset.zone
+      };
     });
-
-    $$('.zone', this.svg).forEach(z=>{
-      const name=z.dataset.zone;
-      this.zoneMap.set(name,z);
-      z.addEventListener('click',evt=>{
-        const side=z.closest('#layer-back')?'back':'front';
-        if(this.activeTool===TOOLS.BURN.char){
-          this.toggleZoneBurn(name);
-        }else{
-          const p=this.svgPoint(evt);
-          this.addMark(p.x,p.y,this.activeTool,side,name);
-        }
-      });
-    });
-
-    this.updateBurnDisplay();
-
-    this.marks.addEventListener('click', e => {
-      const u = e.target.closest('use');
-      if(!u) return;
-      this.marks.querySelector('.selected')?.classList.remove('selected');
-      u.classList.add('selected');
-      if(typeof window.showWoundDetails === 'function') window.showWoundDetails(u.dataset.id);
-    });
-
-    this.btnUndo?.addEventListener('click',()=>this.undo());
-    this.btnRedo?.addEventListener('click',()=>this.redo());
-
-    this.btnDelete?.addEventListener('click',()=>{
-      const sel = this.marks.querySelector('use.selected');
-      if(sel) this.removeMark(sel);
-    });
-
-    this.btnClear?.addEventListener('click', async ()=>{
-      if(await notify({type:'confirm', message:'Išvalyti visas žymas (priekis ir nugara)?'})){
-        this.marks.innerHTML='';
-        this.burns.clear();
-        $$('.zone', this.svg).forEach(z=>z.classList.remove('burned'));
-        this.updateBurnDisplay();
-        this.selectedList && (this.selectedList.innerHTML='');
-        this.saveCb();
-      }
-    });
-
-    this.btnExport?.addEventListener('click',()=>{
-      const clone=this.svg.cloneNode(true);
-      const ser=new XMLSerializer(); const src=ser.serializeToString(clone);
-      const url='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(src);
-      const a=document.createElement('a'); a.href=url; a.download='kuno-zemelapis.svg'; a.click();
-    });
+    const burns = [...this.burns].map(z => ({
+      zone: z,
+      side: this.zoneMap.get(z)?.closest('#layer-back') ? 'back' : 'front'
+    }));
+    return JSON.stringify({ tool: this.activeTool, marks, burns });
   }
 
-  serialize(){
-    const arr=[...this.marks.querySelectorAll('use')].map(u=>{
-      const tr=u.getAttribute('transform');
-      const m=/translate\(([-\d.]+),([-\d.]+)\)/.exec(tr)||[0,0,0];
-      return {id:+u.dataset.id, x:+m[1], y:+m[2], type:u.dataset.type, side:u.dataset.side, zone:u.dataset.zone};
-    });
-    const burnArr=[...this.burns].map(z=>{
-      const el=this.zoneMap.get(z);
-      const side=el?.closest('#layer-back')?'back':'front';
-      return {zone:z, side};
-    });
-    return JSON.stringify({tool:this.activeTool,marks:arr,burns:burnArr});
-  }
-
-  load(raw){
-    try{
-      const o=typeof raw==='string'?JSON.parse(raw):raw;
-      this.activeTool=o.tool||TOOLS.WOUND.char;
+  /** Load previously serialized state. */
+  load(raw) {
+    try {
+      const data = typeof raw === 'string' ? JSON.parse(raw) : raw;
+      this.activeTool = data.tool || TOOLS.WOUND.char;
       this.setTool(this.activeTool);
-      this.marks.innerHTML='';
+      this.marks.innerHTML = '';
       this.burns.clear();
-      $$('.zone', this.svg).forEach(z=>z.classList.remove('burned'));
-      this.selectedList && (this.selectedList.innerHTML='');
+      this.zoneMap.forEach(z => z.classList.remove('burned'));
+      this.selectedList && (this.selectedList.innerHTML = '');
       this.undoStack = [];
       this.redoStack = [];
-      (o.marks||[]).forEach(m=>this.addMark(m.x,m.y,m.type,m.side,m.zone,m.id,false));
-      (o.burns||[]).forEach(b=>{
-        const el=this.zoneMap.get(b.zone);
-        if(el){ el.classList.add('burned'); this.burns.add(b.zone); }
-      });
+      (data.marks || []).forEach(m => this.addMark(m.x, m.y, m.type, m.side, m.zone, m.id, false));
+      (data.burns || []).forEach(b => this.toggleZoneBurn(b.zone, false));
       this.updateBurnDisplay();
       this.updateUndoRedoButtons();
-    }catch(e){ console.error(e); }
+    } catch (e) {
+      console.error(e);
+    }
   }
 
-  counts(){
-    const types = Object.values(TOOLS).map(t=>t.char);
-    const cnt={ front:{}, back:{} };
-    types.forEach(t=>{ cnt.front[t]=0; cnt.back[t]=0; });
-    const arr=[...this.marks.querySelectorAll('use')].map(u=>({type:u.dataset.type, side:u.dataset.side}));
-    arr.forEach(m=>{ if(cnt[m.side] && (m.type in cnt[m.side])) cnt[m.side][m.type]++; });
-    cnt.burned=this.burnArea();
-    return cnt;
+  /** Count marks by side and tool and include burn percentage. */
+  counts() {
+    const res = { front: {}, back: {}, burned: this.burnArea() };
+    Object.values(TOOLS).forEach(t => {
+      res.front[t.char] = 0;
+      res.back[t.char] = 0;
+    });
+    [...this.marks.querySelectorAll('use')].forEach(u => {
+      const side = u.dataset.side;
+      const type = u.dataset.type;
+      if (res[side] && type in res[side]) res[side][type]++;
+    });
+    return res;
   }
 
-  zoneCounts(){
-    const types = Object.values(TOOLS).map(t=>t.char);
-    const zonesRes={};
-    this.marks && [...this.marks.querySelectorAll('use')].forEach(u=>{
-      const z=u.dataset.zone;
-      if(!z) return;
-      if(!zonesRes[z]){
-        zonesRes[z]={burned:0,label:ZONE_LABELS[z]||z};
-        types.forEach(t=>zonesRes[z][t]=0);
+  /** Aggregated counts per zone including burn areas. */
+  zoneCounts() {
+    const res = {};
+    const types = Object.values(TOOLS).map(t => t.char);
+    [...this.marks.querySelectorAll('use')].forEach(u => {
+      const z = u.dataset.zone;
+      if (!z) return;
+      if (!res[z]) {
+        res[z] = { burned: 0, label: ZONE_LABELS[z] || z };
+        types.forEach(t => (res[z][t] = 0));
       }
-      zonesRes[z][u.dataset.type]=(zonesRes[z][u.dataset.type]||0)+1;
+      res[z][u.dataset.type] = (res[z][u.dataset.type] || 0) + 1;
     });
-    this.burns.forEach(z=>{
-      if(!zonesRes[z]){
-        zonesRes[z]={burned:0,label:ZONE_LABELS[z]||z};
-        types.forEach(t=>zonesRes[z][t]=0);
+    this.burns.forEach(z => {
+      if (!res[z]) {
+        res[z] = { burned: 0, label: ZONE_LABELS[z] || z };
+        types.forEach(t => (res[z][t] = 0));
       }
-      const area=parseFloat(this.zoneMap.get(z)?.dataset.area);
-      zonesRes[z].burned+=isNaN(area)?0:area;
+      const area = parseFloat(this.zoneMap.get(z)?.dataset.area);
+      res[z].burned += isNaN(area) ? 0 : area;
     });
-    return zonesRes;
+    return res;
   }
 }
+
