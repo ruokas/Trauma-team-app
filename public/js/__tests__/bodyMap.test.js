@@ -12,6 +12,8 @@ function setupDom() {
     <div class="map-toolbar">
       <button class="tool" data-tool="${TOOLS.WOUND.char}"></button>
       <button class="tool" data-tool="${TOOLS.BURN.char}"></button>
+      <button class="tool" data-tool="${TOOLS.BURN_BRUSH.char}"></button>
+      <input id="brushSize" type="range" value="20">
     </div>
     <button id="btnUndo"></button>
     <button id="btnRedo"></button>
@@ -135,6 +137,21 @@ describe('BodyMap instance', () => {
     document.getElementById('front-shape').dispatchEvent(new MouseEvent('click'));
     document.getElementById('back-shape').dispatchEvent(new MouseEvent('click'));
     expect(document.querySelectorAll('#marks use').length).toBe(2);
+  });
+
+  test('addBrush increases burn area and serializes', () => {
+    setupDom();
+    const bm = new BodyMap();
+    bm.init(() => {});
+    const before = bm.burnArea();
+    bm.addBrush(10, 10, 20);
+    expect(bm.burnArea()).toBeGreaterThan(before);
+    const data = JSON.parse(bm.serialize());
+    expect(data.brushes.length).toBe(1);
+    const bm2 = new BodyMap();
+    bm2.init(() => {});
+    bm2.load(data);
+    expect(bm2.burnArea()).toBeGreaterThan(0);
   });
 
   test('undo and redo actions manage stacks and buttons', () => {
