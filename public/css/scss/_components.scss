@@ -77,15 +77,15 @@ input.invalid,select.invalid{border-color:var(--red)}
 .timeline-entry:last-child{border-bottom:none}
 /* SVG body map */
 .map-toolbar{display:flex;gap:$space-8;flex-wrap:wrap;align-items:center;margin:$space-6 0}
-  .tool{padding:$space-8 $space-10;border-radius:$space-10;border:1px solid var(--line);min-height:2.25rem;cursor:pointer;font-weight:700;display:inline-flex;align-items:center;gap:$space-8;--btn-color:#152231;background:var(--btn-color);color:#000;}
+  .tool{padding:$space-8 $space-10;border-radius:$space-10;border:1px solid var(--line);min-height:2.25rem;cursor:pointer;font-weight:700;display:inline-flex;align-items:center;gap:$space-8;--btn-color:#152231;background:var(--btn-color);color:var(--ink);}
   .tool .icon{display:inline-flex;width:1em;height:1em;align-items:center;justify-content:center}
   .tool[data-tool="Ž"]{--btn-color:#ef5350;color:#fff}
-  .tool[data-tool="S"]{--btn-color:#64b5f6}
-  .tool[data-tool="B"]{--btn-color:#ffd54f}
-  #btnUndo{--btn-color:#90a4ae}
-  #btnRedo{--btn-color:#90a4ae}
-  #btnClearMap{--btn-color:#ffb74d}
-  #btnExportSvg{--btn-color:#81c784}
+  .tool[data-tool="S"]{--btn-color:#64b5f6;color:#000}
+  .tool[data-tool="B"]{--btn-color:#ffd54f;color:#000}
+  #btnUndo{--btn-color:#90a4ae;color:#000}
+  #btnRedo{--btn-color:#90a4ae;color:#000}
+  #btnClearMap{--btn-color:#ffb74d;color:#000}
+  #btnExportSvg{--btn-color:#81c784;color:#000}
 .tool.active{background:color-mix(in srgb,var(--btn-color),#000 20%);color:#fff;border-color:color-mix(in srgb,var(--btn-color),#000 30%)}
   #bodySvg{display:block;width:100%;height:auto;aspect-ratio:1500/1100;max-width:40rem;max-height:80vh;border:1px solid var(--line);border-radius:$space-12;background:#0b141e}
 .silhouette{fill:var(--accent);stroke:var(--accent);stroke-width:2}
