@@ -59,9 +59,10 @@ section[data-tab="B – Kvėpavimas"] h3:first-of-type{margin-top:0}
 input.invalid,select.invalid{border-color:var(--red)}
       .badge{padding:$space-2 $space-8;border-radius:$space-8;font-size:$font-xs;border:1px solid var(--line);background:#152231;color:var(--muted)}
   .activation-dot{width:0.75rem;height:0.75rem;border-radius:50%;display:none;margin-left:$space-8}
-.activation-dot.red{background:var(--red);display:inline-block}
-.activation-dot.yellow{background:var(--yellow);display:inline-block}
-      #saveStatus{color:var(--muted);font-size:$font-sm;margin-top:$space-4}
+  .activation-dot.red{background:var(--red);display:inline-block}
+  .activation-dot.yellow{background:var(--yellow);display:inline-block}
+  #activationStatusText{@extend .sr-only !optional}
+        #saveStatus{color:var(--muted);font-size:$font-sm;margin-top:$space-4}
 #saveStatus.offline{color:var(--yellow)}
 #saveStatus.offline::before{content:'⚠ ';}
 .split{display:flex;gap:$space-12;flex-wrap:wrap}
@@ -80,7 +81,7 @@ input.invalid,select.invalid{border-color:var(--red)}
   .tool .icon{display:inline-flex;width:1em;height:1em;align-items:center;justify-content:center}
   .tool[data-tool="Ž"]{--btn-color:#ef5350;color:#fff}
   .tool[data-tool="S"]{--btn-color:#64b5f6}
-  .tool[data-tool="N"]{--btn-color:#ffd54f}
+  .tool[data-tool="B"]{--btn-color:#ffd54f}
   #btnUndo{--btn-color:#90a4ae}
   #btnRedo{--btn-color:#90a4ae}
   #btnClearMap{--btn-color:#ffb74d}
@@ -91,7 +92,6 @@ input.invalid,select.invalid{border-color:var(--red)}
     .label{fill:#a9b6c5;font:bold $font-lg system-ui}
 .mark-w{stroke:#ef5350;stroke-width:3;fill:none}
 .mark-b{fill:#64b5f6}
-.mark-n{fill:#ffd54f;stroke:#6b540e;stroke-width:2}
 .burn-area{fill:color-mix(in srgb,var(--red) 60%,transparent);stroke:none}
 #marks use.selected {
   outline: 2px solid var(--accent);
@@ -101,7 +101,6 @@ input.invalid,select.invalid{border-color:var(--red)}
 }
   .zone{fill:transparent;cursor:pointer;transition:fill .2s}
   .zone.selected{fill:color-mix(in srgb,var(--accent) 80%,transparent)}
-  .zone.burned{fill:color-mix(in srgb,var(--red) 90%,transparent)}
 .nav-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:10}
 body.nav-open .nav-overlay{display:block}
 body.nav-open{overflow:hidden}
