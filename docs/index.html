@@ -65,7 +65,18 @@
               <div><label for="gmp_time">GMP pranešimo laikas</label><div class="row"><input id="gmp_time" type="time"><button type="button" class="btn ghost" id="btnGmpNow">Dabar</button></div></div>
           </div>
           <div class="grid cols-2 cols-auto mt-8">
-              <div><label for="gmp_mechanism">Traumos mechanizmas</label><input id="gmp_mechanism" type="text"></div>
+              <div>
+                <label for="gmp_mechanism">Traumos mechanizmas</label>
+                <input id="gmp_mechanism" type="text" list="gmp_mechanism_list">
+                <datalist id="gmp_mechanism_list">
+                  <option value="Autoavarija"></option>
+                  <option value="Kritimas"></option>
+                  <option value="Motociklo avarija"></option>
+                  <option value="Šautinė žaizda"></option>
+                  <option value="Durinė žaizda"></option>
+                  <option value="Nudegimas"></option>
+                </datalist>
+              </div>
               <div><label for="gmp_notes">Pastabos</label><input id="gmp_notes" type="text" placeholder="Trumpai..."></div>
           </div>
         </fieldset>
@@ -270,12 +281,12 @@
         <button type="button" class="tool" data-tool="Ž"><svg class="icon" viewBox="-12 -12 24 24"><circle r="8" class="mark-w"/><path d="M-6 0 L6 0 M0 -6 L0 6" class="mark-w"/></svg><span>Žaizda</span></button>
         <button type="button" class="tool" data-tool="S"><svg class="icon" viewBox="-12 -12 24 24"><circle r="8" class="mark-b"/></svg><span>Sumušimas</span></button>
         <button type="button" class="tool" data-tool="N"><svg class="icon" viewBox="-12 -12 24 24"><polygon points="0,-8 8,0 0,8 -8,0" class="mark-n"/></svg><span>Nudegimas</span></button>
-        <button type="button" class="tool" data-tool="B"><svg class="icon" viewBox="-12 -12 24 24"><circle r="8" class="burn-area"/></svg><span>Šepetys</span></button>
+        <button type="button" class="tool" data-tool="B"><svg class="icon" viewBox="-12 -12 24 24"><circle r="8" class="burn-area"/></svg><span>Teptukas</span></button>
+        <button type="button" class="tool" data-tool="E"><span class="icon">🧽</span><span>Trintukas</span></button>
         <input id="brushSize" type="range" min="5" max="100" value="20">
         <span class="flex-1"></span>
         <button type="button" class="tool" id="btnUndo"><span class="icon">↩</span><span>Anuliuoti</span></button>
         <button type="button" class="tool" id="btnRedo"><span class="icon">↪</span><span>Perdaryti</span></button>
-        <button type="button" class="tool" id="btnDelete"><span class="icon">✖</span><span>Pašalinti</span></button>
         <button type="button" class="tool" id="btnClearMap"><span class="icon">🧹</span><span>Išvalyti</span></button>
         <button type="button" class="tool" id="btnExportSvg"><span class="icon">⬇</span><span>Eksportuoti SVG</span></button>
       </div>
