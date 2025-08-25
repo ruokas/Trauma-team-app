@@ -108,12 +108,22 @@ function ensureSingleTeam(){
 }
 function updateActivationIndicator(){
   const dot=$('#activationIndicator');
+  const status=$('#activationStatusText');
   const redActive=$$('.chip.active', $('#chips_red')).length>0;
   const yellowActive=$$('.chip.active', $('#chips_yellow')).length>0;
   dot.classList.remove('red','yellow');
   dot.style.display='none';
-  if(redActive){ dot.classList.add('red'); dot.style.display='inline-block'; }
-  else if(yellowActive){ dot.classList.add('yellow'); dot.style.display='inline-block'; }
+  let text='No team activated';
+  if(redActive){
+    dot.classList.add('red');
+    dot.style.display='inline-block';
+    text='Red team activated';
+  } else if(yellowActive){
+    dot.classList.add('yellow');
+    dot.style.display='inline-block';
+    text='Yellow team activated';
+  }
+  if(status) status.textContent=text;
 }
 function setupActivationControls(){
   const redGroup=$('#chips_red');

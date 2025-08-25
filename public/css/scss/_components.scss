@@ -58,9 +58,10 @@ section[data-tab="B – Kvėpavimas"] h3:first-of-type{margin-top:0}
 input.invalid,select.invalid{border-color:var(--red)}
       .badge{padding:$space-2 $space-8;border-radius:$space-8;font-size:$font-xs;border:1px solid var(--line);background:#152231;color:var(--muted)}
   .activation-dot{width:0.75rem;height:0.75rem;border-radius:50%;display:none;margin-left:$space-8}
-.activation-dot.red{background:var(--red);display:inline-block}
-.activation-dot.yellow{background:var(--yellow);display:inline-block}
-      #saveStatus{color:var(--muted);font-size:$font-sm;margin-top:$space-4}
+  .activation-dot.red{background:var(--red);display:inline-block}
+  .activation-dot.yellow{background:var(--yellow);display:inline-block}
+  #activationStatusText{@extend .sr-only !optional}
+        #saveStatus{color:var(--muted);font-size:$font-sm;margin-top:$space-4}
 #saveStatus.offline{color:var(--yellow)}
 #saveStatus.offline::before{content:'⚠ ';}
 .split{display:flex;gap:$space-12;flex-wrap:wrap}
