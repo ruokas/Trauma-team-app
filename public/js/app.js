@@ -21,6 +21,7 @@ const IMG_XRAY=['Krūtinės Ro','Dubens Ro'];
 const LABS=['BKT','Biocheminis tyrimas','Krešumai','Fibrinogenas','ROTEM','Kraujo grupė','Kraujo dujos'];
 const BLOOD_GROUPS=['0-','0+','A-','A+','B-','B+','AB-','AB+'];
 const TEAM_ROLES=['Komandos vadovas','Raštininkas','ED gydytojas 1','ED gydytojas 2','Slaugytoja 1','Slaugytoja 2','Anesteziologas','Chirurgas','Ortopedas'];
+const LS_MECHANISM_KEY='traumos_mechanizmai';
 
 const imgCtWrap=$('#imaging_ct'); IMG_CT.forEach(n=>{const s=document.createElement('span'); s.className='chip'; s.dataset.value=n; s.textContent=n; addChipIndicators(s); imgCtWrap.appendChild(s);});
 const imgXrayWrap=$('#imaging_xray'); IMG_XRAY.forEach(n=>{const s=document.createElement('span'); s.className='chip'; s.dataset.value=n; s.textContent=n; addChipIndicators(s); imgXrayWrap.appendChild(s);});
@@ -68,6 +69,32 @@ const teamWrap=$('#teamGrid'); TEAM_ROLES.forEach(r=>{
   box.innerHTML=`<label>${r}</label><input type="text" data-team="${r}" data-field="team_${slug}" placeholder="Vardas Pavardė">`;
   teamWrap.appendChild(box);
 });
+
+function initMechanismList(){
+  const list=$('#gmp_mechanism_list');
+  const input=$('#gmp_mechanism');
+  if(!list||!input) return;
+  const existing=new Set(Array.from(list.options).map(o=>o.value));
+  const stored=JSON.parse(localStorage.getItem(LS_MECHANISM_KEY)||'[]');
+  stored.forEach(v=>{
+    if(!existing.has(v)){
+      const opt=document.createElement('option');
+      opt.value=v;
+      list.appendChild(opt);
+      existing.add(v);
+    }
+  });
+  input.addEventListener('change',()=>{
+    const val=input.value.trim();
+    if(!val||existing.has(val)) return;
+    const opt=document.createElement('option');
+    opt.value=val;
+    list.appendChild(opt);
+    existing.add(val);
+    stored.push(val);
+    localStorage.setItem(LS_MECHANISM_KEY, JSON.stringify(stored));
+  });
+}
 
 /* ===== Activation indicator ===== */
 function ensureSingleTeam(){
@@ -230,6 +257,7 @@ async function init(){
   initActions(saveAllDebounced);
   initTimeline();
   setupActivationControls();
+  initMechanismList();
   document.addEventListener('input', saveAllDebounced);
 
   const vitals = {

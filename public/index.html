@@ -65,7 +65,18 @@
               <div><label for="gmp_time">GMP pranešimo laikas</label><div class="row"><input id="gmp_time" type="time"><button type="button" class="btn ghost" id="btnGmpNow">Dabar</button></div></div>
           </div>
           <div class="grid cols-2 cols-auto mt-8">
-              <div><label for="gmp_mechanism">Traumos mechanizmas</label><input id="gmp_mechanism" type="text"></div>
+              <div>
+                <label for="gmp_mechanism">Traumos mechanizmas</label>
+                <input id="gmp_mechanism" type="text" list="gmp_mechanism_list">
+                <datalist id="gmp_mechanism_list">
+                  <option value="Autoavarija"></option>
+                  <option value="Kritimas"></option>
+                  <option value="Motociklo avarija"></option>
+                  <option value="Šautinė žaizda"></option>
+                  <option value="Durinė žaizda"></option>
+                  <option value="Nudegimas"></option>
+                </datalist>
+              </div>
               <div><label for="gmp_notes">Pastabos</label><input id="gmp_notes" type="text" placeholder="Trumpai..."></div>
           </div>
         </fieldset>
