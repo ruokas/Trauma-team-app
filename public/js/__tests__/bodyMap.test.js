@@ -8,7 +8,6 @@ function setupDom() {
   document.body.innerHTML = `
     <svg id="bodySvg"><g id="layer-front"></g><g id="layer-back"></g><g id="marks"></g></svg>
     <div id="burnTotal"></div>
-    <div id="selectedLocations"></div>
     <div class="map-toolbar">
       <button class="tool" data-tool="${TOOLS.WOUND.char}"></button>
       <button class="tool" data-tool="${TOOLS.BURN.char}"></button>
