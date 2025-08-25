@@ -154,6 +154,26 @@ describe('BodyMap instance', () => {
     expect(bm2.burnArea()).toBeGreaterThan(0);
   });
 
+  test('burn brush only paints over body zones', () => {
+    setupDom();
+    const bm = new BodyMap();
+    bm.init(() => {});
+    bm.setTool(TOOLS.BURN_BRUSH.char);
+    // deterministic coordinates
+    bm.svgPoint = () => ({ x: 10, y: 10 });
+
+    // outside body -> no brush
+    bm.svg.dispatchEvent(new MouseEvent('pointerdown', { bubbles: true }));
+    document.dispatchEvent(new MouseEvent('pointerup'));
+    expect(bm.brushLayer.childElementCount).toBe(0);
+
+    // inside body -> brush added
+    const zone = document.querySelector('.zone[data-zone="front"]');
+    zone.dispatchEvent(new MouseEvent('pointerdown', { bubbles: true }));
+    document.dispatchEvent(new MouseEvent('pointerup'));
+    expect(bm.brushLayer.childElementCount).toBe(1);
+  });
+
   test('undo and redo actions manage stacks and buttons', () => {
     setupDom();
     const bm = new BodyMap();

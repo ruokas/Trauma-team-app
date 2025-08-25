@@ -56,6 +56,11 @@ export default class BodyMap {
     this.onDragEnd = this.onDragEnd.bind(this);
   }
 
+  /** Check if event target is within body shapes. */
+  inBody(evt) {
+    return !!evt.target.closest('.zone, #front-shape, #back-shape');
+  }
+
   /** Initialise DOM references and event listeners. */
   init(saveCb) {
     if (this.initialized) return;
@@ -143,13 +148,13 @@ export default class BodyMap {
 
     // Brush drawing on SVG
     this.svg.addEventListener('pointerdown', e => {
-      if (this.activeTool === TOOLS.BURN_BRUSH.char) {
+      if (this.activeTool === TOOLS.BURN_BRUSH.char && this.inBody(e)) {
         this.isDrawing = true;
         this.drawBrush(e);
       }
     });
     this.svg.addEventListener('pointermove', e => {
-      if (this.activeTool === TOOLS.BURN_BRUSH.char && this.isDrawing) {
+      if (this.activeTool === TOOLS.BURN_BRUSH.char && this.isDrawing && this.inBody(e)) {
         this.drawBrush(e);
       }
     });
@@ -257,6 +262,7 @@ export default class BodyMap {
     circle.setAttribute('cy', y);
     circle.setAttribute('r', r);
     circle.classList.add('burn-area');
+    circle.setAttribute('pointer-events', 'none');
     circle.dataset.id = mid;
     this.brushLayer.appendChild(circle);
     const area = Math.PI * r * r;
