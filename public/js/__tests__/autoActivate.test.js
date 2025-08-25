@@ -14,9 +14,13 @@ describe('autoActivateFromGMP', () => {
     autoActivateFromGMP();
     expect(isChipActive(chip)).toBe(true);
     expect(chip.dataset.auto).toBe('true');
+    expect(chip.classList.contains('auto')).toBe(true);
+    expect(chip.querySelector('.chip-status-text').textContent).toBe('auto-selected');
     input.value = '120';
     autoActivateFromGMP();
     expect(isChipActive(chip)).toBe(false);
     expect(chip.dataset.auto).toBeUndefined();
+    expect(chip.classList.contains('auto')).toBe(false);
+    expect(chip.querySelector('.chip-status-text').textContent).toBe('not selected');
   });
 });
