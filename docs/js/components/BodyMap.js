@@ -38,7 +38,6 @@ export default class BodyMap {
     // state
     this.activeTool = TOOLS.WOUND.char;
     this.saveCb = () => {};
-    this.burns = new Set();
     this.zoneMap = new Map();
     this.markSeq = 0;
     this.undoStack = [];
@@ -56,8 +55,10 @@ export default class BodyMap {
 
   /** Determine whether event occurred within body silhouette. */
   inBody(evt) {
+    const inside = !!evt.target.closest('.zone, #front-shape, #back-shape');
+    if (!inside) return false;
     if (!this.svg || typeof this.svg.createSVGPoint !== 'function') {
-      return !!evt.target.closest('.zone, #front-shape, #back-shape');
+      return inside;
     }
     const p = this.svgPoint(evt);
     return this.pointInBody(p.x, p.y);
@@ -146,8 +147,6 @@ export default class BodyMap {
         const p = this.svgPoint(evt);
         if (!this.pointInBody(p.x, p.y, side)) return;
         if (this.activeTool === TOOLS.BURN.char) {
-          this.toggleZoneBurn(id);
-        } else if (this.activeTool === TOOLS.BURN_BRUSH.char) {
           this.addBrush(p.x, p.y, this.brushSize);
         } else {
           this.addMark(p.x, p.y, this.activeTool, side, id);
@@ -163,7 +162,7 @@ export default class BodyMap {
 
     // Brush drawing and erasing on SVG
     this.svg.addEventListener('pointerdown', e => {
-      if (this.activeTool === TOOLS.BURN_BRUSH.char && this.inBody(e)) {
+      if (this.activeTool === TOOLS.BURN.char && this.inBody(e)) {
         this.isDrawing = true;
         this.drawBrush(e);
       } else if (this.activeTool === TOOLS.BURN_ERASE.char) {
@@ -172,7 +171,7 @@ export default class BodyMap {
       }
     });
     this.svg.addEventListener('pointermove', e => {
-      if (this.activeTool === TOOLS.BURN_BRUSH.char && this.isDrawing && this.inBody(e)) {
+      if (this.activeTool === TOOLS.BURN.char && this.isDrawing && this.inBody(e)) {
         this.drawBrush(e);
       } else if (this.activeTool === TOOLS.BURN_ERASE.char && this.isDrawing) {
         this.eraseBrush(e);
@@ -213,8 +212,6 @@ export default class BodyMap {
     this.btnClear?.addEventListener('click', async () => {
       if (await notify({ type: 'confirm', message: 'Išvalyti visas žymas (priekis ir nugara)?' })) {
         this.marks.innerHTML = '';
-        this.burns.clear();
-        this.zoneMap.forEach(z => z.classList.remove('burned'));
         this.brushLayer && (this.brushLayer.innerHTML = '');
         this.brushBurns = [];
         this.markSeq = 0;
@@ -402,31 +399,10 @@ export default class BodyMap {
     this.saveCb();
   }
 
-  /** Toggle burn state for a zone. */
-  toggleZoneBurn(name, record = true) {
-    const el = this.zoneMap.get(name);
-    if (!el) return;
-    const burned = el.classList.toggle('burned');
-    if (burned) this.burns.add(name); else this.burns.delete(name);
-    if (record) {
-      this.undoStack.push({ type: 'burn', zone: name });
-      this.redoStack = [];
-      this.updateUndoRedoButtons();
-    }
-    this.updateBurnDisplay();
-    this.saveCb();
-  }
-
   /** Compute total burned area percentage. */
   burnArea() {
-    let total = 0;
-    this.burns.forEach(z => {
-      const area = parseFloat(this.zoneMap.get(z)?.dataset.area);
-      total += isNaN(area) ? 0 : area;
-    });
     const brushTotal = this.brushBurns.reduce((sum, b) => sum + b.area, 0);
-    const brushPercent = this.totalArea ? (brushTotal / this.totalArea) * 100 : 0;
-    return total + brushPercent;
+    return this.totalArea ? (brushTotal / this.totalArea) * 100 : 0;
   }
 
   /** Display burn percentage in the UI. */
@@ -471,13 +447,11 @@ export default class BodyMap {
     }
     const style = document.createElement('style');
       style.textContent = `#bodySvg{display:block;width:100%;height:auto;aspect-ratio:1500/1100;max-width:40rem;max-height:80vh;border:1px solid #2d3b4f;border-radius:0.75rem;background:#0b141e}
-.silhouette{fill:none;stroke:#c2d0e0;stroke-width:2}
-.mark-w{stroke:#ef5350;stroke-width:3;fill:none}
-.mark-b{fill:#64b5f6}
-.mark-n{fill:#ffd54f;stroke:#6b540e;stroke-width:2}
-.zone{fill:transparent;cursor:pointer;transition:fill .2s}
-.zone.selected{fill:rgba(78,160,245,0.8)}
-.zone.burned{fill:rgba(229,57,53,0.9)}`;
+  .silhouette{fill:none;stroke:#c2d0e0;stroke-width:2}
+  .mark-w{stroke:#ef5350;stroke-width:3;fill:none}
+  .mark-b{fill:#64b5f6}
+  .zone{fill:transparent;cursor:pointer;transition:fill .2s}
+  .zone.selected{fill:rgba(78,160,245,0.8)}`;
     clone.insertBefore(style, clone.firstChild);
     const ser = new XMLSerializer();
     const url = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(ser.serializeToString(clone));
@@ -502,9 +476,6 @@ export default class BodyMap {
         this.addMark(m.x, m.y, m.type, m.side, m.zone, m.id, false);
         break;
       }
-      case 'burn':
-        this.toggleZoneBurn(action.zone, false);
-        break;
       case 'brush-add':
         this.removeBrush(action.brush.id, false);
         break;
@@ -533,9 +504,6 @@ export default class BodyMap {
         this.removeMark(m, false);
         break;
       }
-      case 'burn':
-        this.toggleZoneBurn(action.zone, false);
-        break;
       case 'brush-add': {
         const b = action.brush;
         this.addBrush(b.x, b.y, b.r, b.id, false);
@@ -563,17 +531,13 @@ export default class BodyMap {
         zone: u.dataset.zone
       };
     });
-    const burns = [...this.burns].map(z => ({
-      zone: z,
-      side: this.zoneMap.get(z)?.closest('#layer-back') ? 'back' : 'front'
-    }));
     const brushes = [...this.brushLayer.querySelectorAll('circle')].map(c => ({
       id: +c.dataset.id,
       x: +c.getAttribute('cx'),
       y: +c.getAttribute('cy'),
       r: +c.getAttribute('r')
     }));
-    return JSON.stringify({ tool: this.activeTool, marks, burns, brushes });
+    return JSON.stringify({ tool: this.activeTool, marks, brushes });
   }
 
   /** Load previously serialized state. */
@@ -584,12 +548,9 @@ export default class BodyMap {
       this.setTool(this.activeTool);
       this.marks.innerHTML = '';
       this.brushLayer.innerHTML = '';
-      this.burns.clear();
-      this.zoneMap.forEach(z => z.classList.remove('burned'));
       this.undoStack = [];
       this.redoStack = [];
       (data.marks || []).forEach(m => this.addMark(m.x, m.y, m.type, m.side, m.zone, m.id, false));
-      (data.burns || []).forEach(b => this.toggleZoneBurn(b.zone, false));
       this.brushBurns = [];
       (data.brushes || []).forEach(b => this.addBrush(b.x, b.y, b.r, b.id, false));
       this.updateBurnDisplay();
@@ -622,18 +583,10 @@ export default class BodyMap {
       const z = u.dataset.zone;
       if (!z) return;
       if (!res[z]) {
-        res[z] = { burned: 0, label: ZONE_LABELS[z] || z };
+        res[z] = { label: ZONE_LABELS[z] || z };
         types.forEach(t => (res[z][t] = 0));
       }
       res[z][u.dataset.type] = (res[z][u.dataset.type] || 0) + 1;
-    });
-    this.burns.forEach(z => {
-      if (!res[z]) {
-        res[z] = { burned: 0, label: ZONE_LABELS[z] || z };
-        types.forEach(t => (res[z][t] = 0));
-      }
-      const area = parseFloat(this.zoneMap.get(z)?.dataset.area);
-      res[z].burned += isNaN(area) ? 0 : area;
     });
     return res;
   }

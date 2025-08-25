@@ -21,8 +21,6 @@ export function bodymapSummary(){
     const seg=[];
     if(z[TOOLS.WOUND.char]) seg.push(`${z[TOOLS.WOUND.char]} ${TOOLS.WOUND.char}`);
     if(z[TOOLS.BRUISE.char]) seg.push(`${z[TOOLS.BRUISE.char]} ${TOOLS.BRUISE.char}`);
-    if(z[TOOLS.BURN.char]) seg.push(`${z[TOOLS.BURN.char]} ${TOOLS.BURN.char}`);
-    if(z.burned) seg.push(`Nudegimai ${z.burned}%`);
     return `${z.label}: ${seg.join(', ')}`;
   });
   return parts.length?`Žemėlapis: ${parts.join('; ')}`:'';
