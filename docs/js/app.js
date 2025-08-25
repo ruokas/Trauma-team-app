@@ -10,7 +10,7 @@ import { initValidation, validateVitals } from './validation.js';
 import { initTopbar } from './components/topbar.js';
 import { initCollapsibles } from './sections.js';
 import { connectSocket, initSessions, fetchUsers, initTheme, saveAll, loadAll } from './sessionManager.js';
-import { initBodyMap } from './bodyMap.js';
+import bodyMap from './bodyMap.js';
 import { generateReport, gksSum } from './report.js';
 import { setupHeaderActions } from './headerActions.js';
 export { validateVitals };
@@ -224,7 +224,7 @@ async function init(){
   await initSessions();
   initTabs();
   initCollapsibles();
-  initBodyMap(saveAllDebounced);
+  bodyMap.init(saveAllDebounced);
   initChips(saveAllDebounced);
   initAutoActivate(saveAllDebounced);
   initActions(saveAllDebounced);

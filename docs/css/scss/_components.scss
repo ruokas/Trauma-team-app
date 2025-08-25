@@ -75,17 +75,33 @@ input.invalid,select.invalid{border-color:var(--red)}
 .timeline-entry:last-child{border-bottom:none}
 /* SVG body map */
 .map-toolbar{display:flex;gap:$space-8;flex-wrap:wrap;align-items:center;margin:$space-6 0}
-  .tool{padding:$space-8 $space-10;border-radius:$space-10;border:1px solid var(--line);background:#152231;color:var(--ink);min-height:2.25rem;cursor:pointer;font-weight:700}
-.tool.active{background:var(--accent);color:#fff;border-color:#2d74b8}
-  #bodySvg{width:100%;max-width:40rem;max-height:80vh;height:auto;aspect-ratio:1500/900;border:1px solid var(--line);border-radius:$space-12;background:#0b141e;transform:scale(.9);transform-origin:top center}
-.silhouette{fill:#0f1822;stroke:var(--line);stroke-width:2}
+  .tool{padding:$space-8 $space-10;border-radius:$space-10;border:1px solid var(--line);min-height:2.25rem;cursor:pointer;font-weight:700;display:inline-flex;align-items:center;gap:$space-8;--btn-color:#152231;background:var(--btn-color);color:#000;}
+  .tool .icon{display:inline-flex;width:1em;height:1em;align-items:center;justify-content:center}
+  .tool[data-tool="Ž"]{--btn-color:#ef5350;color:#fff}
+  .tool[data-tool="S"]{--btn-color:#64b5f6}
+  .tool[data-tool="N"]{--btn-color:#ffd54f}
+  #btnUndo{--btn-color:#90a4ae}
+  #btnRedo{--btn-color:#90a4ae}
+  #btnDelete{--btn-color:#d32f2f;color:#fff}
+  #btnClearMap{--btn-color:#ffb74d}
+  #btnExportSvg{--btn-color:#81c784}
+.tool.active{background:color-mix(in srgb,var(--btn-color),#000 20%);color:#fff;border-color:color-mix(in srgb,var(--btn-color),#000 30%)}
+  #bodySvg{display:block;width:100%;height:auto;aspect-ratio:1500/1100;max-width:40rem;max-height:80vh;border:1px solid var(--line);border-radius:$space-12;background:#0b141e}
+.silhouette{fill:none;stroke:var(--line);stroke-width:2}
     .label{fill:#a9b6c5;font:bold $font-lg system-ui}
 .mark-w{stroke:#ef5350;stroke-width:3;fill:none}
 .mark-b{fill:#64b5f6}
 .mark-n{fill:#ffd54f;stroke:#6b540e;stroke-width:2}
-.zone{fill:rgba(0,0,0,0);cursor:pointer}
-.zone:hover{fill:rgba(255,255,255,0.1)}
-.zone.burned{fill:rgba(255,87,34,0.4)}
+#marks use.selected {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  transform: scale(1.1);
+  transition: transform .2s;
+}
+  .zone{fill:transparent;cursor:pointer;transition:fill .2s}
+  .zone:hover{fill:color-mix(in srgb,var(--accent) 60%,transparent)}
+  .zone.selected{fill:color-mix(in srgb,var(--accent) 80%,transparent)}
+  .zone.burned{fill:color-mix(in srgb,var(--red) 90%,transparent)}
 .nav-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:10}
 body.nav-open .nav-overlay{display:block}
 body.nav-open{overflow:hidden}
