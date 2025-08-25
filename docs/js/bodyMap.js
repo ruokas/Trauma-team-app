@@ -225,8 +225,33 @@ export function initBodyMap(saveAll){
     }
   });
 
-  btnExport?.addEventListener('click',()=>{
+  btnExport?.addEventListener('click',async()=>{
     const clone=svg.cloneNode(true);
+    const uses=[...clone.querySelectorAll('use[data-src]')];
+    for(const u of uses){
+      const ref=u.dataset.src; if(!ref) continue;
+      const [url,hash]=ref.split('#');
+      try{
+        const res=await fetch(url); if(!res.ok) continue;
+        const txt=await res.text();
+        const doc=new DOMParser().parseFromString(txt,'image/svg+xml');
+        const el=doc.getElementById(hash); if(!el) continue;
+        const replacement=el.cloneNode(true);
+        [...u.attributes].forEach(a=>{if(!['href','xlink:href','data-src'].includes(a.name))replacement.setAttribute(a.name,a.value);});
+        u.replaceWith(replacement);
+      }catch(e){console.error(e);}
+    }
+    const style=document.createElement('style');
+    style.textContent=`#bodySvg{display:block;width:100%;height:auto;aspect-ratio:850/900;max-width:40rem;max-height:80vh;border:1px solid #2d3b4f;border-radius:0.75rem;background:#0b141e}
+.silhouette{fill:none;stroke:#2d3b4f;stroke-width:2}
+.mark-w{stroke:#ef5350;stroke-width:3;fill:none}
+.mark-b{fill:#64b5f6}
+.mark-n{fill:#ffd54f;stroke:#6b540e;stroke-width:2}
+.zone{fill:transparent;cursor:pointer;transition:fill .2s}
+.zone:hover{fill:rgba(78,160,245,0.6)}
+.zone.selected{fill:rgba(78,160,245,0.8)}
+.zone.burned{fill:rgba(229,57,53,0.9)}`;
+    clone.insertBefore(style,clone.firstChild);
     const ser=new XMLSerializer(); const src=ser.serializeToString(clone);
     const url='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(src);
     const a=document.createElement('a'); a.href=url; a.download='kuno-zemelapis.svg'; a.click();
