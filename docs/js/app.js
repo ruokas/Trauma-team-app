@@ -10,7 +10,7 @@ import { initValidation, validateVitals } from './validation.js';
 import { initTopbar } from './components/topbar.js';
 import { initCollapsibles } from './sections.js';
 import { connectSocket, initSessions, fetchUsers, initTheme, saveAll, loadAll } from './sessionManager.js';
-import { initBodyMap } from './bodyMap.js';
+import bodyMap from './bodyMap.js';
 import { generateReport, gksSum } from './report.js';
 import { setupHeaderActions } from './headerActions.js';
 export { validateVitals };
@@ -188,7 +188,22 @@ if($('#spr_gcs_calc') && $('#btnSprGCSCalc')){
   const toggleSprGcs=setupGcsCalc('spr');
   $('#btnSprGCSCalc').addEventListener('click',toggleSprGcs);
 }
-$('#e_back_ny').addEventListener('change',e=>{ $('#e_back_notes').disabled=e.target.checked; if(e.target.checked) $('#e_back_notes').value=''; saveAll();});
+const backNone=$('#e_back_none'), backChanges=$('#e_back_changes'), backNotes=$('#e_back_notes');
+if(backNone && backChanges && backNotes){
+  const updateBack=()=>{
+    if(backChanges.checked){
+      backNotes.disabled=false;
+      backNotes.classList.remove('hidden');
+    }else{
+      backNotes.disabled=true;
+      backNotes.classList.add('hidden');
+      backNotes.value='';
+    }
+    saveAll();
+  };
+  [backNone,backChanges].forEach(el=>el.addEventListener('change',updateBack));
+  updateBack();
+}
 
 function clampNumberInputs(){
   const clamp=el=>{
@@ -225,7 +240,7 @@ async function init(){
   await initSessions();
   initTabs();
   initCollapsibles();
-  initBodyMap(saveAllDebounced);
+  bodyMap.init(saveAllDebounced);
   initChips(saveAllDebounced);
   initAutoActivate(saveAllDebounced);
   initActions(saveAllDebounced);

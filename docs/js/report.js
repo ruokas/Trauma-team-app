@@ -1,6 +1,6 @@
 import { $ } from './utils.js';
 import { listChips } from './chips.js';
-import { zoneCounts as bodyMapZoneCounts, TOOLS } from './bodyMap.js';
+import bodyMap, { TOOLS } from './bodyMap.js';
 
 const TEAM_ROLES=['Komandos vadovas','Raštininkas','ED gydytojas 1','ED gydytojas 2','Slaugytoja 1','Slaugytoja 2','Anesteziologas','Chirurgas','Ortopedas'];
 const fastAreas=[
@@ -16,12 +16,12 @@ export function gksSum(a,k,m){ a=+a||0;k=+k||0;m=+m||0; return (a&&k&&m)?(a+k+m)
 const getSingleValue=sel=>listChips(sel)[0]||'';
 
 export function bodymapSummary(){
-  const zones=bodyMapZoneCounts();
+  const zones=bodyMap.zoneCounts();
   const parts=Object.values(zones).map(z=>{
     const seg=[];
-    if(z[TOOLS.WOUND]) seg.push(`${z[TOOLS.WOUND]} ${TOOLS.WOUND}`);
-    if(z[TOOLS.BRUISE]) seg.push(`${z[TOOLS.BRUISE]} ${TOOLS.BRUISE}`);
-    if(z[TOOLS.BURN]) seg.push(`${z[TOOLS.BURN]} ${TOOLS.BURN}`);
+    if(z[TOOLS.WOUND.char]) seg.push(`${z[TOOLS.WOUND.char]} ${TOOLS.WOUND.char}`);
+    if(z[TOOLS.BRUISE.char]) seg.push(`${z[TOOLS.BRUISE.char]} ${TOOLS.BRUISE.char}`);
+    if(z[TOOLS.BURN.char]) seg.push(`${z[TOOLS.BURN.char]} ${TOOLS.BURN.char}`);
     if(z.burned) seg.push(`Nudegimai ${z.burned}%`);
     return `${z.label}: ${seg.join(', ')}`;
   });
@@ -55,7 +55,12 @@ export function generateReport(){
   const dgks=gksSum($('#d_gksa').value,$('#d_gksk').value,$('#d_gksm').value); const left=getSingleValue('#d_pupil_left_group'); const right=getSingleValue('#d_pupil_right_group');
   out.push('\n--- D Sąmonė ---'); out.push([dgks?('GKS '+dgks+' (A'+$('#d_gksa').value+'-K'+$('#d_gksk').value+'-M'+$('#d_gksm').value+')'):null, left?('Vyzdžiai kairė: '+left+ (left==='kita'&&$('#d_pupil_left_note').value?(' ('+$('#d_pupil_left_note').value+')'):'') ):null, right?('Vyzdžiai dešinė: '+right+ (right==='kita'&&$('#d_pupil_right_note').value?(' ('+$('#d_pupil_right_note').value+')'):'') ):null, $('#d_notes').value?('Pastabos: '+$('#d_notes').value):null].filter(Boolean).join(' | '));
 
-  out.push('\n--- E Kita ---'); out.push([$('#e_temp').value?('T '+$('#e_temp').value+'°C'):null, $('#e_back_ny').checked?'Nugara: n.y.':($('#e_back_notes').value?('Nugara: '+$('#e_back_notes').value):null), $('#e_other').value?('Kita: '+$('#e_other').value):null, bodymapSummary()].filter(Boolean).join(' | '));
+  out.push('\n--- E Kita ---'); out.push([
+    $('#e_temp').value?('T '+$('#e_temp').value+'°C'):null,
+    $('#e_back_none').checked?'Nugara: be pakitimų':($('#e_back_notes').value?('Nugara: '+$('#e_back_notes').value):null),
+    $('#e_other').value?('Kita: '+$('#e_other').value):null,
+    bodymapSummary()
+  ].filter(Boolean).join(' | '));
 
   function collect(container){ return Array.from(container.children).map(card=>{ const on=card.querySelector('.act_chk').checked; if(!on) return null; const nameInput=card.querySelector('.act_custom_name'); const base=card.querySelector('.act_name').textContent.trim(); const customName=nameInput?nameInput.value.trim():''; const name=nameInput?customName:base; if(nameInput && !customName) return null; const time=card.querySelector('.act_time').value; const doseInput=card.querySelector('.act_dose'); const dose=doseInput?doseInput.value:''; const note=card.querySelector('.act_note').value; return [name, time?('laikas '+time):null, dose?('dozė '+dose):null, note?('pastabos '+note):null].filter(Boolean).join(' | '); }).filter(Boolean);}
   const pain=collect($('#pain_meds')), bleeding=collect($('#bleeding_meds')), other=collect($('#other_meds')), procs=collect($('#procedures'));
