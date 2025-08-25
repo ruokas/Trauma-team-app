@@ -242,7 +242,7 @@ export function initBodyMap(saveAll){
       }catch(e){console.error(e);}
     }
     const style=document.createElement('style');
-    style.textContent=`#bodySvg{display:block;width:100%;height:auto;aspect-ratio:850/900;max-width:40rem;max-height:80vh;border:1px solid #2d3b4f;border-radius:0.75rem;background:#0b141e}
+      style.textContent=`#bodySvg{display:block;width:100%;height:auto;aspect-ratio:1500/900;max-width:40rem;max-height:80vh;border:1px solid #2d3b4f;border-radius:0.75rem;background:#0b141e}
 .silhouette{fill:none;stroke:#2d3b4f;stroke-width:2}
 .mark-w{stroke:#ef5350;stroke-width:3;fill:none}
 .mark-b{fill:#64b5f6}
