@@ -26,9 +26,13 @@ function autoActivateFromGMP(){
     if(fn()){
       setChipActive(chip, true);
       chip.dataset.auto = 'true';
+      chip.classList.add('auto');
+      const sr = chip.querySelector('.chip-status-text');
+      if(sr) sr.textContent = 'auto-selected';
     } else if(chip.dataset.auto === 'true'){
       setChipActive(chip, false);
       delete chip.dataset.auto;
+      chip.classList.remove('auto');
     }
   });
   if($$('.chip.active', red).length){
