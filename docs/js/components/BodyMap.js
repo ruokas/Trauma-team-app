@@ -32,7 +32,6 @@ export default class BodyMap {
     this.btnClear = null;
     this.btnExport = null;
     this.burnTotalEl = null;
-    this.selectedList = null;
     this.brushSizeInput = null;
     this.brushLayer = null;
 
@@ -94,7 +93,6 @@ export default class BodyMap {
     this.btnClear = $('#btnClearMap');
     this.btnExport = $('#btnExportSvg');
     this.burnTotalEl = $('#burnTotal');
-    this.selectedList = $('#selectedLocations');
     this.brushSizeInput = $('#brushSize');
 
     const vb = this.svg?.getAttribute('viewBox')?.split(/\s+/).map(Number);
@@ -217,7 +215,6 @@ export default class BodyMap {
         this.marks.innerHTML = '';
         this.burns.clear();
         this.zoneMap.forEach(z => z.classList.remove('burned'));
-        this.selectedList && (this.selectedList.innerHTML = '');
         this.brushLayer && (this.brushLayer.innerHTML = '');
         this.brushBurns = [];
         this.markSeq = 0;
@@ -344,12 +341,6 @@ export default class BodyMap {
     if (mid > this.markSeq) this.markSeq = mid;
     if (zone) {
       use.dataset.zone = zone;
-      if (this.selectedList) {
-        const el = document.createElement('div');
-        el.textContent = ZONE_LABELS[zone] || zone;
-        el.dataset.id = mid;
-        this.selectedList.appendChild(el);
-      }
     }
     use.addEventListener('pointerdown', e => this.startDrag(e, use));
     this.marks.appendChild(use);
@@ -392,9 +383,6 @@ export default class BodyMap {
   /** Remove a mark from the map. */
   removeMark(el, record = true) {
     if (!el) return;
-    if (this.selectedList && el.dataset.zone) {
-      this.selectedList.querySelector(`[data-id="${el.dataset.id}"]`)?.remove();
-    }
     const tr = el.getAttribute('transform');
     const m = /translate\(([-\d.]+),([-\d.]+)\)/.exec(tr) || [0, 0, 0];
     const data = {
@@ -598,7 +586,6 @@ export default class BodyMap {
       this.brushLayer.innerHTML = '';
       this.burns.clear();
       this.zoneMap.forEach(z => z.classList.remove('burned'));
-      this.selectedList && (this.selectedList.innerHTML = '');
       this.undoStack = [];
       this.redoStack = [];
       (data.marks || []).forEach(m => this.addMark(m.x, m.y, m.type, m.side, m.zone, m.id, false));
