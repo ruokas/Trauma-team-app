@@ -344,6 +344,17 @@ export default class BodyMap {
         console.error(e);
       }
     }
+    const style = document.createElement('style');
+    style.textContent = `#bodySvg{display:block;width:100%;height:auto;aspect-ratio:850/900;max-width:40rem;max-height:80vh;border:1px solid #2d3b4f;border-radius:0.75rem;background:#0b141e}
+.silhouette{fill:none;stroke:#2d3b4f;stroke-width:2}
+.mark-w{stroke:#ef5350;stroke-width:3;fill:none}
+.mark-b{fill:#64b5f6}
+.mark-n{fill:#ffd54f;stroke:#6b540e;stroke-width:2}
+.zone{fill:transparent;cursor:pointer;transition:fill .2s}
+.zone:hover{fill:rgba(78,160,245,0.6)}
+.zone.selected{fill:rgba(78,160,245,0.8)}
+.zone.burned{fill:rgba(229,57,53,0.9)}`;
+    clone.insertBefore(style, clone.firstChild);
     const ser = new XMLSerializer();
     const url = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(ser.serializeToString(clone));
     const a = document.createElement('a');
