@@ -3,20 +3,27 @@ import { notify } from '../alerts.js';
 import zones from '../bodyMapZones.js';
 import { TOOLS } from '../BodyMapTools.js';
 
+// Map tool characters to their SVG symbol references for quick lookup
 const TOOL_SYMBOL = Object.values(TOOLS).reduce((acc, t) => {
   acc[t.char] = t.symbol;
   return acc;
 }, {});
 
+// Mapping of zone id to human friendly label
 const ZONE_LABELS = zones.reduce((acc, z) => {
   acc[z.id] = z.label;
   return acc;
 }, {});
 
+// A complete rewrite of the body map logic.  The original implementation
+// grew organically and was difficult to follow.  This version focuses on a
+// small, well documented API while keeping behaviour compatible with the
+// existing UI and tests.
 export default class BodyMap {
   constructor() {
     this.initialized = false;
 
+    // DOM references
     this.svg = null;
     this.marks = null;
     this.tools = [];
@@ -28,6 +35,7 @@ export default class BodyMap {
     this.burnTotalEl = null;
     this.selectedList = null;
 
+    // state
     this.activeTool = TOOLS.WOUND.char;
     this.saveCb = () => {};
     this.burns = new Set();
@@ -36,11 +44,13 @@ export default class BodyMap {
     this.undoStack = [];
     this.redoStack = [];
 
+    // dragging
     this.drag = null;
     this.onDragMove = this.onDragMove.bind(this);
     this.onDragEnd = this.onDragEnd.bind(this);
   }
 
+  /** Initialise DOM references and event listeners. */
   init(saveCb) {
     if (this.initialized) return;
     this.initialized = true;
@@ -58,6 +68,8 @@ export default class BodyMap {
     this.burnTotalEl = $('#burnTotal');
     this.selectedList = $('#selectedLocations');
 
+    // Build zone paths if they are not already present in the SVG.  Tests
+    // provide a bare bones SVG so we create the required paths here.
     if (this.svg && !this.svg.querySelector('.zone')) {
       const layers = { front: $('#layer-front'), back: $('#layer-back') };
       zones.forEach(z => {
@@ -83,6 +95,7 @@ export default class BodyMap {
       });
     }
 
+    // Cache zone elements and attach click handlers
     $$('.zone', this.svg).forEach(el => {
       const id = el.dataset.zone;
       this.zoneMap.set(id, el);
@@ -97,11 +110,13 @@ export default class BodyMap {
       });
     });
 
+    // Tool buttons
     this.tools.forEach(btn =>
       btn.addEventListener('click', () => this.setTool(btn.dataset.tool))
     );
     this.setTool(this.activeTool);
 
+    // Clicking on body silhouettes adds marks
     ['front-shape', 'back-shape'].forEach(id => {
       const el = document.getElementById(id);
       if (!el) return;
@@ -111,6 +126,7 @@ export default class BodyMap {
       });
     });
 
+    // Mark selection and dragging
     this.marks.addEventListener('click', e => {
       const u = e.target.closest('use');
       if (!u) return;
@@ -121,6 +137,7 @@ export default class BodyMap {
       }
     });
 
+    // Basic controls
     this.btnDelete?.addEventListener('click', () => {
       const sel = this.marks.querySelector('use.selected');
       if (sel) this.removeMark(sel);
@@ -141,25 +158,19 @@ export default class BodyMap {
         this.saveCb();
       }
     });
-    this.btnExport?.addEventListener('click', () => {
-      const clone = this.svg.cloneNode(true);
-      const ser = new XMLSerializer();
-      const url = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(ser.serializeToString(clone));
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'kuno-zemelapis.svg';
-      a.click();
-    });
+    this.btnExport?.addEventListener('click', () => this.exportSvg());
 
     this.updateBurnDisplay();
     this.updateUndoRedoButtons();
   }
 
+  /** Switch the active drawing tool. */
   setTool(tool) {
     this.activeTool = tool;
     this.tools.forEach(b => b.classList.toggle('active', b.dataset.tool === tool));
   }
 
+  /** Convert client coordinates to SVG coordinates. */
   svgPoint(evt) {
     const pt = this.svg.createSVGPoint();
     pt.x = evt.clientX;
@@ -167,6 +178,7 @@ export default class BodyMap {
     return pt.matrixTransform(this.svg.getScreenCTM().inverse());
   }
 
+  /** Keep coordinates within the body outline. */
   clampToBody(x, y, side) {
     const target = side ? this.svg.querySelector(`#layer-${side}`) : this.svg;
     let bbox;
@@ -184,6 +196,7 @@ export default class BodyMap {
     };
   }
 
+  /** Add a new mark to the map. */
   addMark(x, y, type = this.activeTool, side, zone, id, record = true) {
     ({ x, y } = this.clampToBody(x, y, side));
     const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
@@ -214,6 +227,7 @@ export default class BodyMap {
     this.saveCb();
   }
 
+  /** Begin dragging a mark. */
   startDrag(evt, el) {
     const tr = el.getAttribute('transform');
     const m = /translate\(([-\d.]+),([-\d.]+)\)/.exec(tr) || [0, 0, 0];
@@ -240,6 +254,7 @@ export default class BodyMap {
     this.saveCb();
   }
 
+  /** Remove a mark from the map. */
   removeMark(el, record = true) {
     if (!el) return;
     if (this.selectedList && el.dataset.zone) {
@@ -264,6 +279,7 @@ export default class BodyMap {
     this.saveCb();
   }
 
+  /** Toggle burn state for a zone. */
   toggleZoneBurn(name, record = true) {
     const el = this.zoneMap.get(name);
     if (!el) return;
@@ -278,6 +294,7 @@ export default class BodyMap {
     this.saveCb();
   }
 
+  /** Compute total burned area percentage. */
   burnArea() {
     let total = 0;
     this.burns.forEach(z => {
@@ -287,17 +304,66 @@ export default class BodyMap {
     return total;
   }
 
+  /** Display burn percentage in the UI. */
   updateBurnDisplay() {
     if (!this.burnTotalEl) return;
     const t = this.burnArea();
     this.burnTotalEl.textContent = t ? `Nudegimai: ${t}%` : '';
   }
 
+  /** Enable/disable undo and redo buttons. */
   updateUndoRedoButtons() {
     if (this.btnUndo) this.btnUndo.disabled = this.undoStack.length === 0;
     if (this.btnRedo) this.btnRedo.disabled = this.redoStack.length === 0;
   }
 
+  /** Export a self-contained SVG with embedded silhouettes. */
+  async exportSvg() {
+    const clone = this.svg.cloneNode(true);
+    const uses = [...clone.querySelectorAll('use[data-src]')];
+    for (const u of uses) {
+      const ref = u.dataset.src;
+      if (!ref) continue;
+      const [url, hash] = ref.split('#');
+      try {
+        const res = await fetch(url);
+        if (!res.ok) continue;
+        const txt = await res.text();
+        const doc = new DOMParser().parseFromString(txt, 'image/svg+xml');
+        const el = doc.getElementById(hash);
+        if (!el) continue;
+        const replacement = el.cloneNode(true);
+        // Copy non-href attributes from original <use>
+        [...u.attributes].forEach(attr => {
+          if (!['href', 'xlink:href', 'data-src'].includes(attr.name)) {
+            replacement.setAttribute(attr.name, attr.value);
+          }
+        });
+        u.replaceWith(replacement);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    const style = document.createElement('style');
+      style.textContent = `#bodySvg{display:block;width:100%;height:auto;aspect-ratio:1500/1100;max-width:40rem;max-height:80vh;border:1px solid #2d3b4f;border-radius:0.75rem;background:#0b141e}
+.silhouette{fill:none;stroke:#2d3b4f;stroke-width:2}
+.mark-w{stroke:#ef5350;stroke-width:3;fill:none}
+.mark-b{fill:#64b5f6}
+.mark-n{fill:#ffd54f;stroke:#6b540e;stroke-width:2}
+.zone{fill:transparent;cursor:pointer;transition:fill .2s}
+.zone:hover{fill:rgba(78,160,245,0.6)}
+.zone.selected{fill:rgba(78,160,245,0.8)}
+.zone.burned{fill:rgba(229,57,53,0.9)}`;
+    clone.insertBefore(style, clone.firstChild);
+    const ser = new XMLSerializer();
+    const url = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(ser.serializeToString(clone));
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'kuno-zemelapis.svg';
+    a.click();
+  }
+
+  /** Undo the last action. */
   undo() {
     const action = this.undoStack.pop();
     if (!action) return;
@@ -320,6 +386,7 @@ export default class BodyMap {
     this.updateUndoRedoButtons();
   }
 
+  /** Redo a previously undone action. */
   redo() {
     const action = this.redoStack.pop();
     if (!action) return;
@@ -342,6 +409,7 @@ export default class BodyMap {
     this.updateUndoRedoButtons();
   }
 
+  /** Serialize current map state. */
   serialize() {
     const marks = [...this.marks.querySelectorAll('use')].map(u => {
       const tr = u.getAttribute('transform');
@@ -362,6 +430,7 @@ export default class BodyMap {
     return JSON.stringify({ tool: this.activeTool, marks, burns });
   }
 
+  /** Load previously serialized state. */
   load(raw) {
     try {
       const data = typeof raw === 'string' ? JSON.parse(raw) : raw;
@@ -382,6 +451,7 @@ export default class BodyMap {
     }
   }
 
+  /** Count marks by side and tool and include burn percentage. */
   counts() {
     const res = { front: {}, back: {}, burned: this.burnArea() };
     Object.values(TOOLS).forEach(t => {
@@ -396,6 +466,7 @@ export default class BodyMap {
     return res;
   }
 
+  /** Aggregated counts per zone including burn areas. */
   zoneCounts() {
     const res = {};
     const types = Object.values(TOOLS).map(t => t.char);
