@@ -2,7 +2,7 @@
   <g id="front-map">
     <g class="silhouette" id="front-shape" data-side="front">
       <!-- Silhouette path from Material Design Icons (Apache License 2.0) -->
-      <path transform="scale(2)" d="M12,2A2,2 0 0,1 14,4A2,2 0 0,1 12,6A2,2 0 0,1 10,4A2,2 0 0,1 12,2M10.5,7H13.5A2,2 0 0,1 15.5,9V14.5H14V22H10V14.5H8.5V9A2,2 0 0,1 10.5,7Z"/>
+      <path transform="scale(2)" d="M21,9H15V22H13V16H11V22H9V9H3V7H21M12,2A2,2 0 0,1 14,4A2,2 0 0,1 12,6C10.89,6 10,5.1 10,4C10,2.89 10.89,2 12,2Z"/>
     </g>
   </g>
 </svg>
