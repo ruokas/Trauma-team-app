@@ -188,7 +188,6 @@ if($('#spr_gcs_calc') && $('#btnSprGCSCalc')){
   const toggleSprGcs=setupGcsCalc('spr');
   $('#btnSprGCSCalc').addEventListener('click',toggleSprGcs);
 }
-$('#e_back_ny').addEventListener('change',e=>{ $('#e_back_notes').disabled=e.target.checked; if(e.target.checked) $('#e_back_notes').value=''; saveAll();});
 
 function clampNumberInputs(){
   const clamp=el=>{
