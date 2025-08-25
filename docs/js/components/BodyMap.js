@@ -56,9 +56,24 @@ export default class BodyMap {
     this.onDragEnd = this.onDragEnd.bind(this);
   }
 
-  /** Check if event target is within body shapes. */
+  /** Determine whether event occurred within body silhouette. */
   inBody(evt) {
-    return !!evt.target.closest('.zone, #front-shape, #back-shape');
+    const p = this.svgPoint(evt);
+    return this.pointInBody(p.x, p.y);
+  }
+
+  /** Check if given coordinates lie within the body silhouette. */
+  pointInBody(x, y, side) {
+    const pt = this.svg.createSVGPoint();
+    pt.x = x;
+    pt.y = y;
+    const sides = side ? [side] : ['front', 'back'];
+    return sides.some(s => {
+      const path = this.svg.querySelector(`#${s}-shape path`);
+      return path && typeof path.isPointInFill === 'function'
+        ? path.isPointInFill(pt)
+        : true;
+    });
   }
 
   /** Initialise DOM references and event listeners. */
@@ -128,13 +143,13 @@ export default class BodyMap {
       this.zoneMap.set(id, el);
       el.addEventListener('click', evt => {
         const side = el.closest('#layer-back') ? 'back' : 'front';
+        const p = this.svgPoint(evt);
+        if (!this.pointInBody(p.x, p.y, side)) return;
         if (this.activeTool === TOOLS.BURN.char) {
           this.toggleZoneBurn(id);
         } else if (this.activeTool === TOOLS.BURN_BRUSH.char) {
-          const p = this.svgPoint(evt);
           this.addBrush(p.x, p.y, this.brushSize);
         } else {
-          const p = this.svgPoint(evt);
           this.addMark(p.x, p.y, this.activeTool, side, id);
         }
       });
@@ -171,6 +186,7 @@ export default class BodyMap {
       if (!el) return;
       el.addEventListener('click', evt => {
         const p = this.svgPoint(evt);
+        if (!this.pointInBody(p.x, p.y, el.dataset.side)) return;
         this.addMark(p.x, p.y, this.activeTool, el.dataset.side);
       });
     });
@@ -256,6 +272,7 @@ export default class BodyMap {
   /** Add burn brush circle. */
   addBrush(x, y, r = this.brushSize, id, record = true) {
     ({ x, y } = this.clampToBody(x, y));
+    if (!this.pointInBody(x, y)) return;
     const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
     const mid = id || ++this.markSeq;
     circle.setAttribute('cx', x);
@@ -288,6 +305,7 @@ export default class BodyMap {
   /** Add a new mark to the map. */
   addMark(x, y, type = this.activeTool, side, zone, id, record = true) {
     ({ x, y } = this.clampToBody(x, y, side));
+    if (!this.pointInBody(x, y, side)) return;
     const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
     const symbol = TOOL_SYMBOL[type];
     if (symbol) use.setAttribute('href', symbol);
@@ -332,6 +350,7 @@ export default class BodyMap {
     let x = this.drag.origX + dx;
     let y = this.drag.origY + dy;
     ({ x, y } = this.clampToBody(x, y, this.drag.el.dataset.side));
+    if (!this.pointInBody(x, y, this.drag.el.dataset.side)) return;
     this.drag.el.setAttribute('transform', `translate(${x},${y})`);
   }
 
@@ -442,7 +461,6 @@ export default class BodyMap {
 .mark-b{fill:#64b5f6}
 .mark-n{fill:#ffd54f;stroke:#6b540e;stroke-width:2}
 .zone{fill:transparent;cursor:pointer;transition:fill .2s}
-.zone:hover{fill:rgba(78,160,245,0.6)}
 .zone.selected{fill:rgba(78,160,245,0.8)}
 .zone.burned{fill:rgba(229,57,53,0.9)}`;
     clone.insertBefore(style, clone.firstChild);
