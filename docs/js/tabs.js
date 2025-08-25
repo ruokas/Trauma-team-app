@@ -22,7 +22,11 @@ export function showTab(name){
     b.classList.toggle('active', active);
     b.setAttribute('aria-selected', active ? 'true' : 'false');
   });
-  document.querySelectorAll('.view').forEach(v=>v.style.display = (v.dataset.tab===name)?'block':'none');
+  document.querySelectorAll('.view').forEach(v=>{
+    const visible = v.dataset.tab === name;
+    v.classList.toggle('visible', visible);
+    v.classList.toggle('hidden', !visible);
+  });
   localStorage.setItem('v10_activeTab', name);
   document.dispatchEvent(new CustomEvent('tabShown',{detail:name}));
 }
@@ -52,7 +56,9 @@ export function initTabs(){
     b.onclick=()=>showTab(t.name);
     nav.appendChild(b);
   });
-  document.querySelectorAll('.view').forEach((v,i)=>v.style.display=(i===0)?'block':'none');
+  document.querySelectorAll('.view').forEach((v,i)=>{
+    v.classList.add(i===0 ? 'visible' : 'hidden');
+  });
 
   nav.addEventListener('keydown', e=>{
     const tabs = Array.from(nav.querySelectorAll('.tab'));
