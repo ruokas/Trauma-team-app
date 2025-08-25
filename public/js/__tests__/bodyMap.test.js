@@ -13,13 +13,13 @@ function setupDom() {
       <button class="tool" data-tool="${TOOLS.WOUND.char}"></button>
       <button class="tool" data-tool="${TOOLS.BURN.char}"></button>
       <button class="tool" data-tool="${TOOLS.BURN_BRUSH.char}"></button>
+      <button class="tool" data-tool="${TOOLS.BURN_ERASE.char}"></button>
       <input id="brushSize" type="range" value="20">
     </div>
     <button id="btnUndo"></button>
     <button id="btnRedo"></button>
     <button id="btnClearMap"></button>
     <button id="btnExportSvg"></button>
-    <button id="btnDelete"></button>
   `;
 }
 
@@ -96,23 +96,6 @@ describe('BodyMap instance', () => {
     expect(save).toHaveBeenCalledTimes(2);
   });
 
-  test('delete removes selected mark', () => {
-    setupDom();
-    const bm = new BodyMap();
-    bm.init(() => {});
-    bm.load({ tool: TOOLS.WOUND.char, marks: [
-      { id: 1, x: 1, y: 2, type: TOOLS.WOUND.char, side: 'front' },
-      { id: 2, x: 3, y: 4, type: TOOLS.BRUISE.char, side: 'front' }
-    ] });
-    const show = jest.fn();
-    window.showWoundDetails = show;
-    const [m1] = document.querySelectorAll('#marks use');
-    m1.dispatchEvent(new Event('click', { bubbles: true }));
-    expect(m1.classList.contains('selected')).toBe(true);
-    document.getElementById('btnDelete').click();
-    expect(document.querySelectorAll('#marks use').length).toBe(1);
-  });
-
   test('init only runs once and avoids duplicating listeners', () => {
     setupDom();
     const save = jest.fn();
@@ -172,6 +155,19 @@ describe('BodyMap instance', () => {
     zone.dispatchEvent(new MouseEvent('pointerdown', { bubbles: true }));
     document.dispatchEvent(new MouseEvent('pointerup'));
     expect(bm.brushLayer.childElementCount).toBe(1);
+  });
+
+  test('eraser removes burn brush', () => {
+    setupDom();
+    const bm = new BodyMap();
+    bm.init(() => {});
+    bm.addBrush(10, 10, 20);
+    bm.setTool(TOOLS.BURN_ERASE.char);
+    const circle = bm.brushLayer.querySelector('circle');
+    document.elementFromPoint = () => circle;
+    bm.svg.dispatchEvent(new MouseEvent('pointerdown', { clientX: 0, clientY: 0 }));
+    document.dispatchEvent(new MouseEvent('pointerup'));
+    expect(bm.brushLayer.childElementCount).toBe(0);
   });
 
   test('undo and redo actions manage stacks and buttons', () => {

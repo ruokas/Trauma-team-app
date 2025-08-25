@@ -31,7 +31,6 @@ export default class BodyMap {
     this.btnRedo = null;
     this.btnClear = null;
     this.btnExport = null;
-    this.btnDelete = null;
     this.burnTotalEl = null;
     this.selectedList = null;
     this.brushSizeInput = null;
@@ -58,12 +57,16 @@ export default class BodyMap {
 
   /** Determine whether event occurred within body silhouette. */
   inBody(evt) {
+    if (!this.svg || typeof this.svg.createSVGPoint !== 'function') {
+      return !!evt.target.closest('.zone, #front-shape, #back-shape');
+    }
     const p = this.svgPoint(evt);
     return this.pointInBody(p.x, p.y);
   }
 
   /** Check if given coordinates lie within the body silhouette. */
   pointInBody(x, y, side) {
+    if (!this.svg || typeof this.svg.createSVGPoint !== 'function') return true;
     const pt = this.svg.createSVGPoint();
     pt.x = x;
     pt.y = y;
@@ -90,7 +93,6 @@ export default class BodyMap {
     this.btnRedo = $('#btnRedo');
     this.btnClear = $('#btnClearMap');
     this.btnExport = $('#btnExportSvg');
-    this.btnDelete = $('#btnDelete');
     this.burnTotalEl = $('#burnTotal');
     this.selectedList = $('#selectedLocations');
     this.brushSizeInput = $('#brushSize');
@@ -161,16 +163,21 @@ export default class BodyMap {
     );
     this.setTool(this.activeTool);
 
-    // Brush drawing on SVG
+    // Brush drawing and erasing on SVG
     this.svg.addEventListener('pointerdown', e => {
       if (this.activeTool === TOOLS.BURN_BRUSH.char && this.inBody(e)) {
         this.isDrawing = true;
         this.drawBrush(e);
+      } else if (this.activeTool === TOOLS.BURN_ERASE.char) {
+        this.isDrawing = true;
+        this.eraseBrush(e);
       }
     });
     this.svg.addEventListener('pointermove', e => {
       if (this.activeTool === TOOLS.BURN_BRUSH.char && this.isDrawing && this.inBody(e)) {
         this.drawBrush(e);
+      } else if (this.activeTool === TOOLS.BURN_ERASE.char && this.isDrawing) {
+        this.eraseBrush(e);
       }
     });
     document.addEventListener('pointerup', () => {
@@ -203,10 +210,6 @@ export default class BodyMap {
     });
 
     // Basic controls
-    this.btnDelete?.addEventListener('click', () => {
-      const sel = this.marks.querySelector('use.selected');
-      if (sel) this.removeMark(sel);
-    });
     this.btnUndo?.addEventListener('click', () => this.undo());
     this.btnRedo?.addEventListener('click', () => this.redo());
     this.btnClear?.addEventListener('click', async () => {
@@ -239,6 +242,10 @@ export default class BodyMap {
 
   /** Convert client coordinates to SVG coordinates. */
   svgPoint(evt) {
+    if (!this.svg || typeof this.svg.createSVGPoint !== 'function' ||
+        typeof this.svg.getScreenCTM !== 'function') {
+      return { x: evt.clientX, y: evt.clientY };
+    }
     const pt = this.svg.createSVGPoint();
     pt.x = evt.clientX;
     pt.y = evt.clientY;
@@ -269,6 +276,12 @@ export default class BodyMap {
     this.addBrush(p.x, p.y, this.brushSize);
   }
 
+  eraseBrush(evt) {
+    const el = document.elementFromPoint(evt.clientX, evt.clientY);
+    const circle = el?.closest('circle.burn-area');
+    if (circle) this.removeBrush(+circle.dataset.id);
+  }
+
   /** Add burn brush circle. */
   addBrush(x, y, r = this.brushSize, id, record = true) {
     ({ x, y } = this.clampToBody(x, y));
@@ -279,13 +292,12 @@ export default class BodyMap {
     circle.setAttribute('cy', y);
     circle.setAttribute('r', r);
     circle.classList.add('burn-area');
-    circle.setAttribute('pointer-events', 'none');
     circle.dataset.id = mid;
     this.brushLayer.appendChild(circle);
     const area = Math.PI * r * r;
     this.brushBurns.push({ id: mid, area });
     if (record) {
-      this.undoStack.push({ type: 'brush', brush: { id: mid, x, y, r } });
+      this.undoStack.push({ type: 'brush-add', brush: { id: mid, x, y, r } });
       this.redoStack = [];
       this.updateUndoRedoButtons();
     }
@@ -293,13 +305,28 @@ export default class BodyMap {
     this.saveCb();
   }
 
-  removeBrush(id) {
+  removeBrush(id, record = true) {
     const el = this.brushLayer.querySelector(`circle[data-id="${id}"]`);
     if (!el) return;
     const idx = this.brushBurns.findIndex(b => b.id === id);
-    if (idx >= 0) this.brushBurns.splice(idx, 1);
+    let brush;
+    if (idx >= 0) {
+      brush = {
+        id,
+        x: +el.getAttribute('cx'),
+        y: +el.getAttribute('cy'),
+        r: +el.getAttribute('r')
+      };
+      this.brushBurns.splice(idx, 1);
+    }
     el.remove();
+    if (record && brush) {
+      this.undoStack.push({ type: 'brush-remove', brush });
+      this.redoStack = [];
+      this.updateUndoRedoButtons();
+    }
     this.updateBurnDisplay();
+    this.saveCb();
   }
 
   /** Add a new mark to the map. */
@@ -490,9 +517,14 @@ export default class BodyMap {
       case 'burn':
         this.toggleZoneBurn(action.zone, false);
         break;
-      case 'brush':
-        this.removeBrush(action.brush.id);
+      case 'brush-add':
+        this.removeBrush(action.brush.id, false);
         break;
+      case 'brush-remove': {
+        const b = action.brush;
+        this.addBrush(b.x, b.y, b.r, b.id, false);
+        break;
+      }
     }
     this.redoStack.push(action);
     this.updateUndoRedoButtons();
@@ -516,11 +548,14 @@ export default class BodyMap {
       case 'burn':
         this.toggleZoneBurn(action.zone, false);
         break;
-      case 'brush': {
+      case 'brush-add': {
         const b = action.brush;
         this.addBrush(b.x, b.y, b.r, b.id, false);
         break;
       }
+      case 'brush-remove':
+        this.removeBrush(action.brush.id, false);
+        break;
     }
     this.undoStack.push(action);
     this.updateUndoRedoButtons();
