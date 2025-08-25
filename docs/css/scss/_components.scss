@@ -87,7 +87,7 @@ input.invalid,select.invalid{border-color:var(--red)}
   #btnExportSvg{--btn-color:#81c784}
 .tool.active{background:color-mix(in srgb,var(--btn-color),#000 20%);color:#fff;border-color:color-mix(in srgb,var(--btn-color),#000 30%)}
   #bodySvg{display:block;width:100%;height:auto;aspect-ratio:1500/1100;max-width:40rem;max-height:80vh;border:1px solid var(--line);border-radius:$space-12;background:#0b141e}
-.silhouette{fill:none;stroke:var(--muted);stroke-width:2}
+.silhouette{fill:var(--accent);stroke:var(--accent);stroke-width:2}
     .label{fill:#a9b6c5;font:bold $font-lg system-ui}
 .mark-w{stroke:#ef5350;stroke-width:3;fill:none}
 .mark-b{fill:#64b5f6}
