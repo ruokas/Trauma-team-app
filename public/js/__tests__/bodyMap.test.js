@@ -2,7 +2,7 @@ import zones from '../bodyMapZones.js';
 import BodyMap from '../components/BodyMap.js';
 import { TOOLS } from '../BodyMapTools.js';
 
-const headZone = zones.find(z => z.id === 'head-front');
+const frontZone = zones.find(z => z.id === 'front');
 
 function setupDom() {
   document.body.innerHTML = `
@@ -26,12 +26,12 @@ describe('BodyMap instance', () => {
     setupDom();
     const bm = new BodyMap();
     bm.init(() => {});
-    bm.addMark(10, 20, TOOLS.WOUND.char, 'front', 'head-front');
+    bm.addMark(10, 20, TOOLS.WOUND.char, 'front', 'front');
     const mark = document.querySelector('#marks use');
-    expect(mark.dataset.zone).toBe('head-front');
+    expect(mark.dataset.zone).toBe('front');
     expect(mark.getAttribute('href')).toBe(TOOLS.WOUND.symbol);
     const data = JSON.parse(bm.serialize());
-    expect(data.marks[0]).toMatchObject({ x: 10, y: 20, type: TOOLS.WOUND.char, side: 'front', zone: 'head-front' });
+    expect(data.marks[0]).toMatchObject({ x: 10, y: 20, type: TOOLS.WOUND.char, side: 'front', zone: 'front' });
   });
 
   test('load restores marks and burn zones', () => {
@@ -40,30 +40,30 @@ describe('BodyMap instance', () => {
     bm.init(() => {});
     bm.load({
       tool: TOOLS.WOUND.char,
-      marks: [{ id: 1, x: 5, y: 5, type: TOOLS.WOUND.char, side: 'front', zone: 'head-front' }],
-      burns: [{ zone: 'head-front', side: 'front' }]
+      marks: [{ id: 1, x: 5, y: 5, type: TOOLS.WOUND.char, side: 'front', zone: 'front' }],
+      burns: [{ zone: 'front', side: 'front' }]
     });
-    const zone = document.querySelector('.zone[data-zone="head-front"]');
+    const zone = document.querySelector('.zone[data-zone="front"]');
     expect(document.querySelectorAll('#marks use').length).toBe(1);
     expect(zone.classList.contains('burned')).toBe(true);
-    expect(bm.counts().burned).toBe(headZone.area);
+    expect(bm.counts().burned).toBe(frontZone.area);
     const serialized = JSON.parse(bm.serialize());
-    expect(serialized.burns[0].zone).toBe('head-front');
+    expect(serialized.burns[0].zone).toBe('front');
   });
 
   test('zoneCounts aggregates marks and burn area', () => {
     setupDom();
     const bm = new BodyMap();
     bm.init(() => {});
-    bm.addMark(1, 1, TOOLS.WOUND.char, 'front', 'head-front');
+    bm.addMark(1, 1, TOOLS.WOUND.char, 'front', 'front');
     bm.setTool(TOOLS.BURN.char);
-    const zone = document.querySelector('.zone[data-zone="head-front"]');
+    const zone = document.querySelector('.zone[data-zone="front"]');
     zone.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     const z = bm.zoneCounts();
-    expect(z['head-front'][TOOLS.WOUND.char]).toBe(1);
-    expect(z['head-front'].burned).toBe(headZone.area);
-    expect(z['head-front'].label).toBe(headZone.label);
-    expect(document.getElementById('burnTotal').textContent).toBe(`Nudegimai: ${headZone.area}%`);
+    expect(z['front'][TOOLS.WOUND.char]).toBe(1);
+    expect(z['front'].burned).toBe(frontZone.area);
+    expect(z['front'].label).toBe(frontZone.label);
+    expect(document.getElementById('burnTotal').textContent).toBe(`Nudegimai: ${frontZone.area}%`);
   });
 
   test('toggleZoneBurn toggles burn state and saves', () => {
@@ -71,11 +71,11 @@ describe('BodyMap instance', () => {
     const save = jest.fn();
     const bm = new BodyMap();
     bm.init(save);
-    bm.toggleZoneBurn('head-front');
-    const zone = document.querySelector('.zone[data-zone="head-front"]');
+    bm.toggleZoneBurn('front');
+    const zone = document.querySelector('.zone[data-zone="front"]');
     expect(zone.classList.contains('burned')).toBe(true);
     expect(save).toHaveBeenCalledTimes(1);
-    bm.toggleZoneBurn('head-front');
+    bm.toggleZoneBurn('front');
     expect(zone.classList.contains('burned')).toBe(false);
     expect(save).toHaveBeenCalledTimes(2);
   });
@@ -118,7 +118,7 @@ describe('BodyMap instance', () => {
     bm.init(save);
     bm.init(save);
     bm.setTool(TOOLS.BURN.char);
-    const zone = document.querySelector('.zone[data-zone="head-front"]');
+    const zone = document.querySelector('.zone[data-zone="front"]');
     zone.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     expect(zone.classList.contains('burned')).toBe(true);
     expect(save).toHaveBeenCalledTimes(1);
