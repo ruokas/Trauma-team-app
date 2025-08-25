@@ -492,10 +492,11 @@ export default class BodyMap {
       case 'burn':
         this.toggleZoneBurn(action.zone, false);
         break;
-      case 'brush':
+      case 'brush': {
         const b = action.brush;
         this.addBrush(b.x, b.y, b.r, b.id, false);
         break;
+      }
     }
     this.undoStack.push(action);
     this.updateUndoRedoButtons();
