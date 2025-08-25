@@ -57,8 +57,10 @@ export default class BodyMap {
 
   /** Determine whether event occurred within body silhouette. */
   inBody(evt) {
+    const inside = !!evt.target.closest('.zone, #front-shape, #back-shape');
+    if (!inside) return false;
     if (!this.svg || typeof this.svg.createSVGPoint !== 'function') {
-      return !!evt.target.closest('.zone, #front-shape, #back-shape');
+      return inside;
     }
     const p = this.svgPoint(evt);
     return this.pointInBody(p.x, p.y);
