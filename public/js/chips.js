@@ -57,6 +57,14 @@ function togglePupilNote(side, chip){
   if(!show) note.value='';
 }
 
+function toggleBackNote(chip){
+  if(chip.parentElement?.id !== 'e_back_group') return;
+  const note = $('#e_back_notes');
+  const show = chip.dataset.value==='Pakitimai' && isChipActive(chip);
+  note.style.display = show ? 'block' : 'none';
+  if(!show) note.value='';
+}
+
 function updateBreathGroups(){
   ['b_breath_left_group','b_breath_right_group'].forEach(id=>{
     const group = $('#'+id);
@@ -103,6 +111,7 @@ export function initChips(saveAll){
     }
     togglePupilNote('left', chip);
     togglePupilNote('right', chip);
+    toggleBackNote(chip);
     if(group.id.startsWith('imaging_')){
       const box=$('#imaging_other');
       const show=!!document.querySelector('[id^="imaging_"] .chip.active[data-value="Kita"]');

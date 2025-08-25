@@ -25,7 +25,7 @@ const setupDom = () => {
       <button id="d_gcs_apply"></button>
       <span id="d_gcs_calc_total"></span>
     </div>
-    <input type="checkbox" id="e_back_ny" />
+    <div id="e_back_group" class="chip-group" data-single="true"><button class="chip" data-value="Be pakitimų"></button><button class="chip" data-value="Pakitimai"></button></div>
     <textarea id="output"></textarea>
     <svg id="bodySvg"><g id="layer-front"></g><g id="layer-back"></g><g id="marks"></g></svg>
     <div id="front-shape"></div>
