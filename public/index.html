@@ -74,7 +74,7 @@
           <div class="grid cols-2 cols-auto mt-8">
               <div>
                 <label for="gmp_mechanism">Traumos mechanizmas</label>
-                <input id="gmp_mechanism" type="text" list="gmp_mechanism_list">
+                <input id="gmp_mechanism" type="text" list="gmp_mechanism_list" aria-describedby="gmp_mechanism_hint" title="Galite pasirinkti iš sąrašo arba įvesti savo tekstą">
                 <datalist id="gmp_mechanism_list">
                   <option value="Autoavarija"></option>
                   <option value="Kritimas"></option>
@@ -83,6 +83,7 @@
                   <option value="Durinė žaizda"></option>
                   <option value="Nudegimas"></option>
                 </datalist>
+                <div class="hint" id="gmp_mechanism_hint">Galite pasirinkti iš sąrašo arba įvesti savo tekstą</div>
               </div>
               <div><label for="gmp_notes">Pastabos</label><input id="gmp_notes" type="text" placeholder="Trumpai..."></div>
           </div>
