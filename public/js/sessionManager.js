@@ -60,14 +60,14 @@ async function getSessions(){
       const res = await fetch('/api/sessions', { headers: { 'Authorization': 'Bearer ' + authToken } });
       if(res.ok){
         const data = await res.json();
-        const normalized = data.map(s => ({ archived: false, ...s, archived: !!s.archived }));
+        const normalized = data.map(s => ({ ...s, archived: !!s.archived }));
         localStorage.setItem('trauma_sessions', JSON.stringify(normalized));
         return normalized;
       }
     }catch(e){ console.error(e); }
   }
   try{
-    return JSON.parse(localStorage.getItem('trauma_sessions')||'[]').map(s=>({ archived:false, ...s, archived:!!s.archived }));
+    return JSON.parse(localStorage.getItem('trauma_sessions')||'[]').map(s=>({ ...s, archived:!!s.archived }));
   }catch(e){ return []; }
 }
 

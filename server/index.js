@@ -16,7 +16,7 @@ async function loadDB(){
     const parsed = JSON.parse(data);
     if (!Array.isArray(parsed.sessions)) parsed.sessions = [];
     // Ensure all sessions have an archived flag for backwards compatibility
-    parsed.sessions = parsed.sessions.map(s => ({ archived: false, ...s, archived: !!s.archived }));
+    parsed.sessions = parsed.sessions.map(s => ({ ...s, archived: !!s.archived }));
     return parsed;
   } catch (e) {
     console.error('Failed to load DB', e);
