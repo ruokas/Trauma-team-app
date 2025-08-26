@@ -52,9 +52,13 @@ function togglePupilNote(side, chip){
   const groupId = `d_pupil_${side}_group`;
   if(chip.parentElement?.id !== groupId) return;
   const note = $(`#d_pupil_${side}_note`);
+  const group = note.parentElement;
   const show = chip.dataset.value==='kita' && isChipActive(chip);
-  note.style.display = show ? 'block' : 'none';
+  note.hidden = !show;
+  const label = group.querySelector(`label[for="d_pupil_${side}_note"]`);
+  if(label) label.hidden = !show;
   if(!show) note.value='';
+  group.setAttribute('aria-expanded', show);
 }
 
 function toggleBackNote(chip){
