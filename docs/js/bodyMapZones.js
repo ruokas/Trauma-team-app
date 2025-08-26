@@ -13,5 +13,5 @@ export default [
   { id: 'back-left-arm', side: 'back', path: 'M2 16c-2 6-2 18 0 24h6V16z', area: 4.5, label: 'Kairė ranka (nugara)' },
   { id: 'back-right-arm', side: 'back', path: 'M46 16c2 6 2 18 0 24h-6V16z', area: 4.5, label: 'Dešinė ranka (nugara)' },
   { id: 'back-left-leg', side: 'back', path: 'M18 32c-4 4-4 12-4 16h8V36c0-4-2-4-4-4z', area: 9, label: 'Kairė koja (nugara)' },
-  { id: 'back-right-leg', side: 'back', path: 'M30 32c4 4 4 12 4 16h-8V36c0-4 2-4 4-4z', area: 9, label: 'Dešinė koja (nugara)' }
+  { id: 'back-right-leg', side: 'back', path: 'M30 32c4 4 4 12 4 16h-8V36c0-4 2-4 4-4z', area: 9, label: 'Dešinė koja (nugara)' },
 ];
