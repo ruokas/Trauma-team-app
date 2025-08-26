@@ -119,37 +119,57 @@ export async function initSessions(){
     populateSessionSelect(select, sessions);
     if (currentSessionId) select.value = currentSessionId;
   });
-  function renderDeleteButtons(){
+  function renderDeleteButtons(focusId){
     delWrap.innerHTML='';
     sessions.filter(s=>showArchived || !s.archived).forEach(s=>{
       const row=document.createElement('div');
       row.className='session-item';
+      row.dataset.sessionId=s.id;
       const label=document.createElement('span');
+      label.className='session-label';
       label.textContent=s.name;
-      const rename=document.createElement('button');
-      rename.type='button';
-      rename.textContent='✎';
-      rename.className='btn ghost';
-      rename.setAttribute('aria-label','Rename session');
-      rename.addEventListener('click', async () => {
-        const newName = (await notify({ type: 'prompt', message: 'Naujas pavadinimas', defaultValue: s.name }))?.trim();
-        if (newName == null) return;
-        if (!newName) {
-          notify({ type: 'error', message: 'Pavadinimas negali būti tuščias.' });
-          return;
-        }
-        if (newName === s.name) return;
-        const newNameLower = newName.toLowerCase();
-        if (sessions.some(x => x.id !== s.id && x.name.trim().toLowerCase() === newNameLower)) {
-          notify({ type: 'error', message: 'Pacientas su tokiu pavadinimu jau egzistuoja.' });
-          return;
-        }
-        s.name = newName;
-        saveSessions(sessions);
-        populateSessionSelect(select, sessions);
-        if (currentSessionId) { select.value = currentSessionId; }
-        renderDeleteButtons();
-      });
+      label.tabIndex=0;
+
+      const startRename=()=>{
+        const input=document.createElement('input');
+        input.type='text';
+        input.value=s.name;
+        input.className='session-rename-input';
+        let cancelled=false;
+        const cancel=()=>{ cancelled=true; input.replaceWith(label); label.focus(); };
+        const attemptSave=()=>{
+          const newName=input.value.trim();
+          if(!newName){
+            notify({ type:'error', message:'Pavadinimas negali būti tuščias.' });
+            input.focus();
+            return;
+          }
+          if(newName===s.name){ cancel(); return; }
+          const newNameLower=newName.toLowerCase();
+          if(sessions.some(x=>x.id!==s.id && x.name.trim().toLowerCase()===newNameLower)){
+            notify({ type:'error', message:'Pacientas su tokiu pavadinimu jau egzistuoja.' });
+            input.focus();
+            return;
+          }
+          s.name=newName;
+          saveSessions(sessions);
+          populateSessionSelect(select, sessions);
+          if(currentSessionId) select.value=currentSessionId;
+          renderDeleteButtons(s.id);
+        };
+        input.addEventListener('blur', ()=>{ if(!cancelled) attemptSave(); });
+        input.addEventListener('keydown', e=>{
+          if(e.key==='Enter'){ e.preventDefault(); input.blur(); }
+          else if(e.key==='Escape'){ e.preventDefault(); cancel(); }
+        });
+        label.replaceWith(input);
+        input.focus();
+        input.select();
+      };
+
+      label.addEventListener('click', startRename);
+      label.addEventListener('keydown', e=>{ if(e.key==='Enter') startRename(); });
+
       const archive=document.createElement('button');
       archive.type='button';
       archive.textContent=s.archived?'Unarchive':'Archive';
@@ -197,11 +217,14 @@ export async function initSessions(){
         }
       });
       row.appendChild(label);
-      row.appendChild(rename);
       row.appendChild(archive);
       row.appendChild(btn);
       delWrap.appendChild(row);
     });
+    if(focusId){
+      const focusEl=delWrap.querySelector(`.session-item[data-session-id="${focusId}"] .session-label`);
+      if(focusEl) focusEl.focus();
+    }
   }
   if(!sessions.length){
     const id=Date.now().toString(36);
