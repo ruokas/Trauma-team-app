@@ -6,7 +6,7 @@ import { serializeAR, loadAR } from './arBodyMap.js';
 
 let authToken = localStorage.getItem('trauma_token') || null;
 let socket = null;
-const socketEndpoint = window.SOCKET_URL;
+const socketEndpoint = window.socketEndpoint || window.SOCKET_URL;
 let currentSessionId = localStorage.getItem('trauma_current_session') || null;
 
 function updateUserList(users){
