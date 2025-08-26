@@ -49,7 +49,16 @@ export function generateReport(){
     $('#b_dpv_fio2').value?('DPV FiO₂ '+$('#b_dpv_fio2').value):null
   ].filter(Boolean).join('; '));
 
-  out.push('\n--- C Kraujotaka ---'); out.push([$('#c_hr').value?('ŠSD '+$('#c_hr').value+'/min'):null, ($('#c_sbp').value||$('#c_dbp').value)?('AKS '+$('#c_sbp').value+'/'+$('#c_dbp').value):null, $('#c_caprefill').value?('KPL '+$('#c_caprefill').value+'s'):null].filter(Boolean).join('; '));
+  const chr=$('#c_hr').value, csbp=$('#c_sbp').value, cdbp=$('#c_dbp').value;
+  const cmap = (csbp && cdbp) ? Math.round((+csbp + 2*+cdbp)/3) : '';
+  const csi = (chr && csbp) ? (+chr / +csbp).toFixed(2) : '';
+  out.push('\n--- C Kraujotaka ---'); out.push([
+    chr?('ŠSD '+chr+'/min'):null,
+    (csbp||cdbp)?('AKS '+csbp+'/'+cdbp):null,
+    cmap?('MAP '+cmap):null,
+    csi?('SI '+csi):null,
+    $('#c_caprefill').value?('KPL '+$('#c_caprefill').value+'s'):null
+  ].filter(Boolean).join('; '));
 
   const dgks=gksSum($('#d_gksa').value,$('#d_gksk').value,$('#d_gksm').value); const left=getSingleValue('#d_pupil_left_group'); const right=getSingleValue('#d_pupil_right_group');
   out.push('\n--- D Sąmonė ---'); out.push([dgks?('GKS '+dgks+' (A'+$('#d_gksa').value+'-K'+$('#d_gksk').value+'-M'+$('#d_gksm').value+')'):null, left?('Vyzdžiai kairė: '+left+ (left==='kita'&&$('#d_pupil_left_note').value?(' ('+$('#d_pupil_left_note').value+')'):'') ):null, right?('Vyzdžiai dešinė: '+right+ (right==='kita'&&$('#d_pupil_right_note').value?(' ('+$('#d_pupil_right_note').value+')'):'') ):null, $('#d_notes').value?('Pastabos: '+$('#d_notes').value):null].filter(Boolean).join(' | '));
