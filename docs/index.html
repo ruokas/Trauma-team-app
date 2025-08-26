@@ -55,19 +55,26 @@
         <fieldset class="collapsible" id="activation-gmp">
           <legend>GMP rodikliai</legend>
           <div class="grid cols-3 cols-auto">
-              <div><label for="gmp_hr">GMP ŠSD (k./min)</label><input id="gmp_hr" type="number" min="0" max="250"></div>
-              <div><label for="gmp_rr">GMP KD (k./min)</label><input id="gmp_rr" type="number" min="0" max="80"></div>
-              <div><label for="gmp_spo2">GMP SpO₂ (%)</label><input id="gmp_spo2" type="number" min="0" max="100"></div>
+              <div><label for="gmp_hr">GMP ŠSD (k./min)</label><input id="gmp_hr" type="number" min="0" max="250" title="ŠSD – beats per minute, 0–250"></div>
+              <div><label for="gmp_rr">GMP KD (k./min)</label><input id="gmp_rr" type="number" min="0" max="80" title="KD – breaths per minute, 0–80"></div>
+              <div><label for="gmp_spo2">GMP SpO₂ (%)</label><input id="gmp_spo2" type="number" min="0" max="100" title="SpO₂ – percent, 0–100"></div>
           </div>
           <div class="grid cols-3 cols-auto mt-8">
-              <div class="row"><div class="flex-1"><label for="gmp_sbp">GMP AKS s</label><input id="gmp_sbp" type="number" min="0" max="300"></div><div class="flex-1"><label for="gmp_dbp">GMP AKS d</label><input id="gmp_dbp" type="number" min="0" max="200"></div></div>
+              <div class="row"><div class="flex-1"><label for="gmp_sbp">GMP AKS s</label><input id="gmp_sbp" type="number" min="0" max="300" title="AKS s – mmHg, 0–300"></div><div class="flex-1"><label for="gmp_dbp">GMP AKS d</label><input id="gmp_dbp" type="number" min="0" max="200" title="AKS d – mmHg, 0–200"></div></div>
               <div><label>GMP GKS (A-K-M)</label><div class="row"><input id="gmp_gksa" type="number" min="1" max="4" placeholder="A"><input id="gmp_gksk" type="number" min="1" max="5" placeholder="K"><input id="gmp_gksm" type="number" min="1" max="6" placeholder="M"><span id="gmp_gks_total"></span></div></div>
-              <div><label for="gmp_time">GMP pranešimo laikas</label><div class="row"><input id="gmp_time" type="time"><button type="button" class="btn ghost" id="btnGmpNow">Dabar</button></div></div>
+              <div>
+                <label for="gmp_time">GMP pranešimo laikas</label>
+                <div class="row">
+                  <input id="gmp_time" type="time" aria-describedby="gmp_time_hint" title="24 val. formatas (HH:MM)">
+                  <button type="button" class="btn ghost" id="btnGmpNow" aria-describedby="gmp_time_hint" title="Įrašyti dabartinį laiką">Dabar</button>
+                </div>
+                <div class="hint" id="gmp_time_hint">Naudokite 24 val. formatą (HH:MM); mygtukas „Dabar“ įrašo dabartinį laiką.</div>
+              </div>
           </div>
           <div class="grid cols-2 cols-auto mt-8">
               <div>
                 <label for="gmp_mechanism">Traumos mechanizmas</label>
-                <input id="gmp_mechanism" type="text" list="gmp_mechanism_list">
+                <input id="gmp_mechanism" type="text" list="gmp_mechanism_list" aria-describedby="gmp_mechanism_hint" title="Galite pasirinkti iš sąrašo arba įvesti savo tekstą">
                 <datalist id="gmp_mechanism_list">
                   <option value="Autoavarija"></option>
                   <option value="Kritimas"></option>
@@ -76,6 +83,7 @@
                   <option value="Durinė žaizda"></option>
                   <option value="Nudegimas"></option>
                 </datalist>
+                <div class="hint" id="gmp_mechanism_hint">Galite pasirinkti iš sąrašo arba įvesti savo tekstą</div>
               </div>
               <div><label for="gmp_notes">Pastabos</label><input id="gmp_notes" type="text" placeholder="Trumpai..."></div>
           </div>
@@ -135,8 +143,8 @@
         <fieldset class="collapsible" id="breathing-vitals">
           <legend>Gyvybiniai rodikliai</legend>
           <div class="grid cols-2 cols-auto">
-            <div><label for="b_rr">KD (k./min)</label><input id="b_rr" type="number" min="0" max="80"></div>
-            <div><label for="b_spo2">SpO₂ (%)</label><input id="b_spo2" type="number" min="0" max="100"></div>
+            <div><label for="b_rr">KD (k./min)</label><input id="b_rr" type="number" min="0" max="80" title="KD – breaths per minute, 0–80"></div>
+            <div><label for="b_spo2">SpO₂ (%)</label><input id="b_spo2" type="number" min="0" max="100" title="SpO₂ – percent, 0–100"></div>
           </div>
         </fieldset>
         <fieldset id="breathing-breath">
@@ -192,39 +200,39 @@
     <section class="card view" id="view-c" data-tab="C – Kraujotaka">
       <h2>C – Kraujotaka</h2>
       <div class="grid cols-3 cols-auto">
-        <div><label for="c_hr">ŠSD (k./min)</label><input id="c_hr" type="number" min="0" max="250"></div>
-        <div class="row"><div class="flex-1"><label for="c_sbp">AKS s</label><input id="c_sbp" type="number" min="0" max="300"></div><div class="flex-1"><label for="c_dbp">AKS d</label><input id="c_dbp" type="number" min="0" max="200"></div></div>
-          <div><label for="c_caprefill">KPL (sek.)</label><input id="c_caprefill" type="number" step="0.1" min="0" max="20"></div>
-          <div>
-            <label>Radialinis pulsas</label>
-            <div class="chip-group" id="c_pulse_radial_group" data-single="true">
-              <button type="button" class="chip" data-value="Stiprus" aria-pressed="false">Stiprus</button>
-              <button type="button" class="chip red" data-value="Silpnas" aria-pressed="false">Silpnas</button>
-            </div>
-          </div>
-          <div>
-            <label>Femoralis pulsas</label>
-            <div class="chip-group" id="c_pulse_femoral_group" data-single="true">
-              <button type="button" class="chip" data-value="Stiprus" aria-pressed="false">Stiprus</button>
-              <button type="button" class="chip red" data-value="Silpnas" aria-pressed="false">Silpnas</button>
-            </div>
-          </div>
-          <div>
-            <label>Odos temp.</label>
-            <div class="chip-group" id="c_skin_temp_group" data-single="true">
-              <button type="button" class="chip" data-value="Šilta" aria-pressed="false">Šilta</button>
-              <button type="button" class="chip red" data-value="Šalta" aria-pressed="false">Šalta</button>
-            </div>
-          </div>
-          <div>
-            <label>Odos spalva</label>
-            <div class="chip-group" id="c_skin_color_group" data-single="true">
-              <button type="button" class="chip" data-value="Blyški" aria-pressed="false">Blyški</button>
-              <button type="button" class="chip red" data-value="Paraudusi" aria-pressed="false">Paraudusi</button>
-            </div>
+        <div><label for="c_hr">ŠSD (k./min)</label><input id="c_hr" type="number" min="0" max="250" title="ŠSD – beats per minute, 0–250"></div>
+        <div class="row"><div class="flex-1"><label for="c_sbp">AKS s</label><input id="c_sbp" type="number" min="0" max="300" title="AKS s – mmHg, 0–300"></div><div class="flex-1"><label for="c_dbp">AKS d</label><input id="c_dbp" type="number" min="0" max="200" title="AKS d – mmHg, 0–200"></div><div class="flex-1"><label>MAP</label><span id="c_map"></span></div><div class="flex-1"><label>SI</label><span id="c_si"></span></div></div>
+        <div><label for="c_caprefill">KPL (sek.)</label><input id="c_caprefill" type="number" step="0.1" min="0" max="20" title="KPL – seconds, 0–20"></div>
+        <div>
+          <label>Radialinis pulsas</label>
+          <div class="chip-group" id="c_pulse_radial_group" data-single="true">
+            <button type="button" class="chip" data-value="Stiprus" aria-pressed="false">Stiprus</button>
+            <button type="button" class="chip red" data-value="Silpnas" aria-pressed="false">Silpnas</button>
           </div>
         </div>
-      </section>
+        <div>
+          <label>Femoralis pulsas</label>
+          <div class="chip-group" id="c_pulse_femoral_group" data-single="true">
+            <button type="button" class="chip" data-value="Stiprus" aria-pressed="false">Stiprus</button>
+            <button type="button" class="chip red" data-value="Silpnas" aria-pressed="false">Silpnas</button>
+          </div>
+        </div>
+        <div>
+          <label>Odos temp.</label>
+          <div class="chip-group" id="c_skin_temp_group" data-single="true">
+            <button type="button" class="chip" data-value="Šilta" aria-pressed="false">Šilta</button>
+            <button type="button" class="chip red" data-value="Šalta" aria-pressed="false">Šalta</button>
+          </div>
+        </div>
+        <div>
+          <label>Odos spalva</label>
+          <div class="chip-group" id="c_skin_color_group" data-single="true">
+            <button type="button" class="chip" data-value="Blyški" aria-pressed="false">Blyški</button>
+            <button type="button" class="chip red" data-value="Paraudusi" aria-pressed="false">Paraudusi</button>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <!-- D -->
     <section class="card view" id="view-d" data-tab="D – Sąmonė">
