@@ -45,7 +45,9 @@ export default class BodyMap {
     this.brushSize = 20;
     this.brushBurns = [];
     this.isDrawing = false;
-    this.totalArea = 1500 * 1100;
+    this.vbWidth = 1500;
+    this.vbHeight = 1100;
+    this.totalArea = this.vbWidth * this.vbHeight;
 
     // dragging
     this.drag = null;
@@ -97,7 +99,11 @@ export default class BodyMap {
     this.brushSizeInput = $('#brushSize');
 
     const vb = this.svg?.getAttribute('viewBox')?.split(/\s+/).map(Number);
-    if (vb) this.totalArea = vb[2] * vb[3];
+    if (vb) {
+      this.vbWidth = vb[2];
+      this.vbHeight = vb[3];
+      this.totalArea = this.vbWidth * this.vbHeight;
+    }
 
     this.brushLayer = document.createElementNS('http://www.w3.org/2000/svg', 'g');
     this.brushLayer.setAttribute('id', 'burnBrushes');
@@ -288,8 +294,7 @@ export default class BodyMap {
     circle.classList.add('burn-area');
     circle.dataset.id = mid;
     this.brushLayer.appendChild(circle);
-    const area = Math.PI * r * r;
-    this.brushBurns.push({ id: mid, area });
+    this.brushBurns.push({ id: mid, x, y, r });
     if (record) {
       this.undoStack.push({ type: 'brush-add', brush: { id: mid, x, y, r } });
       this.redoStack = [];
@@ -399,10 +404,33 @@ export default class BodyMap {
     this.saveCb();
   }
 
-  /** Compute total burned area percentage. */
+  /**
+   * Compute total burned area percentage using union of brush circles.
+   * Circles are rasterised onto a virtual pixel grid matching the SVG
+   * viewBox.  Each covered pixel is counted once to avoid double counting
+   * overlapping brushes.
+   */
   burnArea() {
-    const brushTotal = this.brushBurns.reduce((sum, b) => sum + b.area, 0);
-    return this.totalArea ? (brushTotal / this.totalArea) * 100 : 0;
+    if (!this.totalArea || this.brushBurns.length === 0) return 0;
+    const pixels = new Set();
+    for (const b of this.brushBurns) {
+      const r = Math.round(b.r);
+      const r2 = r * r;
+      const cx = Math.round(b.x);
+      const cy = Math.round(b.y);
+      const minX = Math.max(0, cx - r);
+      const maxX = Math.min(this.vbWidth - 1, cx + r);
+      const minY = Math.max(0, cy - r);
+      const maxY = Math.min(this.vbHeight - 1, cy + r);
+      for (let x = minX; x <= maxX; x++) {
+        for (let y = minY; y <= maxY; y++) {
+          const dx = x - cx;
+          const dy = y - cy;
+          if (dx * dx + dy * dy <= r2) pixels.add(`${x},${y}`);
+        }
+      }
+    }
+    return (pixels.size / this.totalArea) * 100;
   }
 
   /** Display burn percentage in the UI. */
