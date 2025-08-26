@@ -195,7 +195,7 @@ export async function initSessions(){
 }
 
 const IMAGING_GROUPS=['#imaging_ct','#imaging_xray','#imaging_other_group'];
-const CHIP_GROUPS=['#chips_red','#chips_yellow',...IMAGING_GROUPS,'#labs_basic','#a_airway_group','#b_breath_left_group','#b_breath_right_group','#d_pupil_left_group','#d_pupil_right_group','#spr_decision_group'];
+const CHIP_GROUPS=['#chips_red','#chips_yellow',...IMAGING_GROUPS,'#labs_basic','#a_airway_group','#b_breath_left_group','#b_breath_right_group','#c_pulse_radial_group','#c_pulse_femoral_group','#c_skin_temp_group','#c_skin_color_group','#d_pupil_left_group','#d_pupil_right_group','#spr_decision_group'];
 const FIELD_SELECTORS='input[type="text"],input[type="number"],input[type="time"],input[type="date"],textarea,select';
 
 export function saveAll(){
