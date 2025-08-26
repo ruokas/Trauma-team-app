@@ -31,7 +31,8 @@ const bloodGroupWrap=$('#bloodGroup'); if(bloodGroupWrap){ BLOOD_GROUPS.forEach(
 const bloodUnitsInput=$('#bloodUnits');
 const addBloodOrderBtn=$('#addBloodOrder');
 if(bloodUnitsInput && bloodGroupWrap && addBloodOrderBtn){
-  addBloodOrderBtn.addEventListener('click',()=>{
+  const addOrder=e=>{
+    e.preventDefault();
     const units=bloodUnitsInput.value.trim();
     const groupEl=$$('.chip',bloodGroupWrap).find(c=>isChipActive(c));
     const group=groupEl?.dataset.value||'';
@@ -47,7 +48,9 @@ if(bloodUnitsInput && bloodGroupWrap && addBloodOrderBtn){
     saveAll();
     bloodUnitsInput.value='';
     $$('.chip',bloodGroupWrap).forEach(c=>setChipActive(c,false));
-  });
+  };
+  addBloodOrderBtn.addEventListener('click',addOrder);
+  bloodUnitsInput.addEventListener('keydown',e=>{ if(e.key==='Enter') addOrder(e); });
 }
 const fastAreas=[
   {name:'Perikardas', marker:'skystis'},
