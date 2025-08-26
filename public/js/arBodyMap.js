@@ -4,12 +4,22 @@ export function initARBodyMap(onChange){
   const btn = document.getElementById('btnARMode');
   if(!btn || typeof navigator === 'undefined' || !navigator.xr) return;
 
+  // Hide the AR button when immersive AR sessions aren't supported.
+  if(typeof navigator.xr.isSessionSupported === 'function'){
+    navigator.xr.isSessionSupported('immersive-ar').then(supported => {
+      if(!supported) btn.style.display = 'none';
+    });
+  }
+
   const save = typeof onChange === 'function' ? onChange : () => {};
   let session = null;
 
   async function start(){
     try{
-      session = await navigator.xr.requestSession('immersive-ar', { requiredFeatures:['hit-test'] });
+      // Request a basic immersive AR session. Using unsupported required
+      // features (e.g., "hit-test") triggers a NotSupportedError on some
+      // devices, so we avoid specifying them here.
+      session = await navigator.xr.requestSession('immersive-ar');
       btn.classList.add('active');
 
       const canvas = document.createElement('canvas');
