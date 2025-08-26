@@ -275,7 +275,8 @@ export function loadAll(){
   };
   if(authToken && typeof fetch === 'function'){
     fetch(`/api/sessions/${currentSessionId}/data`, { headers:{ 'Authorization': 'Bearer ' + authToken }})
-      .then(r=>r.json()).then(d=>{ localStorage.setItem(sessionKey(), JSON.stringify(d)); apply(d); })
+      .then(r=>{ if(!r.ok) throw new Error(r.status); return r.json(); })
+      .then(d=>{ localStorage.setItem(sessionKey(), JSON.stringify(d)); apply(d); })
       .catch(fallback);
   } else {
     fallback();
