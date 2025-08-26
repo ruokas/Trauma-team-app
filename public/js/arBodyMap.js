@@ -1,3 +1,5 @@
+import { notify } from './alerts.js';
+
 let annotations = [];
 
 export function initARBodyMap(onChange){
@@ -12,6 +14,7 @@ export function initARBodyMap(onChange){
   let session = null;
 
   async function start(){
+    btn.disabled = true;
     try{
       // Request an immersive AR session with hit-test and DOM overlay support.
       session = await navigator.xr.requestSession('immersive-ar', {
@@ -20,6 +23,7 @@ export function initARBodyMap(onChange){
         domOverlay: { root: document.body }
       });
       btn.classList.add('active');
+      btn.disabled = false;
 
       const canvas = document.createElement('canvas');
       canvas.id = 'arCanvas';
@@ -84,18 +88,18 @@ export function initARBodyMap(onChange){
         renderer.setAnimationLoop(null);
         canvas.remove();
         btn.classList.remove('active');
+        btn.disabled = false;
         session = null;
       });
     }catch(err){
-      if(err.name === 'NotSupportedError'){
-        if(typeof window !== 'undefined' && typeof window.alert === 'function'){
-          window.alert('AR mode is unavailable on this device.');
-        }
-      }else{
-        console.error(err);
-      }
+      notify({
+        message: 'Unable to start AR session. AR not supported or permission denied.',
+        type: 'error'
+      });
+      console.error(err);
       session = null;
       btn.classList.remove('active');
+      btn.disabled = false;
     }
   }
 
