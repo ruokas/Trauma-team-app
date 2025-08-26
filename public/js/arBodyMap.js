@@ -71,16 +71,15 @@ export function initARBodyMap(onChange){
         };
         session.addEventListener('select', onSelect);
 
-      const loop = (t,frame) => {
-        session.requestAnimationFrame(loop);
+      renderer.setAnimationLoop((t, frame) => {
         const pose = frame.getViewerPose(refSpace);
-        if(pose){
-          renderer.render(scene,camera);
+        if (pose) {
+          renderer.render(scene, camera);
         }
-      };
-      session.requestAnimationFrame(loop);
+      });
 
       session.addEventListener('end', () => {
+        renderer.setAnimationLoop(null);
         canvas.remove();
         btn.classList.remove('active');
         session = null;
