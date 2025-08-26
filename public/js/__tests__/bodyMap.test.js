@@ -60,6 +60,16 @@ describe('BodyMap instance', () => {
       expect(z['front-torso'].label).toBe(frontZone.label);
     });
 
+    test('zoneCounts calculates burn coverage', () => {
+      setupDom();
+      const bm = new BodyMap();
+      bm.init(() => {});
+      bm.addBrush(24, 30, 5); // inside front-torso
+      const z = bm.zoneCounts();
+      const expected = bm.burnArea() * (100 / frontZone.area);
+      expect(z['front-torso'].burned).toBeCloseTo(expected, 2);
+    });
+
   test('pointer events move mark and save', () => {
     setupDom();
     const save = jest.fn();
