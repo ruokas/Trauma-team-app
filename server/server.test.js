@@ -88,6 +88,25 @@ describe('server API', () => {
     expect(fakeDB.sessions).toHaveLength(0);
   });
 
+  test('archive and unarchive session', async () => {
+    const token = await login('harry');
+    const create = await request(app)
+      .post('/api/sessions')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ name: 'arch' });
+    const id = create.body.id;
+    const archive = await request(app)
+      .post(`/api/sessions/${id}/archive`)
+      .set('Authorization', `Bearer ${token}`);
+    expect(archive.statusCode).toBe(200);
+    expect(fakeDB.sessions[0].archived).toBe(true);
+    const unarchive = await request(app)
+      .post(`/api/sessions/${id}/unarchive`)
+      .set('Authorization', `Bearer ${token}`);
+    expect(unarchive.statusCode).toBe(200);
+    expect(fakeDB.sessions[0].archived).toBe(false);
+  });
+
   test('requires name when creating session', async () => {
     const token = await login('dave');
     const res = await request(app)

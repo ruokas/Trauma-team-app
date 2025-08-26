@@ -13,7 +13,11 @@ const DISABLE_AUTH = process.env.DISABLE_AUTH === 'true';
 async function loadDB(){
   try {
     const data = await fs.promises.readFile(DB_FILE, 'utf8');
-    return JSON.parse(data);
+    const parsed = JSON.parse(data);
+    if (!Array.isArray(parsed.sessions)) parsed.sessions = [];
+    // Ensure all sessions have an archived flag for backwards compatibility
+    parsed.sessions = parsed.sessions.map(s => ({ ...s, archived: !!s.archived }));
+    return parsed;
   } catch (e) {
     console.error('Failed to load DB', e);
     return { sessions: [], data: {}, users: [] };
@@ -44,12 +48,13 @@ const sessionSchema = Joi.object({
   name: Joi.string().min(1).max(100).required()
 });
 
-const sessionsListSchema = Joi.array().items(
-  Joi.object({
-    id: Joi.string().required(),
-    name: Joi.string().min(1).max(100).required()
-  })
-);
+const sessionListItemSchema = Joi.object({
+  id: Joi.string().required(),
+  name: Joi.string().min(1).max(100).required(),
+  archived: Joi.boolean().required()
+});
+
+const sessionsListSchema = Joi.array().items(sessionListItemSchema);
 
 const sessionDataSchema = Joi.object().unknown(true);
 
@@ -114,7 +119,7 @@ app.post('/api/sessions', auth, async (req, res) => {
   if (error) return res.status(400).json({ error: error.message });
   const { name } = value;
   const id = crypto.randomBytes(6).toString('hex');
-  const session = { id, name };
+  const session = { id, name, archived: false };
   db.sessions.push(session);
   await saveDB();
   io.emit('sessions', db.sessions);
@@ -128,6 +133,26 @@ app.put('/api/sessions/:id', auth, async (req, res) => {
   const { error, value } = sessionSchema.validate(req.body);
   if (error) return res.status(400).json({ error: error.message });
   session.name = value.name;
+  await saveDB();
+  io.emit('sessions', db.sessions);
+  res.json({ ok: true });
+});
+
+app.post('/api/sessions/:id/archive', auth, async (req, res) => {
+  const id = req.params.id;
+  const session = db.sessions.find(s => s.id === id);
+  if (!session) return res.status(404).json({ error: 'Not found' });
+  session.archived = true;
+  await saveDB();
+  io.emit('sessions', db.sessions);
+  res.json({ ok: true });
+});
+
+app.post('/api/sessions/:id/unarchive', auth, async (req, res) => {
+  const id = req.params.id;
+  const session = db.sessions.find(s => s.id === id);
+  if (!session) return res.status(404).json({ error: 'Not found' });
+  session.archived = false;
   await saveDB();
   io.emit('sessions', db.sessions);
   res.json({ ok: true });
