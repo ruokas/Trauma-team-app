@@ -14,6 +14,7 @@ import bodyMap from './bodyMap.js';
 import { generateReport, gksSum } from './report.js';
 import { setupHeaderActions } from './headerActions.js';
 import { TEAM_ROLES } from './constants.js';
+import { initCirculationChecks } from './circulation.js';
 export { validateVitals };
 
 /* ===== Imaging / Labs / Team ===== */
@@ -316,10 +317,7 @@ async function init(){
     if(mapEl) mapEl.textContent=map;
     if(siEl) siEl.textContent=si;
   };
-  ['#c_hr','#c_sbp','#c_dbp'].forEach(sel=>{
-    const el=$(sel);
-    if(el) el.addEventListener('input', updateCirculationMetrics);
-  });
+  initCirculationChecks(updateCirculationMetrics);
   updateCirculationMetrics();
     const updateDGksTotal=()=>{
       $('#d_gks_total').textContent=gksSum($('#d_gksa').value,$('#d_gksk').value,$('#d_gksm').value);
