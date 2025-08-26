@@ -11,7 +11,6 @@ import { initTopbar } from './components/topbar.js';
 import { initCollapsibles } from './sections.js';
 import { connectSocket, initSessions, fetchUsers, initTheme, saveAll, loadAll } from './sessionManager.js';
 import bodyMap from './bodyMap.js';
-import { initARBodyMap } from './arBodyMap.js';
 import { generateReport, gksSum } from './report.js';
 import { setupHeaderActions } from './headerActions.js';
 import { TEAM_ROLES } from './constants.js';
@@ -263,7 +262,6 @@ async function init(){
   initTabs();
   initCollapsibles();
   bodyMap.init(saveAllDebounced);
-  initARBodyMap(saveAllDebounced);
   initChips(saveAllDebounced);
   initAutoActivate(saveAllDebounced);
   initActions(saveAllDebounced);
