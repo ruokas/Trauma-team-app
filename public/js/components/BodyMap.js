@@ -135,6 +135,7 @@ export default class BodyMap {
         path.classList.add('zone');
         path.dataset.zone = z.id;
         path.dataset.area = z.area;
+        if (z.bbox) path.dataset.bbox = z.bbox.join(',');
         path.setAttribute('d', z.path);
         path.setAttribute('aria-label', z.label);
         const title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
@@ -573,7 +574,8 @@ export default class BodyMap {
       y: +c.getAttribute('cy'),
       r: +c.getAttribute('r')
     }));
-    return JSON.stringify({ tool: this.activeTool, marks, brushes });
+    const zones = this.zoneCounts();
+    return JSON.stringify({ tool: this.activeTool, marks, brushes, zones });
   }
 
   /** Load previously serialized state. */
@@ -615,15 +617,98 @@ export default class BodyMap {
   zoneCounts() {
     const res = {};
     const types = Object.values(TOOLS).map(t => t.char);
+
+    // Initialise result with all zones so burns can be reported even
+    // if no marks have been added.
+    this.zoneMap.forEach((_, id) => {
+      res[id] = { label: ZONE_LABELS[id] || id, burned: 0 };
+      types.forEach(t => (res[id][t] = 0));
+    });
+
+    // Aggregate marks per zone
     [...this.marks.querySelectorAll('use')].forEach(u => {
       const z = u.dataset.zone;
-      if (!z) return;
-      if (!res[z]) {
-        res[z] = { label: ZONE_LABELS[z] || z };
-        types.forEach(t => (res[z][t] = 0));
-      }
+      if (!z || !res[z]) return;
       res[z][u.dataset.type] = (res[z][u.dataset.type] || 0) + 1;
     });
+
+    // Calculate burn coverage for each zone by rasterising the burn
+    // brushes and intersecting with zone paths.  Each pixel is counted
+    // once per zone to avoid double counting overlapping brushes.
+    if (this.brushBurns.length && this.zoneMap.size) {
+      const zonePixels = new Map();
+      this.zoneMap.forEach((_, id) => zonePixels.set(id, new Set()));
+
+      const pt = this.svg?.createSVGPoint ? this.svg.createSVGPoint() : null;
+      const inZone = (el, x, y) => {
+        if (!el) return false;
+        if (el.dataset.bbox) {
+          const [minX, minY, maxX, maxY] = el.dataset.bbox.split(',').map(Number);
+          if (x >= minX && x <= maxX && y >= minY && y <= maxY) return true;
+        }
+        if (typeof el.isPointInFill === 'function' && pt) {
+          pt.x = x;
+          pt.y = y;
+          try { return el.isPointInFill(pt); } catch { return false; }
+        }
+        if (typeof el.getBBox === 'function') {
+          try {
+            const b = el.getBBox();
+            if (b && b.width && b.height) {
+              return x >= b.x && x <= b.x + b.width && y >= b.y && y <= b.y + b.height;
+            }
+          } catch {
+            // ignore
+          }
+        }
+        const d = el.getAttribute('d');
+        if (d) {
+          const nums = d.match(/-?\d*\.?\d+/g)?.map(Number) || [];
+          const xs = [];
+          const ys = [];
+          for (let i = 0; i < nums.length; i += 2) {
+            xs.push(nums[i]);
+            if (i + 1 < nums.length) ys.push(nums[i + 1]);
+          }
+          if (xs.length && ys.length) {
+            const minX = Math.min(...xs);
+            const maxX = Math.max(...xs);
+            const minY = Math.min(...ys);
+            const maxY = Math.max(...ys);
+            return x >= minX && x <= maxX && y >= minY && y <= maxY;
+          }
+        }
+        return false;
+      };
+
+      for (const b of this.brushBurns) {
+        const r = Math.round(b.r);
+        const r2 = r * r;
+        const cx = Math.round(b.x);
+        const cy = Math.round(b.y);
+        const minX = Math.max(0, cx - r);
+        const maxX = Math.min(this.vbWidth - 1, cx + r);
+        const minY = Math.max(0, cy - r);
+        const maxY = Math.min(this.vbHeight - 1, cy + r);
+        for (let x = minX; x <= maxX; x++) {
+          for (let y = minY; y <= maxY; y++) {
+            const dx = x - cx;
+            const dy = y - cy;
+            if (dx * dx + dy * dy > r2) continue;
+            this.zoneMap.forEach((el, id) => {
+              if (inZone(el, x, y)) zonePixels.get(id).add(`${x},${y}`);
+            });
+          }
+        }
+      }
+
+      this.zoneMap.forEach((el, id) => {
+        const pixels = zonePixels.get(id).size;
+        const zoneArea = (parseFloat(el.dataset.area) / 100) * this.totalArea;
+        res[id].burned = zoneArea ? (pixels / zoneArea) * 100 : 0;
+      });
+    }
+
     return res;
   }
 }
