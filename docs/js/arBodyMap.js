@@ -4,12 +4,9 @@ export function initARBodyMap(onChange){
   const btn = document.getElementById('btnARMode');
   if(!btn || typeof navigator === 'undefined' || !navigator.xr) return;
 
-  // Hide the AR button when immersive AR sessions aren't supported.
-  if(typeof navigator.xr.isSessionSupported === 'function'){
-    navigator.xr.isSessionSupported('immersive-ar').then(supported => {
-      if(!supported) btn.style.display = 'none';
-    });
-  }
+  // Previously we hid the AR button when immersive AR sessions weren't supported.
+  // Keeping it visible allows users to try entering AR mode even on devices
+  // where support detection is unreliable.
 
   const save = typeof onChange === 'function' ? onChange : () => {};
   let session = null;
