@@ -28,8 +28,8 @@ export function setupHeaderActions({ validateForm, saveAll }){
   const btnClear=$('#btnClear');
   if(btnClear) btnClear.addEventListener('click',async()=>{ if(await notify({type:'confirm', message:'Išvalyti viską?'})){ localStorage.removeItem(sessionKey()); location.reload(); }});
 
-  const btnPdf=$('#btnPdf');
-  if(btnPdf) btnPdf.addEventListener('click', async () => {
+  const pdfButtons=[$('#btnPdf'), $('#btnPdfReport')].filter(Boolean);
+  pdfButtons.forEach(btn=>btn.addEventListener('click', async () => {
     if(!validateForm()) return;
     showTab('Santrauka');
     const text = $('#output').value || '';
@@ -44,10 +44,10 @@ export function setupHeaderActions({ validateForm, saveAll }){
       notify({message:'Nepavyko sugeneruoti PDF.', type:'error'});
       console.error('PDF generation failed', e);
     }
-  });
+  }));
 
-  const btnPrint=$('#btnPrint');
-  if(btnPrint) btnPrint.addEventListener('click', async () => {
+  const printButtons=[$('#btnPrint'), $('#btnPrintReport')].filter(Boolean);
+  printButtons.forEach(btn=>btn.addEventListener('click', async () => {
     if(!validateForm()) return;
     const prevTab=localStorage.getItem('v10_activeTab');
     showTab('Santrauka');
@@ -75,7 +75,7 @@ export function setupHeaderActions({ validateForm, saveAll }){
       window.print();
     }
     if(prevTab) showTab(prevTab);
-  });
+  }));
 
   const menu=document.querySelector('.more-actions .menu');
   if(menu && getAuthToken() && !document.getElementById('btnLogout')){
