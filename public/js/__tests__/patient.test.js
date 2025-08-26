@@ -143,7 +143,7 @@ describe('patient fields', () => {
     expect(mockSave).toHaveBeenCalledWith('report.pdf');
   });
 
-  test('print window contains body map', () => {
+  test('print window contains body map', async () => {
     const newDoc = document.implementation.createHTMLDocument();
     const win = {
       document: newDoc,
@@ -156,6 +156,7 @@ describe('patient fields', () => {
     document.getElementById('patient_sex').value='M';
     document.getElementById('patient_history').value='H123';
     document.getElementById('btnPrint').click();
+    await new Promise(resolve => setTimeout(resolve, 0));
     expect(openMock).toHaveBeenCalled();
     expect(win.focus).toHaveBeenCalled();
     expect(win.print).toHaveBeenCalled();

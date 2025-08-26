@@ -418,10 +418,12 @@ export default class BodyMap {
     if (this.btnRedo) this.btnRedo.disabled = this.redoStack.length === 0;
   }
 
-  /** Export a self-contained SVG with embedded silhouettes. */
-  async exportSvg() {
-    const clone = this.svg.cloneNode(true);
-    const uses = [...clone.querySelectorAll('use[data-src]')];
+  /**
+   * Replace external <use> references with embedded elements so the
+   * resulting SVG is self-contained.
+   */
+  async embedSilhouettes(svg) {
+    const uses = [...svg.querySelectorAll('use[data-src]')];
     for (const u of uses) {
       const ref = u.dataset.src;
       if (!ref) continue;
@@ -445,8 +447,14 @@ export default class BodyMap {
         console.error(e);
       }
     }
+  }
+
+  /** Export a self-contained SVG with embedded silhouettes. */
+  async exportSvg() {
+    const clone = this.svg.cloneNode(true);
+    await this.embedSilhouettes(clone);
     const style = document.createElement('style');
-      style.textContent = `#bodySvg{display:block;width:100%;height:auto;aspect-ratio:1500/1100;max-width:40rem;max-height:80vh;border:1px solid #2d3b4f;border-radius:0.75rem;background:#0b141e}
+    style.textContent = `#bodySvg{display:block;width:100%;height:auto;aspect-ratio:1500/1100;max-width:40rem;max-height:80vh;border:1px solid #2d3b4f;border-radius:0.75rem;background:#0b141e}
   .silhouette{fill:none;stroke:#c2d0e0;stroke-width:2}
   .mark-w{stroke:#ef5350;stroke-width:3;fill:none}
   .mark-b{fill:#64b5f6}
