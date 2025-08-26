@@ -301,18 +301,22 @@ async function init(){
       };
       ['#spr_gksa','#spr_gksk','#spr_gksm'].forEach(sel=>$(sel).addEventListener('input', updateSprGksTotal));
     }
-    $('#btnGmpNow').addEventListener('click', ()=>{ $('#gmp_time').value=nowHM(); saveAll(); });
-    $('#btnSprNow').addEventListener('click', ()=>{ $('#spr_time').value=nowHM(); saveAll(); });
-  $('#btnOxygen').addEventListener('click', ()=>{
-    const box = $('#oxygenFields');
-    const show = getComputedStyle(box).display === 'none';
-    box.style.display = show ? 'flex' : 'none';
+    const btnGmpNow=$('#btnGmpNow');
+    if(btnGmpNow) btnGmpNow.addEventListener('click',()=>{ $('#gmp_time').value=nowHM(); saveAll(); });
+    const btnSprNow=$('#btnSprNow');
+    if(btnSprNow) btnSprNow.addEventListener('click',()=>{ $('#spr_time').value=nowHM(); saveAll(); });
+  const btnOxygen=$('#btnOxygen');
+  if(btnOxygen) btnOxygen.addEventListener('click',()=>{
+    const box=$('#oxygenFields');
+    const show=getComputedStyle(box).display==='none';
+    box.style.display=show?'flex':'none';
     saveAll();
   });
-  $('#btnDPV').addEventListener('click', ()=>{
-    const box = $('#dpvFields');
-    const show = getComputedStyle(box).display === 'none';
-    box.style.display = show ? 'flex' : 'none';
+  const btnDPV=$('#btnDPV');
+  if(btnDPV) btnDPV.addEventListener('click',()=>{
+    const box=$('#dpvFields');
+    const show=getComputedStyle(box).display==='none';
+    box.style.display=show?'flex':'none';
     saveAll();
   });
     $('#spr_skyrius').addEventListener('change', e=>{
