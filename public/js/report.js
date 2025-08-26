@@ -1,8 +1,8 @@
 import { $ } from './utils.js';
 import { listChips } from './chips.js';
 import bodyMap, { TOOLS } from './bodyMap.js';
+import { TEAM_ROLES } from './constants.js';
 
-const TEAM_ROLES=['Komandos vadovas','Raštininkas','ED gydytojas 1','ED gydytojas 2','Slaugytoja 1','Slaugytoja 2','Anesteziologas','Chirurgas','Ortopedas'];
 const fastAreas=[
   {name:'Perikardas', marker:'skystis'},
   {name:'Dešinė pleura', marker:'skystis ar oras'},

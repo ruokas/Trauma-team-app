@@ -14,6 +14,7 @@ import bodyMap from './bodyMap.js';
 import { initARBodyMap } from './arBodyMap.js';
 import { generateReport, gksSum } from './report.js';
 import { setupHeaderActions } from './headerActions.js';
+import { TEAM_ROLES } from './constants.js';
 export { validateVitals };
 
 /* ===== Imaging / Labs / Team ===== */
@@ -21,7 +22,6 @@ const IMG_CT=['Galvos KT','Kaklo KT','Viso kūno KT'];
 const IMG_XRAY=['Krūtinės Ro','Dubens Ro'];
 const LABS=['BKT','Biocheminis tyrimas','Krešumai','Fibrinogenas','ROTEM','Kraujo grupė','Kraujo dujos'];
 const BLOOD_GROUPS=['0-','0+','A-','A+','B-','B+','AB-','AB+'];
-const TEAM_ROLES=['Komandos vadovas','Raštininkas','ED gydytojas 1','ED gydytojas 2','Slaugytoja 1','Slaugytoja 2','Anesteziologas','Chirurgas','Ortopedas'];
 
 const imgCtWrap=$('#imaging_ct'); IMG_CT.forEach(n=>{const s=document.createElement('span'); s.className='chip'; s.dataset.value=n; s.textContent=n; addChipIndicators(s); imgCtWrap.appendChild(s);});
 const imgXrayWrap=$('#imaging_xray'); IMG_XRAY.forEach(n=>{const s=document.createElement('span'); s.className='chip'; s.dataset.value=n; s.textContent=n; addChipIndicators(s); imgXrayWrap.appendChild(s);});
