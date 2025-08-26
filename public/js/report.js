@@ -52,12 +52,21 @@ export function generateReport(){
   const chr=$('#c_hr').value, csbp=$('#c_sbp').value, cdbp=$('#c_dbp').value;
   const cmap = (csbp && cdbp) ? Math.round((+csbp + 2*+cdbp)/3) : '';
   const csi = (chr && csbp) ? (+chr / +csbp).toFixed(2) : '';
+  const radial=getSingleValue('#c_pulse_radial_group');
+  const femoral=getSingleValue('#c_pulse_femoral_group');
+  const skinTemp=getSingleValue('#c_skin_temp_group');
+  const skinColor=getSingleValue('#c_skin_color_group');
+  const skinParts=[skinTemp, skinColor].filter(Boolean);
+  const skin=skinParts.length?('Oda: '+skinParts.join(', ')):null;
   out.push('\n--- C Kraujotaka ---'); out.push([
     chr?('ŠSD '+chr+'/min'):null,
     (csbp||cdbp)?('AKS '+csbp+'/'+cdbp):null,
     cmap?('MAP '+cmap):null,
     csi?('SI '+csi):null,
-    $('#c_caprefill').value?('KPL '+$('#c_caprefill').value+'s'):null
+    $('#c_caprefill').value?('KPL '+$('#c_caprefill').value+'s'):null,
+    radial?('Radialinis pulsas '+radial):null,
+    femoral?('Femoralis pulsas '+femoral):null,
+    skin
   ].filter(Boolean).join('; '));
 
   const dgks=gksSum($('#d_gksa').value,$('#d_gksk').value,$('#d_gksm').value); const left=getSingleValue('#d_pupil_left_group'); const right=getSingleValue('#d_pupil_right_group');

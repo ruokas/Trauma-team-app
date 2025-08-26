@@ -194,9 +194,37 @@
       <div class="grid cols-3 cols-auto">
         <div><label for="c_hr">ŠSD (k./min)</label><input id="c_hr" type="number" min="0" max="250"></div>
         <div class="row"><div class="flex-1"><label for="c_sbp">AKS s</label><input id="c_sbp" type="number" min="0" max="300"></div><div class="flex-1"><label for="c_dbp">AKS d</label><input id="c_dbp" type="number" min="0" max="200"></div></div>
-        <div><label for="c_caprefill">KPL (sek.)</label><input id="c_caprefill" type="number" step="0.1" min="0" max="20"></div>
-      </div>
-    </section>
+          <div><label for="c_caprefill">KPL (sek.)</label><input id="c_caprefill" type="number" step="0.1" min="0" max="20"></div>
+          <div>
+            <label>Radialinis pulsas</label>
+            <div class="chip-group" id="c_pulse_radial_group" data-single="true">
+              <button type="button" class="chip" data-value="Stiprus" aria-pressed="false">Stiprus</button>
+              <button type="button" class="chip red" data-value="Silpnas" aria-pressed="false">Silpnas</button>
+            </div>
+          </div>
+          <div>
+            <label>Femoralis pulsas</label>
+            <div class="chip-group" id="c_pulse_femoral_group" data-single="true">
+              <button type="button" class="chip" data-value="Stiprus" aria-pressed="false">Stiprus</button>
+              <button type="button" class="chip red" data-value="Silpnas" aria-pressed="false">Silpnas</button>
+            </div>
+          </div>
+          <div>
+            <label>Odos temp.</label>
+            <div class="chip-group" id="c_skin_temp_group" data-single="true">
+              <button type="button" class="chip" data-value="Šilta" aria-pressed="false">Šilta</button>
+              <button type="button" class="chip red" data-value="Šalta" aria-pressed="false">Šalta</button>
+            </div>
+          </div>
+          <div>
+            <label>Odos spalva</label>
+            <div class="chip-group" id="c_skin_color_group" data-single="true">
+              <button type="button" class="chip" data-value="Blyški" aria-pressed="false">Blyški</button>
+              <button type="button" class="chip red" data-value="Paraudusi" aria-pressed="false">Paraudusi</button>
+            </div>
+          </div>
+        </div>
+      </section>
 
     <!-- D -->
     <section class="card view" id="view-d" data-tab="D – Sąmonė">

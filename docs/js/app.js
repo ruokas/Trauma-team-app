@@ -249,6 +249,20 @@ async function init(){
     const el=$(sel);
     if(el) el.addEventListener('change',()=>{ if(el.value) logEvent('vital', label, el.value); });
   });
+
+  const chipVitals = {
+    '#c_pulse_radial_group': 'Radialinis pulsas',
+    '#c_pulse_femoral_group': 'Femoralis pulsas',
+    '#c_skin_temp_group': 'Odos temp.',
+    '#c_skin_color_group': 'Odos spalva'
+  };
+  Object.entries(chipVitals).forEach(([sel,label])=>{
+    const group=$(sel);
+    if(group) group.addEventListener('click',e=>{
+      const chip=e.target.closest('.chip');
+      if(chip && isChipActive(chip)) logEvent('vital', label, chip.dataset.value);
+    });
+  });
     const updateDGksTotal=()=>{
       $('#d_gks_total').textContent=gksSum($('#d_gksa').value,$('#d_gksk').value,$('#d_gksm').value);
     };

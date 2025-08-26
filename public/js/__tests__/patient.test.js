@@ -38,11 +38,29 @@ const setupDom = () => {
   `;
   const divIds = [
     'chips_red','chips_yellow','imaging_ct','imaging_xray','imaging_other_group','labs_basic',
-    'a_airway_group','b_breath_left_group','b_breath_right_group','d_pupil_left_group','d_pupil_right_group','spr_decision_group',
+    'a_airway_group','b_breath_left_group','b_breath_right_group',
+    'c_pulse_radial_group','c_pulse_femoral_group','c_skin_temp_group','c_skin_color_group',
+    'd_pupil_left_group','d_pupil_right_group','spr_decision_group',
     'pain_meds','bleeding_meds','other_meds','procedures','fastGrid','teamGrid','oxygenFields','dpvFields',
     'spr_skyrius_container','spr_ligonine_container','imaging_other'
   ];
   divIds.forEach(id=>{ const d=document.createElement('div'); d.id=id; document.body.appendChild(d); });
+  const radial=document.getElementById('c_pulse_radial_group');
+  radial.className='chip-group';
+  radial.dataset.single='true';
+  radial.innerHTML='<button class="chip" data-value="Stiprus"></button><button class="chip" data-value="Silpnas"></button>';
+  const femoral=document.getElementById('c_pulse_femoral_group');
+  femoral.className='chip-group';
+  femoral.dataset.single='true';
+  femoral.innerHTML='<button class="chip" data-value="Stiprus"></button><button class="chip" data-value="Silpnas"></button>';
+  const skinTemp=document.getElementById('c_skin_temp_group');
+  skinTemp.className='chip-group';
+  skinTemp.dataset.single='true';
+  skinTemp.innerHTML='<button class="chip" data-value="Šilta"></button><button class="chip" data-value="Šalta"></button>';
+  const skinColor=document.getElementById('c_skin_color_group');
+  skinColor.className='chip-group';
+  skinColor.dataset.single='true';
+  skinColor.innerHTML='<button class="chip" data-value="Blyški"></button><button class="chip" data-value="Paraudusi"></button>';
   const textInputs=['a_notes','gmp_mechanism','gmp_notes','b_oxygen_type','b_dpv_fio2','d_pupil_left_note','d_pupil_right_note','d_notes','e_back_notes','e_other','spr_skyrius_kita','spr_ligonine','patient_history'];
   textInputs.forEach(id=>{ const i=document.createElement('input'); i.id=id; i.type='text'; document.body.appendChild(i); });
   const numberInputs=['b_rr','b_spo2','b_oxygen_liters','c_hr','c_sbp','c_dbp','c_caprefill','d_gksa','d_gksk','d_gksm','e_temp',
@@ -105,6 +123,35 @@ describe('patient fields', () => {
     expect(report).toContain('25');
     expect(report).toContain('M');
     expect(report).toContain('H123');
+  });
+
+  test('new circulation fields persist and report', () => {
+    const { setChipActive } = require('../chips.js');
+    const radial=document.querySelector('#c_pulse_radial_group .chip[data-value="Stiprus"]');
+    const femoral=document.querySelector('#c_pulse_femoral_group .chip[data-value="Silpnas"]');
+    const skinT=document.querySelector('#c_skin_temp_group .chip[data-value="Šilta"]');
+    const skinC=document.querySelector('#c_skin_color_group .chip[data-value="Blyški"]');
+    setChipActive(radial,true);
+    setChipActive(femoral,true);
+    setChipActive(skinT,true);
+    setChipActive(skinC,true);
+    saveAll();
+    const stored=JSON.parse(localStorage.getItem('trauma_v10_test'));
+    expect(stored['chips:#c_pulse_radial_group']).toEqual(['Stiprus']);
+    expect(stored['chips:#c_pulse_femoral_group']).toEqual(['Silpnas']);
+    expect(stored['chips:#c_skin_temp_group']).toEqual(['Šilta']);
+    expect(stored['chips:#c_skin_color_group']).toEqual(['Blyški']);
+    document.querySelectorAll('.chip.active').forEach(c=>c.classList.remove('active'));
+    loadAll();
+    expect(document.querySelector('#c_pulse_radial_group .chip.active').dataset.value).toBe('Stiprus');
+    expect(document.querySelector('#c_pulse_femoral_group .chip.active').dataset.value).toBe('Silpnas');
+    expect(document.querySelector('#c_skin_temp_group .chip.active').dataset.value).toBe('Šilta');
+    expect(document.querySelector('#c_skin_color_group .chip.active').dataset.value).toBe('Blyški');
+    generateReport();
+    const report=document.getElementById('output').value;
+    expect(report).toContain('Radialinis pulsas Stiprus');
+    expect(report).toContain('Femoralis pulsas Silpnas');
+    expect(report).toContain('Oda: Šilta, Blyški');
   });
 
   test('GCS panel focuses first select and closes on Escape', () => {
