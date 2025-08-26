@@ -223,16 +223,11 @@ export function saveAll(){
       method: 'PUT',
       headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
       body: JSON.stringify(data)
-    }).then(()=>{
-      if(statusEl){
-        statusEl.textContent='Saved';
-        statusEl.classList.remove('offline');
-      }
-    }).catch(()=>{
-      if(statusEl){
-        statusEl.textContent='Save failed';
-        statusEl.classList.add('offline');
-      }
+    }).then(res => {
+      if(!res.ok) throw new Error(res.status);
+      if(statusEl){ statusEl.textContent='Saved'; statusEl.classList.remove('offline'); }
+    }).catch(() => {
+      if(statusEl){ statusEl.textContent='Save failed'; statusEl.classList.add('offline'); }
     });
   } else if(statusEl){
     statusEl.textContent='Saved';
