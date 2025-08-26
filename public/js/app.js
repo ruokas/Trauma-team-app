@@ -290,6 +290,23 @@ async function init(){
     const el=$(sel);
     if(el) el.addEventListener('change',()=>{ if(el.value) logEvent('vital', label, el.value); });
   });
+
+  const updateCirculationMetrics=()=>{
+    const hr=parseFloat($('#c_hr')?.value);
+    const sbp=parseFloat($('#c_sbp')?.value);
+    const dbp=parseFloat($('#c_dbp')?.value);
+    const mapEl=$('#c_map');
+    const siEl=$('#c_si');
+    const map = !isNaN(sbp) && !isNaN(dbp) ? Math.round((sbp + 2*dbp)/3) : '';
+    const si = !isNaN(hr) && !isNaN(sbp) && sbp>0 ? (hr/sbp).toFixed(2) : '';
+    if(mapEl) mapEl.textContent=map;
+    if(siEl) siEl.textContent=si;
+  };
+  ['#c_hr','#c_sbp','#c_dbp'].forEach(sel=>{
+    const el=$(sel);
+    if(el) el.addEventListener('input', updateCirculationMetrics);
+  });
+  updateCirculationMetrics();
     const updateDGksTotal=()=>{
       $('#d_gks_total').textContent=gksSum($('#d_gksa').value,$('#d_gksk').value,$('#d_gksm').value);
     };
