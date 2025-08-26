@@ -85,6 +85,7 @@ function populateSessionSelect(sel, sessions){
 
 export async function initSessions(){
   const select=$('#sessionSelect');
+  if(!select) return;
   let sessions=await getSessions();
   let delWrap=$('#sessionDeleteList');
   if(!delWrap){
