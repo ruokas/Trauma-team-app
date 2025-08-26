@@ -7,6 +7,7 @@ let authToken = localStorage.getItem('trauma_token') || null;
 let socket = null;
 const socketEndpoint = window.socketEndpoint || window.SOCKET_URL;
 let currentSessionId = localStorage.getItem('trauma_current_session') || null;
+let showArchived = false;
 
 function updateUserList(users){
   const el=document.getElementById('userList');
@@ -59,12 +60,15 @@ async function getSessions(){
       const res = await fetch('/api/sessions', { headers: { 'Authorization': 'Bearer ' + authToken } });
       if(res.ok){
         const data = await res.json();
-        localStorage.setItem('trauma_sessions', JSON.stringify(data));
-        return data;
+        const normalized = data.map(s => ({ archived: false, ...s, archived: !!s.archived }));
+        localStorage.setItem('trauma_sessions', JSON.stringify(normalized));
+        return normalized;
       }
     }catch(e){ console.error(e); }
   }
-  try{ return JSON.parse(localStorage.getItem('trauma_sessions')||'[]'); }catch(e){ return []; }
+  try{
+    return JSON.parse(localStorage.getItem('trauma_sessions')||'[]').map(s=>({ archived:false, ...s, archived:!!s.archived }));
+  }catch(e){ return []; }
 }
 
 function saveSessions(list){
@@ -80,7 +84,9 @@ function saveSessions(list){
 
 function populateSessionSelect(sel, sessions){
   sel.innerHTML='';
-  sessions.forEach(s=>{ const opt=document.createElement('option'); opt.value=s.id; opt.textContent=s.name; sel.appendChild(opt); });
+  sessions.filter(s=>showArchived || !s.archived).forEach(s=>{
+    const opt=document.createElement('option'); opt.value=s.id; opt.textContent=s.name; sel.appendChild(opt);
+  });
 }
 
 export async function initSessions(){
@@ -93,9 +99,29 @@ export async function initSessions(){
     delWrap.id='sessionDeleteList';
     select.parentNode.appendChild(delWrap);
   }
+  let toggleArchived=$('#toggleArchivedSessions');
+  if(!toggleArchived){
+    toggleArchived=document.createElement('button');
+    toggleArchived.id='toggleArchivedSessions';
+    toggleArchived.type='button';
+    toggleArchived.className='btn ghost';
+    toggleArchived.textContent='Show archived';
+    select.parentNode.insertBefore(toggleArchived, delWrap);
+  }
+  toggleArchived.addEventListener('click', () => {
+    showArchived = !showArchived;
+    toggleArchived.textContent = showArchived ? 'Hide archived' : 'Show archived';
+    if (!showArchived && sessions.some(s => s.id === currentSessionId && s.archived)) {
+      currentSessionId = sessions.find(s => !s.archived)?.id || null;
+      if (currentSessionId) localStorage.setItem('trauma_current_session', currentSessionId); else localStorage.removeItem('trauma_current_session');
+    }
+    renderDeleteButtons();
+    populateSessionSelect(select, sessions);
+    if (currentSessionId) select.value = currentSessionId;
+  });
   function renderDeleteButtons(){
     delWrap.innerHTML='';
-    sessions.forEach(s=>{
+    sessions.filter(s=>showArchived || !s.archived).forEach(s=>{
       const row=document.createElement('div');
       row.className='session-item';
       const label=document.createElement('span');
@@ -122,6 +148,25 @@ export async function initSessions(){
         saveSessions(sessions);
         populateSessionSelect(select, sessions);
         if (currentSessionId) { select.value = currentSessionId; }
+        renderDeleteButtons();
+      });
+      const archive=document.createElement('button');
+      archive.type='button';
+      archive.textContent=s.archived?'Unarchive':'Archive';
+      archive.className='btn ghost';
+      archive.setAttribute('aria-label', s.archived ? 'Unarchive session' : 'Archive session');
+      archive.addEventListener('click', async () => {
+        if(authToken && typeof fetch==='function'){
+          try{ await fetch(`/api/sessions/${s.id}/${s.archived?'unarchive':'archive'}`, { method:'POST', headers:{ 'Authorization': 'Bearer ' + authToken } }); }catch(e){ console.error(e); }
+        }
+        s.archived=!s.archived;
+        saveSessions(sessions);
+        if(s.archived && currentSessionId===s.id){
+          currentSessionId=sessions.find(x=>!x.archived)?.id||null;
+          if(currentSessionId) localStorage.setItem('trauma_current_session', currentSessionId); else localStorage.removeItem('trauma_current_session');
+        }
+        populateSessionSelect(select, sessions);
+        if(currentSessionId) select.value=currentSessionId; else select.value='';
         renderDeleteButtons();
       });
       const btn=document.createElement('button');
@@ -153,20 +198,21 @@ export async function initSessions(){
       });
       row.appendChild(label);
       row.appendChild(rename);
+      row.appendChild(archive);
       row.appendChild(btn);
       delWrap.appendChild(row);
     });
   }
   if(!sessions.length){
     const id=Date.now().toString(36);
-    sessions=[{id,name:'Pacientas Nr.1'}];
+    sessions=[{id,name:'Pacientas Nr.1', archived:false}];
     saveSessions(sessions);
     currentSessionId=id;
     localStorage.setItem('trauma_current_session', id);
   }
   if(!currentSessionId || !sessions.some(s=>s.id===currentSessionId)){
-    currentSessionId=sessions[0].id;
-    localStorage.setItem('trauma_current_session', currentSessionId);
+    currentSessionId=sessions.find(s=>!s.archived)?.id || sessions[0].id;
+    if(currentSessionId) localStorage.setItem('trauma_current_session', currentSessionId);
   }
   populateSessionSelect(select, sessions);
   select.value=currentSessionId;
@@ -176,7 +222,7 @@ export async function initSessions(){
     const name=await notify({type:'prompt', message:'Paciento ID'});
     if(!name) return;
     const id=Date.now().toString(36);
-    sessions.push({id,name});
+    sessions.push({id,name, archived:false});
     saveSessions(sessions);
     localStorage.setItem('trauma_current_session', id);
     currentSessionId=id;
