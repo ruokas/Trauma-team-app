@@ -112,11 +112,12 @@ export async function initSessions(){
           notify({ type: 'error', message: 'Pavadinimas negali būti tuščias.' });
           return;
         }
-        if (sessions.some(x => x.id !== s.id && x.name.trim().toLowerCase() === newName.toLowerCase())) {
+        if (newName === s.name) return;
+        const newNameLower = newName.toLowerCase();
+        if (sessions.some(x => x.id !== s.id && x.name.trim().toLowerCase() === newNameLower)) {
           notify({ type: 'error', message: 'Pacientas su tokiu pavadinimu jau egzistuoja.' });
           return;
         }
-        if (newName === s.name) return;
         s.name = newName;
         saveSessions(sessions);
         populateSessionSelect(select, sessions);
