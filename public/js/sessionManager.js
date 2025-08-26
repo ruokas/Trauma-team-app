@@ -105,22 +105,30 @@ export async function initSessions(){
       rename.textContent='✎';
       rename.className='btn ghost';
       rename.setAttribute('aria-label','Rename session');
-      rename.addEventListener('click',async()=>{
-        const name=await notify({type:'prompt', message:'Naujas pavadinimas', defaultValue:s.name});
-        if(!name) return;
-        s.name=name;
+      rename.addEventListener('click', async () => {
+        const name = (await notify({ type: 'prompt', message: 'Naujas pavadinimas', defaultValue: s.name }))?.trim();
+        if (name == null) return;
+        if (!name) {
+          notify({ type: 'error', message: 'Pavadinimas negali būti tuščias.' });
+          return;
+        }
+        if (sessions.some(x => x.id !== s.id && x.name.toLowerCase() === name.toLowerCase())) {
+          notify({ type: 'error', message: 'Pacientas su tokiu pavadinimu jau egzistuoja.' });
+          return;
+        }
+        s.name = name;
         localStorage.setItem('trauma_sessions', JSON.stringify(sessions));
         populateSessionSelect(select, sessions);
-        if(currentSessionId){ select.value=currentSessionId; }
+        if (currentSessionId) { select.value = currentSessionId; }
         renderDeleteButtons();
-        if(authToken && typeof fetch==='function'){
-          try{
+        if (authToken && typeof fetch === 'function') {
+          try {
             await fetch(`/api/sessions/${s.id}`, {
-              method:'PUT',
-              headers:{ 'Content-Type':'application/json','Authorization':'Bearer '+authToken },
-              body:JSON.stringify({name})
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+              body: JSON.stringify({ name })
             });
-          }catch(e){ console.error(e); }
+          } catch (e) { console.error(e); }
         }
       });
       const btn=document.createElement('button');
