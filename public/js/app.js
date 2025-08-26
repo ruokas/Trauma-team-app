@@ -185,19 +185,32 @@ function setupGcsCalc(prefix){
   const selM=$(`#${prefix}_gcs_calc_m`);
   const apply=$(`#${prefix}_gcs_apply`);
   const total=$(`#${prefix}_gcs_calc_total`);
+  const btnClose=$(`#${prefix}_gcs_close`);
   const btn = prefix==='spr' ? $('#btnSprGCSCalc') : $('#btnGCSCalc');
   if(!panel||!selA||!selK||!selM||!apply||!total) return ()=>{};
 
   const update=()=>{ total.textContent=gksSum(selA.value,selK.value,selM.value); };
   [selA,selK,selM].forEach(sel=>sel.addEventListener('change',update));
 
+  let firstFocusable, lastFocusable;
   const close=()=>{
     panel.style.display='none';
     document.removeEventListener('keydown',onKey);
     document.removeEventListener('click',onDocClick);
     if(btn) btn.focus();
   };
-  const onKey=e=>{ if(e.key==='Escape') close(); };
+  const onKey=e=>{
+    if(e.key==='Escape') return close();
+    if(e.key==='Tab'){
+      if(e.shiftKey && document.activeElement===firstFocusable){
+        e.preventDefault();
+        lastFocusable.focus();
+      }else if(!e.shiftKey && document.activeElement===lastFocusable){
+        e.preventDefault();
+        firstFocusable.focus();
+      }
+    }
+  };
   const onDocClick=e=>{ if(!panel.contains(e.target) && e.target!==btn) close(); };
 
   apply.addEventListener('click',()=>{
@@ -209,10 +222,15 @@ function setupGcsCalc(prefix){
     saveAll();
   });
 
+  if(btnClose) btnClose.addEventListener('click',close);
+
   return ()=>{
     const hidden=panel.style.display==='none';
     if(hidden){
       panel.style.display='block';
+      const focusables=panel.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
+      firstFocusable=focusables[0];
+      lastFocusable=focusables[focusables.length-1];
       document.addEventListener('keydown',onKey);
       document.addEventListener('click',onDocClick);
       selA.focus();

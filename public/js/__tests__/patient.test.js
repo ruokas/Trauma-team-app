@@ -19,11 +19,15 @@ const setupDom = () => {
     <button id="btnGCS15"></button>
     <button id="btnGCSCalc"></button>
     <div id="d_gcs_calc" style="display:none">
-      <select id="d_gcs_calc_a"></select>
-      <select id="d_gcs_calc_k"></select>
-      <select id="d_gcs_calc_m"></select>
-      <button id="d_gcs_apply"></button>
-      <span id="d_gcs_calc_total"></span>
+      <div role="dialog" aria-modal="true" aria-labelledby="d_gcs_calc_title">
+        <h3 id="d_gcs_calc_title" class="sr-only">GKS skaičiuoklė</h3>
+        <button id="d_gcs_close"></button>
+        <select id="d_gcs_calc_a"></select>
+        <select id="d_gcs_calc_k"></select>
+        <select id="d_gcs_calc_m"></select>
+        <button id="d_gcs_apply"></button>
+        <span id="d_gcs_calc_total"></span>
+      </div>
     </div>
     <div id="e_back_group" class="chip-group" data-single="true"><button class="chip" data-value="Be pakitimų"></button><button class="chip" data-value="Pakitimai"></button></div>
     <textarea id="output"></textarea>
@@ -178,6 +182,23 @@ describe('patient fields', () => {
     document.body.click();
     expect(panel.style.display).toBe('none');
     expect(document.activeElement).toBe(btn);
+  });
+
+  test('GCS panel traps focus within dialog', () => {
+    const btn=document.getElementById('btnGCSCalc');
+    const close=document.getElementById('d_gcs_close');
+    const apply=document.getElementById('d_gcs_apply');
+
+    btn.click();
+    apply.focus();
+    document.dispatchEvent(new KeyboardEvent('keydown',{key:'Tab'}));
+    expect(document.activeElement).toBe(close);
+
+    close.focus();
+    document.dispatchEvent(new KeyboardEvent('keydown',{key:'Tab',shiftKey:true}));
+    expect(document.activeElement).toBe(apply);
+
+    document.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape'}));
   });
 
   test('PDF button generates file via jsPDF', async () => {
