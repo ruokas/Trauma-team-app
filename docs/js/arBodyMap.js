@@ -13,10 +13,12 @@ export function initARBodyMap(onChange){
 
   async function start(){
     try{
-      // Request a basic immersive AR session. Using unsupported required
-      // features (e.g., "hit-test") triggers a NotSupportedError on some
-      // devices, so we avoid specifying them here.
-      session = await navigator.xr.requestSession('immersive-ar');
+      // Request an immersive AR session with hit-test and DOM overlay support.
+      session = await navigator.xr.requestSession('immersive-ar', {
+        requiredFeatures: ['hit-test'],
+        optionalFeatures: ['dom-overlay'],
+        domOverlay: { root: document.body }
+      });
       btn.classList.add('active');
 
       const canvas = document.createElement('canvas');
@@ -85,7 +87,13 @@ export function initARBodyMap(onChange){
         session = null;
       });
     }catch(err){
-      console.error(err);
+      if(err.name === 'NotSupportedError'){
+        if(typeof window !== 'undefined' && typeof window.alert === 'function'){
+          window.alert('AR mode is unavailable on this device.');
+        }
+      }else{
+        console.error(err);
+      }
       session = null;
       btn.classList.remove('active');
     }
