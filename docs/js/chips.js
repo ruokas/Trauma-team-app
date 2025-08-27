@@ -70,6 +70,7 @@ function toggleBackNote(chip){
   const note = $('#e_back_notes');
   const show = chip.dataset.value==='Pakitimai' && isChipActive(chip);
   note.style.display = show ? 'block' : 'none';
+  note.classList.toggle('hidden', !show);
   if(!show) note.value='';
 }
 
@@ -134,21 +135,25 @@ export function initChips(saveAll){
       const box=$('#imaging_other');
       const show=!!document.querySelector('[id^="imaging_"] .chip.active[data-value="Kita"]');
       box.style.display = show ? 'block' : 'none';
+      box.classList.toggle('hidden', !show);
       if(!show) box.value='';
     }
     if(group.id==='spr_decision_group'){
       const showSky = chip.dataset.value==='Stacionarizavimas' && isChipActive(chip);
       const boxSky = $('#spr_skyrius_container');
       boxSky.style.display = showSky ? 'block' : 'none';
+      boxSky.classList.toggle('hidden', !showSky);
       if(!showSky){
         $('#spr_skyrius').value='';
         $('#spr_skyrius_kita').style.display='none';
+        $('#spr_skyrius_kita').classList.add('hidden');
         $('#spr_skyrius_kita').value='';
       }
 
       const showHosp = chip.dataset.value==='Pervežimas į kitą ligoninę' && isChipActive(chip);
       const boxHosp = $('#spr_ligonine_container');
       boxHosp.style.display = showHosp ? 'block' : 'none';
+      boxHosp.classList.toggle('hidden', !showHosp);
       if(!showHosp){
         $('#spr_ligonine').value='';
       }

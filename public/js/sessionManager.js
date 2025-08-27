@@ -375,17 +375,32 @@ export function loadAll(){
       if(rightLabel){ rightLabel.hidden = !showRightNote; rightLabel.classList.toggle('hidden', !showRightNote); }
       const rightWrapper = $('#d_pupil_right_wrapper');
       if(rightWrapper) rightWrapper.setAttribute('aria-expanded', showRightNote);
-      $('#e_back_notes').style.display = ($$('.chip.active', $('#e_back_group')).some(c=>c.dataset.value==='Pakitimai'))?'block':'none';
+      const showBack = $$('.chip.active', $('#e_back_group')).some(c=>c.dataset.value==='Pakitimai');
+      const backNote = $('#e_back_notes');
+      backNote.style.display = showBack ? 'block' : 'none';
+      backNote.classList.toggle('hidden', !showBack);
       const showSkinColorOther = $$('.chip.active', $('#c_skin_color_group')).some(c=>c.dataset.value==='Kita');
       const skinColorOther = $('#c_skin_color_other');
       skinColorOther.hidden = !showSkinColorOther;
       skinColorOther.classList.toggle('hidden', !showSkinColorOther);
       $('#oxygenFields').classList.toggle('hidden', !($('#b_oxygen_liters').value || $('#b_oxygen_type').value));
       $('#dpvFields').classList.toggle('hidden', !$('#b_dpv_fio2').value);
-    $('#spr_skyrius_container').style.display = ($$('.chip.active', $('#spr_decision_group')).some(c=>c.dataset.value==='Stacionarizavimas'))?'block':'none';
-    $('#spr_ligonine_container').style.display = ($$('.chip.active', $('#spr_decision_group')).some(c=>c.dataset.value==='Pervežimas į kitą ligoninę'))?'block':'none';
-    $('#spr_skyrius_kita').style.display = ($('#spr_skyrius').value === 'Kita') ? 'block' : 'none';
-    $('#imaging_other').style.display = (IMAGING_GROUPS.some(sel=>$$('.chip.active', $(sel)).some(c=>c.dataset.value==='Kita')))?'block':'none';
+    const showSky = $$('.chip.active', $('#spr_decision_group')).some(c=>c.dataset.value==='Stacionarizavimas');
+    const skyBox = $('#spr_skyrius_container');
+    skyBox.style.display = showSky ? 'block' : 'none';
+    skyBox.classList.toggle('hidden', !showSky);
+    const showHosp = $$('.chip.active', $('#spr_decision_group')).some(c=>c.dataset.value==='Pervežimas į kitą ligoninę');
+    const hospBox = $('#spr_ligonine_container');
+    hospBox.style.display = showHosp ? 'block' : 'none';
+    hospBox.classList.toggle('hidden', !showHosp);
+    const showSkyOther = ($('#spr_skyrius').value === 'Kita');
+    const skyOther = $('#spr_skyrius_kita');
+    skyOther.style.display = showSkyOther ? 'block' : 'none';
+    skyOther.classList.toggle('hidden', !showSkyOther);
+    const showImgOther = (IMAGING_GROUPS.some(sel=>$$('.chip.active', $(sel)).some(c=>c.dataset.value==='Kita')));
+    const imgOther = $('#imaging_other');
+    imgOther.style.display = showImgOther ? 'block' : 'none';
+    imgOther.classList.toggle('hidden', !showImgOther);
   };
   const fallback=()=>{
     const raw=localStorage.getItem(sessionKey()); if(!raw) return; try{ apply(JSON.parse(raw)); }catch(e){ console.error(e); }

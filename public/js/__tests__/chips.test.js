@@ -125,6 +125,50 @@ describe('chips', () => {
     expect(container.style.display).toBe('none');
   });
 
+  test('shows department field when hospitalization decision selected', () => {
+    document.body.innerHTML = `
+      <div id="spr_decision_group" data-single="true">
+        <button type="button" class="chip" data-value="Stacionarizavimas" aria-pressed="false"></button>
+        <button type="button" class="chip" data-value="Namo" aria-pressed="false"></button>
+      </div>
+      <div id="spr_skyrius_container" style="display:none;" class="hidden">
+        <select id="spr_skyrius"></select>
+        <input id="spr_skyrius_kita" class="hidden" />
+      </div>
+      <div id="spr_ligonine_container" style="display:none;" class="hidden">
+        <input id="spr_ligonine" />
+      </div>
+    `;
+    const { initChips } = require('../chips.js');
+    initChips();
+    const [hospChip, otherChip] = document.querySelectorAll('#spr_decision_group .chip');
+    const container = document.getElementById('spr_skyrius_container');
+    hospChip.click();
+    expect(container.style.display).toBe('block');
+    otherChip.click();
+    expect(container.style.display).toBe('none');
+  });
+
+  test('shows back note input when changes selected', () => {
+    document.body.innerHTML = `
+      <div id="e_back_group" data-single="true">
+        <button type="button" class="chip" data-value="Be pakitimų" aria-pressed="false"></button>
+        <button type="button" class="chip" data-value="Pakitimai" aria-pressed="false"></button>
+      </div>
+      <input id="e_back_notes" class="hidden" />
+    `;
+    const { initChips } = require('../chips.js');
+    initChips();
+    const [noChange, changes] = document.querySelectorAll('#e_back_group .chip');
+    const input = document.getElementById('e_back_notes');
+    changes.click();
+    expect(input.style.display).toBe('block');
+    expect(input.classList.contains('hidden')).toBe(false);
+    noChange.click();
+    expect(input.style.display).toBe('none');
+    expect(input.classList.contains('hidden')).toBe(true);
+  });
+
   test('shows other imaging field when "Kita" selected', () => {
     document.body.innerHTML = `
       <div id="imaging_ct">
