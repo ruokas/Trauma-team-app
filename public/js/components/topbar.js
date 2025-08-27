@@ -1,5 +1,6 @@
 import { ACTIONS_LABEL, MORE_LABEL } from '../constants.js';
 
+const NAV_BREAKPOINT = 768;
 let navMq;
 let navMqListener;
 
@@ -53,7 +54,7 @@ export function initNavToggle(toggle, nav){
   nav.addEventListener('click',e=>{
     if(e.target.closest('.tab')) close();
   });
-  navMq=typeof matchMedia==='function' ? matchMedia('(min-width: 768px)') : null;
+  navMq=typeof matchMedia==='function' ? matchMedia(`(min-width: ${NAV_BREAKPOINT}px)`) : null;
   if(navMq){
     navMqListener=e=>{ if(e.matches) close(); };
     navMq.addEventListener('change', navMqListener);
@@ -104,7 +105,7 @@ function initActionsMenu(){
   const session=document.getElementById('sessionBar');
   const centerWrap=document.querySelector('.header-center');
   if(!container || !toggle || !menu || !arrival || !session || !centerWrap) return;
-  const mq=window.matchMedia('(max-width: 768px)');
+  const mq=window.matchMedia(`(max-width: ${NAV_BREAKPOINT}px)`);
   const update=()=>{
     if(mq.matches){
       menu.appendChild(arrival);

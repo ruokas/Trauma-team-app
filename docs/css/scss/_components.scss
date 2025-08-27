@@ -104,7 +104,7 @@ input.invalid,select.invalid{border-color:var(--red)}
 .nav-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:10}
 body.nav-open .nav-overlay{display:block}
 body.nav-open{overflow:hidden}
-  @media (max-width:61.25rem){
+  @media (max-width:768px){
   #navToggle{display:inline-block;margin-bottom:$space-8}
   main{grid-template-columns:1fr}
   nav{
