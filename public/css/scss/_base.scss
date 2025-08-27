@@ -22,7 +22,7 @@ body{
   line-height:1.5;
 }
 header{
-  height:var(--header-height);
+  min-height:var(--header-height);
   display:flex;
   align-items:center;
   --line:color-mix(in srgb,#2d3b4f,white 20%);
