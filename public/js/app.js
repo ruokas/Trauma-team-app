@@ -18,16 +18,29 @@ import { initCirculation } from './circulation.js';
 import { setupActivationControls, ensureSingleTeam, updateActivationIndicator } from './activation.js';
 import { initGcs } from './gcs.js';
 import { IMG_CT, IMG_XRAY, LABS, BLOOD_GROUPS, FAST_AREAS } from './config.js';
-export { validateVitals };
+export { validateVitals, createChipGroup };
 
 /* ===== Imaging / Labs / Team ===== */
 const LS_MECHANISM_KEY='traumos_mechanizmai';
+function createChipGroup(selector, values){
+  const wrap=$(selector);
+  if(!wrap) return null;
+  values.forEach(val=>{
+    const chip=document.createElement('span');
+    chip.className='chip';
+    chip.dataset.value=val;
+    chip.textContent=val;
+    addChipIndicators(chip);
+    wrap.appendChild(chip);
+  });
+  return wrap;
+}
 
-const imgCtWrap=$('#imaging_ct'); IMG_CT.forEach(n=>{const s=document.createElement('span'); s.className='chip'; s.dataset.value=n; s.textContent=n; addChipIndicators(s); imgCtWrap.appendChild(s);});
-const imgXrayWrap=$('#imaging_xray'); IMG_XRAY.forEach(n=>{const s=document.createElement('span'); s.className='chip'; s.dataset.value=n; s.textContent=n; addChipIndicators(s); imgXrayWrap.appendChild(s);});
-const imgOtherWrap=$('#imaging_other_group'); ['Kita'].forEach(n=>{const s=document.createElement('span'); s.className='chip'; s.dataset.value=n; s.textContent=n; addChipIndicators(s); imgOtherWrap.appendChild(s);});
-const labsWrap=$('#labs_basic'); LABS.forEach(n=>{const s=document.createElement('span'); s.className='chip'; s.dataset.value=n; s.textContent=n; addChipIndicators(s); labsWrap.appendChild(s);});
-const bloodGroupWrap=$('#bloodGroup'); if(bloodGroupWrap){ BLOOD_GROUPS.forEach(g=>{const s=document.createElement('span'); s.className='chip'; s.dataset.value=g; s.textContent=g; addChipIndicators(s); bloodGroupWrap.appendChild(s);}); }
+createChipGroup('#imaging_ct', IMG_CT);
+createChipGroup('#imaging_xray', IMG_XRAY);
+createChipGroup('#imaging_other_group', ['Kita']);
+const labsWrap=createChipGroup('#labs_basic', LABS);
+const bloodGroupWrap=createChipGroup('#bloodGroup', BLOOD_GROUPS);
 const bloodUnitsInput=$('#bloodUnits');
 const addBloodOrderBtn=$('#addBloodOrder');
 if(bloodUnitsInput && bloodGroupWrap && addBloodOrderBtn){
