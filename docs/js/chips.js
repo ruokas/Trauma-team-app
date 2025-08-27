@@ -158,7 +158,7 @@ export function initChips(saveAll){
   }
 
   document.addEventListener('click', e => {
-    const chip = e.target.closest('.chip');
+    const chip = e.target?.closest?.('.chip');
     if(!chip) return;
     handleChip(chip);
   }, true);
@@ -169,7 +169,7 @@ export function initChips(saveAll){
   //   newly focused chip is activated automatically to mirror native
   //   radio behaviour.
   document.addEventListener('keydown', e => {
-    const chip = e.target.closest('.chip');
+    const chip = e.target?.closest?.('.chip');
     if(!chip) return;
 
     if(e.key === 'Enter' || e.key === ' '){

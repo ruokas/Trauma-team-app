@@ -30,3 +30,20 @@ export function initCirculationChecks(updateMetrics) {
     });
   });
 }
+
+export function updateCirculationMetrics() {
+  const hr = parseFloat($('#c_hr')?.value);
+  const sbp = parseFloat($('#c_sbp')?.value);
+  const dbp = parseFloat($('#c_dbp')?.value);
+  const mapEl = $('#c_map');
+  const siEl = $('#c_si');
+  const map = !isNaN(sbp) && !isNaN(dbp) ? Math.round((sbp + 2 * dbp) / 3) : '';
+  const si = !isNaN(hr) && !isNaN(sbp) && sbp > 0 ? (hr / sbp).toFixed(2) : '';
+  if (mapEl) mapEl.textContent = map;
+  if (siEl) siEl.textContent = si;
+}
+
+export function initCirculation() {
+  initCirculationChecks(updateCirculationMetrics);
+  updateCirculationMetrics();
+}
