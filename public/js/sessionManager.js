@@ -57,10 +57,6 @@ export function connectSocket(){
   socket.on('users', list=>updateUserList(list));
 }
 
-export function getSocket(){
-  return socket;
-}
-
 export function reconnectSocket(){
   if(socket){
     socket.disconnect();
