@@ -1,6 +1,9 @@
 @use 'variables' as *;
 
-:root{color-scheme:dark}
+:root{
+  color-scheme:dark;
+  --header-height:68px;
+}
 
 :root.dark{
   --bg:#0c1218;--card:#121a24;--ink:#e9f2fb;
@@ -12,7 +15,8 @@
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;font-size:$font-base;line-height:1.5}
 header{
-  --header-height:68px;
+  height:var(--header-height);
+  line-height:var(--header-height);
   --line:color-mix(in srgb,#2d3b4f,white 20%);
   --ink:color-mix(in srgb,#e9f2fb,white 10%);
   position:sticky;

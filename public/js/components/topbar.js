@@ -61,13 +61,15 @@ export async function initTopbar(){
     console.error('Failed to load topbar', e);
   }
   applyTopbarLocalization(header);
-  const setHeight=()=>{
-    const h=header.offsetHeight+'px';
-    header.style.setProperty('--header-height', h);
-    document.documentElement.style.setProperty('--header-height', h);
-  };
-  setHeight();
-  window.addEventListener('resize', setHeight);
+  if(typeof ResizeObserver==='function'){
+    const updateHeight=entries=>{
+      for(const entry of entries){
+        document.documentElement.style.setProperty('--header-height', entry.contentRect.height+'px');
+      }
+    };
+    const ro=new ResizeObserver(updateHeight);
+    ro.observe(header);
+  }
   const toggle=document.getElementById('navToggle');
   const nav=document.querySelector('nav');
   initNavToggle(toggle, nav);
