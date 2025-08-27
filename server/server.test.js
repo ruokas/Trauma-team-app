@@ -20,23 +20,21 @@ describe('server API', () => {
   let fakeDB;
   let fsPromises;
   let originalPort;
+  let startServer;
 
-  beforeEach(async () => {
-    jest.resetModules();
-    fakeDB = { sessions: [], data: {}, users: [] };
-    fsPromises = require('fs').promises;
-    fsPromises.readFile.mockResolvedValue(JSON.stringify(fakeDB));
-    fsPromises.writeFile.mockImplementation(async (_path, data) => {
-      fakeDB = JSON.parse(data);
+    beforeEach(async () => {
+      jest.resetModules();
+      fakeDB = { sessions: [], data: {}, users: [] };
+      fsPromises = require('fs').promises;
+      fsPromises.readFile.mockResolvedValue(JSON.stringify(fakeDB));
+      fsPromises.writeFile.mockImplementation(async (_path, data) => {
+        fakeDB = JSON.parse(data);
+      });
+      originalPort = process.env.PORT;
+      process.env.PORT = 0;
+      ({ app, server, startServer } = require('./index'));
+      await startServer();
     });
-    originalPort = process.env.PORT;
-    process.env.PORT = 0;
-    ({ app, server } = require('./index'));
-    await new Promise(resolve => {
-      if (server.listening) return resolve();
-      server.on('listening', resolve);
-    });
-  });
 
   afterEach(async () => {
     await new Promise(resolve => server.close(resolve));

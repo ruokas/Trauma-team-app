@@ -187,8 +187,6 @@ app.use((err, req, res, next) => {
 const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: '*' } });
 
-module.exports = { app, server };
-
 io.use((socket, next) => {
   if (DISABLE_AUTH) return next();
   const raw = socket.handshake.auth && socket.handshake.auth.token;
@@ -202,12 +200,16 @@ io.on('connection', socket => {
   socket.emit('users', db.users.map(u => u.name));
 });
 
-(async () => {
+async function startServer () {
   db = await loadDB();
-  server.listen(PORT, () => {
-    console.log('Server listening on', PORT);
-    if (DISABLE_AUTH) console.warn('Authentication disabled');
+  return new Promise((resolve, reject) => {
+    server.listen(PORT, () => {
+      console.log('Server listening on', PORT);
+      if (DISABLE_AUTH) console.warn('Authentication disabled');
+      resolve();
+    });
+    server.on('error', reject);
   });
-})().catch(err => {
-  console.error('Failed to start server', err);
-});
+}
+
+module.exports = { app, server, startServer };

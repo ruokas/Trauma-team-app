@@ -13,10 +13,10 @@ npm install
 Start the application backend:
 
 ```bash
-node server/index.js
+node server/start.js
 ```
 
-You can also create an `npm start` script for convenience.
+Alternatively, use the provided `npm start` script.
 
 ## Testing
 
