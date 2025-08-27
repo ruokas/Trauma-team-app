@@ -188,6 +188,26 @@ describe('server API', () => {
     expect(getData.statusCode).toBe(200);
     expect(getData.body).toEqual(payload);
   });
+
+  test('serializes concurrent writes to prevent data loss', async () => {
+    let active = false;
+    let overlap = false;
+    fsPromises.writeFile.mockImplementation(async (_path, data) => {
+      if (active) overlap = true;
+      active = true;
+      await new Promise(resolve => setTimeout(resolve, 20));
+      fakeDB = JSON.parse(data);
+      active = false;
+    });
+
+    const requests = ['a', 'b', 'c'].map(name =>
+      request(app).post('/api/login').send({ name })
+    );
+    await Promise.all(requests);
+
+    expect(fakeDB.users.map(u => u.name).sort()).toEqual(['a', 'b', 'c']);
+    expect(overlap).toBe(false);
+  });
 });
 
 describe('loadDB', () => {

@@ -28,12 +28,17 @@ async function loadDB(){
   }
 }
 
-async function saveDB(){
-  try {
-    await fs.promises.writeFile(DB_FILE, JSON.stringify(db, null, 2));
-  } catch (e) {
-    console.error('Failed to save DB', e);
-  }
+// Ensure writes to the DB file happen sequentially.
+let writeQueue = Promise.resolve();
+
+function saveDB(){
+  const data = JSON.stringify(db, null, 2);
+  writeQueue = writeQueue
+    .then(() => fs.promises.writeFile(DB_FILE, data))
+    .catch(e => {
+      console.error('Failed to save DB', e);
+    });
+  return writeQueue;
 }
 
 let db;
