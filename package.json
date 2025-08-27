@@ -10,7 +10,8 @@
     "build:css": "sass --no-source-map --style=compressed public/css/scss/main.scss public/css/main.css",
     "build": "npm run build:css && rm -rf docs && cp -r public docs && rm -rf docs/js/__tests__",
     "start": "node server/start.js",
-    "lint": "eslint 'public/js/**/*.js' 'server/**/*.js'"
+    "lint": "eslint server public/js",
+    "prepare": "husky install"
   },
   "keywords": [],
   "author": "",
@@ -30,6 +31,7 @@
     "eslint-plugin-import": "^2.29.1",
     "eslint-plugin-n": "^15.7.0",
     "eslint-plugin-promise": "^6.1.1",
+    "husky": "^9.1.7",
     "jest": "^27.5.1",
     "jsdom": "^26.1.0",
     "sass": "^1.90.0",

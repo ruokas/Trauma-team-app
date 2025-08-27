@@ -1,14 +1,47 @@
 {
+  "root": true,
   "env": {
-    "browser": true,
-    "node": true,
-    "es2021": true,
-    "jest": true
+    "es2021": true
   },
   "extends": ["eslint:recommended"],
-  "parserOptions": {
-    "sourceType": "module"
-  },
+  "overrides": [
+    {
+      "files": ["server/**/*.js"],
+      "env": {
+        "node": true,
+        "jest": true
+      },
+      "extends": ["plugin:n/recommended"],
+      "settings": {
+        "node": {
+          "version": ">=18.0.0"
+        }
+      },
+      "rules": {
+        "n/no-unpublished-require": "off"
+      }
+    },
+    {
+      "files": ["public/js/**/*.js"],
+      "env": {
+        "browser": true
+      },
+      "parserOptions": {
+        "sourceType": "module"
+      }
+    },
+    {
+      "files": ["public/js/__tests__/**/*.js", "public/js/__fixtures__/**/*.js"],
+      "env": {
+        "browser": true,
+        "jest": true,
+        "node": true
+      },
+      "parserOptions": {
+        "sourceType": "module"
+      }
+    }
+  ],
   "rules": {
     "semi": ["error", "always"]
   }
