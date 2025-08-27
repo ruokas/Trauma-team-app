@@ -100,8 +100,8 @@ describe('BodyMap instance', () => {
 
   test('clicking silhouettes adds marks', () => {
     setupDom();
-    document.querySelector('#layer-front').innerHTML = '<use id="front-shape" data-side="front"></use>';
-    document.querySelector('#layer-back').innerHTML = '<use id="back-shape" data-side="back"></use>';
+    document.querySelector('#layer-front').innerHTML = '<image id="front-shape" data-side="front"></image>';
+    document.querySelector('#layer-back').innerHTML = '<image id="back-shape" data-side="back"></image>';
     const bm = new BodyMap();
     bm.init(() => {});
     // Provide deterministic coordinates
