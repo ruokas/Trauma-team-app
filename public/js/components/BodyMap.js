@@ -479,7 +479,9 @@ export default class BodyMap {
     }
 
     // Embed linked raster images as data URIs
-    const images = [...svg.querySelectorAll('image[href], image[xlink\:href]')];
+    const images = [...svg.querySelectorAll('image')].filter(img =>
+      img.hasAttribute('href') || img.hasAttribute('xlink:href')
+    );
     for (const img of images) {
       const url = img.getAttribute('href') || img.getAttribute('xlink:href');
       if (!url || url.startsWith('data:')) continue;
