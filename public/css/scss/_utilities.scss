@@ -4,7 +4,7 @@
 .cols-3{grid-template-columns:repeat(3,1fr)}
 .cols-4{grid-template-columns:repeat(4,1fr)}
 .cols-auto{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
-.row{display:flex;gap:$space-8;align-items:center}
+.row{display:flex;gap:$space-8;align-items:center;flex-wrap:wrap}
 .gcs-input{width:60px;flex:0 0 60px}
 .subtle{font-size:0.875rem;color:var(--muted)}
 .divider{height:1px;background:var(--line);margin:$space-10 0}

@@ -77,7 +77,8 @@ function toggleSkinColorNote(chip){
   if(chip.parentElement?.id !== 'c_skin_color_group') return;
   const note = $('#c_skin_color_other');
   const show = chip.dataset.value==='Kita' && isChipActive(chip);
-  note.style.display = show ? 'block' : 'none';
+  note.hidden = !show;
+  note.classList.toggle('hidden', !show);
   if(!show) note.value='';
 }
 

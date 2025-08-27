@@ -375,7 +375,10 @@ export function loadAll(){
       const rightWrapper = $('#d_pupil_right_wrapper');
       if(rightWrapper) rightWrapper.setAttribute('aria-expanded', showRightNote);
       $('#e_back_notes').style.display = ($$('.chip.active', $('#e_back_group')).some(c=>c.dataset.value==='Pakitimai'))?'block':'none';
-      $('#c_skin_color_other').style.display = ($$('.chip.active', $('#c_skin_color_group')).some(c=>c.dataset.value==='Kita'))?'block':'none';
+      const showSkinColorOther = $$('.chip.active', $('#c_skin_color_group')).some(c=>c.dataset.value==='Kita');
+      const skinColorOther = $('#c_skin_color_other');
+      skinColorOther.hidden = !showSkinColorOther;
+      skinColorOther.classList.toggle('hidden', !showSkinColorOther);
       $('#oxygenFields').classList.toggle('hidden', !($('#b_oxygen_liters').value || $('#b_oxygen_type').value));
       $('#dpvFields').classList.toggle('hidden', !$('#b_dpv_fio2').value);
     $('#spr_skyrius_container').style.display = ($$('.chip.active', $('#spr_decision_group')).some(c=>c.dataset.value==='Stacionarizavimas'))?'block':'none';
