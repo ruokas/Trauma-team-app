@@ -52,15 +52,27 @@ function togglePupilNote(side, chip){
   const groupId = `d_pupil_${side}_group`;
   if(chip.parentElement?.id !== groupId) return;
   const note = $(`#d_pupil_${side}_note`);
+  const group = note.parentElement;
   const show = chip.dataset.value==='kita' && isChipActive(chip);
-  note.style.display = show ? 'block' : 'none';
+  note.hidden = !show;
+  const label = group.querySelector(`label[for="d_pupil_${side}_note"]`);
+  if(label) label.hidden = !show;
   if(!show) note.value='';
+  group.setAttribute('aria-expanded', show);
 }
 
 function toggleBackNote(chip){
   if(chip.parentElement?.id !== 'e_back_group') return;
   const note = $('#e_back_notes');
   const show = chip.dataset.value==='Pakitimai' && isChipActive(chip);
+  note.style.display = show ? 'block' : 'none';
+  if(!show) note.value='';
+}
+
+function toggleSkinColorNote(chip){
+  if(chip.parentElement?.id !== 'c_skin_color_group') return;
+  const note = $('#c_skin_color_other');
+  const show = chip.dataset.value==='Kita' && isChipActive(chip);
   note.style.display = show ? 'block' : 'none';
   if(!show) note.value='';
 }
@@ -112,6 +124,7 @@ export function initChips(saveAll){
     togglePupilNote('left', chip);
     togglePupilNote('right', chip);
     toggleBackNote(chip);
+    toggleSkinColorNote(chip);
     if(group.id.startsWith('imaging_')){
       const box=$('#imaging_other');
       const show=!!document.querySelector('[id^="imaging_"] .chip.active[data-value="Kita"]');

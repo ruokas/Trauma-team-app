@@ -7,6 +7,7 @@ let authToken = localStorage.getItem('trauma_token') || null;
 let socket = null;
 const socketEndpoint = window.socketEndpoint || window.SOCKET_URL;
 let currentSessionId = localStorage.getItem('trauma_current_session') || null;
+let showArchived = false;
 
 function updateUserList(users){
   const el=document.getElementById('userList');
@@ -59,12 +60,15 @@ async function getSessions(){
       const res = await fetch('/api/sessions', { headers: { 'Authorization': 'Bearer ' + authToken } });
       if(res.ok){
         const data = await res.json();
-        localStorage.setItem('trauma_sessions', JSON.stringify(data));
-        return data;
+        const normalized = data.map(s => ({ ...s, archived: !!s.archived }));
+        localStorage.setItem('trauma_sessions', JSON.stringify(normalized));
+        return normalized;
       }
     }catch(e){ console.error(e); }
   }
-  try{ return JSON.parse(localStorage.getItem('trauma_sessions')||'[]'); }catch(e){ return []; }
+  try{
+    return JSON.parse(localStorage.getItem('trauma_sessions')||'[]').map(s=>({ ...s, archived:!!s.archived }));
+  }catch(e){ return []; }
 }
 
 function saveSessions(list){
@@ -80,11 +84,14 @@ function saveSessions(list){
 
 function populateSessionSelect(sel, sessions){
   sel.innerHTML='';
-  sessions.forEach(s=>{ const opt=document.createElement('option'); opt.value=s.id; opt.textContent=s.name; sel.appendChild(opt); });
+  sessions.filter(s=>showArchived || !s.archived).forEach(s=>{
+    const opt=document.createElement('option'); opt.value=s.id; opt.textContent=s.name; sel.appendChild(opt);
+  });
 }
 
 export async function initSessions(){
   const select=$('#sessionSelect');
+  if(!select) return;
   let sessions=await getSessions();
   let delWrap=$('#sessionDeleteList');
   if(!delWrap){
@@ -92,35 +99,95 @@ export async function initSessions(){
     delWrap.id='sessionDeleteList';
     select.parentNode.appendChild(delWrap);
   }
-  function renderDeleteButtons(){
+  let toggleArchived=$('#toggleArchivedSessions');
+  if(!toggleArchived){
+    toggleArchived=document.createElement('button');
+    toggleArchived.id='toggleArchivedSessions';
+    toggleArchived.type='button';
+    toggleArchived.className='btn ghost';
+    toggleArchived.textContent='Show archived';
+    select.parentNode.insertBefore(toggleArchived, delWrap);
+  }
+  toggleArchived.addEventListener('click', () => {
+    showArchived = !showArchived;
+    toggleArchived.textContent = showArchived ? 'Hide archived' : 'Show archived';
+    if (!showArchived && sessions.some(s => s.id === currentSessionId && s.archived)) {
+      currentSessionId = sessions.find(s => !s.archived)?.id || null;
+      if (currentSessionId) localStorage.setItem('trauma_current_session', currentSessionId); else localStorage.removeItem('trauma_current_session');
+    }
+    renderDeleteButtons();
+    populateSessionSelect(select, sessions);
+    if (currentSessionId) select.value = currentSessionId;
+  });
+  function renderDeleteButtons(focusId){
     delWrap.innerHTML='';
-    sessions.forEach(s=>{
+    sessions.filter(s=>showArchived || !s.archived).forEach(s=>{
       const row=document.createElement('div');
       row.className='session-item';
+      row.dataset.sessionId=s.id;
       const label=document.createElement('span');
+      label.className='session-label';
       label.textContent=s.name;
-      const rename=document.createElement('button');
-      rename.type='button';
-      rename.textContent='✎';
-      rename.className='btn ghost';
-      rename.setAttribute('aria-label','Rename session');
-      rename.addEventListener('click',async()=>{
-        const name=await notify({type:'prompt', message:'Naujas pavadinimas', defaultValue:s.name});
-        if(!name) return;
-        s.name=name;
-        localStorage.setItem('trauma_sessions', JSON.stringify(sessions));
-        populateSessionSelect(select, sessions);
-        if(currentSessionId){ select.value=currentSessionId; }
-        renderDeleteButtons();
+      label.tabIndex=0;
+
+      const startRename=()=>{
+        const input=document.createElement('input');
+        input.type='text';
+        input.value=s.name;
+        input.className='session-rename-input';
+        let cancelled=false;
+        const cancel=()=>{ cancelled=true; input.replaceWith(label); label.focus(); };
+        const attemptSave=()=>{
+          const newName=input.value.trim();
+          if(!newName){
+            notify({ type:'error', message:'Pavadinimas negali būti tuščias.' });
+            input.focus();
+            return;
+          }
+          if(newName===s.name){ cancel(); return; }
+          const newNameLower=newName.toLowerCase();
+          if(sessions.some(x=>x.id!==s.id && x.name.trim().toLowerCase()===newNameLower)){
+            notify({ type:'error', message:'Pacientas su tokiu pavadinimu jau egzistuoja.' });
+            input.focus();
+            return;
+          }
+          s.name=newName;
+          saveSessions(sessions);
+          populateSessionSelect(select, sessions);
+          if(currentSessionId) select.value=currentSessionId;
+          renderDeleteButtons(s.id);
+        };
+        input.addEventListener('blur', ()=>{ if(!cancelled) attemptSave(); });
+        input.addEventListener('keydown', e=>{
+          if(e.key==='Enter'){ e.preventDefault(); input.blur(); }
+          else if(e.key==='Escape'){ e.preventDefault(); cancel(); }
+        });
+        label.replaceWith(input);
+        input.focus();
+        input.select();
+      };
+
+      label.addEventListener('click', startRename);
+      label.addEventListener('keydown', e=>{ if(e.key==='Enter') startRename(); });
+
+      const archive=document.createElement('button');
+      archive.type='button';
+      archive.textContent=s.archived?'Unarchive':'Archive';
+      archive.className='btn ghost';
+      archive.setAttribute('aria-label', s.archived ? 'Unarchive session' : 'Archive session');
+      archive.addEventListener('click', async () => {
         if(authToken && typeof fetch==='function'){
-          try{
-            await fetch(`/api/sessions/${s.id}`, {
-              method:'PUT',
-              headers:{ 'Content-Type':'application/json','Authorization':'Bearer '+authToken },
-              body:JSON.stringify({name})
-            });
-          }catch(e){ console.error(e); }
+          try{ await fetch(`/api/sessions/${s.id}/${s.archived?'unarchive':'archive'}`, { method:'POST', headers:{ 'Authorization': 'Bearer ' + authToken } }); }catch(e){ console.error(e); }
         }
+        s.archived=!s.archived;
+        saveSessions(sessions);
+        if(s.archived && currentSessionId===s.id){
+          currentSessionId=sessions.find(x=>!x.archived)?.id||null;
+          if(currentSessionId) localStorage.setItem('trauma_current_session', currentSessionId); else localStorage.removeItem('trauma_current_session');
+        }
+        populateSessionSelect(select, sessions);
+        if(currentSessionId) select.value=currentSessionId; else select.value='';
+        renderDeleteButtons();
       });
       const btn=document.createElement('button');
       btn.type='button';
@@ -150,21 +217,25 @@ export async function initSessions(){
         }
       });
       row.appendChild(label);
-      row.appendChild(rename);
+      row.appendChild(archive);
       row.appendChild(btn);
       delWrap.appendChild(row);
     });
+    if(focusId){
+      const focusEl=delWrap.querySelector(`.session-item[data-session-id="${focusId}"] .session-label`);
+      if(focusEl) focusEl.focus();
+    }
   }
   if(!sessions.length){
     const id=Date.now().toString(36);
-    sessions=[{id,name:'Pacientas Nr.1'}];
+    sessions=[{id,name:'Pacientas Nr.1', archived:false}];
     saveSessions(sessions);
     currentSessionId=id;
     localStorage.setItem('trauma_current_session', id);
   }
   if(!currentSessionId || !sessions.some(s=>s.id===currentSessionId)){
-    currentSessionId=sessions[0].id;
-    localStorage.setItem('trauma_current_session', currentSessionId);
+    currentSessionId=sessions.find(s=>!s.archived)?.id || sessions[0].id;
+    if(currentSessionId) localStorage.setItem('trauma_current_session', currentSessionId);
   }
   populateSessionSelect(select, sessions);
   select.value=currentSessionId;
@@ -174,7 +245,7 @@ export async function initSessions(){
     const name=await notify({type:'prompt', message:'Paciento ID'});
     if(!name) return;
     const id=Date.now().toString(36);
-    sessions.push({id,name});
+    sessions.push({id,name, archived:false});
     saveSessions(sessions);
     localStorage.setItem('trauma_current_session', id);
     currentSessionId=id;
@@ -263,6 +334,7 @@ export function loadAll(){
       $('#d_pupil_left_note').style.display = ($$('.chip.active', $('#d_pupil_left_group')).some(c=>c.dataset.value==='kita'))?'block':'none';
       $('#d_pupil_right_note').style.display = ($$('.chip.active', $('#d_pupil_right_group')).some(c=>c.dataset.value==='kita'))?'block':'none';
       $('#e_back_notes').style.display = ($$('.chip.active', $('#e_back_group')).some(c=>c.dataset.value==='Pakitimai'))?'block':'none';
+      $('#c_skin_color_other').style.display = ($$('.chip.active', $('#c_skin_color_group')).some(c=>c.dataset.value==='Kita'))?'block':'none';
       $('#oxygenFields').style.display = ($('#b_oxygen_liters').value || $('#b_oxygen_type').value) ? 'flex' : 'none';
     $('#dpvFields').style.display = $('#b_dpv_fio2').value ? 'flex' : 'none';
     $('#spr_skyrius_container').style.display = ($$('.chip.active', $('#spr_decision_group')).some(c=>c.dataset.value==='Stacionarizavimas'))?'block':'none';

@@ -55,14 +55,15 @@ export function generateReport(){
   const radial=getSingleValue('#c_pulse_radial_group');
   const femoral=getSingleValue('#c_pulse_femoral_group');
   const skinTemp=getSingleValue('#c_skin_temp_group');
-  const skinColor=getSingleValue('#c_skin_color_group');
+  const skinColorChip=getSingleValue('#c_skin_color_group');
+  const skinColor=skinColorChip==='Kita'?$('#c_skin_color_other').value:skinColorChip;
   const skinParts=[skinTemp, skinColor].filter(Boolean);
   const skin=skinParts.length?('Oda: '+skinParts.join(', ')):null;
   out.push('\n--- C Kraujotaka ---'); out.push([
     chr?('ŠSD '+chr+'/min'):null,
     (csbp||cdbp)?('AKS '+csbp+'/'+cdbp):null,
-    cmap?('MAP '+cmap):null,
-    csi?('SI '+csi):null,
+    cmap?('VAS '+cmap):null,
+    csi?('ŠI '+csi):null,
     $('#c_caprefill').value?('KPL '+$('#c_caprefill').value+'s'):null,
     radial?('Radialinis pulsas '+radial):null,
     femoral?('Femoralis pulsas '+femoral):null,
