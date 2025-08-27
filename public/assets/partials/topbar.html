@@ -21,9 +21,17 @@
     </div>
   </div>
   <div class="header-actions">
-    <div class="toolbar" id="mobileActions" hidden>
+    <div class="toolbar" id="mobileActions">
       <button type="button" class="btn" id="actionsToggle" aria-controls="actionsMenu" aria-expanded="false"></button>
       <div class="menu" id="actionsMenu" hidden></div>
+      <div class="toolbar" id="arrivalBar">
+          <button type="button" class="btn primary" id="btnAtvyko"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>ATVYKO</button>
+        <div id="arrivalTimer" class="btn primary arrival-timer" aria-live="polite"></div>
+      </div>
+      <div class="toolbar" id="sessionBar">
+        <select id="sessionSelect" class="w-auto"></select>
+          <button type="button" class="btn" id="btnNewSession"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Naujas</button>
+      </div>
     </div>
     <div class="toolbar">
       <details class="more-actions">
