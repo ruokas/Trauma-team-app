@@ -189,22 +189,6 @@ describe('server API', () => {
     expect(getData.body).toEqual(payload);
   });
 
-  test('resource endpoints', async () => {
-    const token = await login('res');
-    const getRes = await request(app)
-      .get('/api/resources')
-      .set('Authorization', `Bearer ${token}`);
-    expect(getRes.statusCode).toBe(200);
-    expect(getRes.body).toEqual({ beds: 0, ventilators: 0, staff: 0 });
-
-    const update = await request(app)
-      .put('/api/resources')
-      .set('Authorization', `Bearer ${token}`)
-      .send({ beds: 5, ventilators: 2, staff: 10 });
-    expect(update.statusCode).toBe(200);
-    expect(fakeDB.resources).toEqual({ beds: 5, ventilators: 2, staff: 10 });
-  });
-
   test('serializes concurrent writes to prevent data loss', async () => {
     let active = false;
     let overlap = false;
@@ -240,18 +224,16 @@ describe('loadDB', () => {
     const db = await loadDB();
     expect(db.data).toEqual({});
     expect(db.users).toEqual([]);
-    expect(db.resources).toEqual({ beds: 0, ventilators: 0, staff: 0 });
   });
 
   test('initializes invalid data and users types', async () => {
     fsPromises.readFile.mockResolvedValue(
-      JSON.stringify({ sessions: [], data: [], users: {}, resources: [] })
+      JSON.stringify({ sessions: [], data: [], users: {} })
     );
     const { loadDB } = require('./index');
     const db = await loadDB();
     expect(db.data).toEqual({});
     expect(db.users).toEqual([]);
-     expect(db.resources).toEqual({ beds: 0, ventilators: 0, staff: 0 });
   });
 });
 
