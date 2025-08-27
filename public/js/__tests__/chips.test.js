@@ -155,8 +155,8 @@ describe('chips', () => {
           <button type="button" class="chip" data-value="n.y." aria-pressed="false"></button>
           <button type="button" class="chip" data-value="kita" aria-pressed="false"></button>
         </div>
-        <label for="d_pupil_left_note" hidden>Pastabos</label>
-        <input id="d_pupil_left_note" hidden />
+        <label for="d_pupil_left_note" class="hidden" hidden>Pastabos</label>
+        <input id="d_pupil_left_note" class="hidden" hidden />
       </div>
     `;
     const { initChips } = require('../chips.js');
@@ -164,11 +164,11 @@ describe('chips', () => {
     const [nyChip, otherChip] = document.querySelectorAll('#d_pupil_left_group .chip');
     const note = document.getElementById('d_pupil_left_note');
     otherChip.click();
-    expect(note.hidden).toBe(false);
+    expect(note.classList.contains('hidden')).toBe(false);
     expect(document.getElementById('d_pupil_left_wrapper').getAttribute('aria-expanded')).toBe('true');
     note.value = 'test';
     nyChip.click();
-    expect(note.hidden).toBe(true);
+    expect(note.classList.contains('hidden')).toBe(true);
     expect(document.getElementById('d_pupil_left_wrapper').getAttribute('aria-expanded')).toBe('false');
     expect(note.value).toBe('');
   });

@@ -55,8 +55,12 @@ function togglePupilNote(side, chip){
   const group = note.parentElement;
   const show = chip.dataset.value==='kita' && isChipActive(chip);
   note.hidden = !show;
+  note.classList.toggle('hidden', !show);
   const label = group.querySelector(`label[for="d_pupil_${side}_note"]`);
-  if(label) label.hidden = !show;
+  if(label){
+    label.hidden = !show;
+    label.classList.toggle('hidden', !show);
+  }
   if(!show) note.value='';
   group.setAttribute('aria-expanded', show);
 }
