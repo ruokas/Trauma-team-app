@@ -110,6 +110,10 @@ app.get('/api/sessions', auth, (req, res) => {
 
 app.put('/api/sessions', auth, validate(sessionsListSchema), async (req, res) => {
   db.sessions = req.body;
+  const ids = new Set(db.sessions.map(s => s.id));
+  for (const key of Object.keys(db.data)) {
+    if (!ids.has(key)) delete db.data[key];
+  }
   await saveDB();
   io.emit('sessions', db.sessions);
   res.json({ ok: true });
