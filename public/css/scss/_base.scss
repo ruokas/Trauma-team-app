@@ -24,7 +24,8 @@ body{
 }
 header{
   height:var(--header-height);
-  line-height:var(--header-height);
+  display:flex;
+  align-items:center;
   --line:color-mix(in srgb,#2d3b4f,white 20%);
   --ink:color-mix(in srgb,#e9f2fb,white 10%);
   position:fixed;
@@ -165,8 +166,8 @@ header{
     }
   }
 // Use fluid typography for headings
-h1{font-size:clamp(1.25rem,5vw,2rem);margin:$space-4 0}
-.sub{color:color-mix(in srgb,var(--muted),white 20%);font-size:$font-xs}
+h1{font-size:clamp(1.25rem,5vw,2rem);line-height:1.2;margin:$space-4 0}
+.sub{color:color-mix(in srgb,var(--muted),white 20%);font-size:$font-xs;line-height:1.2}
 .btn{min-width:4rem}
 .btn-icon{width:1em;height:1em;margin-right:$space-4}
 .toolbar{display:flex;gap:$space-8;flex-wrap:wrap;margin-top:$space-8}
