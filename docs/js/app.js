@@ -203,8 +203,10 @@ async function init(){
   });
     $('#spr_skyrius').addEventListener('change', e=>{
       const show = e.target.value === 'Kita';
-      $('#spr_skyrius_kita').style.display = show ? 'block' : 'none';
-      if(!show) $('#spr_skyrius_kita').value='';
+      const field = $('#spr_skyrius_kita');
+      field.style.display = show ? 'block' : 'none';
+      field.classList.toggle('hidden', !show);
+      if(!show) field.value='';
       saveAll();
     });
     $('#output').addEventListener('input', expandOutput);
