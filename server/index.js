@@ -5,6 +5,7 @@ const http = require('http');
 const { Server } = require('socket.io');
 const crypto = require('crypto');
 const Joi = require('joi');
+const validate = require('./validate');
 
 const PORT = process.env.PORT || 3000;
 const DB_FILE = process.env.DB_FILE || path.join(__dirname, 'db.json');
@@ -59,13 +60,13 @@ const sessionsListSchema = Joi.array().items(sessionListItemSchema);
 const sessionDataSchema = Joi.object().unknown(true);
 
 /* ===== Auth ===== */
-app.post('/api/login', async (req, res) => {
+app.post('/api/login', (req, res, next) => {
   if (DISABLE_AUTH) {
     return res.json({ token: 'dev-token' });
   }
-  const { error, value } = loginSchema.validate(req.body);
-  if (error) return res.status(400).json({ error: error.message });
-  const { name } = value;
+  next();
+}, validate(loginSchema), async (req, res) => {
+  const { name } = req.body;
   const token = crypto.randomBytes(8).toString('hex');
   db.users.push({ token, name });
   await saveDB();
@@ -105,19 +106,15 @@ app.get('/api/sessions', auth, (req, res) => {
   res.json(db.sessions);
 });
 
-app.put('/api/sessions', auth, async (req, res) => {
-  const { error, value } = sessionsListSchema.validate(req.body);
-  if (error) return res.status(400).json({ error: error.message });
-  db.sessions = value;
+app.put('/api/sessions', auth, validate(sessionsListSchema), async (req, res) => {
+  db.sessions = req.body;
   await saveDB();
   io.emit('sessions', db.sessions);
   res.json({ ok: true });
 });
 
-app.post('/api/sessions', auth, async (req, res) => {
-  const { error, value } = sessionSchema.validate(req.body);
-  if (error) return res.status(400).json({ error: error.message });
-  const { name } = value;
+app.post('/api/sessions', auth, validate(sessionSchema), async (req, res) => {
+  const { name } = req.body;
   const id = crypto.randomBytes(6).toString('hex');
   const session = { id, name, archived: false };
   db.sessions.push(session);
@@ -126,13 +123,11 @@ app.post('/api/sessions', auth, async (req, res) => {
   res.json(session);
 });
 
-app.put('/api/sessions/:id', auth, async (req, res) => {
+app.put('/api/sessions/:id', auth, validate(sessionSchema), async (req, res) => {
   const id = req.params.id;
   const session = db.sessions.find(s => s.id === id);
   if(!session) return res.status(404).json({ error: 'Not found' });
-  const { error, value } = sessionSchema.validate(req.body);
-  if (error) return res.status(400).json({ error: error.message });
-  session.name = value.name;
+  session.name = req.body.name;
   await saveDB();
   io.emit('sessions', db.sessions);
   res.json({ ok: true });
@@ -175,14 +170,18 @@ app.get('/api/sessions/:id/data', auth, (req, res) => {
   res.json(db.data[id] || {});
 });
 
-app.put('/api/sessions/:id/data', auth, async (req, res) => {
+app.put('/api/sessions/:id/data', auth, validate(sessionDataSchema), async (req, res) => {
   const id = req.params.id;
-  const { error, value } = sessionDataSchema.validate(req.body);
-  if (error) return res.status(400).json({ error: error.message });
-  db.data[id] = value;
+  db.data[id] = req.body;
   await saveDB();
   io.emit('sessionData', { id, data: db.data[id] });
   res.json({ ok: true });
+});
+
+// Global error handler
+// eslint-disable-next-line no-unused-vars
+app.use((err, req, res, next) => {
+  res.status(err.status || 500).json({ error: err.message });
 });
 
 const server = http.createServer(app);
