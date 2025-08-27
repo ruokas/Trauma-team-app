@@ -71,14 +71,20 @@ async function getSessions(){
   }catch(e){ return []; }
 }
 
-function saveSessions(list){
+async function saveSessions(list){
   localStorage.setItem('trauma_sessions', JSON.stringify(list));
   if(authToken && typeof fetch === 'function'){
-    fetch('/api/sessions', {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
-      body: JSON.stringify(list)
-    }).catch(()=>{});
+    try{
+      const res = await fetch('/api/sessions', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+        body: JSON.stringify(list)
+      });
+      if(!res.ok) throw new Error(res.status);
+    }catch(e){
+      console.error(e);
+      notify({ type:'error', message:'Failed to save sessions' });
+    }
   }
 }
 
@@ -137,7 +143,7 @@ export async function initSessions(){
         input.className='session-rename-input';
         let cancelled=false;
         const cancel=()=>{ cancelled=true; input.replaceWith(label); label.focus(); };
-        const attemptSave=()=>{
+        const attemptSave=async()=>{
           const newName=input.value.trim();
           if(!newName){
             notify({ type:'error', message:'Pavadinimas negali būti tuščias.' });
@@ -152,12 +158,12 @@ export async function initSessions(){
             return;
           }
           s.name=newName;
-          saveSessions(sessions);
+          await saveSessions(sessions);
           populateSessionSelect(select, sessions);
           if(currentSessionId) select.value=currentSessionId;
           renderDeleteButtons(s.id);
         };
-        input.addEventListener('blur', ()=>{ if(!cancelled) attemptSave(); });
+        input.addEventListener('blur', async()=>{ if(!cancelled) await attemptSave(); });
         input.addEventListener('keydown', e=>{
           if(e.key==='Enter'){ e.preventDefault(); input.blur(); }
           else if(e.key==='Escape'){ e.preventDefault(); cancel(); }
@@ -180,7 +186,7 @@ export async function initSessions(){
           try{ await fetch(`/api/sessions/${s.id}/${s.archived?'unarchive':'archive'}`, { method:'POST', headers:{ 'Authorization': 'Bearer ' + authToken } }); }catch(e){ console.error(e); }
         }
         s.archived=!s.archived;
-        saveSessions(sessions);
+        await saveSessions(sessions);
         if(s.archived && currentSessionId===s.id){
           currentSessionId=sessions.find(x=>!x.archived)?.id||null;
           if(currentSessionId) localStorage.setItem('trauma_current_session', currentSessionId); else localStorage.removeItem('trauma_current_session');
@@ -229,7 +235,7 @@ export async function initSessions(){
   if(!sessions.length){
     const id=Date.now().toString(36);
     sessions=[{id,name:'Pacientas Nr.1', archived:false}];
-    saveSessions(sessions);
+    await saveSessions(sessions);
     currentSessionId=id;
     localStorage.setItem('trauma_current_session', id);
   }
@@ -246,7 +252,7 @@ export async function initSessions(){
     if(!name) return;
     const id=Date.now().toString(36);
     sessions.push({id,name, archived:false});
-    saveSessions(sessions);
+    await saveSessions(sessions);
     localStorage.setItem('trauma_current_session', id);
     currentSessionId=id;
     populateSessionSelect(select, sessions);
