@@ -296,7 +296,7 @@ const IMAGING_GROUPS=['#imaging_ct','#imaging_xray','#imaging_other_group'];
 const CHIP_GROUPS=['#chips_red','#chips_yellow',...IMAGING_GROUPS,'#labs_basic','#a_airway_group','#b_breath_left_group','#b_breath_right_group','#c_pulse_radial_group','#c_pulse_femoral_group','#c_skin_temp_group','#c_skin_color_group','#d_pupil_left_group','#d_pupil_right_group','#spr_decision_group'];
 const FIELD_SELECTORS='input[type="text"],input[type="number"],input[type="time"],input[type="date"],textarea,select';
 
-export function saveAll(){
+export async function saveAll(){
   if(!currentSessionId) return;
   const data={};
   $$(FIELD_SELECTORS).forEach(el=>{
@@ -317,16 +317,17 @@ export function saveAll(){
     statusEl.classList.remove('offline');
   }
   if(authToken && typeof fetch === 'function'){
-    fetch(`/api/sessions/${currentSessionId}/data`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
-      body: JSON.stringify(data)
-    }).then(res => {
+    try{
+      const res = await fetch(`/api/sessions/${currentSessionId}/data`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + authToken },
+        body: JSON.stringify(data)
+      });
       if(!res.ok) throw new Error(res.status);
       if(statusEl){ statusEl.textContent='Saved'; statusEl.classList.remove('offline'); }
-    }).catch(() => {
+    }catch(e){
       if(statusEl){ statusEl.textContent='Save failed'; statusEl.classList.add('offline'); }
-    });
+    }
   } else if(statusEl){
     statusEl.textContent='Saved';
   }
