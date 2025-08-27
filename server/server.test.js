@@ -190,3 +190,30 @@ describe('server API', () => {
   });
 });
 
+describe('loadDB', () => {
+  let fsPromises;
+
+  beforeEach(() => {
+    jest.resetModules();
+    fsPromises = require('fs').promises;
+  });
+
+  test('initializes missing data and users', async () => {
+    fsPromises.readFile.mockResolvedValue(JSON.stringify({ sessions: [] }));
+    const { loadDB } = require('./index');
+    const db = await loadDB();
+    expect(db.data).toEqual({});
+    expect(db.users).toEqual([]);
+  });
+
+  test('initializes invalid data and users types', async () => {
+    fsPromises.readFile.mockResolvedValue(
+      JSON.stringify({ sessions: [], data: [], users: {} })
+    );
+    const { loadDB } = require('./index');
+    const db = await loadDB();
+    expect(db.data).toEqual({});
+    expect(db.users).toEqual([]);
+  });
+});
+

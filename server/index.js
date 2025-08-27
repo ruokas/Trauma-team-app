@@ -16,6 +16,8 @@ async function loadDB(){
     const data = await fs.promises.readFile(DB_FILE, 'utf8');
     const parsed = JSON.parse(data);
     if (!Array.isArray(parsed.sessions)) parsed.sessions = [];
+    if (typeof parsed.data !== 'object' || parsed.data === null || Array.isArray(parsed.data)) parsed.data = {};
+    if (!Array.isArray(parsed.users)) parsed.users = [];
     // Ensure all sessions have an archived flag for backwards compatibility
     parsed.sessions = parsed.sessions.map(s => ({ ...s, archived: !!s.archived }));
     return parsed;
@@ -212,4 +214,4 @@ async function startServer () {
   });
 }
 
-module.exports = { app, server, startServer };
+module.exports = { app, server, startServer, loadDB };
