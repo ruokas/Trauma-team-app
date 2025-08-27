@@ -358,15 +358,13 @@ async function init(){
   const btnOxygen=$('#btnOxygen');
   if(btnOxygen) btnOxygen.addEventListener('click',()=>{
     const box=$('#oxygenFields');
-    const show=getComputedStyle(box).display==='none';
-    box.style.display=show?'flex':'none';
+    box.classList.toggle('hidden');
     saveAll();
   });
   const btnDPV=$('#btnDPV');
   if(btnDPV) btnDPV.addEventListener('click',()=>{
     const box=$('#dpvFields');
-    const show=getComputedStyle(box).display==='none';
-    box.style.display=show?'flex':'none';
+    box.classList.toggle('hidden');
     saveAll();
   });
     $('#spr_skyrius').addEventListener('change', e=>{

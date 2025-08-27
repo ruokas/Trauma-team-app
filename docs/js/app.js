@@ -313,14 +313,12 @@ async function init(){
     $('#btnSprNow').addEventListener('click', ()=>{ $('#spr_time').value=nowHM(); saveAll(); });
   $('#btnOxygen').addEventListener('click', ()=>{
     const box = $('#oxygenFields');
-    const show = getComputedStyle(box).display === 'none';
-    box.style.display = show ? 'flex' : 'none';
+    box.classList.toggle('hidden');
     saveAll();
   });
   $('#btnDPV').addEventListener('click', ()=>{
     const box = $('#dpvFields');
-    const show = getComputedStyle(box).display === 'none';
-    box.style.display = show ? 'flex' : 'none';
+    box.classList.toggle('hidden');
     saveAll();
   });
     $('#spr_skyrius').addEventListener('change', e=>{
