@@ -65,6 +65,19 @@
   }
 }
 
+@media (max-width: 480px) {
+  .header-actions {
+    .toolbar {
+      display: none;
+    }
+    .more-actions {
+      > summary {
+        display: inline-flex;
+      }
+    }
+  }
+}
+
 /* Mobile actions menu for small screens */
 #mobileActions {
   display:none;

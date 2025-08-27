@@ -44,15 +44,14 @@ header{
 .header-center,
 .header-actions{
   display:flex;
-  flex-wrap:nowrap;
-  overflow-x:auto;
+  flex-wrap:wrap;
   overflow-y:visible;
   gap:$space-12;
   align-items:center;
   min-width:0;
   .toolbar{
     display:flex;
-    flex-wrap:nowrap;
+    flex-wrap:wrap;
     gap:$space-10;
     flex:0 0 auto;
     min-width:auto;
