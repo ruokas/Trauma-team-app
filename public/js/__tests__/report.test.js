@@ -11,7 +11,7 @@ describe('gksSum', () => {
 });
 
 describe('generateReport circulation metrics', () => {
-  test('includes MAP and shock index', () => {
+  test('includes VAS and shock index', () => {
     document.body.innerHTML = `
       <input id="patient_age"><input id="patient_sex"><input id="patient_history">
       <input id="gmp_hr"><input id="gmp_rr"><input id="gmp_spo2"><input id="gmp_sbp"><input id="gmp_dbp">
@@ -34,7 +34,7 @@ describe('generateReport circulation metrics', () => {
     document.querySelector('#c_dbp').value = '60';
     generateReport();
     const out = document.querySelector('#output').value;
-    expect(out).toContain('MAP 80');
-    expect(out).toContain('SI 0.75');
+    expect(out).toContain('VAS 80');
+    expect(out).toContain('ŠI 0.75');
   });
 });

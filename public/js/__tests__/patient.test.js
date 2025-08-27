@@ -64,8 +64,8 @@ const setupDom = () => {
   const skinColor=document.getElementById('c_skin_color_group');
   skinColor.className='chip-group';
   skinColor.dataset.single='true';
-  skinColor.innerHTML='<button class="chip" data-value="Blyški"></button><button class="chip" data-value="Paraudusi"></button>';
-  const textInputs=['a_notes','gmp_mechanism','gmp_notes','b_oxygen_type','b_dpv_fio2','d_pupil_left_note','d_pupil_right_note','d_notes','e_back_notes','e_other','spr_skyrius_kita','spr_ligonine','patient_history'];
+  skinColor.innerHTML='<button class="chip" data-value="Rausva"></button><button class="chip" data-value="Blyški"></button><button class="chip" data-value="Kita"></button>';
+  const textInputs=['a_notes','gmp_mechanism','gmp_notes','b_oxygen_type','b_dpv_fio2','d_pupil_left_note','d_pupil_right_note','d_notes','e_back_notes','e_other','spr_skyrius_kita','spr_ligonine','patient_history','c_skin_color_other'];
   textInputs.forEach(id=>{ const i=document.createElement('input'); i.id=id; i.type='text'; document.body.appendChild(i); });
   const numberInputs=['b_rr','b_spo2','b_oxygen_liters','c_hr','c_sbp','c_dbp','c_caprefill','d_gksa','d_gksk','d_gksm','e_temp',
     'spr_hr','spr_rr','spr_spo2','spr_sbp','spr_dbp','spr_gksa','spr_gksk','spr_gksm','patient_age','gmp_hr','gmp_rr','gmp_spo2',
