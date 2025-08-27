@@ -26,6 +26,10 @@ Execute the test suite:
 npm test
 ```
 
+## Shared Topbar Script
+
+The documentation site now imports the topbar component directly from `public/js/components/topbar.js`. Update that file and rebuild to propagate changes to the docs.
+
 ## Connection Lifecycle
 
 The application maintains a Socket.IO connection to sync sessions and
