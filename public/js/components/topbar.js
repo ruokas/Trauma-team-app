@@ -98,7 +98,12 @@ function applyTopbarLocalization(root){
 }
 
 function initActionsMenu(){
+  document.documentElement.classList.add('js');
   const container=document.getElementById('mobileActions');
+  if(container){
+    container.querySelector('#arrivalBar')?.remove();
+    container.querySelector('#sessionBar')?.remove();
+  }
   const toggle=document.getElementById('actionsToggle');
   const menu=document.getElementById('actionsMenu');
   const arrival=document.getElementById('arrivalBar');
