@@ -19,12 +19,19 @@ async function loadDB(){
     if (!Array.isArray(parsed.sessions)) parsed.sessions = [];
     if (typeof parsed.data !== 'object' || parsed.data === null || Array.isArray(parsed.data)) parsed.data = {};
     if (!Array.isArray(parsed.users)) parsed.users = [];
+    if (typeof parsed.resources !== 'object' || parsed.resources === null || Array.isArray(parsed.resources)) {
+      parsed.resources = { beds: 0, ventilators: 0, staff: 0 };
+    } else {
+      parsed.resources.beds = parsed.resources.beds ?? 0;
+      parsed.resources.ventilators = parsed.resources.ventilators ?? 0;
+      parsed.resources.staff = parsed.resources.staff ?? 0;
+    }
     // Ensure all sessions have an archived flag for backwards compatibility
     parsed.sessions = parsed.sessions.map(s => ({ ...s, archived: !!s.archived }));
     return parsed;
   } catch (e) {
     console.error('Failed to load DB', e);
-    return { sessions: [], data: {}, users: [] };
+    return { sessions: [], data: {}, users: [], resources: { beds: 0, ventilators: 0, staff: 0 } };
   }
 }
 
@@ -67,6 +74,12 @@ const sessionsListSchema = Joi.array().items(sessionListItemSchema);
 
 const sessionDataSchema = Joi.object().unknown(true);
 
+const resourcesSchema = Joi.object({
+  beds: Joi.number().integer().min(0).required(),
+  ventilators: Joi.number().integer().min(0).required(),
+  staff: Joi.number().integer().min(0).required()
+});
+
 /* ===== Auth ===== */
 app.post('/api/login', (req, res, next) => {
   if (DISABLE_AUTH) {
@@ -106,6 +119,18 @@ function auth(req, res, next){
   req.token = token;
   next();
 }
+
+/* ===== Resources ===== */
+app.get('/api/resources', auth, (req, res) => {
+  res.json(db.resources);
+});
+
+app.put('/api/resources', auth, validate(resourcesSchema), async (req, res) => {
+  db.resources = req.body;
+  await saveDB();
+  io.emit('resources', db.resources);
+  res.json({ ok: true });
+});
 
 /* ===== Sessions ===== */
 app.get('/api/sessions', auth, (req, res) => {
@@ -207,6 +232,7 @@ io.use((socket, next) => {
 
 io.on('connection', socket => {
   socket.emit('users', db.users.map(u => u.name));
+  socket.emit('resources', db.resources);
 });
 
 async function startServer () {
