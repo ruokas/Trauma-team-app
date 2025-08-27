@@ -18,6 +18,7 @@ import { initCirculation } from './circulation.js';
 import { setupActivationControls, ensureSingleTeam, updateActivationIndicator } from './activation.js';
 import { initGcs } from './gcs.js';
 import { IMG_CT, IMG_XRAY, LABS, BLOOD_GROUPS, FAST_AREAS } from './config.js';
+import { initCapacityDashboard } from './capacityDashboard.js';
 export { validateVitals, createChipGroup };
 
 /* ===== Imaging / Labs / Team ===== */
@@ -156,6 +157,7 @@ async function init(){
   connectSocket();
   await fetchUsers();
   await initSessions();
+  initCapacityDashboard();
   if(document.getElementById('tabs')){
     initTabs();
     initCollapsibles();
