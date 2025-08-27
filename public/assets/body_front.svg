@@ -1,8 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
-  <g id="front-map">
-    <g class="silhouette" id="front-shape" data-side="front">
-      <!-- Silhouette adapted from Material Design Icons 'human-male' (Apache License 2.0) -->
-      <path d="M24 4A4 4 0 0 1 28 8A4 4 0 0 1 24 12A4 4 0 0 1 20 8A4 4 0 0 1 24 4Z M21 14H27A4 4 0 0 1 31 18V29H28V44H20V29H17V18A4 4 0 0 1 21 14Z"/>
-    </g>
-  </g>
-</svg>

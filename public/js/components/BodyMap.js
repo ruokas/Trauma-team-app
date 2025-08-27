@@ -452,6 +452,7 @@ export default class BodyMap {
    * resulting SVG is self-contained.
    */
   async embedSilhouettes(svg) {
+    // Inline any external SVG references
     const uses = [...svg.querySelectorAll('use[data-src]')];
     for (const u of uses) {
       const ref = u.dataset.src;
@@ -472,6 +473,28 @@ export default class BodyMap {
           }
         });
         u.replaceWith(replacement);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    // Embed linked raster images as data URIs
+    const images = [...svg.querySelectorAll('image[href], image[xlink\:href]')];
+    for (const img of images) {
+      const url = img.getAttribute('href') || img.getAttribute('xlink:href');
+      if (!url || url.startsWith('data:')) continue;
+      try {
+        const res = await fetch(url);
+        if (!res.ok) continue;
+        const blob = await res.blob();
+        const reader = new FileReader();
+        const dataUrl = await new Promise((resolve, reject) => {
+          reader.onloadend = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
+        });
+        img.setAttribute('href', dataUrl);
+        img.removeAttribute('xlink:href');
       } catch (e) {
         console.error(e);
       }
