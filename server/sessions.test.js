@@ -11,21 +11,19 @@ describe('auth middleware', () => {
   let dbPath;
   let server;
   let base;
+  let startServer;
 
-  beforeAll(async () => {
-    tempDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), 'db-'));
-    dbPath = path.join(tempDir, 'db.json');
-    await fs.promises.writeFile(dbPath, JSON.stringify({ sessions: [], data: {}, users: [] }));
-    process.env.DB_FILE = dbPath;
-    process.env.PORT = 0;
-    server = require('./index.js').server;
-    await new Promise(resolve => {
-      if (server.listening) return resolve();
-      server.on('listening', resolve);
+    beforeAll(async () => {
+      tempDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), 'db-'));
+      dbPath = path.join(tempDir, 'db.json');
+      await fs.promises.writeFile(dbPath, JSON.stringify({ sessions: [], data: {}, users: [] }));
+      process.env.DB_FILE = dbPath;
+      process.env.PORT = 0;
+      ({ server, startServer } = require('./index.js'));
+      await startServer();
+      const address = server.address();
+      base = `http://localhost:${address.port}`;
     });
-    const address = server.address();
-    base = `http://localhost:${address.port}`;
-  });
 
   afterAll(async () => {
     await new Promise(resolve => server.close(resolve));
