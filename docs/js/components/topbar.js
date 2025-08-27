@@ -1,3 +1,5 @@
+import { ACTIONS_LABEL, MORE_LABEL } from '../constants.js';
+
 export function initNavToggle(toggle, nav){
   if(!toggle || !nav) return;
   toggle.setAttribute('aria-controls', nav.id);
@@ -58,6 +60,7 @@ export async function initTopbar(){
   }catch(e){
     console.error('Failed to load topbar', e);
   }
+  applyTopbarLocalization(header);
   const setHeight=()=>{
     const h=header.offsetHeight+'px';
     header.style.setProperty('--header-height', h);
@@ -70,6 +73,13 @@ export async function initTopbar(){
   initNavToggle(toggle, nav);
 
   initActionsMenu();
+}
+
+function applyTopbarLocalization(root){
+  const actionsToggle=root?.querySelector('#actionsToggle');
+  if(actionsToggle) actionsToggle.textContent=ACTIONS_LABEL;
+  const moreSummary=root?.querySelector('.more-actions summary');
+  if(moreSummary) moreSummary.textContent=MORE_LABEL;
 }
 
 function initActionsMenu(){

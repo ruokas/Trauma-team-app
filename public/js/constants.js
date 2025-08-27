@@ -9,3 +9,6 @@ export const TEAM_ROLES = [
   'Chirurgas',
   'Ortopedas'
 ];
+
+export const ACTIONS_LABEL = 'Veiksmai ▾';
+export const MORE_LABEL = 'Daugiau ▾';
