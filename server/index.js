@@ -6,6 +6,7 @@ const { Server } = require('socket.io');
 const crypto = require('crypto');
 const Joi = require('joi');
 const validate = require('./validate');
+const { validateToken } = require('./auth');
 
 const PORT = process.env.PORT || 3000;
 const DB_FILE = process.env.DB_FILE || path.join(__dirname, 'db.json');
@@ -94,10 +95,8 @@ app.get('/api/users', auth, (req, res) => {
 
 function auth(req, res, next){
   if (DISABLE_AUTH) return next();
-  const header = req.headers['authorization'] || '';
-  const prefix = 'Bearer ';
-  if(!header.startsWith(prefix)) return res.status(401).json({ error: 'No token' });
-  const token = header.slice(prefix.length);
+  const { valid, token } = validateToken(req.headers['authorization']);
+  if(!valid) return res.status(401).json({ error: 'No token' });
   if(!db.users.some(u => u.token === token)) return res.status(401).json({ error: 'Invalid token' });
   req.token = token;
   next();
@@ -196,9 +195,8 @@ const io = new Server(server, { cors: { origin: '*' } });
 io.use((socket, next) => {
   if (DISABLE_AUTH) return next();
   const raw = socket.handshake.auth && socket.handshake.auth.token;
-  const prefix = 'Bearer ';
-  const token = (typeof raw === 'string' && raw.startsWith(prefix)) ? raw.slice(prefix.length) : null;
-  if(token && db.users.some(u => u.token === token)) return next();
+  const { valid, token } = validateToken(raw);
+  if(valid && db.users.some(u => u.token === token)) return next();
   next(new Error('unauthorized'));
 });
 

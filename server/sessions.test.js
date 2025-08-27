@@ -5,6 +5,16 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 const http = require('http');
+jest.mock('./auth', () => ({
+  validateToken: jest.fn((headerOrString) => {
+    const prefix = 'Bearer ';
+    if (typeof headerOrString === 'string' && headerOrString.startsWith(prefix)) {
+      return { valid: true, token: headerOrString.slice(prefix.length) };
+    }
+    return { valid: false, token: null };
+  })
+}));
+const { validateToken } = require('./auth');
 
 describe('auth middleware', () => {
   let tempDir;
@@ -23,6 +33,10 @@ describe('auth middleware', () => {
       await startServer();
       const address = server.address();
       base = `http://localhost:${address.port}`;
+    });
+
+    beforeEach(() => {
+      validateToken.mockClear();
     });
 
   afterAll(async () => {
@@ -75,6 +89,7 @@ describe('auth middleware', () => {
 
   test('rejects requests without authorization header', async () => {
     const res = await httpRequest('GET', '/api/sessions');
+    expect(validateToken).toHaveBeenCalledWith(undefined);
     expect(res.status).toBe(401);
     const body = JSON.parse(res.data);
     expect(body).toEqual({ error: 'No token' });
@@ -89,6 +104,7 @@ describe('auth middleware', () => {
     const res = await httpRequest('GET', '/api/sessions', {
       headers: { Authorization: token }
     });
+    expect(validateToken).toHaveBeenCalledWith(token);
     expect(res.status).toBe(401);
     const body = JSON.parse(res.data);
     expect(body).toEqual({ error: 'No token' });
@@ -98,6 +114,7 @@ describe('auth middleware', () => {
     const res = await httpRequest('GET', '/api/sessions', {
       headers: { Authorization: 'Bearer invalid' }
     });
+    expect(validateToken).toHaveBeenCalledWith('Bearer invalid');
     expect(res.status).toBe(401);
     const body = JSON.parse(res.data);
     expect(body).toEqual({ error: 'Invalid token' });
