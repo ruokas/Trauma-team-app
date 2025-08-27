@@ -216,4 +216,20 @@ describe('chips', () => {
     expect(document.getElementById('d_pupil_left_wrapper').getAttribute('aria-expanded')).toBe('false');
     expect(note.value).toBe('');
   });
+
+  test('updates status indicator when chip is activated', () => {
+    document.body.innerHTML = `
+      <div id="group"><span class="chip" data-value="a"></span></div>
+    `;
+    const { setChipActive } = require('../chips.js');
+    const chip = document.querySelector('#group .chip');
+    setChipActive(chip, true);
+    const icon = chip.querySelector('.chip-status-icon');
+    const sr = chip.querySelector('.chip-status-text');
+    expect(icon.textContent).toBe('✓');
+    expect(sr.textContent).toBe('selected');
+    setChipActive(chip, false);
+    expect(icon.textContent).toBe('✗');
+    expect(sr.textContent).toBe('not selected');
+  });
 });

@@ -40,5 +40,15 @@ describe('sessionManager utilities', () => {
     expect(document.getElementById('saveStatus').textContent).toBe('Saved');
     expect(mockFetch).toHaveBeenCalled();
   });
+
+  test('setAuthToken stores and clears token', () => {
+    const { setAuthToken, getAuthToken } = require('../sessionManager.js');
+    setAuthToken('abc123');
+    expect(getAuthToken()).toBe('abc123');
+    expect(localStorage.getItem('trauma_token')).toBe('abc123');
+    setAuthToken(null);
+    expect(getAuthToken()).toBeNull();
+    expect(localStorage.getItem('trauma_token')).toBeNull();
+  });
 });
 
