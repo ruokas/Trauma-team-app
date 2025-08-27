@@ -7,7 +7,7 @@ import { logEvent, initTimeline } from './timeline.js';
 import './components/toast.js';
 import './components/modal.js';
 import { initValidation, validateVitals } from './validation.js';
-import { initTopbar } from './components/topbar.js';
+import { initTopbar } from '../../public/js/components/topbar.js';
 import { initCollapsibles } from './sections.js';
 import { connectSocket, initSessions, fetchUsers, initTheme, saveAll, loadAll } from './sessionManager.js';
 import bodyMap from './bodyMap.js';
