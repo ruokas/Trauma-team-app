@@ -125,4 +125,69 @@ describe('auth middleware', () => {
     const sessions = JSON.parse(listRes.data);
     expect(sessions).toContainEqual(created);
   });
+
+  test('removes obsolete session data when replacing the list', async () => {
+    const loginRes = await httpRequest('POST', '/api/login', {
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: 'dataTester' })
+    });
+    const token = JSON.parse(loginRes.data).token;
+
+    const create1 = await httpRequest('POST', '/api/sessions', {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({ name: 's1' })
+    });
+    const session1 = JSON.parse(create1.data);
+
+    const create2 = await httpRequest('POST', '/api/sessions', {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({ name: 's2' })
+    });
+    const session2 = JSON.parse(create2.data);
+
+    await httpRequest('PUT', `/api/sessions/${session1.id}/data`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({ foo: 1 })
+    });
+    await httpRequest('PUT', `/api/sessions/${session2.id}/data`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify({ bar: 2 })
+    });
+
+    const replace = await httpRequest('PUT', '/api/sessions', {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`
+      },
+      body: JSON.stringify([session2])
+    });
+    expect(replace.status).toBe(200);
+
+    const data1 = await httpRequest('GET', `/api/sessions/${session1.id}/data`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    expect(JSON.parse(data1.data)).toEqual({});
+
+    const data2 = await httpRequest('GET', `/api/sessions/${session2.id}/data`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    expect(JSON.parse(data2.data)).toEqual({ bar: 2 });
+
+    const raw = await fs.promises.readFile(dbPath, 'utf8');
+    const parsed = JSON.parse(raw);
+    expect(parsed.data[session1.id]).toBeUndefined();
+    expect(parsed.data[session2.id]).toEqual({ bar: 2 });
+  });
 });
