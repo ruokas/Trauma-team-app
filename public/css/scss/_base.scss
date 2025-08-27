@@ -76,10 +76,16 @@ header{
     min-width:auto;
   }
 }
-.header-actions .toolbar + .toolbar{
-  border-left:1px solid var(--line);
-  padding-left:$space-8;
-  margin-left:$space-8;
+
+.header-actions{
+  column-gap:$space-16;
+  &.nowrap{
+    flex-wrap:nowrap;
+    > .toolbar:not(:first-child){
+      border-left:1px solid var(--line);
+      padding-left:$space-8;
+    }
+  }
 }
 
 .header-center{
