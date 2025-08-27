@@ -20,6 +20,16 @@ describe('validateField', () => {
     expect(err.textContent).toBe('Netinkama reikšmė');
     expect(input.classList.contains('invalid')).toBe(true);
   });
+
+  test('returns error for value outside numeric range', () => {
+    document.body.innerHTML = '<input id="num" min="1" max="5" value="10" />';
+    const input = document.getElementById('num');
+    validateField(input);
+    const err = input.nextElementSibling;
+    expect(err).not.toBeNull();
+    expect(err.textContent).toBe('Leistina 1–5');
+    expect(input.classList.contains('invalid')).toBe(true);
+  });
 });
 
 describe('validateVitals', () => {
