@@ -26,6 +26,20 @@ Execute the test suite:
 npm test
 ```
 
+## Connection Lifecycle
+
+The application maintains a Socket.IO connection to sync sessions and
+users. The client listens for several connection events to aid
+debugging:
+
+- `connect_error` – logs the error, notifies the user and retries the
+  connection.
+- `disconnect` – warns the user that the connection was lost.
+- `reconnect` – logs successful reconnection and notifies the user.
+
+After refreshing authentication tokens, call `setAuthToken()` followed
+by `reconnectSocket()` to manually re-establish the connection.
+
 ## Stylesheets
 
 The CSS is generated from Sass files in `css/scss`:

@@ -34,6 +34,19 @@ export function initTheme(){
 export function connectSocket(){
   if(typeof io === 'undefined' || socket || !authToken) return;
   socket = io(socketEndpoint || undefined, { auth: { token: 'Bearer ' + authToken } });
+  socket.on('connect_error', err => {
+    console.error('Socket connection error:', err);
+    notify({ type: 'error', message: 'Connection error. Retrying...' });
+    setTimeout(() => socket.connect(), 1000);
+  });
+  socket.on('disconnect', reason => {
+    console.warn('Socket disconnected:', reason);
+    notify({ type: 'error', message: 'Disconnected from server' });
+  });
+  socket.on('reconnect', attempt => {
+    console.log('Socket reconnected after', attempt, 'attempts');
+    notify({ type: 'success', message: 'Reconnected to server' });
+  });
   socket.on('sessions', list => {
     const sel = $('#sessionSelect');
     if(sel) populateSessionSelect(sel, list);
@@ -42,6 +55,14 @@ export function connectSocket(){
     if(id === currentSessionId) loadAll();
   });
   socket.on('users', list=>updateUserList(list));
+}
+
+export function reconnectSocket(){
+  if(socket){
+    socket.disconnect();
+    socket = null;
+  }
+  connectSocket();
 }
 
 export function sessionKey(){
@@ -375,6 +396,12 @@ export function loadAll(){
 }
 
 export function getAuthToken(){ return authToken; }
+
+export function setAuthToken(token){
+  authToken = token;
+  if(token) localStorage.setItem('trauma_token', token);
+  else localStorage.removeItem('trauma_token');
+}
 
 export async function logout(){
   if(authToken && typeof fetch==='function'){
