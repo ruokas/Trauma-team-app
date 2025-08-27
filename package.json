@@ -8,7 +8,7 @@
     "test:client": "jest --config jest.config.js --passWithNoTests",
     "test:server": "jest --config jest.server.config.js",
     "build:css": "sass --no-source-map --style=compressed public/css/scss/main.scss public/css/main.css",
-    "build": "npm run build:css && rm -rf docs && cp -r public docs && rm -rf docs/js/__tests__ && rm docs/js/components/topbar.js && sed -i 's#./components/topbar.js#../../public/js/components/topbar.js#' docs/js/app.js",
+    "build": "npm run build:css && rm -rf docs && cp -r public docs && rm -rf docs/js/__tests__",
     "start": "node server/start.js",
     "lint": "eslint 'public/js/**/*.js' 'server/**/*.js'"
   },
