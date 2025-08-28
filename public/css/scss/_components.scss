@@ -65,6 +65,7 @@ input.invalid,select.invalid{border-color:var(--red)}
         #saveStatus{color:var(--muted);font-size:$font-sm;margin-top:$space-4}
 #saveStatus.offline{color:var(--yellow)}
 #saveStatus.offline::before{content:'⚠ ';}
+#activation-patient .grid{grid-template-columns:repeat(auto-fit,minmax(12rem,1fr))}
 .split{display:flex;gap:$space-12;flex-wrap:wrap}
 .split>div{flex:1}
 .interv-groups{display:grid;gap:$space-12;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
