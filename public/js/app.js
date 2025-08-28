@@ -23,6 +23,7 @@ import { init as initFastGrid } from './fastGrid.js';
 import { init as initTeamGrid } from './teamGrid.js';
 import { init as initMechanismList } from './mechanismList.js';
 import { init as initVitalsEvents } from './vitalsEvents.js';
+import { initChipGroups } from './chipData.js';
 export { validateVitals, createChipGroup };
 
 /* ===== Imaging / Labs / Team ===== */
@@ -39,6 +40,8 @@ function createChipGroup(selector, values){
   });
   return wrap;
 }
+
+initChipGroups();
 
 createChipGroup('#imaging_ct', IMG_CT);
 createChipGroup('#imaging_xray', IMG_XRAY);
