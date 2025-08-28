@@ -126,7 +126,7 @@ describe('BodyMap instance', () => {
     expect(bm2.burnArea()).toBeGreaterThan(0);
   });
 
-  test('overlapping burn brushes are counted once', () => {
+  test('overlapping burn brushes sum their areas', () => {
     setupDom();
     const bm = new BodyMap();
     bm.init(() => {});
@@ -134,8 +134,8 @@ describe('BodyMap instance', () => {
     const area1 = bm.burnArea();
     const text1 = bm.burnTotalEl.textContent;
     bm.addBrush(50, 50, 20);
-    expect(bm.burnArea()).toBeCloseTo(area1);
-    expect(bm.burnTotalEl.textContent).toBe(text1);
+    expect(bm.burnArea()).toBeCloseTo(area1 * 2);
+    expect(bm.burnTotalEl.textContent).not.toBe(text1);
   });
 
   test('burn brush only paints over body zones', () => {

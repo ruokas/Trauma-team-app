@@ -47,7 +47,9 @@ export default class BodyMap {
     this.isDrawing = false;
     this.vbWidth = 1500;
     this.vbHeight = 1100;
-    this.totalArea = this.vbWidth * this.vbHeight;
+    // The total drawable area will be derived from the front and back
+    // body silhouettes once the SVG is available.
+    this.totalArea = 0;
 
     // dragging
     this.drag = null;
@@ -102,8 +104,18 @@ export default class BodyMap {
     if (vb) {
       this.vbWidth = vb[2];
       this.vbHeight = vb[3];
-      this.totalArea = this.vbWidth * this.vbHeight;
     }
+
+    // Calculate combined area of the front and back silhouettes.  Fallback
+    // to the viewBox area if the silhouettes are not present.
+    let area = 0;
+    ['front-shape', 'back-shape'].forEach(id => {
+      const el = this.svg?.querySelector(`#${id}`);
+      if (!el || typeof el.getBBox !== 'function') return;
+      const box = el.getBBox();
+      area += box.width * box.height;
+    });
+    this.totalArea = area || (this.vbWidth * this.vbHeight);
 
     this.brushLayer = document.createElementNS('http://www.w3.org/2000/svg', 'g');
     this.brushLayer.setAttribute('id', 'burnBrushes');
@@ -412,26 +424,10 @@ export default class BodyMap {
    * overlapping brushes.
    */
   burnArea() {
-    if (!this.totalArea || this.brushBurns.length === 0) return 0;
-    const pixels = new Set();
-    for (const b of this.brushBurns) {
-      const r = Math.round(b.r);
-      const r2 = r * r;
-      const cx = Math.round(b.x);
-      const cy = Math.round(b.y);
-      const minX = Math.max(0, cx - r);
-      const maxX = Math.min(this.vbWidth - 1, cx + r);
-      const minY = Math.max(0, cy - r);
-      const maxY = Math.min(this.vbHeight - 1, cy + r);
-      for (let x = minX; x <= maxX; x++) {
-        for (let y = minY; y <= maxY; y++) {
-          const dx = x - cx;
-          const dy = y - cy;
-          if (dx * dx + dy * dy <= r2) pixels.add(`${x},${y}`);
-        }
-      }
-    }
-    return (pixels.size / this.totalArea) * 100;
+    // Burn percentage is derived from the sum of brush circle areas
+    // divided by the total silhouette area calculated at init time.
+    const total = this.brushBurns.reduce((sum, b) => sum + Math.PI * b.r * b.r, 0);
+    return this.totalArea ? (total / this.totalArea) * 100 : 0;
   }
 
   /** Display burn percentage in the UI. */
