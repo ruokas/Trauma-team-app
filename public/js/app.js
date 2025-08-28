@@ -6,7 +6,7 @@ import { initActions } from './actions.js';
 import { initTimeline } from './timeline.js';
 import './components/toast.js';
 import './components/modal.js';
-import { initValidation, validateVitals, validatePatient } from './validation.js';
+import { initValidation, validateVitals } from './validation.js';
 import { initTopbar } from './components/topbar.js';
 import { initCollapsibles } from './sections.js';
 import { initTheme, saveAll, loadAll, getCurrentSessionId } from './sessionManager.js';
@@ -24,7 +24,7 @@ import { init as initTeamGrid } from './teamGrid.js';
 import { init as initMechanismList } from './mechanismList.js';
 import { init as initVitalsEvents } from './vitalsEvents.js';
 import { initChipGroups } from './chipData.js';
-export { validateVitals, validatePatient, createChipGroup };
+export { validateVitals, createChipGroup };
 
 /* ===== Imaging / Labs / Team ===== */
 function createChipGroup(selector, values){
@@ -180,7 +180,6 @@ async function init(){
     expandOutput();
     clampNumberInputs();
     initValidation();
-    validatePatient();
     validateVitals();
   }
   if(document.readyState==='loading'){
@@ -190,9 +189,38 @@ async function init(){
   }
 
 function validateForm(){
-  const top = validatePatient();
-  const vitals = validateVitals();
-  return top && vitals;
+  const fields=[
+    {el:$('#patient_age'),check:e=>e.value!=='' && +e.value>=0 && +e.value<=120,msg:'Amžius 0-120'},
+    {el:$('#patient_sex'),check:e=>e.value!=='',msg:'Pasirinkite lytį'},
+    {el:$('#patient_history'),check:e=>e.value.trim()!=='',msg:'Ligos istorijos nr. privalomas'}
+  ];
+  let ok=true;
+  fields.forEach(({el,check,msg})=>{
+    if(!el) return;
+    if(!el.dataset.hint && el.getAttribute('aria-describedby')) el.dataset.hint=el.getAttribute('aria-describedby');
+    let err=document.getElementById(el.id+'_error');
+    const hintId=el.dataset.hint||'';
+    if(!check(el)){
+      ok=false;
+      if(!err){
+        err=document.createElement('div');
+        err.id=el.id+'_error';
+        err.className='error-msg';
+        err.textContent=msg;
+        el.parentElement.appendChild(err);
+      }
+      el.classList.add('invalid');
+      el.setAttribute('aria-invalid','true');
+      el.setAttribute('aria-describedby', (hintId+' '+err.id).trim());
+    }else{
+      if(err) err.remove();
+      el.classList.remove('invalid');
+      el.removeAttribute('aria-invalid');
+      if(hintId) el.setAttribute('aria-describedby', hintId); else el.removeAttribute('aria-describedby');
+    }
+  });
+  if(!validateVitals()) ok=false;
+  return ok;
 }
 
 

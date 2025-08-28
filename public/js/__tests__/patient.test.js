@@ -272,8 +272,8 @@ describe('patient fields', () => {
     age.value = '130';
     age.dispatchEvent(new Event('input', { bubbles: true }));
     expect(age.classList.contains('invalid')).toBe(true);
-    const err = document.getElementById('patient_age_error');
+    const err = age.nextElementSibling;
     expect(err).not.toBeNull();
-    expect(err.textContent).toBe('Amžius 0-120');
+    expect(err.textContent).toContain('Leistina');
   });
 });
