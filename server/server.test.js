@@ -277,5 +277,25 @@ describe('loadDB', () => {
     expect(consoleError).toHaveBeenCalledWith('Failed to load DB', expect.any(Error));
     consoleError.mockRestore();
   });
+
+  test('returns defaults and logs when DB JSON is invalid', async () => {
+    fsPromises.readFile.mockResolvedValue('{ invalid');
+    const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const { loadDB } = require('./index');
+    const db = await loadDB();
+    expect(db).toEqual({ sessions: [], data: {}, users: [] });
+    expect(consoleError).toHaveBeenCalledWith('Failed to parse DB', expect.any(SyntaxError));
+    consoleError.mockRestore();
+  });
+
+  test('returns defaults and logs when DB schema is invalid', async () => {
+    fsPromises.readFile.mockResolvedValue(JSON.stringify({ sessions: 'bad' }));
+    const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const { loadDB } = require('./index');
+    const db = await loadDB();
+    expect(db).toEqual({ sessions: [], data: {}, users: [] });
+    expect(consoleError).toHaveBeenCalledWith('Invalid DB schema', expect.any(Error));
+    consoleError.mockRestore();
+  });
 });
 

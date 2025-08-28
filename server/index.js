@@ -7,6 +7,7 @@ const crypto = require('crypto');
 const Joi = require('joi');
 const validate = require('./validate');
 const { validateToken } = require('./auth');
+const { dbSchema, sessionDataSchema } = require('./dbSchema');
 
 const PORT = process.env.PORT || 3000;
 const DB_FILE = process.env.DB_FILE || path.join(__dirname, 'db.json');
@@ -15,13 +16,21 @@ const DISABLE_AUTH = process.env.DISABLE_AUTH === 'true';
 async function loadDB(){
   try {
     const data = await fs.promises.readFile(DB_FILE, 'utf8');
-    const parsed = JSON.parse(data);
-    if (!Array.isArray(parsed.sessions)) parsed.sessions = [];
-    if (typeof parsed.data !== 'object' || parsed.data === null || Array.isArray(parsed.data)) parsed.data = {};
-    if (!Array.isArray(parsed.users)) parsed.users = [];
+    let parsed;
+    try {
+      parsed = JSON.parse(data);
+    } catch (e) {
+      console.error('Failed to parse DB', e);
+      return { sessions: [], data: {}, users: [] };
+    }
+    const { value, error } = dbSchema.validate(parsed);
+    if (error) {
+      console.error('Invalid DB schema', error);
+      return { sessions: [], data: {}, users: [] };
+    }
     // Ensure all sessions have an archived flag for backwards compatibility
-    parsed.sessions = parsed.sessions.map(s => ({ ...s, archived: !!s.archived }));
-    return parsed;
+    value.sessions = value.sessions.map(s => ({ ...s, archived: !!s.archived }));
+    return value;
   } catch (e) {
     console.error('Failed to load DB', e);
     return { sessions: [], data: {}, users: [] };
@@ -65,24 +74,7 @@ const sessionListItemSchema = Joi.object({
 
 const sessionsListSchema = Joi.array().items(sessionListItemSchema);
 
-const medRecordSchema = Joi.object({
-  name: Joi.string().allow('').max(100).required(),
-  on: Joi.boolean().required(),
-  time: Joi.string().allow('').max(20).required(),
-  dose: Joi.string().allow('').max(50).required(),
-  note: Joi.string().allow('').max(1000).required()
-});
-
-const sessionDataSchema = Joi.object({
-  pain_meds: Joi.array().items(medRecordSchema).max(50),
-  bleeding_meds: Joi.array().items(medRecordSchema).max(50),
-  other_meds: Joi.array().items(medRecordSchema).max(50),
-  procs: Joi.array().items(medRecordSchema).max(50),
-  bodymap_svg: Joi.string().allow('').max(200000)
-})
-  .pattern(/^chips:/, Joi.array().items(Joi.string().max(100)).max(100))
-  .pattern(/.*/, Joi.alternatives().try(Joi.string().max(500), Joi.boolean()))
-  .unknown(false);
+/* sessionDataSchema is imported from dbSchema */
 
 /* ===== Auth ===== */
 app.post('/api/login', (req, res, next) => {
