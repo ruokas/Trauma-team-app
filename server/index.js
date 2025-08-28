@@ -12,6 +12,9 @@ const { dbSchema, sessionDataSchema } = require('./dbSchema');
 const PORT = process.env.PORT || 3000;
 const DB_FILE = process.env.DB_FILE || path.join(__dirname, 'db.json');
 const DISABLE_AUTH = process.env.DISABLE_AUTH === 'true';
+const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS
+  ? process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim()).filter(Boolean)
+  : undefined;
 
 async function loadDB(){
   try {
@@ -198,7 +201,7 @@ app.use((err, req, res, next) => {
 });
 
 const server = http.createServer(app);
-const io = new Server(server, { cors: { origin: '*' } });
+const io = new Server(server, { cors: { origin: ALLOWED_ORIGINS || '*' } });
 
 io.use((socket, next) => {
   if (DISABLE_AUTH) return next();
