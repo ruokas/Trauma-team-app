@@ -10,11 +10,9 @@ let saveAll, loadAll, generateReport, setupHeaderActions, initBodyMap, setCurren
 
 const setupDom = () => {
   document.body.innerHTML = `
-    <button id="btnCopy"></button>
-    <button id="btnSave"></button>
-    <button id="btnClear"></button>
-    <button id="btnPrint"></button>
-    <button id="btnPdf"></button>
+    <button id="btnCopyReport"></button>
+    <button id="btnPdfReport"></button>
+    <button id="btnPrintReport"></button>
     <button id="btnAtvyko"></button>
     <button id="btnGCS15"></button>
     <button id="btnGCSCalc"></button>
@@ -90,7 +88,7 @@ describe('patient fields', () => {
     ({ initBodyMap } = require('../bodyMap.js'));
     setCurrentSessionId('test');
     initBodyMap(()=>{});
-    setupHeaderActions({ validateForm: () => true, saveAll });
+    setupHeaderActions({ validateForm: () => true });
     require('../app.js');
     mockJsPDF.mockClear();
     mockSave.mockClear();
@@ -206,7 +204,7 @@ describe('patient fields', () => {
     document.getElementById('patient_age').value='25';
     document.getElementById('patient_sex').value='M';
     document.getElementById('patient_history').value='H123';
-    document.getElementById('btnPdf').click();
+    document.getElementById('btnPdfReport').click();
     await new Promise(resolve => setTimeout(resolve, 0));
     expect(mockJsPDF).toHaveBeenCalled();
     expect(mockSave).toHaveBeenCalledWith('report.pdf');
@@ -224,7 +222,7 @@ describe('patient fields', () => {
     document.getElementById('patient_age').value='25';
     document.getElementById('patient_sex').value='M';
     document.getElementById('patient_history').value='H123';
-    document.getElementById('btnPrint').click();
+    document.getElementById('btnPrintReport').click();
     await new Promise(resolve => setTimeout(resolve, 0));
     expect(openMock).toHaveBeenCalled();
     expect(win.focus).toHaveBeenCalled();

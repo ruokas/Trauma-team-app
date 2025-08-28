@@ -11,4 +11,3 @@ export const TEAM_ROLES = [
 ];
 
 export const ACTIONS_LABEL = 'Veiksmai ▾';
-export const MORE_LABEL = 'Daugiau ▾';

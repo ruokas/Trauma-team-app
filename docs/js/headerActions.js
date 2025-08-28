@@ -2,17 +2,17 @@ import { $ } from './utils.js';
 import { notify } from './alerts.js';
 import { startArrivalTimer } from './arrival.js';
 import { showTab } from './tabs.js';
-import { sessionKey, getAuthToken, logout } from './sessionManager.js';
+import { getAuthToken, logout } from './sessionManager.js';
 import bodyMap from './bodyMap.js';
 
-export function setupHeaderActions({ validateForm, saveAll }){
+export function setupHeaderActions({ validateForm }){
   const btnAtvyko=document.getElementById('btnAtvyko');
   if(btnAtvyko) btnAtvyko.addEventListener('click', ()=>startArrivalTimer(true));
 
   const arrivalTimer=document.getElementById('arrivalTimer');
   if(arrivalTimer) arrivalTimer.addEventListener('dblclick',()=>startArrivalTimer(true));
 
-  const copyButtons=[$('#btnCopy'), $('#btnCopyReport')].filter(Boolean);
+  const copyButtons=[$('#btnCopyReport')].filter(Boolean);
   copyButtons.forEach(btn=>btn.addEventListener('click',async()=>{
     try{
       await navigator.clipboard.writeText($('#output').value||'');
@@ -22,13 +22,7 @@ export function setupHeaderActions({ validateForm, saveAll }){
     }
   }));
 
-  const btnSave=$('#btnSave');
-  if(btnSave) btnSave.addEventListener('click',()=>{ if(validateForm()){ saveAll(); notify({message:'Išsaugota naršyklėje.', type:'success'}); }});
-
-  const btnClear=$('#btnClear');
-  if(btnClear) btnClear.addEventListener('click',async()=>{ if(await notify({type:'confirm', message:'Išvalyti viską?'})){ localStorage.removeItem(sessionKey()); location.reload(); }});
-
-  const pdfButtons=[$('#btnPdf'), $('#btnPdfReport')].filter(Boolean);
+  const pdfButtons=[$('#btnPdfReport')].filter(Boolean);
   pdfButtons.forEach(btn=>btn.addEventListener('click', async () => {
     if(!validateForm()) return;
     showTab('Santrauka');
@@ -46,7 +40,7 @@ export function setupHeaderActions({ validateForm, saveAll }){
     }
   }));
 
-  const printButtons=[$('#btnPrint'), $('#btnPrintReport')].filter(Boolean);
+  const printButtons=[$('#btnPrintReport')].filter(Boolean);
   printButtons.forEach(btn=>btn.addEventListener('click', async () => {
     if(!validateForm()) return;
     const prevTab=localStorage.getItem('v10_activeTab');
@@ -77,14 +71,14 @@ export function setupHeaderActions({ validateForm, saveAll }){
     if(prevTab) showTab(prevTab);
   }));
 
-  const menu=document.querySelector('.more-actions .menu');
-  if(menu && getAuthToken() && !document.getElementById('btnLogout')){
+  const actionsBar=document.getElementById('desktopActions');
+  if(actionsBar && getAuthToken() && !document.getElementById('btnLogout')){
     const btn=document.createElement('button');
     btn.type='button';
     btn.className='btn';
     btn.id='btnLogout';
     btn.textContent='Logout';
     btn.addEventListener('click',()=>logout());
-    menu.appendChild(btn);
+    actionsBar.appendChild(btn);
   }
 }
