@@ -1,8 +1,7 @@
 @use 'variables' as *;
 
 header {
-  height: var(--header-height);
-  line-height: var(--header-height);
+  min-height: var(--header-height);
   --line: color-mix(in srgb, #2d3b4f, white 20%);
   --ink: color-mix(in srgb, #e9f2fb, white 10%);
   position: sticky;
