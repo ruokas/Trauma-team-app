@@ -38,22 +38,20 @@ header {
 .header-center,
 .header-actions {
   display: flex;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-  overflow-y: visible;
+  flex-wrap: wrap;
   gap: $space-12;
   align-items: center;
   min-width: 0;
   .toolbar {
     display: flex;
-    flex-wrap: nowrap;
+    flex-wrap: wrap;
     gap: $space-10;
-    flex: 0 0 auto;
-    min-width: auto;
+    flex: 1 1 clamp(80px,33%,220px);
+    min-width: clamp(80px,33%,220px);
   }
   .btn {
-    flex: 0 0 auto;
-    min-width: auto;
+    flex: 1 1 clamp(60px,45%,100px);
+    min-width: clamp(60px,45%,100px);
   }
 }
 
@@ -125,16 +123,6 @@ header {
       }
     }
   }
-  .more-actions {
-    display: flex;
-    > summary {
-      display: none;
-    }
-    .menu {
-      display: flex;
-      gap: 8px;
-    }
-  }
 }
 
 #arrivalBar{
@@ -164,39 +152,5 @@ header {
   }
   .header-actions {
     justify-self: end;
-    flex-wrap: wrap;
-    .toolbar {
-      flex-wrap: wrap;
-      flex: 1 1 220px;
-      min-width: 220px;
-      .btn {
-        flex: 1 1 100px;
-        min-width: 100px;
-      }
-    }
-    .more-actions {
-      position: relative;
-      > summary {
-        display: inline-flex;
-        align-items: center;
-        cursor: pointer;
-      }
-      .menu {
-        display: none;
-        position: absolute;
-        right: 0;
-        top: 100%;
-        flex-direction: column;
-        background: var(--card);
-        border: 1px solid var(--line);
-        border-radius: 10px;
-        padding: 8px;
-        min-width: 160px;
-        z-index: 1000;
-      }
-      &[open] .menu {
-        display: flex;
-      }
-    }
   }
 }

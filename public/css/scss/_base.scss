@@ -58,7 +58,6 @@ header{
 .header-actions{
   display:flex;
   flex-wrap:wrap;
-  overflow-y:visible;
   gap:$space-12;
   align-items:center;
   min-width:0;
@@ -66,12 +65,12 @@ header{
     display:flex;
     flex-wrap:wrap;
     gap:$space-10;
-    flex:0 0 auto;
-    min-width:auto;
+    flex:1 1 clamp(80px,33%,220px);
+    min-width:clamp(80px,33%,220px);
   }
   .btn{
-    flex:0 0 auto;
-    min-width:auto;
+    flex:1 1 clamp(60px,45%,100px);
+    min-width:clamp(60px,45%,100px);
   }
 }
 
