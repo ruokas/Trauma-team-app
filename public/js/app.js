@@ -65,18 +65,27 @@ if(bloodUnitsInput && bloodGroupWrap && addBloodOrderBtn){
   addBloodOrderBtn.addEventListener('click',addOrder);
   bloodUnitsInput.addEventListener('keydown',e=>{ if(e.key==='Enter') addOrder(e); });
 }
-const fastWrap=$('#fastGrid');
-FAST_AREAS.forEach(({name,marker})=>{
-  const box=document.createElement('div');
-  box.innerHTML=`<label>${name} (${marker})</label><div class="row"><label class="pill red"><input type="radio" name="fast_${name}" value="Yra"> Yra</label><label class="pill"><input type="radio" name="fast_${name}" value="Nėra"> Nėra</label></div>`;
-  fastWrap.appendChild(box);
-});
-const teamWrap=$('#teamGrid'); TEAM_ROLES.forEach(r=>{
-  const slug=r.replace(/\s+/g,'_');
-  const box=document.createElement('div');
-  box.innerHTML=`<label>${r}</label><input type="text" data-team="${r}" data-field="team_${slug}" placeholder="Vardas Pavardė">`;
-  teamWrap.appendChild(box);
-});
+function initFastGrid(){
+  const fastWrap=$('#fastGrid');
+  if(!fastWrap) return;
+  FAST_AREAS.forEach(({name,marker})=>{
+    const box=document.createElement('div');
+    box.innerHTML=`<label>${name} (${marker})</label><div class="row"><label class="pill red"><input type="radio" name="fast_${name}" value="Yra"> Yra</label><label class="pill"><input type="radio" name="fast_${name}" value="Nėra"> Nėra</label></div>`;
+    fastWrap.appendChild(box);
+  });
+}
+function initTeamGrid(){
+  const teamWrap=$('#teamGrid');
+  if(!teamWrap) return;
+  TEAM_ROLES.forEach(r=>{
+    const slug=r.replace(/\s+/g,'_');
+    const box=document.createElement('div');
+    box.innerHTML=`<label>${r}</label><input type="text" data-team="${r}" data-field="team_${slug}" placeholder="Vardas Pavardė">`;
+    teamWrap.appendChild(box);
+  });
+}
+initFastGrid();
+initTeamGrid();
 
 function initMechanismList(){
   const list=$('#gmp_mechanism_list');
