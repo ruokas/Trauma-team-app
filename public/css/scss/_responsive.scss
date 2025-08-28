@@ -107,6 +107,14 @@
   #actionsMenu:not([hidden]) {
     display:flex;
   }
+  #actionsMenu .toolbar {
+    flex-direction:column;
+    width:100%;
+    gap:8px;
+  }
+  #actionsMenu .toolbar > * {
+    width:100%;
+  }
   .js #sessionBar,
   .js #arrivalBar {
     display:none;
