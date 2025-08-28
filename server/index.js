@@ -160,21 +160,15 @@ app.put('/api/sessions/:id', auth, validate(sessionSchema), async (req, res) => 
   res.json({ ok: true });
 });
 
-app.post('/api/sessions/:id/archive', auth, async (req, res) => {
+app.patch('/api/sessions/:id/archive', auth, async (req, res) => {
   const id = req.params.id;
   const session = db.sessions.find(s => s.id === id);
   if (!session) return res.status(404).json({ error: 'Not found' });
-  session.archived = true;
-  await saveDB();
-  io.emit('sessions', db.sessions);
-  res.json({ ok: true });
-});
-
-app.post('/api/sessions/:id/unarchive', auth, async (req, res) => {
-  const id = req.params.id;
-  const session = db.sessions.find(s => s.id === id);
-  if (!session) return res.status(404).json({ error: 'Not found' });
-  session.archived = false;
+  const { archived } = req.body;
+  if (typeof archived !== 'boolean') {
+    return res.status(400).json({ error: '"archived" must be a boolean' });
+  }
+  session.archived = archived;
   await saveDB();
   io.emit('sessions', db.sessions);
   res.json({ ok: true });

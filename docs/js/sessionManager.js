@@ -207,7 +207,13 @@ export async function initSessions(){
       archive.setAttribute('aria-label', s.archived ? 'Unarchive session' : 'Archive session');
       archive.addEventListener('click', async () => {
         if(authToken && typeof fetch==='function'){
-          try{ await fetch(`/api/sessions/${s.id}/${s.archived?'unarchive':'archive'}`, { method:'POST', headers:{ 'Authorization': 'Bearer ' + authToken } }); }catch(e){ console.error(e); }
+          try{
+            await fetch(`/api/sessions/${s.id}/archive`, {
+              method: 'PATCH',
+              headers: { 'Authorization': 'Bearer ' + authToken, 'Content-Type': 'application/json' },
+              body: JSON.stringify({ archived: !s.archived })
+            });
+          }catch(e){ console.error(e); }
         }
         s.archived=!s.archived;
         await saveSessions(sessions);
