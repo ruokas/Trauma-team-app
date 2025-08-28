@@ -16,6 +16,8 @@ const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS
   ? process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim()).filter(Boolean)
   : undefined;
 
+const EMPTY_DB = { sessions: [], data: {}, users: [] };
+
 async function loadDB(){
   try {
     const data = await fs.promises.readFile(DB_FILE, 'utf8');
@@ -24,19 +26,19 @@ async function loadDB(){
       parsed = JSON.parse(data);
     } catch (e) {
       console.error('Failed to parse DB', e);
-      return { sessions: [], data: {}, users: [] };
+      return JSON.parse(JSON.stringify(EMPTY_DB));
     }
     const { value, error } = dbSchema.validate(parsed);
     if (error) {
       console.error('Invalid DB schema', error);
-      return { sessions: [], data: {}, users: [] };
+      return JSON.parse(JSON.stringify(EMPTY_DB));
     }
     // Ensure all sessions have an archived flag for backwards compatibility
     value.sessions = value.sessions.map(s => ({ ...s, archived: !!s.archived }));
     return value;
   } catch (e) {
     console.error('Failed to load DB', e);
-    return { sessions: [], data: {}, users: [] };
+    return JSON.parse(JSON.stringify(EMPTY_DB));
   }
 }
 
@@ -240,4 +242,4 @@ async function startServer () {
   });
 }
 
-module.exports = { app, server, startServer, loadDB, isAuthorized };
+module.exports = { app, server, startServer, loadDB, isAuthorized, EMPTY_DB };
