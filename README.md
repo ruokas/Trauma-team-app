@@ -26,6 +26,13 @@ Execute the test suite:
 npm test
 ```
 
+## Database Error Handling
+
+The backend persists session data to `server/db.json`. If this file
+cannot be read or written (for example, due to missing permissions), the
+server logs the error and falls back to an empty in-memory database so it
+can continue running.
+
 ## Connection Lifecycle
 
 The application maintains a Socket.IO connection to sync sessions and
