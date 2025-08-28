@@ -1,4 +1,3 @@
-import { ACTIONS_LABEL } from '../constants.js';
 
 const NAV_BREAKPOINT = 768;
 let navMq;
@@ -73,7 +72,6 @@ export async function initTopbar(){
   }catch(e){
     console.error('Failed to load topbar', e);
   }
-  applyTopbarLocalization(header);
   if(typeof ResizeObserver==='function'){
     const updateHeight=entries=>{
       for(const entry of entries){
@@ -86,54 +84,4 @@ export async function initTopbar(){
   const toggle=document.getElementById('navToggle');
   const nav=document.querySelector('nav');
   initNavToggle(toggle, nav);
-
-  initActionsMenu();
-}
-
-function applyTopbarLocalization(root){
-  const actionsToggle=root?.querySelector('#actionsToggle');
-  if(actionsToggle) actionsToggle.textContent=ACTIONS_LABEL;
-}
-
-function initActionsMenu(){
-  const container=document.getElementById('mobileActions');
-  const toggle=document.getElementById('actionsToggle');
-  const menu=document.getElementById('actionsMenu');
-  const mobileBars=document.getElementById('mobileBars');
-  const arrival=document.getElementById('arrivalBar');
-  const session=document.getElementById('sessionBar');
-  const centerWrap=document.querySelector('.header-center');
-  if(!container || !toggle || !menu || !mobileBars || !arrival || !session || !centerWrap) return;
-  const mq=window.matchMedia(`(max-width: ${NAV_BREAKPOINT}px)`);
-  const update=()=>{
-    if(mq.matches){
-      mobileBars.append(arrival, session);
-      container.hidden=false;
-    }else{
-      centerWrap.append(arrival, session);
-      container.hidden=true;
-      menu.hidden=true;
-      toggle.setAttribute('aria-expanded','false');
-    }
-  };
-  mq.addEventListener('change', update);
-  update();
-  toggle.addEventListener('click', ()=>{
-    const expanded=toggle.getAttribute('aria-expanded')==='true';
-    toggle.setAttribute('aria-expanded', String(!expanded));
-    menu.hidden=expanded;
-  });
-  document.addEventListener('click', e=>{
-    if(!container.contains(e.target)){
-      menu.hidden=true;
-      toggle.setAttribute('aria-expanded','false');
-    }
-  });
-  document.addEventListener('keydown', e=>{
-    if(e.key==='Escape'){
-      menu.hidden=true;
-      toggle.setAttribute('aria-expanded','false');
-      toggle.focus();
-    }
-  });
 }

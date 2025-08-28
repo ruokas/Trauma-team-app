@@ -9,5 +9,3 @@ export const TEAM_ROLES = [
   'Chirurgas',
   'Ortopedas'
 ];
-
-export const ACTIONS_LABEL = 'Veiksmai ▾';
