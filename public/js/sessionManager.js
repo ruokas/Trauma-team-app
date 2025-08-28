@@ -342,9 +342,9 @@ export function loadAll(){
     $$(FIELD_SELECTORS).forEach(el=>{
       const key=el.dataset.field || el.id || el.name;
       if(!key) return;
-      if(el.type==='radio'){ if(data[key+'__'+el.value]) el.checked=true; }
+      if(el.type==='radio'){ el.checked=!!data[key+'__'+el.value]; }
       else if(el.type==='checkbox'){ el.checked=(data[key]==='__checked__'); }
-      else{ if(data[key]!=null) el.value=data[key]; }
+      else{ el.value = data[key] ?? ''; }
     });
     CHIP_GROUPS.forEach(sel=>{ const arr=data['chips:'+sel]||[]; $$('.chip',$(sel)).forEach(c=>c.classList.toggle('active',arr.includes(c.dataset.value))); });
     const labsArr=data['chips:#labs_basic']||[];
@@ -359,9 +359,19 @@ export function loadAll(){
       }
     });
     $$('.chip',labsContainer).forEach(c=>c.classList.toggle('active',labsArr.includes(c.dataset.value)));
-    function unpack(container,records){ if(!Array.isArray(records)) return; Array.from(container.children).forEach((card,i)=>{ const r=records[i]; if(!r) return; card.querySelector('.act_chk').checked=!!r.on; card.querySelector('.act_time').value=r.time||''; const d=card.querySelector('.act_dose'); if(d) d.value=r.dose||''; card.querySelector('.act_note').value=r.note||''; const cn=card.querySelector('.act_custom_name'); if(cn) cn.value=r.name||'';});}
+    function unpack(container,records){
+      const arr=Array.isArray(records)?records:[];
+      Array.from(container.children).forEach((card,i)=>{
+        const r=arr[i]||{};
+        card.querySelector('.act_chk').checked=!!r.on;
+        card.querySelector('.act_time').value=r.time||'';
+        const d=card.querySelector('.act_dose'); if(d) d.value=r.dose||'';
+        card.querySelector('.act_note').value=r.note||'';
+        const cn=card.querySelector('.act_custom_name'); if(cn) cn.value=r.name||'';
+      });
+    }
     unpack($('#pain_meds'),data['pain_meds']); unpack($('#bleeding_meds'),data['bleeding_meds']); unpack($('#other_meds'),data['other_meds']); unpack($('#procedures'),data['procs']);
-    if(data['bodymap_svg']) bodyMap.load(data['bodymap_svg']);
+    bodyMap.load(data['bodymap_svg']||'{}');
       const showLeftNote = $$('.chip.active', $('#d_pupil_left_group')).some(c=>c.dataset.value==='kita');
       const leftNote = $('#d_pupil_left_note');
       const leftLabel = $('#d_pupil_left_wrapper label[for="d_pupil_left_note"]');
@@ -410,7 +420,9 @@ export function loadAll(){
     imgOther.classList.toggle('hidden', !showImgOther);
   };
   const fallback=()=>{
-    const raw=localStorage.getItem(sessionKey()); if(!raw) return; try{ apply(JSON.parse(raw)); }catch(e){ console.error(e); }
+    const raw=localStorage.getItem(sessionKey());
+    if(!raw){ apply({}); return; }
+    try{ apply(JSON.parse(raw)); }catch(e){ console.error(e); }
   };
   if(authToken && typeof fetch === 'function'){
     fetch(`/api/sessions/${currentSessionId}/data`, { headers:{ 'Authorization': 'Bearer ' + authToken }})

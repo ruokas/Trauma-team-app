@@ -234,6 +234,35 @@ describe('patient fields', () => {
     expect(svg).not.toBeNull();
   });
 
+  test('switching sessions clears patient fields', () => {
+    document.getElementById('patient_age').value='40';
+    document.getElementById('patient_sex').value='F';
+    document.getElementById('patient_history').value='hist';
+    const { setChipActive } = require('../chips.js');
+    const chip=document.querySelector('#c_skin_color_group .chip[data-value="Blyški"]');
+    setChipActive(chip,true);
+    const card=document.createElement('div');
+    card.innerHTML='<input type="checkbox" class="act_chk"><input class="act_time"><input class="act_dose"><input class="act_note"><input class="act_custom_name"><span class="act_name">Med</span>';
+    document.getElementById('pain_meds').appendChild(card);
+    card.querySelector('.act_chk').checked=true;
+    card.querySelector('.act_time').value='10:00';
+    card.querySelector('.act_dose').value='5';
+    card.querySelector('.act_note').value='note';
+    card.querySelector('.act_custom_name').value='Name';
+    saveAll();
+    setCurrentSessionId('new');
+    loadAll();
+    expect(document.getElementById('patient_age').value).toBe('');
+    expect(document.getElementById('patient_sex').value).toBe('');
+    expect(document.getElementById('patient_history').value).toBe('');
+    expect(document.querySelector('#c_skin_color_group .chip.active')).toBeNull();
+    expect(card.querySelector('.act_chk').checked).toBe(false);
+    expect(card.querySelector('.act_time').value).toBe('');
+    expect(card.querySelector('.act_dose').value).toBe('');
+    expect(card.querySelector('.act_note').value).toBe('');
+    expect(card.querySelector('.act_custom_name').value).toBe('');
+  });
+
   test('validation flags out-of-range values', () => {
     const { initValidation } = require('../validation.js');
     initValidation();
