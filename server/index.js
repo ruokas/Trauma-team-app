@@ -112,14 +112,24 @@ app.get('/api/users', auth, (req, res) => {
   res.json(db.users);
 });
 
-function auth(req, res, next){
+function isAuthorized (raw) {
+  const { valid, payload } = validateToken(raw);
+  if (!valid) return null;
+  if (!db.users.includes(payload.name)) return null;
+  return payload.name;
+}
+
+function auth (req, res, next) {
   if (DISABLE_AUTH) return next();
   const raw = req.headers['authorization'];
-  const { valid, payload } = validateToken(raw);
-  if (typeof raw !== 'string' || !raw.startsWith('Bearer ')) return res.status(401).json({ error: 'No token' });
-  if (!valid) return res.status(401).json({ error: 'Invalid token' });
-  if (!db.users.includes(payload.name)) return res.status(401).json({ error: 'Invalid token' });
-  req.user = payload.name;
+  const name = isAuthorized(raw);
+  if (!name) {
+    const error = typeof raw !== 'string' || !raw.startsWith('Bearer ')
+      ? 'No token'
+      : 'Invalid token';
+    return res.status(401).json({ error });
+  }
+  req.user = name;
   next();
 }
 
@@ -210,9 +220,9 @@ const io = new Server(server, { cors: { origin: ALLOWED_ORIGINS || '*' } });
 io.use((socket, next) => {
   if (DISABLE_AUTH) return next();
   const raw = socket.handshake.auth && socket.handshake.auth.token;
-  const { valid, payload } = validateToken(raw);
-  if (valid && db.users.includes(payload.name)) return next();
-  next(new Error('unauthorized'));
+  const name = isAuthorized(raw);
+  if (!name) return next(new Error('unauthorized'));
+  next();
 });
 
 io.on('connection', socket => {
@@ -230,4 +240,4 @@ async function startServer () {
   });
 }
 
-module.exports = { app, server, startServer, loadDB };
+module.exports = { app, server, startServer, loadDB, isAuthorized };
