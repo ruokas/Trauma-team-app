@@ -131,11 +131,11 @@ export default class BodyMap {
       });
     }
 
-    // Build zone paths if they are not already present in the SVG.  Tests
-    // provide a bare bones SVG so we create the required paths here.
-    if (this.svg && !this.svg.querySelector('.zone')) {
+    // Build zone paths ensuring all zones from bodyMapZones.js are present.
+    if (this.svg) {
       const layers = { front: $('#layer-front'), back: $('#layer-back') };
       zones.forEach(z => {
+        if (this.svg.querySelector(`.zone[data-zone="${z.id}"]`)) return;
         let group = layers[z.side].querySelector('.zones');
         if (!group) {
           group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
@@ -160,6 +160,7 @@ export default class BodyMap {
     }
 
     // Cache zone elements and attach click handlers
+    this.zoneMap.clear();
     $$('.zone', this.svg).forEach(el => {
       const id = el.dataset.zone;
       this.zoneMap.set(id, el);
