@@ -208,6 +208,15 @@ describe('server API', () => {
     expect(fakeDB.users.map(u => u.name).sort()).toEqual(['a', 'b', 'c']);
     expect(overlap).toBe(false);
   });
+
+  test('logs an error when saving the DB fails', async () => {
+    const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
+    fsPromises.writeFile.mockRejectedValueOnce(new Error('disk full'));
+    const res = await request(app).post('/api/login').send({ name: 'zoe' });
+    expect(res.statusCode).toBe(200);
+    expect(consoleError).toHaveBeenCalledWith('Failed to save DB', expect.any(Error));
+    consoleError.mockRestore();
+  });
 });
 
 describe('loadDB', () => {
@@ -234,6 +243,16 @@ describe('loadDB', () => {
     const db = await loadDB();
     expect(db.data).toEqual({});
     expect(db.users).toEqual([]);
+  });
+
+  test('returns defaults and logs when DB load fails', async () => {
+    fsPromises.readFile.mockRejectedValue(new Error('no file'));
+    const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const { loadDB } = require('./index');
+    const db = await loadDB();
+    expect(db).toEqual({ sessions: [], data: {}, users: [] });
+    expect(consoleError).toHaveBeenCalledWith('Failed to load DB', expect.any(Error));
+    consoleError.mockRestore();
   });
 });
 
