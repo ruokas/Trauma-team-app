@@ -74,6 +74,15 @@ function toggleBackNote(chip){
   if(!show) note.value='';
 }
 
+function toggleAbdomenNote(chip){
+  if(chip.parentElement?.id !== 'e_abdomen_group') return;
+  const note = $('#e_abdomen_notes');
+  const show = chip.dataset.value==='Pakitimai' && isChipActive(chip);
+  note.style.display = show ? 'block' : 'none';
+  note.classList.toggle('hidden', !show);
+  if(!show) note.value='';
+}
+
 function toggleSkinColorNote(chip){
   if(chip.parentElement?.id !== 'c_skin_color_group') return;
   const note = $('#c_skin_color_other');
@@ -130,6 +139,7 @@ export function initChips(saveAll){
     togglePupilNote('left', chip);
     togglePupilNote('right', chip);
     toggleBackNote(chip);
+    toggleAbdomenNote(chip);
     toggleSkinColorNote(chip);
     if(group.id.startsWith('imaging_')){
       const box=$('#imaging_other');

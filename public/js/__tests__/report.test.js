@@ -20,7 +20,7 @@ describe('generateReport circulation metrics', () => {
       <input id="b_rr"><input id="b_spo2"><input id="b_oxygen_liters"><input id="b_oxygen_type"><input id="b_dpv_fio2">
       <input id="c_hr"><input id="c_sbp"><input id="c_dbp"><input id="c_caprefill">
       <input id="d_gksa"><input id="d_gksk"><input id="d_gksm"><input id="d_notes">
-      <input id="e_temp"><input id="e_back_notes"><input id="e_other">
+      <input id="e_temp"><input id="e_back_notes"><input id="e_abdomen_notes"><input id="e_other">
       <div id="imaging_ct"></div><div id="imaging_xray"></div><div id="imaging_other_group"></div><input id="imaging_other">
       <div id="pain_meds"></div><div id="bleeding_meds"></div><div id="other_meds"></div><div id="procedures"></div>
       <div id="labs_basic"></div>
