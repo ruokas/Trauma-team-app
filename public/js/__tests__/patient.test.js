@@ -30,6 +30,7 @@ const setupDom = () => {
       </div>
     </div>
     <div id="e_back_group" class="chip-group" data-single="true"><button class="chip" data-value="Be pakitimų"></button><button class="chip" data-value="Pakitimai"></button></div>
+    <div id="e_abdomen_group" class="chip-group" data-single="true"><button class="chip" data-value="Be pakitimų"></button><button class="chip" data-value="Pakitimai"></button></div>
     <textarea id="output"></textarea>
     <svg id="bodySvg"><g id="layer-front"></g><g id="layer-back"></g><g id="marks"></g></svg>
     <div id="front-shape"></div>
@@ -65,7 +66,7 @@ const setupDom = () => {
   skinColor.className='chip-group';
   skinColor.dataset.single='true';
   skinColor.innerHTML='<button class="chip" data-value="Rausva"></button><button class="chip" data-value="Blyški"></button><button class="chip" data-value="Kita"></button>';
-  const textInputs=['a_notes','gmp_mechanism','gmp_notes','b_oxygen_type','b_dpv_fio2','d_pupil_left_note','d_pupil_right_note','d_notes','e_back_notes','e_other','spr_skyrius_kita','spr_ligonine','patient_history','c_skin_color_other'];
+  const textInputs=['a_notes','gmp_mechanism','gmp_notes','b_oxygen_type','b_dpv_fio2','d_pupil_left_note','d_pupil_right_note','d_notes','e_back_notes','e_abdomen_notes','e_other','spr_skyrius_kita','spr_ligonine','patient_history','c_skin_color_other'];
   textInputs.forEach(id=>{ const i=document.createElement('input'); i.id=id; i.type='text'; document.body.appendChild(i); });
   const numberInputs=['b_rr','b_spo2','b_oxygen_liters','c_hr','c_sbp','c_dbp','c_caprefill','d_gksa','d_gksk','d_gksm','e_temp',
     'spr_hr','spr_rr','spr_spo2','spr_sbp','spr_dbp','spr_gksa','spr_gksk','spr_gksm','patient_age','gmp_hr','gmp_rr','gmp_spo2',

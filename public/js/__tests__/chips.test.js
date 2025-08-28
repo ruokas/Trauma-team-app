@@ -169,6 +169,26 @@ describe('chips', () => {
     expect(input.classList.contains('hidden')).toBe(true);
   });
 
+  test('shows abdomen note input when changes selected', () => {
+    document.body.innerHTML = `
+      <div id="e_abdomen_group" data-single="true">
+        <button type="button" class="chip" data-value="Be pakitimų" aria-pressed="false"></button>
+        <button type="button" class="chip" data-value="Pakitimai" aria-pressed="false"></button>
+      </div>
+      <input id="e_abdomen_notes" class="hidden" />
+    `;
+    const { initChips } = require('../chips.js');
+    initChips();
+    const [noChange, changes] = document.querySelectorAll('#e_abdomen_group .chip');
+    const input = document.getElementById('e_abdomen_notes');
+    changes.click();
+    expect(input.style.display).toBe('block');
+    expect(input.classList.contains('hidden')).toBe(false);
+    noChange.click();
+    expect(input.style.display).toBe('none');
+    expect(input.classList.contains('hidden')).toBe(true);
+  });
+
   test('shows other imaging field when "Kita" selected', () => {
     document.body.innerHTML = `
       <div id="imaging_ct">
