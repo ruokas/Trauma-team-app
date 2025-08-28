@@ -142,11 +142,16 @@ section[data-tab="Intervencijos"] .med-search{margin-bottom:$space-8}
 .toast.hide{opacity:0;transform:translateY($space-10)}
 .arrival-timer{
   font-family:monospace;
-  cursor:pointer;
-  display:flex;
+  display:inline-flex;
   align-items:center;
   justify-content:center;
   text-align:center;
   font-size:$font-lg;
   min-width:6ch;
+  padding:$space-8 $space-12;
+  border-radius:$space-10;
+  border:1px solid #2d74b8;
+  background:var(--accent);
+  color:#fff;
+  font-weight:600;
 }
