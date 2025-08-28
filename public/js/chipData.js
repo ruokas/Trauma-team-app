@@ -85,14 +85,8 @@ export const CHIP_DATA = {
 };
 
 export function buildChipGroup(containerId, chips){
-  const selector = `#${containerId}`;
-  const container = document.querySelector(selector);
-  if(!container || container.dataset.initialized) return;
-
-  container.replaceChildren();
-  createChipGroup(selector, chips.map(c => c.label));
-  container.dataset.initialized = 'true';
-
+  const container = createChipGroup(`#${containerId}`, chips.map(c => c.label));
+  if(!container) return;
   const chipEls = container.querySelectorAll('.chip');
   chips.forEach((chip, idx) => {
     const el = chipEls[idx];
