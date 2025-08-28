@@ -55,8 +55,11 @@ export function initNavToggle(toggle, nav){
   toggle.addEventListener('click',()=>{
     document.body.classList.contains('nav-open') ? close() : open();
   });
-  nav.addEventListener('click',e=>{
-    if(e.target.closest('.tab')) close();
+  nav.addEventListener('click', e => {
+    if (e.target.closest('.tab')) {
+      // Delay closing so the default navigation can occur
+      setTimeout(close);
+    }
   });
   navMq=typeof matchMedia==='function' ? matchMedia(`(min-width: ${NAV_BREAKPOINT}px)`) : null;
   if(navMq){

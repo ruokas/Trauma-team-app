@@ -31,9 +31,10 @@ describe('initNavToggle',()=>{
     expect(document.activeElement).toBe(toggle);
   });
 
-  test('closes when tab clicked',()=>{
+  test('closes when tab clicked', async () => {
     toggle.click();
     tabs[0].click();
+    await new Promise(r => setTimeout(r, 0));
     expect(toggle.getAttribute('aria-expanded')).toBe('false');
     expect(nav.getAttribute('aria-hidden')).toBe('true');
     expect(nav.hasAttribute('inert')).toBe(true);
