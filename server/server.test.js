@@ -174,7 +174,14 @@ describe('server API', () => {
       .send({ name: 'data session' });
     const id = session.body.id;
 
-    const payload = { foo: 'bar' };
+    const payload = {
+      foo: 'bar',
+      pain_meds: [{ name: '', on: false, time: '', dose: '', note: '' }],
+      bleeding_meds: [],
+      other_meds: [],
+      procs: [],
+      bodymap_svg: ''
+    };
     const putData = await request(app)
       .put(`/api/sessions/${id}/data`)
       .set('Authorization', `Bearer ${token}`)
@@ -187,6 +194,20 @@ describe('server API', () => {
       .set('Authorization', `Bearer ${token}`);
     expect(getData.statusCode).toBe(200);
     expect(getData.body).toEqual(payload);
+  });
+
+  test('rejects invalid session data shape', async () => {
+    const token = await login('invalid');
+    const session = await request(app)
+      .post('/api/sessions')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ name: 'bad data' });
+    const id = session.body.id;
+    const res = await request(app)
+      .put(`/api/sessions/${id}/data`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ pain_meds: [{ name: 'x', on: 'yes' }] });
+    expect(res.statusCode).toBe(400);
   });
 
   test('serializes concurrent writes to prevent data loss', async () => {

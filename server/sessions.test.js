@@ -173,14 +173,14 @@ describe('auth middleware', () => {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`
       },
-      body: JSON.stringify({ foo: 1 })
+      body: JSON.stringify({ foo: '1' })
     });
     await httpRequest('PUT', `/api/sessions/${session2.id}/data`, {
       headers: {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`
       },
-      body: JSON.stringify({ bar: 2 })
+      body: JSON.stringify({ bar: '2' })
     });
 
     const replace = await httpRequest('PUT', '/api/sessions', {
@@ -200,11 +200,11 @@ describe('auth middleware', () => {
     const data2 = await httpRequest('GET', `/api/sessions/${session2.id}/data`, {
       headers: { Authorization: `Bearer ${token}` }
     });
-    expect(JSON.parse(data2.data)).toEqual({ bar: 2 });
+    expect(JSON.parse(data2.data)).toEqual({ bar: '2' });
 
     const raw = await fs.promises.readFile(dbPath, 'utf8');
     const parsed = JSON.parse(raw);
     expect(parsed.data[session1.id]).toBeUndefined();
-    expect(parsed.data[session2.id]).toEqual({ bar: 2 });
+    expect(parsed.data[session2.id]).toEqual({ bar: '2' });
   });
 });
