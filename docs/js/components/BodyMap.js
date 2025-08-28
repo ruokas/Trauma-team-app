@@ -45,7 +45,12 @@ export default class BodyMap {
     this.brushSize = 20;
     this.brushBurns = [];
     this.isDrawing = false;
-    this.totalArea = 1500 * 1100;
+    // viewBox dimensions are still captured for pixel bounds but the
+    // total drawable area will be calculated from the body silhouettes
+    // themselves once the SVG is available.
+    this.vbWidth = 1500;
+    this.vbHeight = 1100;
+    this.totalArea = 0;
 
     // dragging
     this.drag = null;
@@ -97,7 +102,22 @@ export default class BodyMap {
     this.brushSizeInput = $('#brushSize');
 
     const vb = this.svg?.getAttribute('viewBox')?.split(/\s+/).map(Number);
-    if (vb) this.totalArea = vb[2] * vb[3];
+    if (vb) {
+      this.vbWidth = vb[2];
+      this.vbHeight = vb[3];
+    }
+
+    // Calculate the drawable area based on the actual front and back
+    // body silhouettes rather than the whole SVG viewBox.  Fallback to
+    // the viewBox area if the silhouettes are missing.
+    let area = 0;
+    ['front-shape', 'back-shape'].forEach(id => {
+      const el = this.svg?.querySelector(`#${id}`);
+      if (!el || typeof el.getBBox !== 'function') return;
+      const box = el.getBBox();
+      area += box.width * box.height;
+    });
+    this.totalArea = area || (this.vbWidth * this.vbHeight);
 
     this.brushLayer = document.createElementNS('http://www.w3.org/2000/svg', 'g');
     this.brushLayer.setAttribute('id', 'burnBrushes');
@@ -402,6 +422,8 @@ export default class BodyMap {
 
   /** Compute total burned area percentage. */
   burnArea() {
+    // Burn percentage is the ratio of all drawn brush areas to the total
+    // silhouette area calculated during initialisation.
     const brushTotal = this.brushBurns.reduce((sum, b) => sum + b.area, 0);
     return this.totalArea ? (brushTotal / this.totalArea) * 100 : 0;
   }
