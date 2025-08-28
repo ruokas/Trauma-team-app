@@ -99,21 +99,17 @@ function applyTopbarLocalization(root){
 
 function initActionsMenu(){
   const container=document.getElementById('mobileActions');
-  if(container){
-    container.querySelector('#arrivalBar')?.remove();
-    container.querySelector('#sessionBar')?.remove();
-  }
   const toggle=document.getElementById('actionsToggle');
   const menu=document.getElementById('actionsMenu');
+  const mobileBars=document.getElementById('mobileBars');
   const arrival=document.getElementById('arrivalBar');
   const session=document.getElementById('sessionBar');
   const centerWrap=document.querySelector('.header-center');
-  if(!container || !toggle || !menu || !arrival || !session || !centerWrap) return;
+  if(!container || !toggle || !menu || !mobileBars || !arrival || !session || !centerWrap) return;
   const mq=window.matchMedia(`(max-width: ${NAV_BREAKPOINT}px)`);
   const update=()=>{
     if(mq.matches){
-      menu.appendChild(arrival);
-      menu.appendChild(session);
+      mobileBars.append(arrival, session);
       container.hidden=false;
     }else{
       centerWrap.append(arrival, session);
