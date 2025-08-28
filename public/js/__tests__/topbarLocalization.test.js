@@ -1,5 +1,5 @@
 import { initTopbar } from '../components/topbar.js';
-import { ACTIONS_LABEL, MORE_LABEL } from '../constants.js';
+import { ACTIONS_LABEL } from '../constants.js';
 import fs from 'fs';
 import path from 'path';
 
@@ -13,6 +13,9 @@ describe('topbar localization', () => {
     };
     await initTopbar();
     expect(document.getElementById('actionsToggle').textContent).toBe(ACTIONS_LABEL);
-    expect(document.querySelector('.more-actions summary').textContent).toBe(MORE_LABEL);
+    expect(document.querySelector('.more-actions')).toBeNull();
+    ['btnCopy','btnSave','btnClear','btnPdf','btnPrint'].forEach(id=>{
+      expect(document.getElementById(id)).toBeNull();
+    });
   });
 });

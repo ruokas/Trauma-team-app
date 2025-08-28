@@ -1,4 +1,4 @@
-import { ACTIONS_LABEL, MORE_LABEL } from '../constants.js';
+import { ACTIONS_LABEL } from '../constants.js';
 
 const NAV_BREAKPOINT = 768;
 let navMq;
@@ -93,8 +93,6 @@ export async function initTopbar(){
 function applyTopbarLocalization(root){
   const actionsToggle=root?.querySelector('#actionsToggle');
   if(actionsToggle) actionsToggle.textContent=ACTIONS_LABEL;
-  const moreSummary=root?.querySelector('.more-actions summary');
-  if(moreSummary) moreSummary.textContent=MORE_LABEL;
 }
 
 function initActionsMenu(){

@@ -121,7 +121,7 @@ function clampNumberInputs(){
 async function init(){
   initTheme();
   await initTopbar();
-  setupHeaderActions({ validateForm, saveAll });
+  setupHeaderActions({ validateForm });
   connectSocket({
     onSessions: list => {
       const sel = $('#sessionSelect');
