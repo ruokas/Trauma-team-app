@@ -1,0 +1,203 @@
+@use 'variables' as *;
+
+header {
+  height: var(--header-height);
+  line-height: var(--header-height);
+  --line: color-mix(in srgb, #2d3b4f, white 20%);
+  --ink: color-mix(in srgb, #e9f2fb, white 10%);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #0d151fdd;
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--line);
+}
+
+.wrap {
+  width: 100%;
+  max-width: 1200px;
+  margin-inline: auto;
+  padding: $space-16 $space-20;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-areas: 'left center actions';
+  align-items: center;
+  gap: $space-12;
+}
+
+.header-left {
+  grid-area: left;
+  display: flex;
+  align-items: center;
+  gap: $space-12;
+  > div {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+.header-center,
+.header-actions {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overflow-y: visible;
+  gap: $space-12;
+  align-items: center;
+  min-width: 0;
+  .toolbar {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: $space-10;
+    flex: 0 0 auto;
+    min-width: auto;
+  }
+  .btn {
+    flex: 0 0 auto;
+    min-width: auto;
+  }
+}
+
+.header-center {
+  grid-area: center;
+  justify-self: center;
+  justify-content: center;
+  .toolbar {
+    gap: $space-12;
+  }
+  .toolbar + .toolbar {
+    border-left: 1px solid var(--line);
+    padding-left: $space-8;
+  }
+}
+
+.header-actions {
+  grid-area: actions;
+  justify-self: end;
+  justify-content: flex-end;
+  text-align: right;
+  .toolbar + .toolbar {
+    border-left: 1px solid var(--line);
+    padding-left: $space-8;
+    margin-left: $space-8;
+  }
+  .status-wrap {
+    display: flex;
+    align-items: center;
+    gap: $space-8;
+    flex: 1 1 auto;
+    min-width: 0;
+    #userList,
+    #saveStatus {
+      min-width: 0;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+  }
+  #sessionDeleteList {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-4;
+    margin-top: $space-4;
+    .session-item {
+      display: flex;
+      align-items: center;
+      gap: $space-8;
+      border: 1px solid var(--line);
+      border-radius: $space-10;
+      padding: $space-4 $space-8;
+      .btn {
+        flex: 0 0 auto;
+        min-width: auto;
+        width: $space-20;
+        height: $space-20;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: $space-4;
+        &:hover {
+          background: var(--red);
+          border-color: var(--red);
+          color: #fff;
+        }
+      }
+    }
+  }
+  .more-actions {
+    display: flex;
+    > summary {
+      display: none;
+    }
+    .menu {
+      display: flex;
+      gap: 8px;
+    }
+  }
+}
+
+#arrivalBar{
+  flex:0 0 auto;
+  min-width:auto;
+  .btn{
+    flex:0 0 auto;
+    min-width:80px;
+    padding:$space-6 $space-8;
+  }
+}
+
+.header-actions .toolbar:first-child,
+.header-center .toolbar:first-child {
+  margin-top: 0;
+}
+
+@media (max-width: 768px) {
+  header .wrap {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      'left'
+      'actions';
+  }
+  .header-center {
+    display: none;
+  }
+  .header-actions {
+    justify-self: end;
+    flex-wrap: wrap;
+    .toolbar {
+      flex-wrap: wrap;
+      flex: 1 1 220px;
+      min-width: 220px;
+      .btn {
+        flex: 1 1 100px;
+        min-width: 100px;
+      }
+    }
+    .more-actions {
+      position: relative;
+      > summary {
+        display: inline-flex;
+        align-items: center;
+        cursor: pointer;
+      }
+      .menu {
+        display: none;
+        position: absolute;
+        right: 0;
+        top: 100%;
+        flex-direction: column;
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 8px;
+        min-width: 160px;
+        z-index: 1000;
+      }
+      &[open] .menu {
+        display: flex;
+      }
+    }
+  }
+}
