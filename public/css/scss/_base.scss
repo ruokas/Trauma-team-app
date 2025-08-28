@@ -165,7 +165,12 @@ header{
 h1{font-size:clamp(1.25rem,5vw,2rem);line-height:1.2;margin:$space-4 0}
 .sub{color:color-mix(in srgb,var(--muted),white 20%);font-size:$font-xs;line-height:1.2}
 .btn{min-width:4rem}
-.btn-icon{width:1em;height:1em;margin-right:$space-4}
+.btn-icon{
+  width:1.5em;
+  height:1.5em;
+  margin-right:$space-4;
+  &:only-child{margin-right:0}
+}
 .toolbar{display:flex;gap:$space-8;flex-wrap:wrap;margin-top:$space-8}
 .toolbar--scroll{flex-wrap:nowrap;overflow-x:auto}
 .header-actions .toolbar:first-child,
