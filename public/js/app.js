@@ -9,7 +9,9 @@ import './components/modal.js';
 import { initValidation, validateVitals } from './validation.js';
 import { initTopbar } from './components/topbar.js';
 import { initCollapsibles } from './sections.js';
-import { connectSocket, initSessions, fetchUsers, initTheme, saveAll, loadAll } from './sessionManager.js';
+import { initTheme, saveAll, loadAll, getCurrentSessionId } from './sessionManager.js';
+import { connectSocket, fetchUsers } from './sessionApi.js';
+import { initSessions, populateSessionSelect, updateUserList } from './sessionUI.js';
 import bodyMap from './bodyMap.js';
 import { generateReport } from './report.js';
 import { setupHeaderActions } from './headerActions.js';
@@ -117,8 +119,18 @@ async function init(){
   initTheme();
   await initTopbar();
   setupHeaderActions({ validateForm, saveAll });
-  connectSocket();
-  await fetchUsers();
+  connectSocket({
+    onSessions: list => {
+      const sel = $('#sessionSelect');
+      if(sel) populateSessionSelect(sel, list);
+    },
+    onSessionData: ({ id }) => {
+      if(id === getCurrentSessionId()) loadAll();
+    },
+    onUsers: updateUserList
+  });
+  const users = await fetchUsers();
+  updateUserList(users);
   await initSessions();
   if(document.getElementById('tabs')){
     initTabs();
