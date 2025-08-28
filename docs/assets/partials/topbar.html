@@ -1,19 +1,19 @@
 <div class="wrap">
   <div class="header-left">
     <button type="button" class="btn" id="navToggle" aria-controls="tabs" aria-expanded="false" aria-label="Navigation menu">
-      <svg viewBox="0 0 24 24" width="1.5em" height="1.5em" aria-hidden="true">
+      <svg class="btn-icon" viewBox="0 0 24 24" aria-hidden="true">
         <path d="M3 6h18M3 12h18M3 18h18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       </svg>
     </button>
     <div>
       <h1>Sunkios traumos forma</h1>
-      <div class="sub">Aktyvacija · ABCE · Santrauka <span id="activationIndicator" class="activation-dot"></span></div>
+      <div class="sub">Aktyvacija · ABCE · Santrauka <span id="activationIndicator" class="activation-dot"></span><span id="activationStatusText" class="sr-only" aria-live="polite"></span></div>
     </div>
   </div>
   <div class="header-center">
     <div class="toolbar" id="arrivalBar">
         <button type="button" class="btn primary" id="btnAtvyko"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>ATVYKO</button>
-      <div id="arrivalTimer" class="btn primary arrival-timer" aria-live="polite"></div>
+      <span id="arrivalTimer" class="arrival-timer" aria-live="polite"></span>
     </div>
     <div class="toolbar" id="sessionBar">
       <select id="sessionSelect" class="w-auto"></select>

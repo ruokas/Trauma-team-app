@@ -4,7 +4,7 @@ jest.useFakeTimers('modern');
 
 beforeEach(() => {
   localStorage.clear();
-  document.body.innerHTML = '<div id="arrivalTimer"></div>';
+  document.body.innerHTML = '<span id="arrivalTimer"></span>';
 });
 
 afterAll(() => {
