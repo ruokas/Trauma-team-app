@@ -123,6 +123,12 @@ describe('server API', () => {
     expect(res.body).toEqual({ error: '"name" is required' });
   });
 
+  test('returns 413 for payloads exceeding limit', async () => {
+    const bigName = 'a'.repeat(1024 * 1024 + 1);
+    const res = await request(app).post('/api/login').send({ name: bigName });
+    expect(res.statusCode).toBe(413);
+  });
+
   test('rejects session update with invalid name', async () => {
     const token = await login('frank');
     const create = await request(app)
