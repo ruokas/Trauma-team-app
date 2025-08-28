@@ -23,7 +23,7 @@ describe('sessionManager utilities', () => {
     localStorage.setItem('trauma_current_session', 'test');
     localStorage.setItem('trauma_token', 'token');
     document.body.innerHTML = `
-      <input id="field" />
+      <input id="field" type="text" />
       <div id="saveStatus"></div>
       <div id="pain_meds"></div>
       <div id="bleeding_meds"></div>
@@ -39,6 +39,14 @@ describe('sessionManager utilities', () => {
     await promise;
     expect(document.getElementById('saveStatus').textContent).toBe('Saved');
     expect(mockFetch).toHaveBeenCalled();
+    const payload = JSON.parse(mockFetch.mock.calls[0][1].body);
+    expect(payload).toMatchObject({
+      pain_meds: [],
+      bleeding_meds: [],
+      other_meds: [],
+      procs: [],
+      bodymap_svg: ''
+    });
   });
 
   test('setAuthToken stores and clears token', () => {

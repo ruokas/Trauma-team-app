@@ -9,6 +9,9 @@ const socketEndpoint = window.socketEndpoint || window.SOCKET_URL;
 let currentSessionId = localStorage.getItem('trauma_current_session') || null;
 let showArchived = false;
 
+const MAX_FIELD_LENGTH = 500;
+const limit = (val, max = MAX_FIELD_LENGTH) => (val || '').toString().slice(0, max);
+
 function updateUserList(users){
   const el=document.getElementById('userList');
   if(el) el.textContent=users.length?`Prisijungę: ${users.join(', ')}`:'';
@@ -303,13 +306,13 @@ export function saveAll(){
     const key=el.dataset.field || el.id || el.name;
     if(!key) return;
     if(el.type==='radio'){ if(el.checked) data[key+'__'+el.value]=true; }
-    else if(el.type==='checkbox'){ data[key]=el.checked?'__checked__':(el.value||''); }
-    else{ data[key]=el.value; }
+    else if(el.type==='checkbox'){ data[key]=el.checked?'__checked__':limit(el.value); }
+    else{ data[key]=limit(el.value); }
   });
   CHIP_GROUPS.forEach(sel=>{ const arr=$$('.chip.active',$(sel)).map(c=>c.dataset.value); data['chips:'+sel]=arr; });
-  function pack(container){ return Array.from(container.children).map(card=>({ name:(card.querySelector('.act_custom_name')?card.querySelector('.act_custom_name').value:card.querySelector('.act_name').textContent.trim()), on:card.querySelector('.act_chk').checked, time:card.querySelector('.act_time').value, dose:(card.querySelector('.act_dose')?card.querySelector('.act_dose').value:''), note:card.querySelector('.act_note').value }));}
+  function pack(container){ return Array.from(container.children).map(card=>({ name:limit(card.querySelector('.act_custom_name')?card.querySelector('.act_custom_name').value:card.querySelector('.act_name').textContent.trim()), on:card.querySelector('.act_chk').checked, time:limit(card.querySelector('.act_time').value), dose:limit(card.querySelector('.act_dose')?card.querySelector('.act_dose').value:''), note:limit(card.querySelector('.act_note').value) }));}
   data['pain_meds']=pack($('#pain_meds')); data['bleeding_meds']=pack($('#bleeding_meds')); data['other_meds']=pack($('#other_meds')); data['procs']=pack($('#procedures'));
-  data['bodymap_svg']=bodyMap.serialize();
+  data['bodymap_svg']=limit(bodyMap.serialize(), 200000);
   localStorage.setItem(sessionKey(), JSON.stringify(data));
   const statusEl = $('#saveStatus');
   if(statusEl){
