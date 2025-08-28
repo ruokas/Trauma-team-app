@@ -18,6 +18,11 @@ node server/start.js
 
 Alternatively, use the provided `npm start` script.
 
+## Environment Variables
+
+- `ALLOWED_ORIGINS` – Comma-separated list of origins allowed for
+  Socket.IO connections. If unset, all origins are permitted.
+
 ## Testing
 
 Execute the test suite:
