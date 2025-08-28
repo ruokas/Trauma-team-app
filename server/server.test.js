@@ -94,13 +94,15 @@ describe('server API', () => {
       .send({ name: 'arch' });
     const id = create.body.id;
     const archive = await request(app)
-      .post(`/api/sessions/${id}/archive`)
-      .set('Authorization', `Bearer ${token}`);
+      .patch(`/api/sessions/${id}/archive`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ archived: true });
     expect(archive.statusCode).toBe(200);
     expect(fakeDB.sessions[0].archived).toBe(true);
     const unarchive = await request(app)
-      .post(`/api/sessions/${id}/unarchive`)
-      .set('Authorization', `Bearer ${token}`);
+      .patch(`/api/sessions/${id}/archive`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ archived: false });
     expect(unarchive.statusCode).toBe(200);
     expect(fakeDB.sessions[0].archived).toBe(false);
   });
