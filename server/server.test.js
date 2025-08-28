@@ -2,6 +2,7 @@
  * @jest-environment node
  */
 const request = require('supertest');
+const jwt = require('jsonwebtoken');
 
 jest.mock('fs', () => {
   const actual = jest.requireActual('fs');
@@ -32,6 +33,7 @@ describe('server API', () => {
       });
       originalPort = process.env.PORT;
       process.env.PORT = 0;
+      process.env.JWT_SECRET = 'testsecret';
       ({ app, server, startServer } = require('./index'));
       await startServer();
     });
@@ -54,6 +56,16 @@ describe('server API', () => {
       .set('Authorization', `Bearer ${token}`);
     expect(res.statusCode).toBe(200);
     expect(fakeDB.users).toHaveLength(0);
+  });
+
+  test('rejects expired tokens', async () => {
+    await request(app).post('/api/login').send({ name: 'old' });
+    const expired = jwt.sign({ name: 'old', exp: Math.floor(Date.now()/1000) - 10 }, process.env.JWT_SECRET);
+    const res = await request(app)
+      .get('/api/sessions')
+      .set('Authorization', `Bearer ${expired}`);
+    expect(res.statusCode).toBe(401);
+    expect(res.body).toEqual({ error: 'Invalid token' });
   });
 
   test('session CRUD', async () => {
@@ -234,7 +246,7 @@ describe('server API', () => {
     );
     await Promise.all(requests);
 
-    expect(fakeDB.users.map(u => u.name).sort()).toEqual(['a', 'b', 'c']);
+    expect(fakeDB.users.sort()).toEqual(['a', 'b', 'c']);
     expect(overlap).toBe(false);
   });
 

@@ -5,15 +5,26 @@ const fs = require('fs');
 const path = require('path');
 const os = require('os');
 const http = require('http');
-jest.mock('./auth', () => ({
-  validateToken: jest.fn((headerOrString) => {
-    const prefix = 'Bearer ';
-    if (typeof headerOrString === 'string' && headerOrString.startsWith(prefix)) {
-      return { valid: true, token: headerOrString.slice(prefix.length) };
-    }
-    return { valid: false, token: null };
-  })
-}));
+jest.mock('./auth', () => {
+  const jwt = require('jsonwebtoken');
+  const secret = process.env.JWT_SECRET || 'dev-secret';
+  const expiresIn = process.env.JWT_EXPIRES_IN || '1h';
+  return {
+    validateToken: jest.fn(headerOrString => {
+      const prefix = 'Bearer ';
+      if (typeof headerOrString === 'string' && headerOrString.startsWith(prefix)) {
+        try {
+          const payload = jwt.verify(headerOrString.slice(prefix.length), secret);
+          return { valid: true, payload };
+        } catch (e) {
+          return { valid: false, payload: null };
+        }
+      }
+      return { valid: false, payload: null };
+    }),
+    generateToken: name => jwt.sign({ name }, secret, { expiresIn })
+  };
+});
 const { validateToken } = require('./auth');
 
 describe('auth middleware', () => {
@@ -29,6 +40,7 @@ describe('auth middleware', () => {
       await fs.promises.writeFile(dbPath, JSON.stringify({ sessions: [], data: {}, users: [] }));
       process.env.DB_FILE = dbPath;
       process.env.PORT = 0;
+      process.env.JWT_SECRET = 'testsecret';
       ({ server, startServer } = require('./index.js'));
       await startServer();
       const address = server.address();
