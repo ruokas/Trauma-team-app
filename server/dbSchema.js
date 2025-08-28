@@ -25,10 +25,7 @@ const sessionSchema = Joi.object({
   archived: Joi.boolean().default(false)
 });
 
-const userSchema = Joi.object({
-  token: Joi.string().required(),
-  name: Joi.string().min(1).max(50).required()
-});
+const userSchema = Joi.string().min(1).max(50);
 
 const dbSchema = Joi.object({
   sessions: Joi.array().items(sessionSchema).required(),

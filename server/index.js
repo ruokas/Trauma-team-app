@@ -6,7 +6,7 @@ const { Server } = require('socket.io');
 const crypto = require('crypto');
 const Joi = require('joi');
 const validate = require('./validate');
-const { validateToken } = require('./auth');
+const { validateToken, generateToken } = require('./auth');
 const { dbSchema, sessionDataSchema } = require('./dbSchema');
 
 const PORT = process.env.PORT || 3000;
@@ -87,35 +87,39 @@ app.post('/api/login', (req, res, next) => {
   next();
 }, validate(loginSchema), async (req, res) => {
   const { name } = req.body;
-  const token = crypto.randomBytes(8).toString('hex');
-  db.users.push({ token, name });
-  await saveDB();
-  io.emit('users', db.users.map(u => u.name));
+  const token = generateToken(name);
+  if (!db.users.includes(name)) {
+    db.users.push(name);
+    await saveDB();
+    io.emit('users', db.users);
+  }
   res.json({ token });
 });
 
 app.post('/api/logout', auth, async (req, res) => {
   if (DISABLE_AUTH) return res.json({ ok: true });
-  const token = req.token;
-  const index = db.users.findIndex(u => u.token === token);
-  if(index !== -1){
+  const name = req.user;
+  const index = db.users.indexOf(name);
+  if (index !== -1) {
     db.users.splice(index, 1);
     await saveDB();
-    io.emit('users', db.users.map(u => u.name));
+    io.emit('users', db.users);
   }
   res.json({ ok: true });
 });
 
 app.get('/api/users', auth, (req, res) => {
-  res.json(db.users.map(u => u.name));
+  res.json(db.users);
 });
 
 function auth(req, res, next){
   if (DISABLE_AUTH) return next();
-  const { valid, token } = validateToken(req.headers['authorization']);
-  if(!valid) return res.status(401).json({ error: 'No token' });
-  if(!db.users.some(u => u.token === token)) return res.status(401).json({ error: 'Invalid token' });
-  req.token = token;
+  const raw = req.headers['authorization'];
+  const { valid, payload } = validateToken(raw);
+  if (typeof raw !== 'string' || !raw.startsWith('Bearer ')) return res.status(401).json({ error: 'No token' });
+  if (!valid) return res.status(401).json({ error: 'Invalid token' });
+  if (!db.users.includes(payload.name)) return res.status(401).json({ error: 'Invalid token' });
+  req.user = payload.name;
   next();
 }
 
@@ -206,15 +210,14 @@ const io = new Server(server, { cors: { origin: ALLOWED_ORIGINS || '*' } });
 io.use((socket, next) => {
   if (DISABLE_AUTH) return next();
   const raw = socket.handshake.auth && socket.handshake.auth.token;
-  const { valid, token } = validateToken(raw);
-  if(valid && db.users.some(u => u.token === token)) return next();
+  const { valid, payload } = validateToken(raw);
+  if (valid && db.users.includes(payload.name)) return next();
   next(new Error('unauthorized'));
 });
 
 io.on('connection', socket => {
-  socket.emit('users', db.users.map(u => u.name));
+  socket.emit('users', db.users);
 });
-
 async function startServer () {
   db = await loadDB();
   return new Promise((resolve, reject) => {
