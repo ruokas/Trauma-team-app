@@ -1,4 +1,5 @@
 import { ACTIONS_LABEL, MORE_LABEL } from '../constants.js';
+import { notify } from '../alerts.js';
 
 const NAV_BREAKPOINT = 768;
 let navMq;
@@ -67,11 +68,13 @@ export async function initTopbar(){
   if(!header || typeof fetch!=='function') return;
   try{
     const res=await fetch('assets/partials/topbar.html');
-    if(res.ok){
-      header.innerHTML=await res.text();
-    }
+    if(!res.ok) throw new Error(`HTTP ${res.status}`);
+    header.innerHTML=await res.text();
   }catch(e){
     console.error('Failed to load topbar', e);
+    notify({type:'error', message:'Failed to load topbar'});
+    header.innerHTML='<div class="wrap"><button type="button" class="btn" id="retryTopbar">Retry</button></div>';
+    header.querySelector('#retryTopbar')?.addEventListener('click', initTopbar);
   }
   applyTopbarLocalization(header);
   if(typeof ResizeObserver==='function'){
