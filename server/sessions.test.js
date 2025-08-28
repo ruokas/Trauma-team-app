@@ -7,19 +7,22 @@ const os = require('os');
 const http = require('http');
 jest.mock('./auth', () => {
   const jwt = require('jsonwebtoken');
+  const secret = process.env.JWT_SECRET || 'dev-secret';
+  const expiresIn = process.env.JWT_EXPIRES_IN || '1h';
   return {
     validateToken: jest.fn(headerOrString => {
       const prefix = 'Bearer ';
       if (typeof headerOrString === 'string' && headerOrString.startsWith(prefix)) {
         try {
-          const payload = jwt.verify(headerOrString.slice(prefix.length), process.env.JWT_SECRET || 'dev-secret');
+          const payload = jwt.verify(headerOrString.slice(prefix.length), secret);
           return { valid: true, payload };
         } catch (e) {
           return { valid: false, payload: null };
         }
       }
       return { valid: false, payload: null };
-    })
+    }),
+    generateToken: name => jwt.sign({ name }, secret, { expiresIn })
   };
 });
 const { validateToken } = require('./auth');
