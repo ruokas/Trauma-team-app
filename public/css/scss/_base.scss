@@ -2,7 +2,7 @@
 
 :root{
   color-scheme:dark;
-  --header-height:68px;
+  --header-height:50px;
 }
 
 :root.dark{
@@ -39,11 +39,11 @@ header{
   width:100%;
   max-width:1200px;
   margin-inline:auto;
-  padding:$space-16 $space-20;
+  padding:$space-8 $space-20;
   display:grid;
   grid-template-columns:auto 1fr auto;
   align-items:center;
-  gap:$space-12;
+  gap:$space-8;
 }
 .header-left{
   display:flex;
