@@ -13,6 +13,7 @@ describe('initNavToggle',()=>{
     toggle.click();
     expect(toggle.getAttribute('aria-expanded')).toBe('true');
     expect(nav.hasAttribute('aria-hidden')).toBe(false);
+    expect(nav.hasAttribute('inert')).toBe(false);
     expect(document.body.classList.contains('nav-open')).toBe(true);
     expect(document.activeElement).toBe(tabs[0]);
     tabs[1].focus();
@@ -25,6 +26,7 @@ describe('initNavToggle',()=>{
     document.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape'}));
     expect(toggle.getAttribute('aria-expanded')).toBe('false');
     expect(nav.getAttribute('aria-hidden')).toBe('true');
+    expect(nav.hasAttribute('inert')).toBe(true);
     expect(document.body.classList.contains('nav-open')).toBe(false);
     expect(document.activeElement).toBe(toggle);
   });
@@ -34,6 +36,7 @@ describe('initNavToggle',()=>{
     tabs[0].click();
     expect(toggle.getAttribute('aria-expanded')).toBe('false');
     expect(nav.getAttribute('aria-hidden')).toBe('true');
+    expect(nav.hasAttribute('inert')).toBe(true);
     expect(document.body.classList.contains('nav-open')).toBe(false);
     expect(document.activeElement).toBe(toggle);
   });
