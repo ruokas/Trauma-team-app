@@ -62,6 +62,28 @@ export function initNavToggle(toggle, nav){
   }
 }
 
+export function initPatientMenuToggle(toggle, menu){
+  if(!toggle || !menu) return;
+  const mq=typeof matchMedia==='function' ? matchMedia(`(min-width: ${NAV_BREAKPOINT}px)`) : null;
+  const update=()=>{
+    if(mq && mq.matches){
+      menu.removeAttribute('hidden');
+      toggle.setAttribute('aria-expanded','true');
+    }else{
+      menu.setAttribute('hidden','');
+      toggle.setAttribute('aria-expanded','false');
+    }
+  };
+  toggle.addEventListener('click',()=>{
+    const expanded=toggle.getAttribute('aria-expanded')==='true';
+    toggle.setAttribute('aria-expanded', String(!expanded));
+    if(expanded) menu.setAttribute('hidden','');
+    else menu.removeAttribute('hidden');
+  });
+  if(mq){ mq.addEventListener('change', update); }
+  update();
+}
+
 export async function initTopbar(){
   const header=document.getElementById('appHeader');
   if(!header || typeof fetch!=='function') return;
@@ -87,4 +109,7 @@ export async function initTopbar(){
   const toggle=document.getElementById('navToggle');
   const nav=document.querySelector('nav');
   initNavToggle(toggle, nav);
+  const patientToggle=document.getElementById('patientMenuToggle');
+  const sessionBar=document.getElementById('sessionBar');
+  initPatientMenuToggle(patientToggle, sessionBar);
 }
