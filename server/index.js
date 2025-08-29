@@ -8,6 +8,7 @@ const Joi = require('joi');
 const validate = require('./validate');
 const { validateToken, generateToken } = require('./auth');
 const { dbSchema, sessionDataSchema } = require('./dbSchema');
+const helmet = require('helmet');
 
 const PORT = process.env.PORT || 3000;
 const DB_FILE = process.env.DB_FILE || path.join(__dirname, 'db.json');
@@ -58,6 +59,7 @@ function saveDB(){
 let db;
 
 const app = express();
+app.use(helmet());
 app.use(express.json({ limit: '1mb' }));
 // Serve static assets from the public directory
 app.use(express.static(path.join(__dirname, '..', 'public')));
