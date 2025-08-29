@@ -351,7 +351,10 @@ export default class BodyMap {
     if (!this.pointInBody(x, y, side)) return;
     const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
     const symbol = TOOL_SYMBOL[type];
-    if (symbol) use.setAttribute('href', symbol);
+    if (symbol) {
+      use.setAttribute('href', symbol);
+      use.setAttributeNS('http://www.w3.org/1999/xlink', 'href', symbol);
+    }
     use.setAttribute('transform', `translate(${x},${y})`);
     const mid = id || ++this.markSeq;
     use.dataset.id = mid;
