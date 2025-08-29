@@ -81,6 +81,10 @@ const sessionListItemSchema = Joi.object({
 
 const sessionsListSchema = Joi.array().items(sessionListItemSchema);
 
+const sessionArchiveSchema = Joi.object({
+  archived: Joi.boolean().required()
+});
+
 /* sessionDataSchema is imported from dbSchema */
 
 /* ===== Auth ===== */
@@ -173,14 +177,11 @@ app.put('/api/sessions/:id', auth, validate(sessionSchema), async (req, res) => 
   res.json({ ok: true });
 });
 
-app.patch('/api/sessions/:id/archive', auth, async (req, res) => {
+app.patch('/api/sessions/:id/archive', auth, validate(sessionArchiveSchema), async (req, res) => {
   const id = req.params.id;
   const session = db.sessions.find(s => s.id === id);
   if (!session) return res.status(404).json({ error: 'Not found' });
   const { archived } = req.body;
-  if (typeof archived !== 'boolean') {
-    return res.status(400).json({ error: '"archived" must be a boolean' });
-  }
   session.archived = archived;
   await saveDB();
   io.emit('sessions', db.sessions);
