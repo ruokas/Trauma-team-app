@@ -4,12 +4,9 @@
   }
 
   .header-left,
+  .header-center,
   .header-actions {
     grid-column: 1 / -1;
-  }
-
-  .js .header-center {
-    display: none;
   }
 
   .header-actions {

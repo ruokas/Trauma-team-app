@@ -1,2 +1,15 @@
+@media (max-width: 768px) {
+  header .wrap {
+    grid-template-columns: 1fr;
+  }
 
-/* Responsive overrides handled in topbar.scss */
+  .header-left,
+  .header-center,
+  .header-actions {
+    grid-column: 1 / -1;
+  }
+
+  .header-actions {
+    justify-self: end;
+  }
+}
