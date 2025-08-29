@@ -19,6 +19,72 @@ describe('sessionManager utilities', () => {
     expect(sessionKey()).toBe('trauma_v10_abc');
   });
 
+  test('serializeFields and loadFields round trip', () => {
+    document.body.innerHTML = `
+      <input id="f1" type="text" value="abc" />
+      <input id="f2" type="checkbox" value="x" />
+      <input name="grp" type="radio" value="a" />
+      <input name="grp" type="radio" value="b" checked />
+    `;
+    document.getElementById('f2').checked = true;
+    const { serializeFields, loadFields } = require('../formSerialization.js');
+    const data = serializeFields();
+    expect(data).toMatchObject({ f1: 'abc', f2: '__checked__', 'grp__b': true });
+    document.getElementById('f1').value = '';
+    document.getElementById('f2').checked = false;
+    document.querySelectorAll('input[name="grp"]').forEach(r => (r.checked = false));
+    loadFields(data);
+    expect(document.getElementById('f1').value).toBe('abc');
+    expect(document.getElementById('f2').checked).toBe(true);
+    expect(document.querySelector('input[name="grp"][value="b"]').checked).toBe(true);
+  });
+
+  test('serializeChips and loadChips round trip', () => {
+    document.body.innerHTML = `
+      <div id="group">
+        <span class="chip" data-value="a"></span>
+        <span class="chip active" data-value="b"></span>
+      </div>
+      <div id="labs_basic"></div>
+    `;
+    const { serializeChips, loadChips } = require('../chipState.js');
+    const data = serializeChips(['#group']);
+    expect(data['chips:#group']).toEqual(['b']);
+    document.querySelectorAll('#group .chip').forEach(c => c.classList.remove('active'));
+    loadChips(data, ['#group']);
+    expect(document.querySelector('#group .chip[data-value="b"]').classList.contains('active')).toBe(true);
+  });
+
+  test('updateDomToggles responds to chip state', () => {
+    document.body.innerHTML = `
+      <div id="d_pupil_left_group"><span class="chip" data-value="kita"></span></div>
+      <div id="d_pupil_left_wrapper"><label for="d_pupil_left_note"></label><input id="d_pupil_left_note" class="hidden" /></div>
+      <div id="d_pupil_right_group"></div>
+      <div id="d_pupil_right_wrapper"><label for="d_pupil_right_note"></label><input id="d_pupil_right_note" /></div>
+      <div id="e_back_group"></div><div id="e_back_notes"></div>
+      <div id="e_abdomen_group"></div><div id="e_abdomen_notes"></div>
+      <div id="c_skin_color_group"></div><input id="c_skin_color_other" />
+      <div id="oxygenFields"></div><input id="b_oxygen_liters"><input id="b_oxygen_type">
+      <div id="dpvFields"></div><input id="b_dpv_fio2">
+      <div id="spr_decision_group"></div>
+      <div id="spr_skyrius_container"></div>
+      <div id="spr_ligonine_container"></div>
+      <select id="spr_skyrius"></select>
+      <div id="spr_skyrius_kita"></div>
+      <div id="imaging_ct"></div>
+      <div id="imaging_xray"></div>
+      <div id="imaging_other_group"></div>
+      <div id="imaging_other" class="hidden"></div>
+    `;
+    const { updateDomToggles } = require('../domToggles.js');
+    const chip = document.querySelector('#d_pupil_left_group .chip');
+    updateDomToggles();
+    expect(document.getElementById('d_pupil_left_note').classList.contains('hidden')).toBe(true);
+    chip.classList.add('active');
+    updateDomToggles();
+    expect(document.getElementById('d_pupil_left_note').classList.contains('hidden')).toBe(false);
+  });
+
   test('saveAll resolves and updates status text', async () => {
     localStorage.setItem('trauma_current_session', 'test');
     localStorage.setItem('trauma_token', 'token');
