@@ -119,6 +119,27 @@ describe('server API', () => {
     expect(fakeDB.sessions[0].archived).toBe(false);
   });
 
+  test('rejects invalid archived values', async () => {
+    const token = await login('ian');
+    const create = await request(app)
+      .post('/api/sessions')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ name: 'bad-arch' });
+    const id = create.body.id;
+    const invalidType = await request(app)
+      .patch(`/api/sessions/${id}/archive`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({ archived: 'yes' });
+    expect(invalidType.statusCode).toBe(400);
+    expect(invalidType.body).toEqual({ error: '"archived" must be a boolean' });
+    const missing = await request(app)
+      .patch(`/api/sessions/${id}/archive`)
+      .set('Authorization', `Bearer ${token}`)
+      .send({});
+    expect(missing.statusCode).toBe(400);
+    expect(missing.body).toEqual({ error: '"archived" is required' });
+  });
+
   test('requires name when creating session', async () => {
     const token = await login('dave');
     const res = await request(app)
