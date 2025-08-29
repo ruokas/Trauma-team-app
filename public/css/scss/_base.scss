@@ -120,37 +120,6 @@ header{
       }
     }
 
-    #sessionDeleteList{
-      width:100%;
-      display:flex;
-      flex-wrap:wrap;
-      gap:$space-4;
-    margin-top:$space-4;
-    .session-item{
-      display:flex;
-      align-items:center;
-      gap:$space-8;
-      border:1px solid var(--line);
-      border-radius:$space-10;
-      padding:$space-4 $space-8;
-      .btn{
-        flex:0 0 auto;
-        min-width:auto;
-        width:$space-20;
-        height:$space-20;
-        padding:0;
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        border-radius:$space-4;
-        &:hover{
-          background:var(--red);
-          border-color:var(--red);
-          color:#fff;
-        }
-      }
-    }
-    }
   }
   #arrivalBar{
     flex:0 0 auto;
@@ -161,6 +130,61 @@ header{
       padding:$space-6 $space-8;
     }
   }
+
+#sessionManagerModal{
+  position:fixed;
+  top:var(--header-height);
+  left:0;
+  right:0;
+  bottom:0;
+  background:rgba(0,0,0,.6);
+  z-index:1000;
+  display:none;
+  align-items:flex-start;
+  justify-content:center;
+  padding:$space-12;
+  &.open{display:flex;}
+  .modal-content{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:$space-10;
+    width:min(90%,400px);
+    padding:$space-12;
+  }
+}
+
+#sessionDeleteList{
+  display:flex;
+  flex-direction:column;
+  gap:$space-4;
+  margin-top:$space-4;
+  max-height:60vh;
+  overflow-y:auto;
+  .session-item{
+    display:flex;
+    align-items:center;
+    gap:$space-8;
+    border:1px solid var(--line);
+    border-radius:$space-10;
+    padding:$space-4 $space-8;
+    .btn{
+      flex:0 0 auto;
+      min-width:auto;
+      width:$space-20;
+      height:$space-20;
+      padding:0;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border-radius:$space-4;
+      &:hover{
+        background:var(--red);
+        border-color:var(--red);
+        color:#fff;
+      }
+    }
+  }
+}
 // Use fluid typography for headings
 h1{font-size:clamp(1.25rem,5vw,2rem);line-height:1.2;margin:$space-4 0}
 .sub{color:color-mix(in srgb,var(--muted),white 20%);font-size:$font-xs;line-height:1.2}
