@@ -1,6 +1,6 @@
 @use 'variables' as *;
 
-.btn{border:1px solid var(--line);background:#152231;color:var(--ink);padding:$space-8 $space-12;border-radius:$space-10;cursor:pointer;font-weight:600;transition:background-color .2s,color .2s}
+.btn{border:1px solid var(--line);background:#152231;color:var(--ink);padding:$space-8 $space-12;border-radius:$space-10;cursor:pointer;font-weight:600;transition:background-color .2s,color .2s;display:flex;align-items:center;justify-content:center}
 .btn:hover{filter:brightness(1.1)}
 .btn:active{filter:brightness(.9)}
 .btn:focus-visible{outline:$space-3 solid var(--accent);outline-offset:$space-2;transition:background-color .2s,color .2s}
