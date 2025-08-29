@@ -4,6 +4,10 @@ import { getAuthToken } from './sessionManager.js';
 
 let socket = null;
 const socketEndpoint = window.socketEndpoint || window.SOCKET_URL;
+const INITIAL_DELAY = 1000;
+const MAX_DELAY = 16000;
+let reconnectDelay = INITIAL_DELAY;
+function resetDelay(){ reconnectDelay = INITIAL_DELAY; }
 
 export async function fetchUsers(){
   const token = getAuthToken();
@@ -58,10 +62,12 @@ export function connectSocket({ onSessions, onSessionData, onUsers }={}){
   const token = getAuthToken();
   if(typeof io === 'undefined' || socket || !token) return;
   socket = io(socketEndpoint || undefined,{ auth:{ token:'Bearer '+token } });
+  socket.on('connect', resetDelay);
   socket.on('connect_error', err => {
     console.error('Socket connection error:', err);
     notify({ type:'error', message:'Connection error. Retrying...' });
-    setTimeout(() => socket.connect(), 1000);
+    setTimeout(() => socket.connect(), reconnectDelay);
+    reconnectDelay = Math.min(reconnectDelay * 2, MAX_DELAY);
   });
   socket.on('disconnect', reason => {
     console.warn('Socket disconnected:', reason);
@@ -70,6 +76,7 @@ export function connectSocket({ onSessions, onSessionData, onUsers }={}){
   socket.on('reconnect', attempt => {
     console.log('Socket reconnected after', attempt, 'attempts');
     notify({ type:'success', message:'Reconnected to server' });
+    resetDelay();
   });
   if(onSessions) socket.on('sessions', onSessions);
   if(onSessionData) socket.on('sessionData', onSessionData);
