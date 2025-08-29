@@ -51,4 +51,28 @@ describe('sessionApi', () => {
     handlers.sessions([1,2]);
     expect(onSessions).toHaveBeenCalledWith([1,2]);
   });
+
+  test('connectSocket backs off and resets delay', () => {
+    jest.useFakeTimers();
+    const handlers = {};
+    const connect = jest.fn();
+    global.io = jest.fn(() => ({
+      on: (evt, cb) => { handlers[evt] = cb; },
+      connect,
+      disconnect: jest.fn()
+    }));
+    const setTimeoutSpy = jest.spyOn(global, 'setTimeout');
+    const { connectSocket } = require('../sessionApi.js');
+    connectSocket();
+    const expected = [1000, 2000, 4000, 8000, 16000, 16000];
+    expected.forEach(delay => {
+      handlers.connect_error(new Error('fail'));
+      expect(setTimeoutSpy).toHaveBeenLastCalledWith(expect.any(Function), delay);
+    });
+    handlers.connect();
+    handlers.connect_error(new Error('fail'));
+    expect(setTimeoutSpy).toHaveBeenLastCalledWith(expect.any(Function), 1000);
+    setTimeoutSpy.mockRestore();
+    jest.useRealTimers();
+  });
 });
