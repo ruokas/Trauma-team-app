@@ -28,11 +28,24 @@ export async function initSessions(){
   const sortSelect=$('#sessionSort');
   let sessions=await getSessions();
   let currentSessionId=getCurrentSessionId();
+  let modal=$('#sessionManagerModal');
+  let modalContent;
+  if(!modal){
+    modal=document.createElement('div');
+    modal.id='sessionManagerModal';
+    modal.className='modal';
+    modalContent=document.createElement('div');
+    modalContent.className='modal-content';
+    modal.appendChild(modalContent);
+    document.body.appendChild(modal);
+  }else{
+    modalContent=modal.querySelector('.modal-content');
+  }
   let delWrap=$('#sessionDeleteList');
   if(!delWrap){
     delWrap=document.createElement('div');
     delWrap.id='sessionDeleteList';
-    select.parentNode.appendChild(delWrap);
+    modalContent.appendChild(delWrap);
   }
   let toggleArchived=$('#toggleArchivedSessions');
   if(!toggleArchived){
@@ -41,8 +54,21 @@ export async function initSessions(){
     toggleArchived.type='button';
     toggleArchived.className='btn ghost';
     toggleArchived.textContent='Show archived';
-    select.parentNode.insertBefore(toggleArchived, delWrap);
+    modalContent.insertBefore(toggleArchived, delWrap);
   }
+  let manageBtn=$('#btnManageSessions');
+  if(!manageBtn){
+    manageBtn=document.createElement('button');
+    manageBtn.type='button';
+    manageBtn.id='btnManageSessions';
+    manageBtn.className='btn';
+    manageBtn.textContent='Manage patients';
+    const btnNew=$('#btnNewSession');
+    btnNew.parentNode.insertBefore(manageBtn, btnNew.nextSibling);
+  }
+  manageBtn.addEventListener('click',()=>{
+    modal.classList.toggle('open');
+  });
   function renderDeleteButtons(focusId){
     delWrap.innerHTML='';
     const q=(searchInput?.value||'').trim().toLowerCase();
