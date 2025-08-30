@@ -1,6 +1,9 @@
 const jwt = require('jsonwebtoken');
 
-const SECRET = process.env.JWT_SECRET || 'dev-secret';
+const SECRET = process.env.JWT_SECRET;
+if (!SECRET) {
+  throw new Error('JWT_SECRET environment variable is required');
+}
 const EXPIRES_IN = process.env.JWT_EXPIRES_IN || '1h';
 const INVALID = { valid: false, token: null, payload: null };
 
