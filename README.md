@@ -10,16 +10,19 @@ npm install
 
 ## Running the Server
 
-Start the application backend:
+Set the required JWT secret and start the application backend:
 
 ```bash
+export JWT_SECRET="your-secret"
 node server/start.js
 ```
 
-Alternatively, use the provided `npm start` script.
+Alternatively, set `JWT_SECRET` and use the provided `npm start` script.
 
 ## Environment Variables
 
+- `JWT_SECRET` – Secret used to sign JSON Web Tokens. **Required**; the
+  server will not start without it.
 - `ALLOWED_ORIGINS` – Comma-separated list of origins allowed for
   Socket.IO connections. If unset, all origins are permitted.
 
