@@ -20,6 +20,15 @@ const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS
 const EMPTY_DB = { sessions: [], data: {}, users: [] };
 
 async function loadDB(){
+  async function backupAndNotify(){
+    const backup = `${DB_FILE}.bak`;
+    try {
+      await fs.promises.rename(DB_FILE, backup);
+      console.error(`Backed up unreadable DB to ${backup}`);
+    } catch (err) {
+      console.error('Failed to back up DB file', err);
+    }
+  }
   try {
     const data = await fs.promises.readFile(DB_FILE, 'utf8');
     let parsed;
@@ -27,11 +36,13 @@ async function loadDB(){
       parsed = JSON.parse(data);
     } catch (e) {
       console.error('Failed to parse DB', e);
+      await backupAndNotify();
       return JSON.parse(JSON.stringify(EMPTY_DB));
     }
     const { value, error } = dbSchema.validate(parsed);
     if (error) {
       console.error('Invalid DB schema', error);
+      await backupAndNotify();
       return JSON.parse(JSON.stringify(EMPTY_DB));
     }
     // Ensure all sessions have an archived flag for backwards compatibility
@@ -39,6 +50,7 @@ async function loadDB(){
     return value;
   } catch (e) {
     console.error('Failed to load DB', e);
+    await backupAndNotify();
     return JSON.parse(JSON.stringify(EMPTY_DB));
   }
 }

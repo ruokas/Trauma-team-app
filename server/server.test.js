@@ -3,6 +3,7 @@
  */
 const request = require('supertest');
 const jwt = require('jsonwebtoken');
+const path = require('path');
 
 jest.mock('fs', () => {
   const actual = jest.requireActual('fs');
@@ -11,6 +12,7 @@ jest.mock('fs', () => {
     promises: {
       readFile: jest.fn(),
       writeFile: jest.fn(),
+      rename: jest.fn(),
     },
   };
 });
@@ -287,6 +289,7 @@ describe('loadDB', () => {
   beforeEach(() => {
     jest.resetModules();
     fsPromises = require('fs').promises;
+    fsPromises.rename.mockResolvedValue();
   });
 
   test('initializes missing data and users', async () => {
@@ -313,7 +316,11 @@ describe('loadDB', () => {
     const { loadDB } = require('./index');
     const db = await loadDB();
     expect(db).toEqual({ sessions: [], data: {}, users: [] });
+    const dbPath = path.join(__dirname, 'db.json');
+    const backupPath = `${dbPath}.bak`;
     expect(consoleError).toHaveBeenCalledWith('Failed to load DB', expect.any(Error));
+    expect(fsPromises.rename).toHaveBeenCalledWith(dbPath, backupPath);
+    expect(consoleError).toHaveBeenCalledWith(`Backed up unreadable DB to ${backupPath}`);
     consoleError.mockRestore();
   });
 
@@ -323,7 +330,11 @@ describe('loadDB', () => {
     const { loadDB } = require('./index');
     const db = await loadDB();
     expect(db).toEqual({ sessions: [], data: {}, users: [] });
+    const dbPath = path.join(__dirname, 'db.json');
+    const backupPath = `${dbPath}.bak`;
     expect(consoleError).toHaveBeenCalledWith('Failed to parse DB', expect.any(SyntaxError));
+    expect(fsPromises.rename).toHaveBeenCalledWith(dbPath, backupPath);
+    expect(consoleError).toHaveBeenCalledWith(`Backed up unreadable DB to ${backupPath}`);
     consoleError.mockRestore();
   });
 
@@ -333,7 +344,11 @@ describe('loadDB', () => {
     const { loadDB } = require('./index');
     const db = await loadDB();
     expect(db).toEqual({ sessions: [], data: {}, users: [] });
+    const dbPath = path.join(__dirname, 'db.json');
+    const backupPath = `${dbPath}.bak`;
     expect(consoleError).toHaveBeenCalledWith('Invalid DB schema', expect.any(Error));
+    expect(fsPromises.rename).toHaveBeenCalledWith(dbPath, backupPath);
+    expect(consoleError).toHaveBeenCalledWith(`Backed up unreadable DB to ${backupPath}`);
     consoleError.mockRestore();
   });
 });
