@@ -101,6 +101,7 @@ input.invalid,select.invalid{border-color:var(--red)}
 }
   .zone{fill:transparent;cursor:pointer;transition:fill .2s}
   .zone.selected{fill:color-mix(in srgb,var(--accent) 80%,transparent)}
+#navToggle{display:none}
 #patientMenuToggle{
   display:none;
   width:3rem;
