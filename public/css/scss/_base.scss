@@ -92,7 +92,8 @@ header{
   .toolbar{
     gap:$space-12;
   }
-  .toolbar + .toolbar{
+  .toolbar + .toolbar,
+  .toolbar + .patient-menu{
     border-left:1px solid var(--line);
     padding-left:$space-8;
   }
