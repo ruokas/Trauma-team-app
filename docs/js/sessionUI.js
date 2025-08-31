@@ -10,24 +10,42 @@ export function updateUserList(users){
   if(el) el.textContent = users.length ? `Prisijungę: ${users.join(', ')}` : '';
 }
 
-export function populateSessionSelect(sel, sessions){
+export function populateSessionSelect(sel, sessions, { query = '', sortBy = 'created' } = {}){
   sel.innerHTML='';
-  sessions.filter(s=>showArchived || !s.archived).forEach(s=>{
-    const opt=document.createElement('option');
-    opt.value=s.id; opt.textContent=s.name; sel.appendChild(opt);
-  });
+  const q=query.trim().toLowerCase();
+  let list=sessions.filter(s=>(showArchived || !s.archived) && (!q || s.name.toLowerCase().includes(q)));
+  list=list.slice();
+  if(sortBy==='name') list.sort((a,b)=>a.name.localeCompare(b.name));
+  else list.sort((a,b)=>(a.created||0)-(b.created||0));
+  list.forEach(s=>{ const opt=document.createElement('option'); opt.value=s.id; opt.textContent=s.name; sel.appendChild(opt); });
+  return list;
 }
 
 export async function initSessions(){
   const select=$('#sessionSelect');
   if(!select) return;
+  const searchInput=$('#sessionSearch');
+  const sortSelect=$('#sessionSort');
   let sessions=await getSessions();
   let currentSessionId=getCurrentSessionId();
+  let modal=$('#sessionManagerModal');
+  let modalContent;
+  if(!modal){
+    modal=document.createElement('div');
+    modal.id='sessionManagerModal';
+    modal.className='modal';
+    modalContent=document.createElement('div');
+    modalContent.className='modal-content';
+    modal.appendChild(modalContent);
+    document.body.appendChild(modal);
+  }else{
+    modalContent=modal.querySelector('.modal-content');
+  }
   let delWrap=$('#sessionDeleteList');
   if(!delWrap){
     delWrap=document.createElement('div');
     delWrap.id='sessionDeleteList';
-    select.parentNode.appendChild(delWrap);
+    modalContent.appendChild(delWrap);
   }
   let toggleArchived=$('#toggleArchivedSessions');
   if(!toggleArchived){
@@ -36,22 +54,25 @@ export async function initSessions(){
     toggleArchived.type='button';
     toggleArchived.className='btn ghost';
     toggleArchived.textContent='Show archived';
-    select.parentNode.insertBefore(toggleArchived, delWrap);
+    modalContent.insertBefore(toggleArchived, delWrap);
   }
-  toggleArchived.addEventListener('click', () => {
-    showArchived = !showArchived;
-    toggleArchived.textContent = showArchived ? 'Hide archived' : 'Show archived';
-    if (!showArchived && sessions.some(s => s.id === currentSessionId && s.archived)) {
-      currentSessionId = sessions.find(s => !s.archived)?.id || null;
-      setCurrentSessionId(currentSessionId);
-    }
-    renderDeleteButtons();
-    populateSessionSelect(select, sessions);
-    if (currentSessionId) select.value = currentSessionId;
+  let manageBtn=$('#btnManageSessions');
+  if(!manageBtn){
+    manageBtn=document.createElement('button');
+    manageBtn.type='button';
+    manageBtn.id='btnManageSessions';
+    manageBtn.className='btn';
+    manageBtn.textContent='Manage patients';
+    const btnNew=$('#btnNewSession');
+    btnNew.parentNode.insertBefore(manageBtn, btnNew.nextSibling);
+  }
+  manageBtn.addEventListener('click',()=>{
+    modal.classList.toggle('open');
   });
   function renderDeleteButtons(focusId){
     delWrap.innerHTML='';
-    sessions.filter(s=>showArchived || !s.archived).forEach(s=>{
+    const q=(searchInput?.value||'').trim().toLowerCase();
+    sessions.filter(s=>(showArchived || !s.archived) && (!q || s.name.toLowerCase().includes(q))).forEach(s=>{
       const row=document.createElement('div');
       row.className='session-item';
       row.dataset.sessionId=s.id;
@@ -83,9 +104,7 @@ export async function initSessions(){
           }
           s.name=newName;
           await saveSessions(sessions);
-          populateSessionSelect(select, sessions);
-          if(currentSessionId) select.value=currentSessionId;
-          renderDeleteButtons(s.id);
+          render(s.id);
         };
         input.addEventListener('blur', async()=>{ if(!cancelled) await attemptSave(); });
         input.addEventListener('keydown', e=>{
@@ -123,9 +142,7 @@ export async function initSessions(){
           currentSessionId=sessions.find(x=>!x.archived)?.id||null;
           setCurrentSessionId(currentSessionId);
         }
-        populateSessionSelect(select, sessions);
-        if(currentSessionId) select.value=currentSessionId; else select.value='';
-        renderDeleteButtons();
+        render();
       });
       const btn=document.createElement('button');
       btn.type='button';
@@ -142,17 +159,10 @@ export async function initSessions(){
         sessions=sessions.filter(x=>x.id!==s.id);
         localStorage.removeItem('trauma_v10_'+s.id);
         localStorage.setItem('trauma_sessions', JSON.stringify(sessions));
-        if(wasCurrent){
-          currentSessionId=sessions[0]?.id||null;
-          setCurrentSessionId(currentSessionId);
-        }
-        populateSessionSelect(select, sessions);
-        if(currentSessionId){ select.value=currentSessionId; } else { select.value=''; }
+        render();
         if(wasCurrent){
           localStorage.setItem('v10_activeTab','Aktyvacija');
           location.reload();
-        }else{
-          renderDeleteButtons();
         }
       });
       row.appendChild(label);
@@ -165,32 +175,104 @@ export async function initSessions(){
       if(focusEl) focusEl.focus();
     }
   }
-  if(!sessions.length){
-    const id=Date.now().toString(36);
-    sessions=[{id,name:'Pacientas Nr.1', archived:false}];
-    await saveSessions(sessions);
-    currentSessionId=id;
-    setCurrentSessionId(id);
+  const render=(focusId)=>{
+      const filtered=populateSessionSelect(select, sessions, { query: searchInput?.value || '', sortBy: sortSelect?.value || 'created' });
+      if(currentSessionId && filtered.some(s=>s.id===currentSessionId)){
+        select.value=currentSessionId;
+      }else{
+        currentSessionId=filtered[0]?.id||null;
+        setCurrentSessionId(currentSessionId);
+        if(currentSessionId) select.value=currentSessionId; else select.value='';
+      }
+      renderDeleteButtons(focusId);
+    };
+    toggleArchived.addEventListener('click', () => {
+      showArchived = !showArchived;
+      toggleArchived.textContent = showArchived ? 'Hide archived' : 'Show archived';
+      if (!showArchived && sessions.some(s => s.id === currentSessionId && s.archived)) {
+        currentSessionId = sessions.find(s => !s.archived)?.id || null;
+        setCurrentSessionId(currentSessionId);
+      }
+      render();
+    });
+    searchInput?.addEventListener('input', ()=>render());
+    sortSelect?.addEventListener('change', ()=>render());
+    if(!sessions.length){
+      const id=Date.now().toString(36);
+      sessions=[{id,name:'Pacientas Nr.1', archived:false, created:Date.now()}];
+      await saveSessions(sessions);
+      currentSessionId=id;
+      setCurrentSessionId(id);
   }
   if(!currentSessionId || !sessions.some(s=>s.id===currentSessionId)){
     currentSessionId=sessions.find(s=>!s.archived)?.id || sessions[0].id;
     setCurrentSessionId(currentSessionId);
   }
-  populateSessionSelect(select, sessions);
-  select.value=currentSessionId;
-  renderDeleteButtons();
+    render();
 
   $('#btnNewSession').addEventListener('click',async()=>{
     const name=await notify({type:'prompt', message:'Paciento ID'});
     if(!name) return;
     const id=Date.now().toString(36);
-    sessions.push({id,name, archived:false});
+    sessions.push({id,name, archived:false, created:Date.now()});
     await saveSessions(sessions);
     currentSessionId=id;
     setCurrentSessionId(id);
-    populateSessionSelect(select, sessions);
-    select.value=id;
-    renderDeleteButtons();
+      render();
+      localStorage.setItem('v10_activeTab','Aktyvacija');
+      location.reload();
+    });
+  $('#btnRenameSession')?.addEventListener('click',async()=>{
+    const current=sessions.find(s=>s.id===currentSessionId);
+    if(!current) return;
+    const newName=await notify({type:'prompt', message:'New patient ID', default: current.name});
+    if(!newName) return;
+    const nameTrim=newName.trim();
+    if(!nameTrim){ notify({type:'error', message:'Pavadinimas negali būti tuščias.'}); return; }
+    const lower=nameTrim.toLowerCase();
+    if(sessions.some(s=>s.id!==current.id && s.name.trim().toLowerCase()===lower)){
+      notify({type:'error', message:'Pacientas su tokiu pavadinimu jau egzistuoja.'});
+      return;
+    }
+    current.name=nameTrim;
+    await saveSessions(sessions);
+    render(current.id);
+  });
+  $('#btnArchiveSession')?.addEventListener('click',async()=>{
+    const current=sessions.find(s=>s.id===currentSessionId);
+    if(!current) return;
+    const token=getAuthToken();
+    if(token && typeof fetch==='function'){
+      try{
+        await fetch(`/api/sessions/${current.id}/archive`,{
+          method:'PATCH',
+          headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
+          body:JSON.stringify({archived:!current.archived})
+        });
+      }catch(e){ console.error(e); }
+    }
+    current.archived=!current.archived;
+    await saveSessions(sessions);
+    if(current.archived && currentSessionId===current.id){
+      currentSessionId=sessions.find(s=>!s.archived)?.id||null;
+      setCurrentSessionId(currentSessionId);
+    }
+    render();
+  });
+  $('#btnDeleteSession')?.addEventListener('click',async()=>{
+    const current=sessions.find(s=>s.id===currentSessionId);
+    if(!current) return;
+    if(!await notify({type:'confirm', message:'Ar tikrai norite ištrinti pacientą?'})) return;
+    const token=getAuthToken();
+    if(token && typeof fetch==='function'){
+      try{ await fetch(`/api/sessions/${current.id}`,{method:'DELETE',headers:{'Authorization':'Bearer '+token}}); }catch(e){ console.error(e); }
+    }
+    sessions=sessions.filter(s=>s.id!==current.id);
+    localStorage.removeItem('trauma_v10_'+current.id);
+    await saveSessions(sessions);
+    currentSessionId=sessions.find(s=>!s.archived)?.id||null;
+    setCurrentSessionId(currentSessionId);
+    render();
     localStorage.setItem('v10_activeTab','Aktyvacija');
     location.reload();
   });
