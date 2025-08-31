@@ -10,13 +10,13 @@ export function initNavToggle(toggle, nav){
   if(!toggle || !nav) return;
   toggle.setAttribute('aria-controls', nav.id);
   toggle.setAttribute('aria-expanded','false');
-  nav.setAttribute('aria-hidden','true');
   const overlay=document.querySelector('.nav-overlay');
   const focusableSel='a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
   function close(){
     document.body.classList.remove('nav-open');
     toggle.setAttribute('aria-expanded','false');
     nav.setAttribute('aria-hidden','true');
+    nav.setAttribute('hidden','');
     if(overlay) overlay.hidden=true;
     document.body.style.overflow='';
     document.removeEventListener('keydown', trap);
@@ -41,6 +41,7 @@ export function initNavToggle(toggle, nav){
     document.body.classList.add('nav-open');
     toggle.setAttribute('aria-expanded','true');
     nav.removeAttribute('aria-hidden');
+    nav.removeAttribute('hidden');
     if(overlay) overlay.hidden=false;
     document.body.style.overflow='hidden';
     const items=nav.querySelectorAll(focusableSel);
@@ -50,14 +51,19 @@ export function initNavToggle(toggle, nav){
   toggle.addEventListener('click',()=>{
     document.body.classList.contains('nav-open') ? close() : open();
   });
+  if(overlay){
+    overlay.addEventListener('click', close);
+  }
   nav.addEventListener('click',e=>{
     if(e.target.closest('.tab')) close();
   });
   navMq=typeof matchMedia==='function' ? matchMedia(`(min-width: ${NAV_BREAKPOINT}px)`) : null;
   if(navMq){
-    navMqListener=e=>{ if(e.matches) close(); };
+    navMqListener=e=>{ e.matches ? open() : close(); };
     navMq.addEventListener('change', navMqListener);
-    if(navMq.matches) close();
+    navMq.matches ? open() : close();
+  }else{
+    close();
   }
 }
 
