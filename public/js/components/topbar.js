@@ -70,22 +70,50 @@ export function initNavToggle(toggle, nav){
 
 export function initPatientMenuToggle(toggle, menu){
   if(!toggle || !menu) return;
+  const overlay=document.querySelector('.patient-menu-overlay');
+  const focusableSel='a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
   const mq=typeof matchMedia==='function' ? matchMedia(`(min-width: ${NAV_BREAKPOINT}px)`) : null;
-  const update=()=>{
-    if(mq && mq.matches){
-      menu.removeAttribute('hidden');
-      toggle.setAttribute('aria-expanded','true');
-    }else{
-      menu.setAttribute('hidden','');
-      toggle.setAttribute('aria-expanded','false');
+  function close(){
+    document.body.classList.remove('patient-menu-open');
+    toggle.setAttribute('aria-expanded','false');
+    menu.setAttribute('hidden','');
+    menu.setAttribute('aria-hidden','true');
+    if(overlay) overlay.hidden=true;
+    document.body.style.overflow='';
+    document.removeEventListener('keydown', trap);
+    toggle.focus();
+  }
+  function trap(e){
+    if(e.key==='Tab'){
+      const items=menu.querySelectorAll(focusableSel);
+      if(!items.length) return;
+      const first=items[0];
+      const last=items[items.length-1];
+      if(e.shiftKey){
+        if(document.activeElement===first){ e.preventDefault(); last.focus(); }
+      }else{
+        if(document.activeElement===last){ e.preventDefault(); first.focus(); }
+      }
+    }else if(e.key==='Escape'){
+      close();
     }
-  };
+  }
+  function open(){
+    document.body.classList.add('patient-menu-open');
+    toggle.setAttribute('aria-expanded','true');
+    menu.removeAttribute('hidden');
+    menu.removeAttribute('aria-hidden');
+    if(overlay) overlay.hidden=false;
+    document.body.style.overflow='hidden';
+    const items=menu.querySelectorAll(focusableSel);
+    if(items.length) items[0].focus();
+    document.addEventListener('keydown', trap);
+  }
   toggle.addEventListener('click',()=>{
-    const expanded=toggle.getAttribute('aria-expanded')==='true';
-    toggle.setAttribute('aria-expanded', String(!expanded));
-    if(expanded) menu.setAttribute('hidden','');
-    else menu.removeAttribute('hidden');
+    document.body.classList.contains('patient-menu-open') ? close() : open();
   });
+  if(overlay){ overlay.addEventListener('click', close); }
+  const update=()=>{ if(mq && mq.matches) open(); else close(); };
   if(mq){ mq.addEventListener('change', update); }
   update();
 }

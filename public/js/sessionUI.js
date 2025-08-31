@@ -222,6 +222,60 @@ export async function initSessions(){
       localStorage.setItem('v10_activeTab','Aktyvacija');
       location.reload();
     });
+  $('#btnRenameSession')?.addEventListener('click',async()=>{
+    const current=sessions.find(s=>s.id===currentSessionId);
+    if(!current) return;
+    const newName=await notify({type:'prompt', message:'New patient ID', default: current.name});
+    if(!newName) return;
+    const nameTrim=newName.trim();
+    if(!nameTrim){ notify({type:'error', message:'Pavadinimas negali būti tuščias.'}); return; }
+    const lower=nameTrim.toLowerCase();
+    if(sessions.some(s=>s.id!==current.id && s.name.trim().toLowerCase()===lower)){
+      notify({type:'error', message:'Pacientas su tokiu pavadinimu jau egzistuoja.'});
+      return;
+    }
+    current.name=nameTrim;
+    await saveSessions(sessions);
+    render(current.id);
+  });
+  $('#btnArchiveSession')?.addEventListener('click',async()=>{
+    const current=sessions.find(s=>s.id===currentSessionId);
+    if(!current) return;
+    const token=getAuthToken();
+    if(token && typeof fetch==='function'){
+      try{
+        await fetch(`/api/sessions/${current.id}/archive`,{
+          method:'PATCH',
+          headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
+          body:JSON.stringify({archived:!current.archived})
+        });
+      }catch(e){ console.error(e); }
+    }
+    current.archived=!current.archived;
+    await saveSessions(sessions);
+    if(current.archived && currentSessionId===current.id){
+      currentSessionId=sessions.find(s=>!s.archived)?.id||null;
+      setCurrentSessionId(currentSessionId);
+    }
+    render();
+  });
+  $('#btnDeleteSession')?.addEventListener('click',async()=>{
+    const current=sessions.find(s=>s.id===currentSessionId);
+    if(!current) return;
+    if(!await notify({type:'confirm', message:'Ar tikrai norite ištrinti pacientą?'})) return;
+    const token=getAuthToken();
+    if(token && typeof fetch==='function'){
+      try{ await fetch(`/api/sessions/${current.id}`,{method:'DELETE',headers:{'Authorization':'Bearer '+token}}); }catch(e){ console.error(e); }
+    }
+    sessions=sessions.filter(s=>s.id!==current.id);
+    localStorage.removeItem('trauma_v10_'+current.id);
+    await saveSessions(sessions);
+    currentSessionId=sessions.find(s=>!s.archived)?.id||null;
+    setCurrentSessionId(currentSessionId);
+    render();
+    localStorage.setItem('v10_activeTab','Aktyvacija');
+    location.reload();
+  });
   select.addEventListener('change',()=>{
     const id=select.value;
     saveAll();
