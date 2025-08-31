@@ -39,14 +39,20 @@ async function loadDB(){
       await backupAndNotify();
       return JSON.parse(JSON.stringify(EMPTY_DB));
     }
+    // Normalize sessions for backwards compatibility before validation
+    if (Array.isArray(parsed.sessions)) {
+      parsed.sessions = parsed.sessions.map(s => ({
+        ...s,
+        archived: !!s.archived,
+        created: typeof s.created === 'number' ? s.created : 0
+      }));
+    }
     const { value, error } = dbSchema.validate(parsed);
     if (error) {
       console.error('Invalid DB schema', error);
       await backupAndNotify();
       return JSON.parse(JSON.stringify(EMPTY_DB));
     }
-    // Ensure all sessions have an archived flag for backwards compatibility
-    value.sessions = value.sessions.map(s => ({ ...s, archived: !!s.archived }));
     return value;
   } catch (e) {
     console.error('Failed to load DB', e);
@@ -88,7 +94,8 @@ const sessionSchema = Joi.object({
 const sessionListItemSchema = Joi.object({
   id: Joi.string().required(),
   name: Joi.string().min(1).max(100).required(),
-  archived: Joi.boolean().required()
+  archived: Joi.boolean().required(),
+  created: Joi.number().required()
 });
 
 const sessionsListSchema = Joi.array().items(sessionListItemSchema);
@@ -172,7 +179,7 @@ app.put('/api/sessions', auth, validate(sessionsListSchema), async (req, res) =>
 app.post('/api/sessions', auth, validate(sessionSchema), async (req, res) => {
   const { name } = req.body;
   const id = crypto.randomBytes(6).toString('hex');
-  const session = { id, name, archived: false };
+  const session = { id, name, archived: false, created: Date.now() };
   db.sessions.push(session);
   await saveDB();
   io.emit('sessions', db.sessions);
