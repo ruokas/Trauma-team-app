@@ -22,7 +22,8 @@ const sessionDataSchema = Joi.object({
 const sessionSchema = Joi.object({
   id: Joi.string().required(),
   name: Joi.string().min(1).max(100).required(),
-  archived: Joi.boolean().default(false)
+  archived: Joi.boolean().default(false),
+  created: Joi.number().required()
 });
 
 const userSchema = Joi.string().min(1).max(50);

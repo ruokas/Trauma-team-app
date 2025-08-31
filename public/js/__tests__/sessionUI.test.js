@@ -1,5 +1,5 @@
 jest.mock('../sessionApi.js', () => ({
-  getSessions: jest.fn(() => Promise.resolve([{ id: '1', name: 'One', archived: false }])),
+  getSessions: jest.fn(() => Promise.resolve([{ id: '1', name: 'One', archived: false, created: 1 }])),
   saveSessions: jest.fn()
 }));
 
@@ -22,7 +22,7 @@ describe('sessionUI', () => {
   test('populateSessionSelect renders options', () => {
     const { populateSessionSelect } = require('../sessionUI.js');
     const sel = document.createElement('select');
-    populateSessionSelect(sel, [{ id: '1', name: 'One', archived: false }]);
+    populateSessionSelect(sel, [{ id: '1', name: 'One', archived: false, created: 1 }]);
     expect(sel.querySelectorAll('option').length).toBe(1);
   });
 

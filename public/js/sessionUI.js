@@ -16,7 +16,7 @@ export function populateSessionSelect(sel, sessions, { query = '', sortBy = 'cre
   let list=sessions.filter(s=>(showArchived || !s.archived) && (!q || s.name.toLowerCase().includes(q)));
   list=list.slice();
   if(sortBy==='name') list.sort((a,b)=>a.name.localeCompare(b.name));
-  else list.sort((a,b)=>parseInt(a.id,36)-parseInt(b.id,36));
+  else list.sort((a,b)=>(a.created||0)-(b.created||0));
   list.forEach(s=>{ const opt=document.createElement('option'); opt.value=s.id; opt.textContent=s.name; sel.appendChild(opt); });
   return list;
 }
@@ -199,7 +199,7 @@ export async function initSessions(){
     sortSelect?.addEventListener('change', ()=>render());
     if(!sessions.length){
       const id=Date.now().toString(36);
-      sessions=[{id,name:'Pacientas Nr.1', archived:false}];
+      sessions=[{id,name:'Pacientas Nr.1', archived:false, created:Date.now()}];
       await saveSessions(sessions);
       currentSessionId=id;
       setCurrentSessionId(id);
@@ -214,7 +214,7 @@ export async function initSessions(){
     const name=await notify({type:'prompt', message:'Paciento ID'});
     if(!name) return;
     const id=Date.now().toString(36);
-    sessions.push({id,name, archived:false});
+    sessions.push({id,name, archived:false, created:Date.now()});
     await saveSessions(sessions);
     currentSessionId=id;
     setCurrentSessionId(id);
