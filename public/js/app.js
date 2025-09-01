@@ -26,6 +26,8 @@ import { init as initVitalsEvents } from './vitalsEvents.js';
 import { initChipGroups } from './chipData.js';
 export { validateVitals, createChipGroup };
 
+initTheme();
+
 /* ===== Imaging / Labs / Team ===== */
 function createChipGroup(selector, values){
   const wrap=$(selector);
@@ -119,7 +121,6 @@ function clampNumberInputs(){
 
 /* ===== Init modules ===== */
 async function init(){
-  initTheme();
   await initTopbar();
   setupHeaderActions({ validateForm });
   connectSocket({
