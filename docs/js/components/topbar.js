@@ -59,9 +59,9 @@ export function initNavToggle(toggle, nav){
   if(overlay){
     overlay.addEventListener('click', close);
   }
-  nav.addEventListener('click',e=>{
-    if(e.target.closest('.tab')) close();
-  });
+  // Clicking a tab should no longer hide the navigation menu. The handler
+  // that previously closed the menu on tab clicks has been removed to keep
+  // the navigation visible.
   navMq=typeof matchMedia==='function' ? matchMedia(`(min-width: ${NAV_BREAKPOINT}px)`) : null;
   if(navMq){
     navMqListener=e=>{ e.matches ? open() : close(); };

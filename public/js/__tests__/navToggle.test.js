@@ -34,13 +34,13 @@ describe('initNavToggle',()=>{
       expect(document.activeElement).toBe(toggle);
     });
 
-    test('closes when tab clicked',()=>{
+    test('does not close when tab clicked',()=>{
       toggle.click();
       tabs[0].click();
-      expect(toggle.getAttribute('aria-expanded')).toBe('false');
-      expect(nav.getAttribute('aria-hidden')).toBe('true');
-      expect(document.body.classList.contains('nav-open')).toBe(false);
-      expect(document.activeElement).toBe(toggle);
+      expect(toggle.getAttribute('aria-expanded')).toBe('true');
+      expect(nav.hasAttribute('aria-hidden')).toBe(false);
+      expect(document.body.classList.contains('nav-open')).toBe(true);
+      expect(document.activeElement).toBe(tabs[0]);
     });
   });
 
