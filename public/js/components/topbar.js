@@ -56,9 +56,10 @@ export function initNavToggle(toggle, nav){
   if(overlay){
     overlay.addEventListener('click', close);
   }
-  nav.addEventListener('click',e=>{
-    if(e.target.closest('.tab') && (navMq ? !navMq.matches : window.innerWidth < NAV_BREAKPOINT)) close();
-  });
+  // Previously, clicking on a navigation tab would close the navigation
+  // when viewed on smaller screens. This caused the navigation to hide
+  // unexpectedly. The click handler has been removed so the navigation
+  // remains visible after selecting a tab.
   navMq=typeof matchMedia==='function' ? matchMedia(`(min-width: ${NAV_BREAKPOINT}px)`) : null;
   if(navMq){
     navMqListener=e=>{ e.matches ? open() : close(); };
