@@ -56,7 +56,7 @@ export function initNavToggle(toggle, nav){
     overlay.addEventListener('click', close);
   }
   nav.addEventListener('click',e=>{
-    if(e.target.closest('.tab')) close();
+    if(e.target.closest('.tab') && (navMq ? !navMq.matches : window.innerWidth < NAV_BREAKPOINT)) close();
   });
   navMq=typeof matchMedia==='function' ? matchMedia(`(min-width: ${NAV_BREAKPOINT}px)`) : null;
   if(navMq){
