@@ -17,6 +17,7 @@ const DISABLE_AUTH = process.env.DISABLE_AUTH === 'true';
 const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS
   ? process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim()).filter(Boolean)
   : undefined;
+const LOG_REQUESTS = process.env.NODE_ENV !== 'test';
 
 const EMPTY_DB = { sessions: [], data: {}, users: [] };
 
@@ -82,6 +83,28 @@ app.use(helmet());
 app.use(express.json({ limit: '1mb' }));
 // Serve static assets from the public directory
 app.use(express.static(path.join(__dirname, '..', 'public')));
+
+function requestLogger (req, res, next) {
+  const start = process.hrtime();
+  res.on('finish', () => {
+    const diff = process.hrtime(start);
+    const responseTime = diff[0] * 1000 + diff[1] / 1e6;
+    const user = req.user || 'anonymous';
+    logger.info({
+      message: 'request',
+      method: req.method,
+      url: req.originalUrl,
+      statusCode: res.statusCode,
+      responseTime,
+      user
+    });
+  });
+  next();
+}
+
+if (LOG_REQUESTS) {
+  app.use(requestLogger);
+}
 
 /* ===== Validation Schemas ===== */
 const loginSchema = Joi.object({
