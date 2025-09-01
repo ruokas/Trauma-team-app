@@ -56,6 +56,12 @@ export function initNavToggle(toggle, nav){
   if(overlay){
     overlay.addEventListener('click', close);
   }
+  // Ensure the navigation stays open on desktop after tab clicks.
+  nav.addEventListener('click', () => {
+    if(navMq && navMq.matches){
+      setTimeout(open);
+    }
+  });
   // Previously, clicking on a navigation tab would close the navigation
   // when viewed on smaller screens. This caused the navigation to hide
   // unexpectedly. The click handler has been removed so the navigation
