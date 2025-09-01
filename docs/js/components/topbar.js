@@ -13,7 +13,6 @@ export function initNavToggle(toggle, nav){
   toggle.setAttribute('aria-expanded','false');
   const overlay=document.querySelector('.nav-overlay');
   const focusableSel='a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
-  let focusToggle=false;
   function close(){
     document.body.classList.remove('nav-open');
     toggle.setAttribute('aria-expanded','false');
@@ -22,10 +21,7 @@ export function initNavToggle(toggle, nav){
     if(overlay) overlay.hidden=true;
     document.body.style.overflow='';
     document.removeEventListener('keydown', trap);
-    if(focusToggle){
-      toggle.focus();
-      focusToggle=false;
-    }
+    toggle.focus();
   }
   function trap(e){
     if(e.key==='Tab'){
@@ -39,7 +35,6 @@ export function initNavToggle(toggle, nav){
         if(document.activeElement===last){ e.preventDefault(); first.focus(); }
       }
     }else if(e.key==='Escape'){
-      focusToggle=true;
       close();
     }
   }
@@ -55,18 +50,13 @@ export function initNavToggle(toggle, nav){
     document.addEventListener('keydown', trap);
   }
   toggle.addEventListener('click',()=>{
-    if(document.body.classList.contains('nav-open')){
-      focusToggle=true;
-      close();
-    }else{
-      open();
-    }
+    document.body.classList.contains('nav-open') ? close() : open();
   });
   if(overlay){
-    overlay.addEventListener('click', ()=>{ focusToggle=true; close(); });
+    overlay.addEventListener('click', close);
   }
   nav.addEventListener('click',e=>{
-    if(e.target.closest('.tab')){ focusToggle=true; close(); }
+    if(e.target.closest('.tab')) close();
   });
   navMq=typeof matchMedia==='function' ? matchMedia(`(min-width: ${NAV_BREAKPOINT}px)`) : null;
   if(navMq){
@@ -83,7 +73,6 @@ export function initPatientMenuToggle(toggle, menu){
   const overlay=document.querySelector('.patient-menu-overlay');
   const focusableSel='a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
   const mq=typeof matchMedia==='function' ? matchMedia(`(min-width: ${NAV_BREAKPOINT}px)`) : null;
-  let focusToggle=false;
   function close(){
     document.body.classList.remove('patient-menu-open');
     toggle.setAttribute('aria-expanded','false');
@@ -92,10 +81,7 @@ export function initPatientMenuToggle(toggle, menu){
     if(overlay) overlay.hidden=true;
     document.body.style.overflow='';
     document.removeEventListener('keydown', trap);
-    if(focusToggle){
-      toggle.focus();
-      focusToggle=false;
-    }
+    toggle.focus();
   }
   function trap(e){
     if(e.key==='Tab'){
@@ -109,7 +95,6 @@ export function initPatientMenuToggle(toggle, menu){
         if(document.activeElement===last){ e.preventDefault(); first.focus(); }
       }
     }else if(e.key==='Escape'){
-      focusToggle=true;
       close();
     }
   }
@@ -125,14 +110,9 @@ export function initPatientMenuToggle(toggle, menu){
     document.addEventListener('keydown', trap);
   }
   toggle.addEventListener('click',()=>{
-    if(document.body.classList.contains('patient-menu-open')){
-      focusToggle=true;
-      close();
-    }else{
-      open();
-    }
+    document.body.classList.contains('patient-menu-open') ? close() : open();
   });
-  if(overlay){ overlay.addEventListener('click', ()=>{ focusToggle=true; close(); }); }
+  if(overlay){ overlay.addEventListener('click', close); }
   const update=()=>{ if(mq && mq.matches) open(); else close(); };
   if(mq){ mq.addEventListener('change', update); }
   update();
