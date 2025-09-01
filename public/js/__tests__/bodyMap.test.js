@@ -137,7 +137,7 @@ describe('BodyMap instance', () => {
     expect(bm2.burnArea()).toBeGreaterThan(0);
   });
 
-  test('overlapping burn brushes sum their areas', () => {
+  test('overlapping burn brushes do not double count area', () => {
     setupDom();
     const bm = new BodyMap();
     bm.init(() => {});
@@ -145,8 +145,25 @@ describe('BodyMap instance', () => {
     const area1 = bm.burnArea();
     const text1 = bm.burnTotalEl.textContent;
     bm.addBrush(50, 50, 20);
-    expect(bm.burnArea()).toBeCloseTo(area1 * 2);
-    expect(bm.burnTotalEl.textContent).not.toBe(text1);
+    expect(bm.burnArea()).toBeCloseTo(area1);
+    expect(bm.burnTotalEl.textContent).toBe(text1);
+  });
+
+  test('partially overlapping burn brushes count overlap once', () => {
+    setupDom();
+    const bm = new BodyMap();
+    bm.init(() => {});
+    const r = 20;
+    bm.addBrush(30, 30, r);
+    bm.addBrush(50, 30, r); // offset to create partial overlap
+    const result = bm.burnArea();
+    const d = 20; // distance between centres
+    const intersection =
+      2 * r * r * Math.acos(d / (2 * r)) -
+      (d / 2) * Math.sqrt(4 * r * r - d * d);
+    const union = 2 * Math.PI * r * r - intersection;
+    const expected = (union / bm.totalArea) * 100;
+    expect(result).toBeCloseTo(expected, 3);
   });
 
   test('burn brush only paints over body zones', () => {
