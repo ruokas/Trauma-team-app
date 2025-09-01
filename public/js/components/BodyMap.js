@@ -435,17 +435,36 @@ export default class BodyMap {
    * overlapping brushes.
    */
   burnArea() {
-    // Burn percentage is derived from the sum of brush circle areas
-    // divided by the total silhouette area calculated at init time.
-    const total = this.brushBurns.reduce((sum, b) => sum + Math.PI * b.r * b.r, 0);
-    return this.totalArea ? (total / this.totalArea) * 100 : 0;
+    if (!this.brushBurns.length) return 0;
+
+    const pixels = new Set();
+    for (const b of this.brushBurns) {
+      const r = Math.round(b.r);
+      const r2 = r * r;
+      const cx = Math.round(b.x);
+      const cy = Math.round(b.y);
+      const minX = Math.max(0, cx - r);
+      const maxX = Math.min(this.vbWidth - 1, cx + r);
+      const minY = Math.max(0, cy - r);
+      const maxY = Math.min(this.vbHeight - 1, cy + r);
+      for (let x = minX; x <= maxX; x++) {
+        for (let y = minY; y <= maxY; y++) {
+          const dx = x - cx;
+          const dy = y - cy;
+          if (dx * dx + dy * dy > r2) continue;
+          pixels.add(`${x},${y}`);
+        }
+      }
+    }
+
+    return this.totalArea ? (pixels.size / this.totalArea) * 100 : 0;
   }
 
   /** Display burn percentage in the UI. */
   updateBurnDisplay() {
     if (!this.burnTotalEl) return;
     const t = this.burnArea();
-    this.burnTotalEl.textContent = t ? `Nudegimai: ${t}%` : '';
+    this.burnTotalEl.textContent = t ? `Nudegimai: ${t.toFixed(2)}%` : '';
   }
 
   /** Enable/disable undo and redo buttons. */
