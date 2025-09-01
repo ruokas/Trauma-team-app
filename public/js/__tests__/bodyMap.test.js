@@ -60,21 +60,32 @@ describe('BodyMap instance', () => {
       expect(z['front-torso'].label).toBe(frontZone.label);
     });
 
-    test('zoneCounts calculates burn coverage', () => {
+      test('zoneCounts calculates burn coverage', () => {
+        setupDom();
+        const bm = new BodyMap();
+        bm.init(() => {});
+        bm.addBrush(24, 30, 5); // inside front-torso
+        const z = bm.zoneCounts();
+        const expected = bm.burnArea() * (100 / frontZone.area);
+        expect(z['front-torso'].burned).toBeCloseTo(expected, 2);
+      });
+
+    test('clicking a zone adds a mark', () => {
       setupDom();
       const bm = new BodyMap();
       bm.init(() => {});
-      bm.addBrush(24, 30, 5); // inside front-torso
-      const z = bm.zoneCounts();
-      const expected = bm.burnArea() * (100 / frontZone.area);
-      expect(z['front-torso'].burned).toBeCloseTo(expected, 2);
+      // deterministic position inside body
+      bm.svgPoint = () => ({ x: 10, y: 10 });
+      const zone = document.querySelector('.zone[data-zone="front-torso"]');
+      zone.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      expect(document.querySelectorAll('#marks use').length).toBe(1);
     });
 
-  test('pointer events move mark and save', () => {
-    setupDom();
-    const save = jest.fn();
-    const bm = new BodyMap();
-    bm.init(save);
+    test('pointer events move mark and save', () => {
+      setupDom();
+      const save = jest.fn();
+      const bm = new BodyMap();
+      bm.init(save);
     bm.load({ tool: TOOLS.WOUND.char, marks: [{ id: 1, x: 10, y: 20, type: TOOLS.WOUND.char, side: 'front' }] });
     const mark = document.querySelector('#marks use');
     mark.dispatchEvent(new MouseEvent('pointerdown', { clientX: 10, clientY: 20 }));
@@ -93,7 +104,7 @@ describe('BodyMap instance', () => {
       bm.setTool(TOOLS.BURN.char);
       bm.svgPoint = () => ({ x: 10, y: 10 });
       const zone = document.querySelector('.zone[data-zone="front-torso"]');
-      zone.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      zone.dispatchEvent(new MouseEvent('pointerdown', { bubbles: true }));
       expect(bm.brushLayer.childElementCount).toBe(1);
       expect(save).toHaveBeenCalledTimes(1);
     });

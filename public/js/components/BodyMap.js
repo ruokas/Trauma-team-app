@@ -157,20 +157,25 @@ export default class BodyMap {
       });
     }
 
-    // Cache zone elements and attach click handlers
+    // Cache zone elements and attach click/pointer handlers
     $$('.zone', this.svg).forEach(el => {
       const id = el.dataset.zone;
       this.zoneMap.set(id, el);
-      el.addEventListener('click', evt => {
+      const handler = evt => {
+        if (evt.type === 'pointerdown') evt.preventDefault();
         const side = el.closest('#layer-back') ? 'back' : 'front';
         const p = this.svgPoint(evt);
         if (!this.pointInBody(p.x, p.y, side)) return;
         if (this.activeTool === TOOLS.BURN.char) {
+          if (evt.type === 'click') return; // avoid duplicate via click
+          evt.stopPropagation();
           this.addBrush(p.x, p.y, this.brushSize);
         } else {
           this.addMark(p.x, p.y, this.activeTool, side, id);
         }
-      });
+      };
+      el.addEventListener('click', handler);
+      el.addEventListener('pointerdown', handler);
     });
 
     // Tool buttons
@@ -203,15 +208,18 @@ export default class BodyMap {
       }
     });
 
-    // Clicking on body silhouettes adds marks
+    // Clicking/tapping on body silhouettes adds marks
     ['front-shape', 'back-shape'].forEach(id => {
       const el = document.getElementById(id);
       if (!el) return;
-      el.addEventListener('click', evt => {
+      const handler = evt => {
+        if (evt.type === 'pointerdown') evt.preventDefault();
         const p = this.svgPoint(evt);
         if (!this.pointInBody(p.x, p.y, el.dataset.side)) return;
         this.addMark(p.x, p.y, this.activeTool, el.dataset.side);
-      });
+      };
+      el.addEventListener('click', handler);
+      el.addEventListener('pointerdown', handler);
     });
 
     // Mark selection and dragging
