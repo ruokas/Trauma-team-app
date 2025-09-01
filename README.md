@@ -55,6 +55,24 @@ debugging:
 After refreshing authentication tokens, call `setAuthToken()` followed
 by `reconnectSocket()` to manually re-establish the connection.
 
+## Offline Support
+
+The application registers a service worker to cache static assets and to
+queue session data when saves fail. Changes made while offline are stored
+locally and sent to the server automatically once connectivity returns.
+
+### Testing Service Worker Changes
+
+Service workers are aggressively cached by browsers. After modifying
+`public/sw.js`:
+
+1. Run the development server and load the app to register the worker.
+2. Use your browser's developer tools (Application → Service Workers) to
+   **Unregister** the worker or perform a hard reload to pick up changes.
+3. To test background sync, switch the network panel to “Offline,” make
+   some edits, then go back online; the queued data should sync
+   automatically.
+
 ## Stylesheets
 
 The CSS is generated from Sass files in `css/scss`:

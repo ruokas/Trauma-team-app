@@ -58,6 +58,13 @@ export async function saveAll(){
       if(!res.ok) throw new Error(res.status);
       if(statusEl){ statusEl.textContent='Saved'; statusEl.classList.remove('offline'); }
     }catch(e){
+      if(typeof navigator !== 'undefined' && 'serviceWorker' in navigator){
+        const msg = { type: 'queue-session', id: currentSessionId, data, token: authToken };
+        navigator.serviceWorker.ready.then(reg => {
+          reg.active?.postMessage(msg);
+          reg.sync.register('sync-sessions');
+        });
+      }
       if(statusEl){ statusEl.textContent='Save failed'; statusEl.classList.add('offline'); }
     }
   } else if(statusEl){

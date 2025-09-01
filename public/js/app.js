@@ -121,6 +121,9 @@ function clampNumberInputs(){
 
 /* ===== Init modules ===== */
 async function init(){
+  if(typeof navigator !== 'undefined' && 'serviceWorker' in navigator){
+    navigator.serviceWorker.register('/sw.js');
+  }
   await initTopbar();
   setupHeaderActions({ validateForm });
   connectSocket({
