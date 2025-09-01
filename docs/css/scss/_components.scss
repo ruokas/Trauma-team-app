@@ -102,36 +102,11 @@ input.invalid,select.invalid{border-color:var(--red)}
   .zone{fill:transparent;cursor:pointer;transition:fill .2s}
   .zone.selected{fill:color-mix(in srgb,var(--accent) 80%,transparent)}
 #navToggle{display:none}
-#patientMenuToggle{
-  display:none;
-  width:3rem;
-  height:3rem;
-  border-radius:50%;
-  padding:0;
-}
-.patient-menu{position:relative;display:flex;align-items:center}
 .nav-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:10}
 body.nav-open .nav-overlay{display:block}
 body.nav-open{overflow:hidden}
-.patient-menu-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:10}
-body.patient-menu-open .patient-menu-overlay{display:block}
-body.patient-menu-open{overflow:hidden}
   @media (max-width:768px){
   #navToggle{display:inline-block;margin-bottom:$space-8}
-  #patientMenuToggle{display:inline-flex;margin-bottom:$space-8;align-items:center;justify-content:center}
-  .patient-menu-content{
-    position:fixed;
-    top:0;right:0;bottom:0;
-    width:13.75rem;
-    background:#0d151f;
-    transform:translateX(100%);
-    transition:transform .3s ease;
-    padding:$space-14 $space-16;
-    overflow:auto;
-    z-index:1100;
-    pointer-events:none;
-  }
-  body.patient-menu-open .patient-menu-content{transform:translateX(0);pointer-events:auto}
   main{grid-template-columns:1fr}
   nav{
     position:fixed;
