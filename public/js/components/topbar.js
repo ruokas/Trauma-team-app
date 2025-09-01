@@ -43,10 +43,8 @@ export function initNavToggle(toggle, nav){
     toggle.setAttribute('aria-expanded','true');
     nav.removeAttribute('aria-hidden');
     nav.removeAttribute('hidden');
-    if(!navMq || navMq.matches){
-      if(overlay) overlay.hidden=false;
-      document.body.style.overflow='hidden';
-    }
+    if(overlay) overlay.hidden=false;
+    document.body.style.overflow='hidden';
     const items=nav.querySelectorAll(focusableSel);
     if(items.length) items[0].focus();
     document.addEventListener('keydown', trap);
@@ -60,11 +58,11 @@ export function initNavToggle(toggle, nav){
   nav.addEventListener('click',e=>{
     if(e.target.closest('.tab')) close();
   });
-  navMq=typeof matchMedia==='function' ? matchMedia(`(max-width: ${NAV_BREAKPOINT - 1}px)`) : null;
+  navMq=typeof matchMedia==='function' ? matchMedia(`(min-width: ${NAV_BREAKPOINT}px)`) : null;
   if(navMq){
-    navMqListener=e=>{ e.matches ? close() : open(); };
+    navMqListener=e=>{ e.matches ? open() : close(); };
     navMq.addEventListener('change', navMqListener);
-    navMq.matches ? close() : open();
+    navMq.matches ? open() : close();
   }else{
     close();
   }
