@@ -43,8 +43,9 @@ export function initNavToggle(toggle, nav){
     toggle.setAttribute('aria-expanded','true');
     nav.removeAttribute('aria-hidden');
     nav.removeAttribute('hidden');
-    if(overlay) overlay.hidden=false;
-    document.body.style.overflow='hidden';
+    const mobile=!navMq || !navMq.matches;
+    if(overlay) overlay.hidden=!mobile;
+    document.body.style.overflow=mobile ? 'hidden' : '';
     const items=nav.querySelectorAll(focusableSel);
     if(items.length) items[0].focus();
     document.addEventListener('keydown', trap);
@@ -103,8 +104,9 @@ export function initPatientMenuToggle(toggle, menu){
     toggle.setAttribute('aria-expanded','true');
     menu.removeAttribute('hidden');
     menu.removeAttribute('aria-hidden');
-    if(overlay) overlay.hidden=false;
-    document.body.style.overflow='hidden';
+    const mobile=!mq || !mq.matches;
+    if(overlay) overlay.hidden=!mobile;
+    document.body.style.overflow=mobile ? 'hidden' : '';
     const items=menu.querySelectorAll(focusableSel);
     if(items.length) items[0].focus();
     document.addEventListener('keydown', trap);
