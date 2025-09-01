@@ -58,34 +58,28 @@ function makeSymmetric (side, defs) {
 }
 
 const frontDefs = [
-  // Tapered trapezoid resembling the upper arm
-  { id: 'upper-arm', path: 'M1 18 L7 18 L6 28 L2 28 Z', area: 2, label: 'žastas', bbox: [1, 18, 7, 28] },
-  // Narrowing towards the wrist
-  { id: 'lower-arm', path: 'M2 28 L6 28 L5 40 L3 40 Z', area: 1.5, label: 'dilbis', bbox: [2, 28, 6, 40] },
-  // Simple polygon approximating palm and fingers
-  { id: 'hand', path: 'M2 40 L6 40 L6.5 43 L7 46 L1 46 L1.5 43 Z', area: 1, label: 'plaštaka', bbox: [1, 40, 7, 46] },
-  // Slightly curved thigh
-  { id: 'thigh', path: 'M15 34 L23 34 L22.5 38 L21 41 L17 41 L15.5 38 Z', area: 4.5, label: 'šlaunis', bbox: [15, 34, 23, 41] },
-  // Tapered lower leg
-  { id: 'leg', path: 'M16 41 L22 41 L21.5 44 L21 46 L17 46 L16.5 44 Z', area: 3.5, label: 'blauzda', bbox: [16, 41, 22, 46] },
-  // Wedge shaped foot
-  { id: 'foot', path: 'M15 46 L23 46 L23 48 L21 50 L17 50 L15 48 Z', area: 1, label: 'pėda', bbox: [15, 46, 23, 50] }
+  // Curved upper arm
+  { id: 'upper-arm', path: 'M1 16 C2 14 6 14 7 16 L6 28 C5 30 3 30 2 28 Z', area: 2.3, label: 'žastas', bbox: [1, 16, 7, 28] },
+  // Forearm tapering toward the wrist
+  { id: 'lower-arm', path: 'M2 28 C3 28 5 28 6 28 L5.5 40 C5 42 3 42 2.5 40 Z', area: 1.7, label: 'dilbis', bbox: [2, 28, 6, 40] },
+  // Palm with slight finger outline
+  { id: 'hand', path: 'M2.5 40 L5.5 40 L6.5 43 L6 46 L2 46 L1.5 43 Z', area: 0.5, label: 'plaštaka', bbox: [1.5, 40, 6.5, 46] },
+  // Rounded thigh following body contour
+  { id: 'thigh', path: 'M15 30 C15 27 23 27 23 30 L22 41 C21 43 17 43 16 41 Z', area: 4.5, label: 'šlaunis', bbox: [15, 30, 23, 41] },
+  // Lower leg narrowing towards the ankle
+  { id: 'leg', path: 'M16 41 C16 40 22 40 22 41 L21.5 46 C21 48 17 48 16.5 46 Z', area: 3.5, label: 'blauzda', bbox: [16, 41, 22, 46] },
+  // Simplified foot shape
+  { id: 'foot', path: 'M15 46 L23 46 L22 49 L20 50 L18 50 L16 49 Z', area: 1, label: 'pėda', bbox: [15, 46, 23, 50] }
 ];
 
-// Back definitions mirror the front shapes for now
-const backDefs = [
-  { id: 'upper-arm', path: 'M1 18 L7 18 L6 28 L2 28 Z', area: 2, label: 'žastas', bbox: [1, 18, 7, 28] },
-  { id: 'lower-arm', path: 'M2 28 L6 28 L5 40 L3 40 Z', area: 1.5, label: 'dilbis', bbox: [2, 28, 6, 40] },
-  { id: 'hand', path: 'M2 40 L6 40 L6.5 43 L7 46 L1 46 L1.5 43 Z', area: 1, label: 'plaštaka', bbox: [1, 40, 7, 46] },
-  { id: 'thigh', path: 'M15 34 L23 34 L22.5 38 L21 41 L17 41 L15.5 38 Z', area: 4.5, label: 'šlaunis', bbox: [15, 34, 23, 41] },
-  { id: 'leg', path: 'M16 41 L22 41 L21.5 44 L21 46 L17 46 L16.5 44 Z', area: 3.5, label: 'blauzda', bbox: [16, 41, 22, 46] },
-  { id: 'foot', path: 'M15 46 L23 46 L23 48 L21 50 L17 50 L15 48 Z', area: 1, label: 'pėda', bbox: [15, 46, 23, 50] }
-];
+// Back definitions reuse the same limb shapes
+const backDefs = [...frontDefs];
 
 export default [
   // Front zones
   { id: 'front-head', side: 'front', path: 'M24 3c4 0 7 3 7 7s-3 7-7 7-7-3-7-7 3-7 7-7z', area: 4.5, label: 'Galva (priekis)', bbox: [17, 3, 31, 17] },
   { id: 'front-torso', side: 'front', path: 'M14 16c0-8 10-12 10-12s10 4 10 12v18c0 8-10 12-10 12s-10-4-10-12V16z', area: 18, label: 'Liemuo (priekis)', bbox: [14, 4, 34, 46] },
+  { id: 'front-groin', side: 'front', path: 'M20 46 L28 46 L28 48 L20 48 Z', area: 1, label: 'Tarpvietė', bbox: [20, 46, 28, 48] },
   ...makeSymmetric('front', frontDefs),
 
   // Back zones
