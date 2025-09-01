@@ -112,14 +112,14 @@ input.invalid,select.invalid{border-color:var(--red)}
 .patient-menu{position:relative;display:flex;align-items:center}
 .nav-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:10}
 body.nav-open .nav-overlay{display:block}
-body.nav-open{overflow:hidden}
-.patient-menu-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:10}
-body.patient-menu-open .patient-menu-overlay{display:block}
-body.patient-menu-open{overflow:hidden}
-  @media (max-width:768px){
-  #navToggle{display:inline-block;margin-bottom:$space-8}
-  #patientMenuToggle{display:inline-flex;margin-bottom:$space-8;align-items:center;justify-content:center}
-  .patient-menu-content{
+  body.nav-open{overflow:hidden}
+  body.patient-menu-open{overflow:hidden}
+    @media (max-width:768px){
+    #navToggle{display:inline-block;margin-bottom:$space-8}
+    #patientMenuToggle{display:inline-flex;margin-bottom:$space-8;align-items:center;justify-content:center}
+    .patient-menu-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:10}
+    body.patient-menu-open .patient-menu-overlay{display:block}
+    .patient-menu-content{
     position:fixed;
     top:0;right:0;bottom:0;
     width:13.75rem;
