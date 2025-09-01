@@ -274,12 +274,13 @@ describe('server API', () => {
   });
 
   test('logs an error when saving the DB fails', async () => {
-    const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const logger = require('./logger');
+    const loggerError = jest.spyOn(logger, 'error').mockImplementation(() => {});
     fsPromises.writeFile.mockRejectedValueOnce(new Error('disk full'));
     const res = await request(app).post('/api/login').send({ name: 'zoe' });
     expect(res.statusCode).toBe(200);
-    expect(consoleError).toHaveBeenCalledWith('Failed to save DB', expect.any(Error));
-    consoleError.mockRestore();
+    expect(loggerError).toHaveBeenCalledWith('Failed to save DB', expect.any(Error));
+    loggerError.mockRestore();
   });
 });
 
@@ -312,44 +313,47 @@ describe('loadDB', () => {
 
   test('returns defaults and logs when DB load fails', async () => {
     fsPromises.readFile.mockRejectedValue(new Error('no file'));
-    const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const logger = require('./logger');
+    const loggerError = jest.spyOn(logger, 'error').mockImplementation(() => {});
     const { loadDB } = require('./index');
     const db = await loadDB();
     expect(db).toEqual({ sessions: [], data: {}, users: [] });
     const dbPath = path.join(__dirname, 'db.json');
     const backupPath = `${dbPath}.bak`;
-    expect(consoleError).toHaveBeenCalledWith('Failed to load DB', expect.any(Error));
+    expect(loggerError).toHaveBeenCalledWith('Failed to load DB', expect.any(Error));
     expect(fsPromises.rename).toHaveBeenCalledWith(dbPath, backupPath);
-    expect(consoleError).toHaveBeenCalledWith(`Backed up unreadable DB to ${backupPath}`);
-    consoleError.mockRestore();
+    expect(loggerError).toHaveBeenCalledWith(`Backed up unreadable DB to ${backupPath}`);
+    loggerError.mockRestore();
   });
 
   test('returns defaults and logs when DB JSON is invalid', async () => {
     fsPromises.readFile.mockResolvedValue('{ invalid');
-    const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const logger = require('./logger');
+    const loggerError = jest.spyOn(logger, 'error').mockImplementation(() => {});
     const { loadDB } = require('./index');
     const db = await loadDB();
     expect(db).toEqual({ sessions: [], data: {}, users: [] });
     const dbPath = path.join(__dirname, 'db.json');
     const backupPath = `${dbPath}.bak`;
-    expect(consoleError).toHaveBeenCalledWith('Failed to parse DB', expect.any(SyntaxError));
+    expect(loggerError).toHaveBeenCalledWith('Failed to parse DB', expect.any(SyntaxError));
     expect(fsPromises.rename).toHaveBeenCalledWith(dbPath, backupPath);
-    expect(consoleError).toHaveBeenCalledWith(`Backed up unreadable DB to ${backupPath}`);
-    consoleError.mockRestore();
+    expect(loggerError).toHaveBeenCalledWith(`Backed up unreadable DB to ${backupPath}`);
+    loggerError.mockRestore();
   });
 
   test('returns defaults and logs when DB schema is invalid', async () => {
     fsPromises.readFile.mockResolvedValue(JSON.stringify({ sessions: 'bad' }));
-    const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const logger = require('./logger');
+    const loggerError = jest.spyOn(logger, 'error').mockImplementation(() => {});
     const { loadDB } = require('./index');
     const db = await loadDB();
     expect(db).toEqual({ sessions: [], data: {}, users: [] });
     const dbPath = path.join(__dirname, 'db.json');
     const backupPath = `${dbPath}.bak`;
-    expect(consoleError).toHaveBeenCalledWith('Invalid DB schema', expect.any(Error));
+    expect(loggerError).toHaveBeenCalledWith('Invalid DB schema', expect.any(Error));
     expect(fsPromises.rename).toHaveBeenCalledWith(dbPath, backupPath);
-    expect(consoleError).toHaveBeenCalledWith(`Backed up unreadable DB to ${backupPath}`);
-    consoleError.mockRestore();
+    expect(loggerError).toHaveBeenCalledWith(`Backed up unreadable DB to ${backupPath}`);
+    loggerError.mockRestore();
   });
 });
 
