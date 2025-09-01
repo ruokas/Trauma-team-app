@@ -42,8 +42,13 @@ export function initNavToggle(toggle, nav){
     toggle.setAttribute('aria-expanded','true');
     nav.removeAttribute('aria-hidden');
     nav.removeAttribute('hidden');
-    if(overlay) overlay.hidden=false;
-    document.body.style.overflow='hidden';
+    if(!navMq || !navMq.matches){
+      if(overlay) overlay.hidden=false;
+      document.body.style.overflow='hidden';
+    }else{
+      if(overlay) overlay.hidden=true;
+      document.body.style.overflow='';
+    }
     const items=nav.querySelectorAll(focusableSel);
     if(items.length) items[0].focus();
     document.addEventListener('keydown', trap);
