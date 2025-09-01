@@ -9,6 +9,7 @@ const validate = require('./validate');
 const { validateToken, generateToken } = require('./auth');
 const { dbSchema, sessionDataSchema } = require('./dbSchema');
 const helmet = require('helmet');
+const logger = require('./logger');
 
 const PORT = process.env.PORT || 3000;
 const DB_FILE = process.env.DB_FILE || path.join(__dirname, 'db.json');
@@ -24,9 +25,9 @@ async function loadDB(){
     const backup = `${DB_FILE}.bak`;
     try {
       await fs.promises.rename(DB_FILE, backup);
-      console.error(`Backed up unreadable DB to ${backup}`);
+      logger.error(`Backed up unreadable DB to ${backup}`);
     } catch (err) {
-      console.error('Failed to back up DB file', err);
+      logger.error('Failed to back up DB file', err);
     }
   }
   try {
@@ -35,7 +36,7 @@ async function loadDB(){
     try {
       parsed = JSON.parse(data);
     } catch (e) {
-      console.error('Failed to parse DB', e);
+      logger.error('Failed to parse DB', e);
       await backupAndNotify();
       return JSON.parse(JSON.stringify(EMPTY_DB));
     }
@@ -49,13 +50,13 @@ async function loadDB(){
     }
     const { value, error } = dbSchema.validate(parsed);
     if (error) {
-      console.error('Invalid DB schema', error);
+      logger.error('Invalid DB schema', error);
       await backupAndNotify();
       return JSON.parse(JSON.stringify(EMPTY_DB));
     }
     return value;
   } catch (e) {
-    console.error('Failed to load DB', e);
+    logger.error('Failed to load DB', e);
     await backupAndNotify();
     return JSON.parse(JSON.stringify(EMPTY_DB));
   }
@@ -69,7 +70,7 @@ function saveDB(){
   writeQueue = writeQueue
     .then(() => fs.promises.writeFile(DB_FILE, data))
     .catch(e => {
-      console.error('Failed to save DB', e);
+      logger.error('Failed to save DB', e);
     });
   return writeQueue;
 }
@@ -256,8 +257,8 @@ async function startServer () {
   db = await loadDB();
   return new Promise((resolve, reject) => {
     server.listen(PORT, () => {
-      console.log('Server listening on', PORT);
-      if (DISABLE_AUTH) console.warn('Authentication disabled');
+      logger.info('Server listening on', PORT);
+      if (DISABLE_AUTH) logger.warn('Authentication disabled');
       resolve();
     });
     server.on('error', reject);

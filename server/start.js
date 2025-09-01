@@ -1,5 +1,6 @@
 const { startServer } = require('./index');
+const logger = require('./logger');
 
 startServer().catch(err => {
-  console.error('Failed to start server', err);
+  logger.error('Failed to start server', err);
 });
