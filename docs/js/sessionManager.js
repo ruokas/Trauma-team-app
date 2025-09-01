@@ -3,13 +3,20 @@ import bodyMap from './bodyMap.js';
 
 let authToken = localStorage.getItem('trauma_token') || null;
 let currentSessionId = localStorage.getItem('trauma_current_session') || null;
+let theme = localStorage.getItem('trauma_theme') || 'dark';
 
 const MAX_FIELD_LENGTH = 500;
 const limit = (val, max = MAX_FIELD_LENGTH) => (val || '').toString().slice(0, max);
 
+export function setTheme(t){
+  theme = t === 'light' ? 'light' : 'dark';
+  localStorage.setItem('trauma_theme', theme);
+  document.documentElement.classList.remove('light','dark');
+  document.documentElement.classList.add(theme);
+}
+
 export function initTheme(){
-  document.documentElement.classList.remove('light');
-  document.documentElement.classList.add('dark');
+  setTheme(theme);
 }
 
 export function sessionKey(){
