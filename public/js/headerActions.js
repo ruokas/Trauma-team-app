@@ -73,23 +73,24 @@ export function setupHeaderActions({ validateForm }){
 
   const actionsBar=document.getElementById('desktopActions');
   if(actionsBar){
-    if(!document.getElementById('btnTheme')){
-      const themeBtn=document.createElement('button');
+    let themeBtn=document.getElementById('btnTheme');
+    if(!themeBtn){
+      themeBtn=document.createElement('button');
       themeBtn.type='button';
       themeBtn.className='btn';
       themeBtn.id='btnTheme';
-      const updateThemeBtn=()=>{
-        const dark=document.documentElement.classList.contains('dark');
-        themeBtn.textContent=dark?'Light mode':'Dark mode';
-      };
-      themeBtn.addEventListener('click',()=>{
-        const next=document.documentElement.classList.contains('dark')?'light':'dark';
-        setTheme(next);
-        updateThemeBtn();
-      });
-      updateThemeBtn();
       actionsBar.appendChild(themeBtn);
     }
+    const updateThemeBtn=()=>{
+      const dark=document.documentElement.classList.contains('dark');
+      themeBtn.textContent=dark?'Light mode':'Dark mode';
+    };
+    themeBtn.addEventListener('click',()=>{
+      const next=document.documentElement.classList.contains('dark')?'light':'dark';
+      setTheme(next);
+      updateThemeBtn();
+    });
+    updateThemeBtn();
 
     if(getAuthToken() && !document.getElementById('btnLogout')){
       const btn=document.createElement('button');
