@@ -112,7 +112,6 @@ input.invalid,select.invalid{border-color:var(--red)}
 .patient-menu{position:relative;display:flex;align-items:center}
 .nav-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:10;display:none}
 body.nav-open .nav-overlay:not([hidden]){display:block}
-body.nav-open{overflow:hidden}
 .patient-menu-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:10;display:none}
 body.patient-menu-open .patient-menu-overlay:not([hidden]){display:block}
 body.patient-menu-open{overflow:hidden}
@@ -132,6 +131,7 @@ body.patient-menu-open{overflow:hidden}
     pointer-events:none;
   }
   body.patient-menu-open .patient-menu-content{transform:translateX(0);pointer-events:auto}
+  body.nav-open{overflow:hidden}
   main{grid-template-columns:1fr}
   nav{
     position:fixed;
