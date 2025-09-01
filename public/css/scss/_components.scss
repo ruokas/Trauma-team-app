@@ -110,11 +110,11 @@ input.invalid,select.invalid{border-color:var(--red)}
   padding:0;
 }
 .patient-menu{position:relative;display:flex;align-items:center}
-.nav-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:10}
-body.nav-open .nav-overlay{display:block}
+.nav-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:10;display:none}
+body.nav-open .nav-overlay:not([hidden]){display:block}
 body.nav-open{overflow:hidden}
-.patient-menu-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:10}
-body.patient-menu-open .patient-menu-overlay{display:block}
+.patient-menu-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:10;display:none}
+body.patient-menu-open .patient-menu-overlay:not([hidden]){display:block}
 body.patient-menu-open{overflow:hidden}
   @media (max-width:768px){
   #navToggle{display:inline-block;margin-bottom:$space-8}
