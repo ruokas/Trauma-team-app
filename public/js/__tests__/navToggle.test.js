@@ -53,6 +53,20 @@ describe('initNavToggle',()=>{
       expect(nav.hasAttribute('aria-hidden')).toBe(false);
       expect(document.body.classList.contains('nav-open')).toBe(true);
     });
+
+    test('reopens if another handler hides it', () => {
+      jest.useFakeTimers();
+      tabs[0].addEventListener('click', () => {
+        nav.setAttribute('hidden','');
+        nav.setAttribute('aria-hidden','true');
+        document.body.classList.remove('nav-open');
+      });
+      tabs[0].click();
+      jest.runAllTimers();
+      expect(nav.hasAttribute('hidden')).toBe(false);
+      expect(document.body.classList.contains('nav-open')).toBe(true);
+      jest.useRealTimers();
+    });
   });
 });
 
