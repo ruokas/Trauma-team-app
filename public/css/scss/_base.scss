@@ -1,11 +1,18 @@
 @use 'variables' as *;
 
 :root{
-  color-scheme:dark;
   --header-height:50px;
 }
 
+:root.light{
+  color-scheme:light;
+  --bg:#ffffff;--card:#f8f9fa;--ink:#0c1218;
+  --muted:#4a5665;--line:#d0d7e0;
+  --accent:#1976d2;--red:#d32f2f;--yellow:#ffb300;--green:#2e7d32;--ink2:#152231;
+}
+
 :root.dark{
+  color-scheme:dark;
   --bg:#0c1218;--card:#121a24;--ink:#e9f2fb;
   /* brighten supporting colours for better contrast */
   --muted:#c2d0e0;--line:#2d3b4f;
