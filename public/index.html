@@ -17,14 +17,28 @@
 <header id="appHeader" role="banner">
   <div class="toolbar" id="sessionBar">
     <div class="session-filter">
-      <input type="text" id="sessionSearch" placeholder="Search sessions">
-      <select id="sessionSort">
-        <option value="created">Sort by creation</option>
-        <option value="name">Sort by name</option>
-      </select>
+      <div class="icon-field">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="11" cy="11" r="8"/>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input type="text" id="sessionSearch" placeholder="Search sessions">
+      </div>
+      <div class="icon-field">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3 7l4-4 4 4"/>
+          <path d="M7 3v14"/>
+          <path d="M17 21l-4-4 4-4"/>
+          <path d="M17 3v14"/>
+        </svg>
+        <select id="sessionSort">
+          <option value="created">Sort by creation</option>
+          <option value="name">Sort by name</option>
+        </select>
+      </div>
     </div>
     <select id="sessionSelect" class="w-auto"></select>
-    <button type="button" class="btn" id="btnNewSession">Naujas</button>
+    <button type="button" class="btn" id="btnNewSession"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Naujas</button>
   </div>
 </header>
 <template id="chip-template">
