@@ -119,6 +119,14 @@ export async function initSessions(){
       label.addEventListener('click', startRename);
       label.addEventListener('keydown', e=>{ if(e.key==='Enter') startRename(); });
 
+      const rename=document.createElement('button');
+      rename.type='button';
+      rename.className='btn ghost';
+      rename.innerHTML='<svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>';
+      rename.setAttribute('aria-label','Pervardyti');
+      rename.title='Pervardyti';
+      rename.addEventListener('click', startRename);
+
       const archive=document.createElement('button');
       archive.type='button';
       archive.className='btn ghost';
@@ -144,12 +152,12 @@ export async function initSessions(){
         }
         render();
       });
-      const btn=document.createElement('button');
-      btn.type='button';
-      btn.textContent='✖';
-      btn.className='btn ghost';
-      btn.setAttribute('aria-label','Delete session');
-      btn.addEventListener('click',async()=>{
+      const del=document.createElement('button');
+      del.type='button';
+      del.textContent='✖';
+      del.className='btn ghost';
+      del.setAttribute('aria-label','Delete session');
+      del.addEventListener('click',async()=>{
         if(!await notify({type:'confirm', message:'Ar tikrai norite ištrinti pacientą?'})) return;
         const token=getAuthToken();
         if(token && typeof fetch==='function'){
@@ -166,8 +174,9 @@ export async function initSessions(){
         }
       });
       row.appendChild(label);
+      row.appendChild(rename);
       row.appendChild(archive);
-      row.appendChild(btn);
+      row.appendChild(del);
       delWrap.appendChild(row);
     });
     if(focusId){
@@ -222,60 +231,6 @@ export async function initSessions(){
       localStorage.setItem('v10_activeTab','Aktyvacija');
       location.reload();
     });
-  $('#btnRenameSession')?.addEventListener('click',async()=>{
-    const current=sessions.find(s=>s.id===currentSessionId);
-    if(!current) return;
-    const newName=await notify({type:'prompt', message:'New patient ID', default: current.name});
-    if(!newName) return;
-    const nameTrim=newName.trim();
-    if(!nameTrim){ notify({type:'error', message:'Pavadinimas negali būti tuščias.'}); return; }
-    const lower=nameTrim.toLowerCase();
-    if(sessions.some(s=>s.id!==current.id && s.name.trim().toLowerCase()===lower)){
-      notify({type:'error', message:'Pacientas su tokiu pavadinimu jau egzistuoja.'});
-      return;
-    }
-    current.name=nameTrim;
-    await saveSessions(sessions);
-    render(current.id);
-  });
-  $('#btnArchiveSession')?.addEventListener('click',async()=>{
-    const current=sessions.find(s=>s.id===currentSessionId);
-    if(!current) return;
-    const token=getAuthToken();
-    if(token && typeof fetch==='function'){
-      try{
-        await fetch(`/api/sessions/${current.id}/archive`,{
-          method:'PATCH',
-          headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},
-          body:JSON.stringify({archived:!current.archived})
-        });
-      }catch(e){ console.error(e); }
-    }
-    current.archived=!current.archived;
-    await saveSessions(sessions);
-    if(current.archived && currentSessionId===current.id){
-      currentSessionId=sessions.find(s=>!s.archived)?.id||null;
-      setCurrentSessionId(currentSessionId);
-    }
-    render();
-  });
-  $('#btnDeleteSession')?.addEventListener('click',async()=>{
-    const current=sessions.find(s=>s.id===currentSessionId);
-    if(!current) return;
-    if(!await notify({type:'confirm', message:'Ar tikrai norite ištrinti pacientą?'})) return;
-    const token=getAuthToken();
-    if(token && typeof fetch==='function'){
-      try{ await fetch(`/api/sessions/${current.id}`,{method:'DELETE',headers:{'Authorization':'Bearer '+token}}); }catch(e){ console.error(e); }
-    }
-    sessions=sessions.filter(s=>s.id!==current.id);
-    localStorage.removeItem('trauma_v10_'+current.id);
-    await saveSessions(sessions);
-    currentSessionId=sessions.find(s=>!s.archived)?.id||null;
-    setCurrentSessionId(currentSessionId);
-    render();
-    localStorage.setItem('v10_activeTab','Aktyvacija');
-    location.reload();
-  });
   select.addEventListener('change',()=>{
     const id=select.value;
     saveAll();

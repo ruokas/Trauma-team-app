@@ -10,24 +10,42 @@ export function updateUserList(users){
   if(el) el.textContent = users.length ? `Prisijungę: ${users.join(', ')}` : '';
 }
 
-export function populateSessionSelect(sel, sessions){
+export function populateSessionSelect(sel, sessions, { query = '', sortBy = 'created' } = {}){
   sel.innerHTML='';
-  sessions.filter(s=>showArchived || !s.archived).forEach(s=>{
-    const opt=document.createElement('option');
-    opt.value=s.id; opt.textContent=s.name; sel.appendChild(opt);
-  });
+  const q=query.trim().toLowerCase();
+  let list=sessions.filter(s=>(showArchived || !s.archived) && (!q || s.name.toLowerCase().includes(q)));
+  list=list.slice();
+  if(sortBy==='name') list.sort((a,b)=>a.name.localeCompare(b.name));
+  else list.sort((a,b)=>(a.created||0)-(b.created||0));
+  list.forEach(s=>{ const opt=document.createElement('option'); opt.value=s.id; opt.textContent=s.name; sel.appendChild(opt); });
+  return list;
 }
 
 export async function initSessions(){
   const select=$('#sessionSelect');
   if(!select) return;
+  const searchInput=$('#sessionSearch');
+  const sortSelect=$('#sessionSort');
   let sessions=await getSessions();
   let currentSessionId=getCurrentSessionId();
+  let modal=$('#sessionManagerModal');
+  let modalContent;
+  if(!modal){
+    modal=document.createElement('div');
+    modal.id='sessionManagerModal';
+    modal.className='modal';
+    modalContent=document.createElement('div');
+    modalContent.className='modal-content';
+    modal.appendChild(modalContent);
+    document.body.appendChild(modal);
+  }else{
+    modalContent=modal.querySelector('.modal-content');
+  }
   let delWrap=$('#sessionDeleteList');
   if(!delWrap){
     delWrap=document.createElement('div');
     delWrap.id='sessionDeleteList';
-    select.parentNode.appendChild(delWrap);
+    modalContent.appendChild(delWrap);
   }
   let toggleArchived=$('#toggleArchivedSessions');
   if(!toggleArchived){
@@ -36,22 +54,25 @@ export async function initSessions(){
     toggleArchived.type='button';
     toggleArchived.className='btn ghost';
     toggleArchived.textContent='Show archived';
-    select.parentNode.insertBefore(toggleArchived, delWrap);
+    modalContent.insertBefore(toggleArchived, delWrap);
   }
-  toggleArchived.addEventListener('click', () => {
-    showArchived = !showArchived;
-    toggleArchived.textContent = showArchived ? 'Hide archived' : 'Show archived';
-    if (!showArchived && sessions.some(s => s.id === currentSessionId && s.archived)) {
-      currentSessionId = sessions.find(s => !s.archived)?.id || null;
-      setCurrentSessionId(currentSessionId);
-    }
-    renderDeleteButtons();
-    populateSessionSelect(select, sessions);
-    if (currentSessionId) select.value = currentSessionId;
+  let manageBtn=$('#btnManageSessions');
+  if(!manageBtn){
+    manageBtn=document.createElement('button');
+    manageBtn.type='button';
+    manageBtn.id='btnManageSessions';
+    manageBtn.className='btn';
+    manageBtn.textContent='Manage patients';
+    const btnNew=$('#btnNewSession');
+    btnNew.parentNode.insertBefore(manageBtn, btnNew.nextSibling);
+  }
+  manageBtn.addEventListener('click',()=>{
+    modal.classList.toggle('open');
   });
   function renderDeleteButtons(focusId){
     delWrap.innerHTML='';
-    sessions.filter(s=>showArchived || !s.archived).forEach(s=>{
+    const q=(searchInput?.value||'').trim().toLowerCase();
+    sessions.filter(s=>(showArchived || !s.archived) && (!q || s.name.toLowerCase().includes(q))).forEach(s=>{
       const row=document.createElement('div');
       row.className='session-item';
       row.dataset.sessionId=s.id;
@@ -83,9 +104,7 @@ export async function initSessions(){
           }
           s.name=newName;
           await saveSessions(sessions);
-          populateSessionSelect(select, sessions);
-          if(currentSessionId) select.value=currentSessionId;
-          renderDeleteButtons(s.id);
+          render(s.id);
         };
         input.addEventListener('blur', async()=>{ if(!cancelled) await attemptSave(); });
         input.addEventListener('keydown', e=>{
@@ -99,6 +118,14 @@ export async function initSessions(){
 
       label.addEventListener('click', startRename);
       label.addEventListener('keydown', e=>{ if(e.key==='Enter') startRename(); });
+
+      const rename=document.createElement('button');
+      rename.type='button';
+      rename.className='btn ghost';
+      rename.innerHTML='<svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></svg>';
+      rename.setAttribute('aria-label','Pervardyti');
+      rename.title='Pervardyti';
+      rename.addEventListener('click', startRename);
 
       const archive=document.createElement('button');
       archive.type='button';
@@ -123,16 +150,14 @@ export async function initSessions(){
           currentSessionId=sessions.find(x=>!x.archived)?.id||null;
           setCurrentSessionId(currentSessionId);
         }
-        populateSessionSelect(select, sessions);
-        if(currentSessionId) select.value=currentSessionId; else select.value='';
-        renderDeleteButtons();
+        render();
       });
-      const btn=document.createElement('button');
-      btn.type='button';
-      btn.textContent='✖';
-      btn.className='btn ghost';
-      btn.setAttribute('aria-label','Delete session');
-      btn.addEventListener('click',async()=>{
+      const del=document.createElement('button');
+      del.type='button';
+      del.textContent='✖';
+      del.className='btn ghost';
+      del.setAttribute('aria-label','Delete session');
+      del.addEventListener('click',async()=>{
         if(!await notify({type:'confirm', message:'Ar tikrai norite ištrinti pacientą?'})) return;
         const token=getAuthToken();
         if(token && typeof fetch==='function'){
@@ -142,22 +167,16 @@ export async function initSessions(){
         sessions=sessions.filter(x=>x.id!==s.id);
         localStorage.removeItem('trauma_v10_'+s.id);
         localStorage.setItem('trauma_sessions', JSON.stringify(sessions));
-        if(wasCurrent){
-          currentSessionId=sessions[0]?.id||null;
-          setCurrentSessionId(currentSessionId);
-        }
-        populateSessionSelect(select, sessions);
-        if(currentSessionId){ select.value=currentSessionId; } else { select.value=''; }
+        render();
         if(wasCurrent){
           localStorage.setItem('v10_activeTab','Aktyvacija');
           location.reload();
-        }else{
-          renderDeleteButtons();
         }
       });
       row.appendChild(label);
+      row.appendChild(rename);
       row.appendChild(archive);
-      row.appendChild(btn);
+      row.appendChild(del);
       delWrap.appendChild(row);
     });
     if(focusId){
@@ -165,35 +184,53 @@ export async function initSessions(){
       if(focusEl) focusEl.focus();
     }
   }
-  if(!sessions.length){
-    const id=Date.now().toString(36);
-    sessions=[{id,name:'Pacientas Nr.1', archived:false}];
-    await saveSessions(sessions);
-    currentSessionId=id;
-    setCurrentSessionId(id);
+  const render=(focusId)=>{
+      const filtered=populateSessionSelect(select, sessions, { query: searchInput?.value || '', sortBy: sortSelect?.value || 'created' });
+      if(currentSessionId && filtered.some(s=>s.id===currentSessionId)){
+        select.value=currentSessionId;
+      }else{
+        currentSessionId=filtered[0]?.id||null;
+        setCurrentSessionId(currentSessionId);
+        if(currentSessionId) select.value=currentSessionId; else select.value='';
+      }
+      renderDeleteButtons(focusId);
+    };
+    toggleArchived.addEventListener('click', () => {
+      showArchived = !showArchived;
+      toggleArchived.textContent = showArchived ? 'Hide archived' : 'Show archived';
+      if (!showArchived && sessions.some(s => s.id === currentSessionId && s.archived)) {
+        currentSessionId = sessions.find(s => !s.archived)?.id || null;
+        setCurrentSessionId(currentSessionId);
+      }
+      render();
+    });
+    searchInput?.addEventListener('input', ()=>render());
+    sortSelect?.addEventListener('change', ()=>render());
+    if(!sessions.length){
+      const id=Date.now().toString(36);
+      sessions=[{id,name:'Pacientas Nr.1', archived:false, created:Date.now()}];
+      await saveSessions(sessions);
+      currentSessionId=id;
+      setCurrentSessionId(id);
   }
   if(!currentSessionId || !sessions.some(s=>s.id===currentSessionId)){
     currentSessionId=sessions.find(s=>!s.archived)?.id || sessions[0].id;
     setCurrentSessionId(currentSessionId);
   }
-  populateSessionSelect(select, sessions);
-  select.value=currentSessionId;
-  renderDeleteButtons();
+    render();
 
   $('#btnNewSession').addEventListener('click',async()=>{
     const name=await notify({type:'prompt', message:'Paciento ID'});
     if(!name) return;
     const id=Date.now().toString(36);
-    sessions.push({id,name, archived:false});
+    sessions.push({id,name, archived:false, created:Date.now()});
     await saveSessions(sessions);
     currentSessionId=id;
     setCurrentSessionId(id);
-    populateSessionSelect(select, sessions);
-    select.value=id;
-    renderDeleteButtons();
-    localStorage.setItem('v10_activeTab','Aktyvacija');
-    location.reload();
-  });
+      render();
+      localStorage.setItem('v10_activeTab','Aktyvacija');
+      location.reload();
+    });
   select.addEventListener('change',()=>{
     const id=select.value;
     saveAll();
