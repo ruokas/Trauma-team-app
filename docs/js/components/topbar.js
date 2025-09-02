@@ -1,3 +1,4 @@
+import { notify } from '../alerts.js';
 
 const NAV_BREAKPOINT = 768;
 let navMq;
@@ -42,13 +43,9 @@ export function initNavToggle(toggle, nav){
     toggle.setAttribute('aria-expanded','true');
     nav.removeAttribute('aria-hidden');
     nav.removeAttribute('hidden');
-    if(!navMq || !navMq.matches){
-      if(overlay) overlay.hidden=false;
-      document.body.style.overflow='hidden';
-    }else{
-      if(overlay) overlay.hidden=true;
-      document.body.style.overflow='';
-    }
+    const mobile=!navMq || !navMq.matches;
+    if(overlay) overlay.hidden=!mobile;
+    document.body.style.overflow=mobile ? 'hidden' : '';
     const items=nav.querySelectorAll(focusableSel);
     if(items.length) items[0].focus();
     document.addEventListener('keydown', trap);
@@ -59,15 +56,15 @@ export function initNavToggle(toggle, nav){
   if(overlay){
     overlay.addEventListener('click', close);
   }
-  // Ensure the navigation stays open on desktop after tab clicks.
-  nav.addEventListener('click',()=>{
+  // Close the navigation after selecting a tab on small screens while
+  // keeping it open on desktop.
+  nav.addEventListener('click', () => {
     if(navMq && navMq.matches){
       setTimeout(open);
+    }else{
+      close();
     }
   });
-  // Clicking a tab should no longer hide the navigation menu. The handler
-  // that previously closed the menu on tab clicks has been removed to keep
-  // the navigation visible.
   navMq=typeof matchMedia==='function' ? matchMedia(`(min-width: ${NAV_BREAKPOINT}px)`) : null;
   if(navMq){
     navMqListener=e=>{ e.matches ? open() : close(); };
@@ -78,16 +75,69 @@ export function initNavToggle(toggle, nav){
   }
 }
 
+export function initPatientMenuToggle(toggle, menu){
+  if(!toggle || !menu) return;
+  const overlay=document.querySelector('.patient-menu-overlay');
+  const focusableSel='a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
+  const mq=typeof matchMedia==='function' ? matchMedia(`(min-width: ${NAV_BREAKPOINT}px)`) : null;
+  function close(){
+    document.body.classList.remove('patient-menu-open');
+    toggle.setAttribute('aria-expanded','false');
+    menu.setAttribute('hidden','');
+    menu.setAttribute('aria-hidden','true');
+    if(overlay) overlay.hidden=true;
+    document.body.style.overflow='';
+    document.removeEventListener('keydown', trap);
+    toggle.focus();
+  }
+  function trap(e){
+    if(e.key==='Tab'){
+      const items=menu.querySelectorAll(focusableSel);
+      if(!items.length) return;
+      const first=items[0];
+      const last=items[items.length-1];
+      if(e.shiftKey){
+        if(document.activeElement===first){ e.preventDefault(); last.focus(); }
+      }else{
+        if(document.activeElement===last){ e.preventDefault(); first.focus(); }
+      }
+    }else if(e.key==='Escape'){
+      close();
+    }
+  }
+  function open(){
+    document.body.classList.add('patient-menu-open');
+    toggle.setAttribute('aria-expanded','true');
+    menu.removeAttribute('hidden');
+    menu.removeAttribute('aria-hidden');
+    const mobile=!mq || !mq.matches;
+    if(overlay) overlay.hidden=!mobile;
+    document.body.style.overflow=mobile ? 'hidden' : '';
+    const items=menu.querySelectorAll(focusableSel);
+    if(items.length) items[0].focus();
+    document.addEventListener('keydown', trap);
+  }
+  toggle.addEventListener('click',()=>{
+    document.body.classList.contains('patient-menu-open') ? close() : open();
+  });
+  if(overlay){ overlay.addEventListener('click', close); }
+  const update=()=>{ if(mq && mq.matches) open(); else close(); };
+  if(mq){ mq.addEventListener('change', update); }
+  update();
+}
+
 export async function initTopbar(){
   const header=document.getElementById('appHeader');
   if(!header || typeof fetch!=='function') return;
   try{
     const res=await fetch('assets/partials/topbar.html');
-    if(res.ok){
-      header.innerHTML=await res.text();
-    }
+    if(!res.ok) throw new Error(`HTTP ${res.status}`);
+    header.innerHTML=await res.text();
   }catch(e){
     console.error('Failed to load topbar', e);
+    notify({type:'error', message:'Failed to load topbar'});
+    header.innerHTML='<div class="wrap"><button type="button" class="btn" id="retryTopbar">Retry</button></div>';
+    header.querySelector('#retryTopbar')?.addEventListener('click', initTopbar);
   }
   if(typeof ResizeObserver==='function'){
     const updateHeight=entries=>{
@@ -101,4 +151,7 @@ export async function initTopbar(){
   const toggle=document.getElementById('navToggle');
   const nav=document.querySelector('nav');
   initNavToggle(toggle, nav);
+  const patientToggle=document.getElementById('patientMenuToggle');
+  const sessionBar=document.getElementById('sessionBar');
+  initPatientMenuToggle(patientToggle, sessionBar);
 }

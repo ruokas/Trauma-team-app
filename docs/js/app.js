@@ -3,7 +3,7 @@ import { initTabs } from './tabs.js';
 import { initChips, setChipActive, isChipActive, addChipIndicators } from './chips.js';
 import { initAutoActivate } from './autoActivate.js';
 import { initActions } from './actions.js';
-import { logEvent, initTimeline } from './timeline.js';
+import { initTimeline } from './timeline.js';
 import './components/toast.js';
 import './components/modal.js';
 import { initValidation, validateVitals } from './validation.js';
@@ -15,21 +15,41 @@ import { initSessions, populateSessionSelect, updateUserList } from './sessionUI
 import bodyMap from './bodyMap.js';
 import { generateReport } from './report.js';
 import { setupHeaderActions } from './headerActions.js';
-import { TEAM_ROLES } from './constants.js';
 import { initCirculation } from './circulation.js';
 import { setupActivationControls, ensureSingleTeam, updateActivationIndicator } from './activation.js';
 import { initGcs } from './gcs.js';
-import { IMG_CT, IMG_XRAY, LABS, BLOOD_GROUPS, FAST_AREAS } from './config.js';
-export { validateVitals };
+import { IMG_CT, IMG_XRAY, LABS, BLOOD_GROUPS } from './config.js';
+import { init as initFastGrid } from './fastGrid.js';
+import { init as initTeamGrid } from './teamGrid.js';
+import { init as initMechanismList } from './mechanismList.js';
+import { init as initVitalsEvents } from './vitalsEvents.js';
+import { initChipGroups } from './chipData.js';
+export { validateVitals, createChipGroup };
+
+initTheme();
 
 /* ===== Imaging / Labs / Team ===== */
-const LS_MECHANISM_KEY='traumos_mechanizmai';
+function createChipGroup(selector, values){
+  const wrap=$(selector);
+  if(!wrap) return null;
+  values.forEach(val=>{
+    const chip=document.createElement('span');
+    chip.className='chip';
+    chip.dataset.value=val;
+    chip.textContent=val;
+    addChipIndicators(chip);
+    wrap.appendChild(chip);
+  });
+  return wrap;
+}
 
-const imgCtWrap=$('#imaging_ct'); IMG_CT.forEach(n=>{const s=document.createElement('span'); s.className='chip'; s.dataset.value=n; s.textContent=n; addChipIndicators(s); imgCtWrap.appendChild(s);});
-const imgXrayWrap=$('#imaging_xray'); IMG_XRAY.forEach(n=>{const s=document.createElement('span'); s.className='chip'; s.dataset.value=n; s.textContent=n; addChipIndicators(s); imgXrayWrap.appendChild(s);});
-const imgOtherWrap=$('#imaging_other_group'); ['Kita'].forEach(n=>{const s=document.createElement('span'); s.className='chip'; s.dataset.value=n; s.textContent=n; addChipIndicators(s); imgOtherWrap.appendChild(s);});
-const labsWrap=$('#labs_basic'); LABS.forEach(n=>{const s=document.createElement('span'); s.className='chip'; s.dataset.value=n; s.textContent=n; addChipIndicators(s); labsWrap.appendChild(s);});
-const bloodGroupWrap=$('#bloodGroup'); if(bloodGroupWrap){ BLOOD_GROUPS.forEach(g=>{const s=document.createElement('span'); s.className='chip'; s.dataset.value=g; s.textContent=g; addChipIndicators(s); bloodGroupWrap.appendChild(s);}); }
+initChipGroups();
+
+createChipGroup('#imaging_ct', IMG_CT);
+createChipGroup('#imaging_xray', IMG_XRAY);
+createChipGroup('#imaging_other_group', ['Kita']);
+const labsWrap=createChipGroup('#labs_basic', LABS);
+const bloodGroupWrap=createChipGroup('#bloodGroup', BLOOD_GROUPS);
 const bloodUnitsInput=$('#bloodUnits');
 const addBloodOrderBtn=$('#addBloodOrder');
 if(bloodUnitsInput && bloodGroupWrap && addBloodOrderBtn){
@@ -53,44 +73,6 @@ if(bloodUnitsInput && bloodGroupWrap && addBloodOrderBtn){
   };
   addBloodOrderBtn.addEventListener('click',addOrder);
   bloodUnitsInput.addEventListener('keydown',e=>{ if(e.key==='Enter') addOrder(e); });
-}
-const fastWrap=$('#fastGrid');
-FAST_AREAS.forEach(({name,marker})=>{
-  const box=document.createElement('div');
-  box.innerHTML=`<label>${name} (${marker})</label><div class="row"><label class="pill red"><input type="radio" name="fast_${name}" value="Yra"> Yra</label><label class="pill"><input type="radio" name="fast_${name}" value="Nėra"> Nėra</label></div>`;
-  fastWrap.appendChild(box);
-});
-const teamWrap=$('#teamGrid'); TEAM_ROLES.forEach(r=>{
-  const slug=r.replace(/\s+/g,'_');
-  const box=document.createElement('div');
-  box.innerHTML=`<label>${r}</label><input type="text" data-team="${r}" data-field="team_${slug}" placeholder="Vardas Pavardė">`;
-  teamWrap.appendChild(box);
-});
-
-function initMechanismList(){
-  const list=$('#gmp_mechanism_list');
-  const input=$('#gmp_mechanism');
-  if(!list||!input) return;
-  const existing=new Set(Array.from(list.options).map(o=>o.value));
-  const stored=JSON.parse(localStorage.getItem(LS_MECHANISM_KEY)||'[]');
-  stored.forEach(v=>{
-    if(!existing.has(v)){
-      const opt=document.createElement('option');
-      opt.value=v;
-      list.appendChild(opt);
-      existing.add(v);
-    }
-  });
-  input.addEventListener('change',()=>{
-    const val=input.value.trim();
-    if(!val||existing.has(val)) return;
-    const opt=document.createElement('option');
-    opt.value=val;
-    list.appendChild(opt);
-    existing.add(val);
-    stored.push(val);
-    localStorage.setItem(LS_MECHANISM_KEY, JSON.stringify(stored));
-  });
 }
 
 /* ===== Save / Load ===== */
@@ -139,7 +121,9 @@ function clampNumberInputs(){
 
 /* ===== Init modules ===== */
 async function init(){
-  initTheme();
+  if(typeof navigator !== 'undefined' && 'serviceWorker' in navigator){
+    navigator.serviceWorker.register('/sw.js');
+  }
   await initTopbar();
   setupHeaderActions({ validateForm });
   connectSocket({
@@ -165,41 +149,11 @@ async function init(){
   initActions(saveAllDebounced);
   initTimeline();
   setupActivationControls();
+  initFastGrid();
+  initTeamGrid();
   initMechanismList();
+  initVitalsEvents();
   document.addEventListener('input', saveAllDebounced);
-
-  const vitals = {
-    '#gmp_hr': 'GMP ŠSD',
-    '#gmp_rr': 'GMP KD',
-    '#gmp_spo2': 'GMP SpO₂',
-    '#gmp_sbp': 'GMP AKS s',
-    '#gmp_dbp': 'GMP AKS d',
-    '#b_rr': 'KD',
-    '#b_spo2': 'SpO₂',
-    '#c_hr': 'ŠSD',
-    '#c_sbp': 'AKS s',
-    '#c_dbp': 'AKS d',
-    '#c_caprefill': 'KPL'
-  };
-  Object.entries(vitals).forEach(([sel,label])=>{
-    const el=$(sel);
-    if(el) el.addEventListener('change',()=>{ if(el.value) logEvent('vital', label, el.value); });
-  });
-
-  const chipVitals = {
-    '#c_pulse_radial_group': 'Radialinis pulsas',
-    '#c_pulse_femoral_group': 'Femoralis pulsas',
-    '#c_skin_temp_group': 'Odos temp.',
-    '#c_skin_color_group': 'Odos spalva'
-  };
-  Object.entries(chipVitals).forEach(([sel,label])=>{
-    const group=$(sel);
-    if(group) group.addEventListener('click',e=>{
-      const chip=e.target.closest('.chip');
-      if(chip && isChipActive(chip)) logEvent('vital', label, chip.dataset.value);
-    });
-  });
-
   initCirculation();
   const btnOxygen=$('#btnOxygen');
   if(btnOxygen) btnOxygen.addEventListener('click',()=>{

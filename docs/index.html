@@ -11,15 +11,46 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/main.css">
 <link rel="stylesheet" href="https://unpkg.com/vis-timeline@8.3.0/styles/vis-timeline-graph2d.min.css">
-<style>
-  .silhouette { pointer-events: none; }
-</style>
 </head>
 <body>
 <a href="#views" class="skip-link">Skip to content</a>
-<header id="appHeader" role="banner"></header>
+<header id="appHeader" role="banner">
+  <div class="toolbar" id="sessionBar">
+    <div class="session-filter">
+      <div class="icon-field">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <circle cx="11" cy="11" r="8"/>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input type="text" id="sessionSearch" placeholder="Search sessions">
+      </div>
+      <div class="icon-field">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3 7l4-4 4 4"/>
+          <path d="M7 3v14"/>
+          <path d="M17 21l-4-4 4-4"/>
+          <path d="M17 3v14"/>
+        </svg>
+        <select id="sessionSort">
+          <option value="created">Sort by creation</option>
+          <option value="name">Sort by name</option>
+        </select>
+      </div>
+    </div>
+    <select id="sessionSelect" class="w-auto"></select>
+    <button type="button" class="btn" id="btnNewSession"><svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Naujas</button>
+  </div>
+</header>
 <template id="chip-template">
-  <span class="chip-status-icon" aria-hidden="true">✗</span>
+  <span class="chip-status-icon" aria-hidden="true">
+    <svg class="chip-icon chip-icon-default" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2">
+      <line x1="1" y1="1" x2="9" y2="9" />
+      <line x1="9" y1="1" x2="1" y2="9" />
+    </svg>
+    <svg class="chip-icon chip-icon-selected" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2" hidden>
+      <polyline points="1 5 4 8 9 1" />
+    </svg>
+  </span>
   <span class="sr-only chip-status-text">not selected</span>
 </template>
 
@@ -98,29 +129,11 @@
           <div class="split mt-12">
             <div>
               <label><strong>RAUDONA</strong></label>
-              <div class="chip-group" id="chips_red" aria-label="RAUDONA">
-                <button type="button" class="chip red" data-value="GKS &lt; 9" aria-pressed="false">GKS &lt; 9</button>
-                <button type="button" class="chip red" data-value="KD &lt; 8 ar &gt; 30/min" aria-pressed="false">KD &lt; 8 ar &gt; 30/min</button>
-                <button type="button" class="chip red" data-value="AKS &lt; 90 mmHg" aria-pressed="false">AKS &lt; 90 mmHg</button>
-                <button type="button" class="chip red" data-value="SpO₂ &lt; 90%" aria-pressed="false">SpO₂ &lt; 90%</button>
-                <button type="button" class="chip red" data-value="ŠSD &gt; 120/min" aria-pressed="false">ŠSD &gt; 120/min</button>
-                <button type="button" class="chip red" data-value="Stridoras" aria-pressed="false">Stridoras</button>
-                <button type="button" class="chip red" data-value="Lūžę 2 ilgieji kaulai/dubuo" aria-pressed="false">Lūžę 2 ilgieji kaulai/dubuo</button>
-                <button type="button" class="chip red" data-value="Kiauriniai suž. kakle/krūtinėje/juosmenyje" aria-pressed="false">Kiauriniai suž. kakle/krūtinėje/juosmenyje</button>
-                <button type="button" class="chip red" data-value="Įtariamas vidinis kraujavimas" aria-pressed="false">Įtariamas vidinis kraujavimas</button>
-                <button type="button" class="chip red" data-value="Nestabili krūtinės ląsta" aria-pressed="false">Nestabili krūtinės ląsta</button>
-                <button type="button" class="chip red" data-value="Nudegimas &gt;18% ar KT nudegimas" aria-pressed="false">Nudegimas &gt;18% ar KT nudegimas</button>
-                <button type="button" class="chip red" data-value="Amputacijos aukščiau plašt./pėdų" aria-pressed="false">Amputacijos aukščiau plašt./pėdų</button>
-              </div>
+              <div class="chip-group" id="chips_red" aria-label="RAUDONA"></div>
             </div>
             <div>
               <label><strong>GELTONA</strong></label>
-              <div class="chip-group" id="chips_yellow" aria-label="GELTONA">
-                <button type="button" class="chip yellow" data-value="Pėst./dvir./motociklo trauma" aria-pressed="false">Pėst./dvir./motociklo trauma</button>
-                <button type="button" class="chip yellow" data-value="Sprogimas/susišaudymas" aria-pressed="false">Sprogimas/susišaudymas</button>
-                <button type="button" class="chip yellow" data-value="Kritimas &gt;3 m ar nardymas" aria-pressed="false">Kritimas &gt;3 m ar nardymas</button>
-                <button type="button" class="chip yellow" data-value="Reikėjo gelbėtojų pagalbos" aria-pressed="false">Reikėjo gelbėtojų pagalbos</button>
-              </div>
+              <div class="chip-group" id="chips_yellow" aria-label="GELTONA"></div>
             </div>
           </div>
           <div class="hint mt-6">Auto-aktyvacija – tik iš GMP rodiklių; rankiniai pakeitimai išlieka.</div>
@@ -131,13 +144,7 @@
     <section class="card view" id="view-a" data-tab="A – Kvėpavimo takai">
       <h2>A – Kvėpavimo takai</h2>
       <label>Takai</label>
-      <div class="chip-group" id="a_airway_group" data-single="true" aria-label="Takai">
-        <button type="button" class="chip" data-value="Atviri" aria-pressed="false">Atviri</button>
-        <button type="button" class="chip red" data-value="Obstrukcija" aria-pressed="false">Obstrukcija</button>
-        <button type="button" class="chip red" data-value="Įvesta laringinė kaukė" aria-pressed="false">Įvesta laringinė kaukė</button>
-        <button type="button" class="chip red" data-value="Intubuotas" aria-pressed="false">Intubuotas</button>
-        <button type="button" class="chip red" data-value="Kita" aria-pressed="false">Kita</button>
-      </div>
+      <div class="chip-group" id="a_airway_group" data-single="true" aria-label="Takai"></div>
       <div class="row mt-8"><label class="m-0" for="a_notes">Pastabos</label><input id="a_notes" type="text" placeholder="Trumpai..."></div>
     </section>
 
@@ -156,23 +163,11 @@
           <div class="row">
             <div>
               <div class="subtle">Kairė</div>
-              <div class="chip-group" id="b_breath_left_group" data-single="true" aria-label="Alsavimas – Kairė">
-                <button type="button" class="chip breath-chip" data-value="Normalus" aria-label="Normalus" title="Normalus">Normalus</button>
-                <button type="button" class="chip breath-chip red breath-toggle" data-value="_kita" aria-label="Kita" title="Kita">Kita</button>
-                <button type="button" class="chip breath-chip red breath-option hidden" data-value="Neišklausomas">Neišklausomas</button>
-                <button type="button" class="chip breath-chip red breath-option hidden" data-value="Susilpnėjęs">Susilpnėjęs</button>
-                <button type="button" class="chip breath-chip red breath-option hidden" data-value="Kita">Kita</button>
-              </div>
+              <div class="chip-group" id="b_breath_left_group" data-single="true" aria-label="Alsavimas – Kairė"></div>
             </div>
             <div>
               <div class="subtle">Dešinė</div>
-              <div class="chip-group" id="b_breath_right_group" data-single="true" aria-label="Alsavimas – Dešinė">
-                <button type="button" class="chip breath-chip" data-value="Normalus" aria-label="Normalus" title="Normalus">Normalus</button>
-                <button type="button" class="chip breath-chip red breath-toggle" data-value="_kita" aria-label="Kita" title="Kita">Kita</button>
-                <button type="button" class="chip breath-chip red breath-option hidden" data-value="Neišklausomas">Neišklausomas</button>
-                <button type="button" class="chip breath-chip red breath-option hidden" data-value="Susilpnėjęs">Susilpnėjęs</button>
-                <button type="button" class="chip breath-chip red breath-option hidden" data-value="Kita">Kita</button>
-              </div>
+              <div class="chip-group" id="b_breath_right_group" data-single="true" aria-label="Alsavimas – Dešinė"></div>
             </div>
           </div>
         </fieldset>
@@ -209,33 +204,20 @@
         <div><label for="c_caprefill">KPL (sek.)</label><input id="c_caprefill" type="number" step="0.1" min="0" max="20" title="KPL – seconds, 0–20"></div>
         <div>
           <label>Radialinis pulsas</label>
-          <div class="chip-group" id="c_pulse_radial_group" data-single="true">
-            <button type="button" class="chip" data-value="Stiprus" aria-pressed="false">Stiprus</button>
-            <button type="button" class="chip red" data-value="Silpnas" aria-pressed="false">Silpnas</button>
-          </div>
+          <div class="chip-group" id="c_pulse_radial_group" data-single="true"></div>
         </div>
         <div>
           <label>Femoralis pulsas</label>
-          <div class="chip-group" id="c_pulse_femoral_group" data-single="true">
-            <button type="button" class="chip" data-value="Stiprus" aria-pressed="false">Stiprus</button>
-            <button type="button" class="chip red" data-value="Silpnas" aria-pressed="false">Silpnas</button>
-          </div>
+          <div class="chip-group" id="c_pulse_femoral_group" data-single="true"></div>
         </div>
         <div>
           <label>Odos temp.</label>
-          <div class="chip-group" id="c_skin_temp_group" data-single="true">
-            <button type="button" class="chip" data-value="Šilta" aria-pressed="false">Šilta</button>
-            <button type="button" class="chip red" data-value="Šalta" aria-pressed="false">Šalta</button>
-          </div>
+          <div class="chip-group" id="c_skin_temp_group" data-single="true"></div>
         </div>
         <div>
           <label>Odos spalva</label>
           <div class="row">
-            <div class="chip-group" id="c_skin_color_group" data-single="true">
-              <button type="button" class="chip" data-value="Rausva" aria-pressed="false">Rausva</button>
-              <button type="button" class="chip red" data-value="Blyški" aria-pressed="false">Blyški</button>
-              <button type="button" class="chip red" data-value="Kita" aria-pressed="false">Kita</button>
-            </div>
+            <div class="chip-group" id="c_skin_color_group" data-single="true"></div>
             <input id="c_skin_color_other" type="text" placeholder="Kita..." class="hidden">
           </div>
         </div>
@@ -304,7 +286,7 @@
       <div class="mt-8">
         <label>Vyzdžiai – Kairė</label>
         <div id="d_pupil_left_wrapper" aria-expanded="false">
-          <div class="chip-group" id="d_pupil_left_group" data-single="true" aria-label="Vyzdžiai – Kairė"><button type="button" class="chip" data-value="n.y." aria-pressed="false">n.y.</button><button type="button" class="chip red" data-value="kita" aria-pressed="false">kita</button></div>
+          <div class="chip-group" id="d_pupil_left_group" data-single="true" aria-label="Vyzdžiai – Kairė"></div>
           <label for="d_pupil_left_note" class="mt-6 hidden" hidden>Pastabos</label>
           <input id="d_pupil_left_note" type="text" placeholder="Pastabos..." class="mt-6 hidden" hidden>
         </div>
@@ -312,7 +294,7 @@
       <div class="mt-8">
         <label>Vyzdžiai – Dešinė</label>
         <div id="d_pupil_right_wrapper" aria-expanded="false">
-          <div class="chip-group" id="d_pupil_right_group" data-single="true" aria-label="Vyzdžiai – Dešinė"><button type="button" class="chip" data-value="n.y." aria-pressed="false">n.y.</button><button type="button" class="chip red" data-value="kita" aria-pressed="false">kita</button></div>
+          <div class="chip-group" id="d_pupil_right_group" data-single="true" aria-label="Vyzdžiai – Dešinė"></div>
           <label for="d_pupil_right_note" class="mt-6 hidden" hidden>Pastabos</label>
           <input id="d_pupil_right_note" type="text" placeholder="Pastabos..." class="mt-6 hidden" hidden>
         </div>
@@ -325,8 +307,8 @@
       <h2>E – Kita</h2>
       <div class="grid cols-3 cols-auto">
         <div><label for="e_temp">Temperatūra (°C)</label><input id="e_temp" type="number" step="0.1" min="30" max="43"></div>
-        <div><label for="e_back_notes">Nugaros apžiūra</label><div class="row"><div class="chip-group" id="e_back_group" data-single="true"><button type="button" class="chip" data-value="Be pakitimų" aria-pressed="false">Be pakitimų</button><button type="button" class="chip red" data-value="Pakitimai" aria-pressed="false">Pakitimai</button></div><input id="e_back_notes" type="text" placeholder="Pakitimai..." class="hidden"></div></div>
-        <div><label for="e_abdomen_notes">Pilvo apžiūra</label><div class="row"><div class="chip-group" id="e_abdomen_group" data-single="true"><button type="button" class="chip" data-value="Be pakitimų" aria-pressed="false">Be pakitimų</button><button type="button" class="chip red" data-value="Pakitimai" aria-pressed="false">Pakitimai</button></div><input id="e_abdomen_notes" type="text" placeholder="Pakitimai..." class="hidden"></div></div>
+        <div><label for="e_back_notes">Nugaros apžiūra</label><div class="row"><div class="chip-group" id="e_back_group" data-single="true"></div><input id="e_back_notes" type="text" placeholder="Pakitimai..." class="hidden"></div></div>
+        <div><label for="e_abdomen_notes">Pilvo apžiūra</label><div class="row"><div class="chip-group" id="e_abdomen_group" data-single="true"></div><input id="e_abdomen_notes" type="text" placeholder="Pakitimai..." class="hidden"></div></div>
         <div><label for="e_other">Kitos pastabos</label><input id="e_other" type="text" placeholder="..."></div>
       </div>
 
@@ -336,26 +318,26 @@
         <button type="button" class="tool" data-tool="Ž"><svg class="icon" viewBox="-12 -12 24 24"><circle r="8" class="mark-w"/><path d="M-6 0 L6 0 M0 -6 L0 6" class="mark-w"/></svg><span>Žaizda</span></button>
         <button type="button" class="tool" data-tool="S"><svg class="icon" viewBox="-12 -12 24 24"><circle r="8" class="mark-b"/></svg><span>Sumušimas</span></button>
         <button type="button" class="tool" data-tool="B"><svg class="icon" viewBox="-12 -12 24 24"><circle r="8" class="burn-area"/></svg><span>Nudegimas</span></button>
-        <button type="button" class="tool" data-tool="E"><span class="icon">🧽</span><span>Trintukas</span></button>
-        <input id="brushSize" type="range" min="5" max="100" value="20">
-        <span class="flex-1"></span>
-        <button type="button" class="tool" id="btnUndo"><span class="icon">↩</span><span>Anuliuoti</span></button>
-        <button type="button" class="tool" id="btnRedo"><span class="icon">↪</span><span>Perdaryti</span></button>
-        <button type="button" class="tool" id="btnClearMap"><span class="icon">🧹</span><span>Išvalyti</span></button>
-        <button type="button" class="tool" id="btnExportSvg"><span class="icon">⬇</span><span>Eksportuoti SVG</span></button>
+          <button type="button" class="tool" data-tool="E"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 21H8a2 2 0 0 1-1.42-.587l-3.994-3.999a2 2 0 0 1 0-2.828l10-10a2 2 0 0 1 2.829 0l5.999 6a2 2 0 0 1 0 2.828L12.834 21"/><path d="m5.082 11.09 8.828 8.828"/></svg><span>Trintukas</span></button>
+          <input id="brushSize" type="range" min="5" max="100" value="20">
+          <span class="flex-1"></span>
+          <button type="button" class="tool" id="btnUndo"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3"/></svg><span>Anuliuoti</span></button>
+          <button type="button" class="tool" id="btnRedo"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 15 6-6m0 0-6-6m6 6H9a6 6 0 0 0 0 12h3"/></svg><span>Perdaryti</span></button>
+          <button type="button" class="tool" id="btnClearMap"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"/></svg><span>Išvalyti</span></button>
+          <button type="button" class="tool" id="btnExportSvg"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg><span>Eksportuoti SVG</span></button>
       </div>
 
       <!-- SVG BODY MAP -->
       <svg id="bodySvg" viewBox="0 0 1500 1090" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
         <!-- Marker symbols -->
         <defs>
-          <g id="sym-wound">
+          <symbol id="sym-wound" viewBox="-14 -14 28 28">
             <circle r="14" class="mark-w"/>
             <path d="M-10 0 L10 0 M0 -10 L0 10" class="mark-w"/>
-          </g>
-          <g id="sym-bruise">
+          </symbol>
+          <symbol id="sym-bruise" viewBox="-10 -10 20 20">
             <circle r="10" class="mark-b"/>
-          </g>
+          </symbol>
         </defs>
 
         <!-- FRONT silhouette -->
@@ -437,13 +419,7 @@
       <div><label for="spr_time">Laikas</label><div class="row"><input id="spr_time" type="time"><button type="button" class="btn ghost" id="btnSprNow">Dabar</button></div></div>
       <div class="mt-8">
         <label>Sprendimas</label>
-        <div class="chip-group" id="spr_decision_group" data-single="true" aria-label="Sprendimas">
-          <button type="button" class="chip" data-value="Stacionarizavimas" aria-pressed="false">Stacionarizavimas</button>
-          <button type="button" class="chip" data-value="Namo" aria-pressed="false">Namo</button>
-          <button type="button" class="chip" data-value="Stebėjimas SMPS" aria-pressed="false">Stebėjimas SMPS</button>
-          <button type="button" class="chip" data-value="Mirtis" aria-pressed="false">Mirtis</button>
-          <button type="button" class="chip" data-value="Pervežimas į kitą ligoninę" aria-pressed="false">Pervežimas į kitą ligoninę</button>
-        </div>
+        <div class="chip-group" id="spr_decision_group" data-single="true" aria-label="Sprendimas"></div>
       </div>
       <div id="spr_skyrius_container" class="hidden mt-8">
         <label for="spr_skyrius">Skyrius</label>
