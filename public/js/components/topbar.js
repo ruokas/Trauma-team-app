@@ -75,56 +75,25 @@ export function initNavToggle(toggle, nav){
   }
 }
 
-export function initPatientMenuToggle(toggle, menu){
-  if(!toggle || !menu) return;
-  const overlay=document.querySelector('.patient-menu-overlay');
-  const focusableSel='a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
-  const mq=typeof matchMedia==='function' ? matchMedia(`(min-width: ${NAV_BREAKPOINT}px)`) : null;
-  function close(){
-    document.body.classList.remove('patient-menu-open');
-    toggle.setAttribute('aria-expanded','false');
-    menu.setAttribute('hidden','');
-    menu.setAttribute('aria-hidden','true');
-    if(overlay) overlay.hidden=true;
-    document.body.style.overflow='';
-    document.removeEventListener('keydown', trap);
-    toggle.focus();
-  }
-  function trap(e){
-    if(e.key==='Tab'){
-      const items=menu.querySelectorAll(focusableSel);
-      if(!items.length) return;
-      const first=items[0];
-      const last=items[items.length-1];
-      if(e.shiftKey){
-        if(document.activeElement===first){ e.preventDefault(); last.focus(); }
-      }else{
-        if(document.activeElement===last){ e.preventDefault(); first.focus(); }
-      }
-    }else if(e.key==='Escape'){
-      close();
+export function initPatientMenuToggle(menu){
+  if(!menu) return;
+  const search=menu.querySelector('#patientSearch');
+  const searchToggle=menu.querySelector('#patientSearchToggle');
+  const mq=typeof matchMedia==='function' ? matchMedia('(min-width: 769px)') : null;
+  const update=()=>{ if(mq && mq.matches) menu.setAttribute('open',''); else menu.removeAttribute('open'); };
+  update();
+  window.addEventListener('resize', update);
+  document.addEventListener('click', e=>{
+    if(menu.hasAttribute('open') && !menu.contains(e.target)){
+      menu.removeAttribute('open');
+      search?.classList.add('hidden');
     }
-  }
-  function open(){
-    const mobile=!mq || !mq.matches;
-    document.body.classList.toggle('patient-menu-open', mobile);
-    toggle.setAttribute('aria-expanded','true');
-    menu.removeAttribute('hidden');
-    menu.removeAttribute('aria-hidden');
-    if(overlay) overlay.hidden=!mobile;
-    document.body.style.overflow=mobile ? 'hidden' : '';
-    const items=menu.querySelectorAll(focusableSel);
-    if(items.length) items[0].focus();
-    document.addEventListener('keydown', trap);
-  }
-  toggle.addEventListener('click',()=>{
-    menu.hasAttribute('hidden') ? open() : close();
   });
-  if(overlay){ overlay.addEventListener('click', close); }
-  if(mq){
-    mq.addEventListener('change',()=>{ if(!menu.hasAttribute('hidden')) open(); });
-  }
-  close();
+  searchToggle?.addEventListener('click',()=>{
+    search?.classList.toggle('hidden');
+    if(!search?.classList.contains('hidden')) search.focus();
+    else if(search) search.value='';
+  });
 }
 
 export async function initTopbar(){
@@ -152,7 +121,6 @@ export async function initTopbar(){
   const toggle=document.getElementById('navToggle');
   const nav=document.querySelector('nav');
   initNavToggle(toggle, nav);
-  const patientToggle=document.getElementById('patientMenuToggle');
-  const sessionBar=document.getElementById('sessionBar');
-  initPatientMenuToggle(patientToggle, sessionBar);
+  const patientMenu=document.getElementById('patientMenu');
+  initPatientMenuToggle(patientMenu);
 }
