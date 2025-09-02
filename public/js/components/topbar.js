@@ -118,12 +118,13 @@ export function initPatientMenuToggle(toggle, menu){
     document.addEventListener('keydown', trap);
   }
   toggle.addEventListener('click',()=>{
-    document.body.classList.contains('patient-menu-open') ? close() : open();
+    menu.hasAttribute('hidden') ? open() : close();
   });
   if(overlay){ overlay.addEventListener('click', close); }
-  const update=()=>{ if(mq && mq.matches) open(); else close(); };
-  if(mq){ mq.addEventListener('change', update); }
-  update();
+  if(mq){
+    mq.addEventListener('change',()=>{ if(!menu.hasAttribute('hidden')) open(); });
+  }
+  close();
 }
 
 export async function initTopbar(){
