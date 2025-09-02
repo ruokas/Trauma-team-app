@@ -9,6 +9,7 @@
   --bg:#ffffff;--card:#f8f9fa;--ink:#0c1218;
   --muted:#4a5665;--line:#d0d7e0;
   --accent:#1976d2;--red:#d32f2f;--yellow:#ffb300;--green:#2e7d32;--ink2:#152231;
+  --overlay:rgba(0,0,0,0.5);
 }
 
 :root.dark{
@@ -17,6 +18,7 @@
   /* brighten supporting colours for better contrast */
   --muted:#c2d0e0;--line:#2d3b4f;
   --accent:#4ea0f5;--red:#e53935;--yellow:#ffcc00;--green:#00c853;--ink2:#d7ecff;
+  --overlay:rgba(0,0,0,0.7);
 }
 
 *{box-sizing:border-box}
