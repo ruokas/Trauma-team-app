@@ -31,7 +31,11 @@ select option.red{color:var(--red)}
   font:inherit;
   outline:none;
 }
-  .chip-status-icon{font-weight:700;width:1em;text-align:center}
+  .chip-status-icon{display:inline-flex;width:1em;height:1em}
+  .chip-status-icon .chip-icon{width:100%;height:100%;display:block}
+  .chip-status-icon .chip-icon-selected{display:none}
+  .chip.active .chip-status-icon .chip-icon-default{display:none}
+  .chip.active .chip-status-icon .chip-icon-selected{display:block}
 label.chip input{
   position:absolute;
   opacity:0;
