@@ -84,7 +84,7 @@ export function initPatientMenuToggle(menu){
   update();
   window.addEventListener('resize', update);
   document.addEventListener('click', e=>{
-    if(menu.hasAttribute('open') && !menu.contains(e.target)){
+    if(menu.hasAttribute('open') && (!mq || !mq.matches) && !menu.contains(e.target)){
       menu.removeAttribute('open');
       search?.classList.add('hidden');
     }
