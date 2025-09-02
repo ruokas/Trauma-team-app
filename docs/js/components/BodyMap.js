@@ -45,11 +45,10 @@ export default class BodyMap {
     this.brushSize = 20;
     this.brushBurns = [];
     this.isDrawing = false;
-    // viewBox dimensions are still captured for pixel bounds but the
-    // total drawable area will be calculated from the body silhouettes
-    // themselves once the SVG is available.
     this.vbWidth = 1500;
     this.vbHeight = 1100;
+    // The total drawable area will be derived from the front and back
+    // body silhouettes once the SVG is available.
     this.totalArea = 0;
 
     // dragging
@@ -107,9 +106,8 @@ export default class BodyMap {
       this.vbHeight = vb[3];
     }
 
-    // Calculate the drawable area based on the actual front and back
-    // body silhouettes rather than the whole SVG viewBox.  Fallback to
-    // the viewBox area if the silhouettes are missing.
+    // Calculate combined area of the front and back silhouettes.  Fallback
+    // to the viewBox area if the silhouettes are not present.
     let area = 0;
     ['front-shape', 'back-shape'].forEach(id => {
       const el = this.svg?.querySelector(`#${id}`);
@@ -131,11 +129,11 @@ export default class BodyMap {
       });
     }
 
-    // Build zone paths ensuring all zones from bodyMapZones.js are present.
-    if (this.svg) {
+    // Build zone paths if they are not already present in the SVG.  Tests
+    // provide a bare bones SVG so we create the required paths here.
+    if (this.svg && !this.svg.querySelector('.zone')) {
       const layers = { front: $('#layer-front'), back: $('#layer-back') };
       zones.forEach(z => {
-        if (this.svg.querySelector(`.zone[data-zone="${z.id}"]`)) return;
         let group = layers[z.side].querySelector('.zones');
         if (!group) {
           group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
@@ -159,21 +157,25 @@ export default class BodyMap {
       });
     }
 
-    // Cache zone elements and attach click handlers
-    this.zoneMap.clear();
+    // Cache zone elements and attach click/pointer handlers
     $$('.zone', this.svg).forEach(el => {
       const id = el.dataset.zone;
       this.zoneMap.set(id, el);
-      el.addEventListener('click', evt => {
+      const handler = evt => {
+        if (evt.type === 'pointerdown') evt.preventDefault();
         const side = el.closest('#layer-back') ? 'back' : 'front';
         const p = this.svgPoint(evt);
         if (!this.pointInBody(p.x, p.y, side)) return;
         if (this.activeTool === TOOLS.BURN.char) {
+          if (evt.type === 'click') return; // avoid duplicate via click
+          evt.stopPropagation();
           this.addBrush(p.x, p.y, this.brushSize);
         } else {
           this.addMark(p.x, p.y, this.activeTool, side, id);
         }
-      });
+      };
+      el.addEventListener('click', handler);
+      el.addEventListener('pointerdown', handler);
     });
 
     // Tool buttons
@@ -206,15 +208,18 @@ export default class BodyMap {
       }
     });
 
-    // Clicking on body silhouettes adds marks
+    // Clicking/tapping on body silhouettes adds marks
     ['front-shape', 'back-shape'].forEach(id => {
       const el = document.getElementById(id);
       if (!el) return;
-      el.addEventListener('click', evt => {
+      const handler = evt => {
+        if (evt.type === 'pointerdown') evt.preventDefault();
         const p = this.svgPoint(evt);
         if (!this.pointInBody(p.x, p.y, el.dataset.side)) return;
         this.addMark(p.x, p.y, this.activeTool, el.dataset.side);
-      });
+      };
+      el.addEventListener('click', handler);
+      el.addEventListener('pointerdown', handler);
     });
 
     // Mark selection and dragging
@@ -310,8 +315,7 @@ export default class BodyMap {
     circle.classList.add('burn-area');
     circle.dataset.id = mid;
     this.brushLayer.appendChild(circle);
-    const area = Math.PI * r * r;
-    this.brushBurns.push({ id: mid, area });
+    this.brushBurns.push({ id: mid, x, y, r });
     if (record) {
       this.undoStack.push({ type: 'brush-add', brush: { id: mid, x, y, r } });
       this.redoStack = [];
@@ -424,19 +428,43 @@ export default class BodyMap {
     this.saveCb();
   }
 
-  /** Compute total burned area percentage. */
+  /**
+   * Compute total burned area percentage using union of brush circles.
+   * Circles are rasterised onto a virtual pixel grid matching the SVG
+   * viewBox.  Each covered pixel is counted once to avoid double counting
+   * overlapping brushes.
+   */
   burnArea() {
-    // Burn percentage is the ratio of all drawn brush areas to the total
-    // silhouette area calculated during initialisation.
-    const brushTotal = this.brushBurns.reduce((sum, b) => sum + b.area, 0);
-    return this.totalArea ? (brushTotal / this.totalArea) * 100 : 0;
+    if (!this.brushBurns.length) return 0;
+
+    const pixels = new Set();
+    for (const b of this.brushBurns) {
+      const r = Math.round(b.r);
+      const r2 = r * r;
+      const cx = Math.round(b.x);
+      const cy = Math.round(b.y);
+      const minX = Math.max(0, cx - r);
+      const maxX = Math.min(this.vbWidth - 1, cx + r);
+      const minY = Math.max(0, cy - r);
+      const maxY = Math.min(this.vbHeight - 1, cy + r);
+      for (let x = minX; x <= maxX; x++) {
+        for (let y = minY; y <= maxY; y++) {
+          const dx = x - cx;
+          const dy = y - cy;
+          if (dx * dx + dy * dy > r2) continue;
+          pixels.add(`${x},${y}`);
+        }
+      }
+    }
+
+    return this.totalArea ? (pixels.size / this.totalArea) * 100 : 0;
   }
 
   /** Display burn percentage in the UI. */
   updateBurnDisplay() {
     if (!this.burnTotalEl) return;
     const t = this.burnArea();
-    this.burnTotalEl.textContent = t ? `Nudegimai: ${t}%` : '';
+    this.burnTotalEl.textContent = t ? `Nudegimai: ${t.toFixed(2)}%` : '';
   }
 
   /** Enable/disable undo and redo buttons. */
@@ -641,17 +669,23 @@ export default class BodyMap {
     const res = {};
     const types = Object.values(TOOLS).map(t => t.char);
 
+    // Initialise result with all zones so burns can be reported even
+    // if no marks have been added.
     this.zoneMap.forEach((_, id) => {
       res[id] = { label: ZONE_LABELS[id] || id, burned: 0 };
       types.forEach(t => (res[id][t] = 0));
     });
 
+    // Aggregate marks per zone
     [...this.marks.querySelectorAll('use')].forEach(u => {
       const z = u.dataset.zone;
       if (!z || !res[z]) return;
       res[z][u.dataset.type] = (res[z][u.dataset.type] || 0) + 1;
     });
 
+    // Calculate burn coverage for each zone by rasterising the burn
+    // brushes and intersecting with zone paths.  Each pixel is counted
+    // once per zone to avoid double counting overlapping brushes.
     if (this.brushBurns.length && this.zoneMap.size) {
       const zonePixels = new Map();
       this.zoneMap.forEach((_, id) => zonePixels.set(id, new Set()));
