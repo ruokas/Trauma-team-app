@@ -32,13 +32,13 @@ header{
   min-height:var(--header-height);
   display:flex;
   align-items:center;
-  --line:color-mix(in srgb,#2d3b4f,white 20%);
-  --ink:color-mix(in srgb,#e9f2fb,white 10%);
+  --line:color-mix(in srgb,var(--line),var(--bg) 20%);
+  --ink:color-mix(in srgb,var(--ink),var(--bg) 10%);
   position:sticky;
   top:0;
   z-index:1000;
   width:100%;
-  background:#0d151fdd;
+  background:color-mix(in srgb,var(--bg),var(--ink) 10%);
   backdrop-filter:blur(6px);
   border-bottom:1px solid var(--line);
 }
