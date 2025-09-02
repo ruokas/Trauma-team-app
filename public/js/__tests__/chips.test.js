@@ -246,14 +246,10 @@ describe('chips', () => {
     setChipActive(chip, true);
     const icon = chip.querySelector('.chip-status-icon');
     const sr = chip.querySelector('.chip-status-text');
-    const def = icon.querySelector('.chip-icon-default');
-    const sel = icon.querySelector('.chip-icon-selected');
-    expect(def.hidden).toBe(true);
-    expect(sel.hidden).toBe(false);
+    expect(icon.textContent).toBe('✓');
     expect(sr.textContent).toBe('selected');
     setChipActive(chip, false);
-    expect(def.hidden).toBe(false);
-    expect(sel.hidden).toBe(true);
+    expect(icon.textContent).toBe('✗');
     expect(sr.textContent).toBe('not selected');
   });
 });
