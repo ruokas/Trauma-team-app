@@ -3,7 +3,7 @@ import bodyMap from './bodyMap.js';
 
 let authToken = localStorage.getItem('trauma_token') || null;
 let currentSessionId = localStorage.getItem('trauma_current_session') || null;
-let theme = localStorage.getItem('trauma_theme') || 'dark';
+let theme = localStorage.getItem('trauma_theme') || (typeof window !== 'undefined' ? window.initialTheme : null) || 'dark';
 
 const MAX_FIELD_LENGTH = 500;
 const limit = (val, max = MAX_FIELD_LENGTH) => (val || '').toString().slice(0, max);

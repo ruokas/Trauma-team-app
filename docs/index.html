@@ -6,8 +6,14 @@
 <meta name="color-scheme" content="dark light">
 <title>Sunkios traumos forma</title>
 <script>
-  const savedTheme = localStorage.getItem('trauma_theme') || 'dark';
-  document.documentElement.classList.add(savedTheme,'js');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const savedTheme = localStorage.getItem('trauma_theme');
+  const theme = savedTheme || (prefersDark ? 'dark' : 'light');
+  document.documentElement.classList.add(theme, 'js');
+  document.documentElement.style.colorScheme = theme;
+  const meta = document.querySelector('meta[name="color-scheme"]');
+  if (meta) meta.content = theme === 'dark' ? 'dark light' : 'light dark';
+  window.initialTheme = theme;
 </script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/main.css">
@@ -540,6 +546,10 @@
 
 <script src="https://unpkg.com/vis-timeline@8.3.0/standalone/umd/vis-timeline-graph2d.min.js"></script>
 <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous"></script>
+<script type="module">
+  import { initTheme } from './js/sessionManager.js';
+  initTheme();
+</script>
 <script src="js/app.js" defer type="module"></script>
 </body>
 </html>

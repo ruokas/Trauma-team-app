@@ -9,7 +9,7 @@ import './components/modal.js';
 import { initValidation, validateVitals } from './validation.js';
 import { initTopbar } from './components/topbar.js';
 import { initCollapsibles } from './sections.js';
-import { initTheme, saveAll, loadAll, getCurrentSessionId } from './sessionManager.js';
+import { saveAll, loadAll, getCurrentSessionId } from './sessionManager.js';
 import { connectSocket, fetchUsers } from './sessionApi.js';
 import { initSessions, populateSessionSelect, updateUserList } from './sessionUI.js';
 import bodyMap from './bodyMap.js';
@@ -26,7 +26,6 @@ import { init as initVitalsEvents } from './vitalsEvents.js';
 import { initChipGroups } from './chipData.js';
 export { validateVitals, createChipGroup };
 
-initTheme();
 
 /* ===== Imaging / Labs / Team ===== */
 function createChipGroup(selector, values){
