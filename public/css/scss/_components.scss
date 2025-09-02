@@ -148,6 +148,17 @@ body.patient-menu-open .patient-menu-overlay:not([hidden]){display:block}
   body.nav-open nav{transform:translateX(0);pointer-events:auto}
   body.nav-open{overflow:hidden}
 }
+/* Stroke app patient menu styles */
+.header-actions .patient-menu{position:relative}
+.header-actions .patient-menu>summary.btn{min-width:0}
+.header-actions .patient-menu .menu{position:absolute;right:0;display:flex;flex-direction:column;gap:$space-4;background:var(--card);border:1px solid var(--line);border-radius:$space-10;padding:$space-8;margin-top:$space-4}
+.header-actions .patient-menu .btn{width:100%}
+@media (min-width:769px){
+  .header-actions .patient-menu{position:static}
+  .header-actions .patient-menu>summary.btn{display:none}
+  .header-actions .patient-menu .menu{position:static;flex-direction:row;gap:$space-4;background:none;border:0;border-radius:0;padding:0;margin-top:0}
+  .header-actions .patient-menu .btn{width:auto}
+}
 @media print{ header,nav,.toolbar{display:none!important} body{background:#fff;color:#000} section.card{break-inside:avoid} }
 /* Interventions compact layout */
 section[data-tab="Intervencijos"] .card{padding:$space-8}

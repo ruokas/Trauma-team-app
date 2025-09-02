@@ -1,42 +1,25 @@
-describe('initPatientMenuToggle',()=>{
+describe('initPatientMenuToggle', () => {
   const { initPatientMenuToggle } = require('../components/topbar.js');
-  let toggle, menu;
-  describe('mobile',()=>{
-    beforeEach(()=>{
-      document.body.innerHTML='<button id="patientMenuToggle">Menu</button><div id="sessionBar" hidden aria-hidden="true"></div><div class="patient-menu-overlay" hidden></div>';
-      toggle=document.getElementById('patientMenuToggle');
-      menu=document.getElementById('sessionBar');
-      global.matchMedia = jest.fn().mockReturnValue({ matches:false, addEventListener: jest.fn() });
-      initPatientMenuToggle(toggle, menu);
-    });
-    test('toggles menu visibility',()=>{
-      expect(document.body.classList.contains('patient-menu-open')).toBe(false);
-      expect(menu.hasAttribute('hidden')).toBe(true);
-      toggle.click();
-      expect(document.body.classList.contains('patient-menu-open')).toBe(true);
-      expect(menu.hasAttribute('hidden')).toBe(false);
-      toggle.click();
-      expect(document.body.classList.contains('patient-menu-open')).toBe(false);
-      expect(menu.hasAttribute('hidden')).toBe(true);
-    });
+
+  test('opens menu on desktop', () => {
+    document.body.innerHTML = '<details id="patientMenu"><summary class="btn">Menu</summary><div class="menu"></div></details>';
+    global.matchMedia = jest.fn().mockReturnValue({ matches: true, addEventListener: jest.fn() });
+    const menu = document.getElementById('patientMenu');
+    initPatientMenuToggle(menu);
+    expect(menu.hasAttribute('open')).toBe(true);
   });
 
-  describe('desktop',()=>{
-    beforeEach(()=>{
-      document.body.innerHTML='<button id="patientMenuToggle">Menu</button><div id="sessionBar" hidden aria-hidden="true"></div><div class="patient-menu-overlay" hidden></div>';
-      toggle=document.getElementById('patientMenuToggle');
-      menu=document.getElementById('sessionBar');
-      global.matchMedia = jest.fn().mockReturnValue({ matches:true, addEventListener: jest.fn(), removeEventListener: jest.fn() });
-      initPatientMenuToggle(toggle, menu);
-    });
-    test('toggles without locking scroll',()=>{
-      expect(menu.hasAttribute('hidden')).toBe(true);
-      expect(document.body.classList.contains('patient-menu-open')).toBe(false);
-      toggle.click();
-      expect(menu.hasAttribute('hidden')).toBe(false);
-      expect(document.body.classList.contains('patient-menu-open')).toBe(false);
-      toggle.click();
-      expect(menu.hasAttribute('hidden')).toBe(true);
-    });
+  test('toggles search field', () => {
+    document.body.innerHTML = '<details id="patientMenu"><summary class="btn">Menu</summary><div class="menu"><button id="patientSearchToggle"></button><input id="patientSearch" class="hidden"></div></details>';
+    global.matchMedia = jest.fn().mockReturnValue({ matches: false, addEventListener: jest.fn() });
+    const menu = document.getElementById('patientMenu');
+    const search = document.getElementById('patientSearch');
+    const toggle = document.getElementById('patientSearchToggle');
+    initPatientMenuToggle(menu);
+    expect(search.classList.contains('hidden')).toBe(true);
+    toggle.click();
+    expect(search.classList.contains('hidden')).toBe(false);
+    toggle.click();
+    expect(search.classList.contains('hidden')).toBe(true);
   });
 });
