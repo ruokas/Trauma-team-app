@@ -56,19 +56,6 @@ export async function initSessions(){
     toggleArchived.textContent='Show archived';
     modalContent.insertBefore(toggleArchived, delWrap);
   }
-  let manageBtn=$('#btnManageSessions');
-  if(!manageBtn){
-    manageBtn=document.createElement('button');
-    manageBtn.type='button';
-    manageBtn.id='btnManageSessions';
-    manageBtn.className='btn';
-    manageBtn.textContent='Manage patients';
-    const btnNew=$('#btnNewSession');
-    btnNew.parentNode.insertBefore(manageBtn, btnNew.nextSibling);
-  }
-  manageBtn.addEventListener('click',()=>{
-    modal.classList.toggle('open');
-  });
   function renderDeleteButtons(focusId){
     delWrap.innerHTML='';
     const q=(searchInput?.value||'').trim().toLowerCase();

@@ -16,17 +16,19 @@
 <body>
 <a href="#views" class="skip-link">Skip to content</a>
 <header id="appHeader" role="banner">
-  <div class="toolbar" id="sessionBar">
-    <div class="session-filter">
-      <input type="text" id="sessionSearch" placeholder="Search sessions">
-      <select id="sessionSort">
-        <option value="created">Sort by creation</option>
-        <option value="name">Sort by name</option>
-      </select>
+  <div class="patient-menu">
+    <button type="button" class="btn" id="patientMenuToggle" aria-controls="sessionBar" aria-expanded="false" aria-label="Tvarkyti pacientus" title="Tvarkyti pacientus">Tvarkyti pacientus</button>
+    <div class="toolbar patient-menu-content" id="sessionBar" hidden aria-hidden="true">
+      <div class="session-filter">
+        <input type="text" id="sessionSearch" placeholder="Search sessions">
+        <select id="sessionSort">
+          <option value="created">Sort by creation</option>
+          <option value="name">Sort by name</option>
+        </select>
+      </div>
+      <select id="sessionSelect" class="w-auto"></select>
+      <button type="button" class="btn" id="btnNewSession">Naujas</button>
     </div>
-    <select id="sessionSelect" class="w-auto"></select>
-    <button type="button" class="btn" id="btnNewSession">Naujas</button>
-    <button type="button" class="btn" id="btnManageSessions">Manage patients</button>
   </div>
 </header>
 <template id="chip-template">
