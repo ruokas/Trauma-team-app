@@ -10,13 +10,13 @@ export function updateUserList(users){
   if(el) el.textContent = users.length ? `Prisijungę: ${users.join(', ')}` : '';
 }
 
-export function populateSessionSelect(sel, sessions, { query = '', sortBy = 'created' } = {}){
+export function populateSessionSelect(sel, sessions, { query = '' } = {}){
   sel.innerHTML='';
   const q=query.trim().toLowerCase();
-  let list=sessions.filter(s=>(showArchived || !s.archived) && (!q || s.name.toLowerCase().includes(q)));
-  list=list.slice();
-  if(sortBy==='name') list.sort((a,b)=>a.name.localeCompare(b.name));
-  else list.sort((a,b)=>(a.created||0)-(b.created||0));
+  const list=sessions
+    .filter(s=>(showArchived || !s.archived) && (!q || s.name.toLowerCase().includes(q)))
+    .slice()
+    .sort((a,b)=>(a.created||0)-(b.created||0));
   list.forEach(s=>{ const opt=document.createElement('option'); opt.value=s.id; opt.textContent=s.name; sel.appendChild(opt); });
   return list;
 }
@@ -25,7 +25,6 @@ export async function initSessions(){
   const select=$('#sessionSelect');
   if(!select) return;
   const searchInput=$('#sessionSearch');
-  const sortSelect=$('#sessionSort');
   let sessions=await getSessions();
   let currentSessionId=getCurrentSessionId();
   let modal=$('#sessionManagerModal');
@@ -185,7 +184,7 @@ export async function initSessions(){
     }
   }
   const render=(focusId)=>{
-      const filtered=populateSessionSelect(select, sessions, { query: searchInput?.value || '', sortBy: sortSelect?.value || 'created' });
+      const filtered=populateSessionSelect(select, sessions, { query: searchInput?.value || '' });
       if(currentSessionId && filtered.some(s=>s.id===currentSessionId)){
         select.value=currentSessionId;
       }else{
@@ -205,7 +204,6 @@ export async function initSessions(){
       render();
     });
     searchInput?.addEventListener('input', ()=>render());
-    sortSelect?.addEventListener('change', ()=>render());
     if(!sessions.length){
       const id=Date.now().toString(36);
       sessions=[{id,name:'Pacientas Nr.1', archived:false, created:Date.now()}];

@@ -16,18 +16,14 @@
 <body>
 <a href="#views" class="skip-link">Skip to content</a>
 <header id="appHeader" role="banner">
-  <div class="toolbar" id="sessionBar">
-    <div class="session-filter">
-      <input type="text" id="sessionSearch" placeholder="Search sessions">
-      <select id="sessionSort">
-        <option value="created">Sort by creation</option>
-        <option value="name">Sort by name</option>
-      </select>
+    <div class="toolbar" id="sessionBar">
+      <div class="session-filter">
+        <input type="text" id="sessionSearch" placeholder="Search sessions">
+      </div>
+      <select id="sessionSelect" class="w-auto"></select>
+      <button type="button" class="btn" id="btnNewSession">Naujas</button>
+      <button type="button" class="btn" id="btnManageSessions">Manage patients</button>
     </div>
-    <select id="sessionSelect" class="w-auto"></select>
-    <button type="button" class="btn" id="btnNewSession">Naujas</button>
-    <button type="button" class="btn" id="btnManageSessions">Manage patients</button>
-  </div>
 </header>
 <template id="chip-template">
   <span class="chip-status-icon" aria-hidden="true">✗</span>

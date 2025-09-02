@@ -23,15 +23,20 @@ describe('initPatientMenuToggle',()=>{
 
   describe('desktop',()=>{
     beforeEach(()=>{
-      document.body.innerHTML='<button id="patientMenuToggle">Menu</button><div id="sessionBar" aria-hidden="false"></div><div class="patient-menu-overlay" hidden></div>';
+      document.body.innerHTML='<button id="patientMenuToggle">Menu</button><div id="sessionBar" hidden aria-hidden="true"></div><div class="patient-menu-overlay" hidden></div>';
       toggle=document.getElementById('patientMenuToggle');
       menu=document.getElementById('sessionBar');
       global.matchMedia = jest.fn().mockReturnValue({ matches:true, addEventListener: jest.fn(), removeEventListener: jest.fn() });
       initPatientMenuToggle(toggle, menu);
     });
-    test('does not lock scroll',()=>{
+    test('toggles without locking scroll',()=>{
+      expect(menu.hasAttribute('hidden')).toBe(true);
+      expect(document.body.classList.contains('patient-menu-open')).toBe(false);
+      toggle.click();
       expect(menu.hasAttribute('hidden')).toBe(false);
       expect(document.body.classList.contains('patient-menu-open')).toBe(false);
+      toggle.click();
+      expect(menu.hasAttribute('hidden')).toBe(true);
     });
   });
 });
