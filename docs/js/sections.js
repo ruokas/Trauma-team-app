@@ -17,12 +17,15 @@ export function initCollapsibles(){
       const collapsed = fs.dataset.open !== 'true' && view.id !== 'view-aktivacija' && i > 0;
       if(collapsed){
         fs.classList.add('collapsed');
+        content.style.display = 'none';
         legend.setAttribute('aria-expanded','false');
       } else {
         legend.setAttribute('aria-expanded','true');
       }
       const toggle = () => {
-        const isCollapsed = fs.classList.toggle('collapsed');
+        fs.classList.toggle('collapsed');
+        const isCollapsed = fs.classList.contains('collapsed');
+        content.style.display = isCollapsed ? 'none' : '';
         legend.setAttribute('aria-expanded', (!isCollapsed).toString());
       };
       legend.addEventListener('click', toggle);
