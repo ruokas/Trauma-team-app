@@ -1,6 +1,6 @@
 @use 'variables' as *;
 
-.btn{border:1px solid var(--line);background:#152231;color:var(--ink);padding:$space-8 $space-12;border-radius:$space-10;cursor:pointer;font-weight:600;transition:background-color .2s,color .2s;display:flex;align-items:center;justify-content:center}
+.btn{border:1px solid var(--line);background:var(--card);color:var(--ink);padding:$space-8 $space-12;border-radius:$space-10;cursor:pointer;font-weight:600;transition:background-color .2s,color .2s;display:flex;align-items:center;justify-content:center}
 .btn:hover{filter:brightness(1.1)}
 .btn:active{filter:brightness(.9)}
 .btn:focus-visible{outline:$space-3 solid var(--accent);outline-offset:$space-2;transition:background-color .2s,color .2s}
@@ -9,7 +9,7 @@
 .btn.ghost{background:transparent;color:var(--muted);border-style:dashed}
 .btn.icon-btn{padding:$space-8;min-width:0;width:2.5rem;height:2.5rem}
 #d_gks_total{margin-left:auto;font-weight:700}
-.pill{display:inline-flex;align-items:center;gap:$space-8;padding:$space-6 $space-10;border:1px solid var(--line);border-radius:999px;background:#152231;color:#fff;font-weight:700}
+.pill{display:inline-flex;align-items:center;gap:$space-8;padding:$space-6 $space-10;border:1px solid var(--line);border-radius:999px;background:var(--card);color:var(--ink);font-weight:700}
 .pill:has(input:checked){background:var(--accent);border-color:#2d74b8}
 .pill.red:has(input:checked){background:var(--red);border-color:#a52623}
   #fastGrid .pill{
@@ -17,16 +17,16 @@
     font-size:$font-lg;
   }
 select option.red{color:var(--red)}
-.chip{
+  .chip{
   display:inline-flex;
   align-items:center;
   justify-content:center;
   gap:$space-4;
     padding:$space-8 $space-10;
   border:1px solid var(--line);
-  border-radius:999px;
-  background:#152231;
-  color:var(--ink);
+    border-radius:999px;
+    background:var(--card);
+    color:var(--ink);
   cursor:pointer;
   user-select:none;
   font:inherit;
@@ -48,7 +48,7 @@ label.chip input{
 .chip.yellow.active{background:var(--yellow);color:#231b00;border-color:#8a7400}
 .chip.auto{outline:$space-2 dashed var(--accent);outline-offset:$space-2}
   .chip-group{display:flex;flex-wrap:wrap;gap:$space-8}
-  .gcs-calc{margin-top:$space-8;border:1px solid var(--line);border-radius:$space-10;padding:$space-8;background:#152231}
+    .gcs-calc{margin-top:$space-8;border:1px solid var(--line);border-radius:$space-10;padding:$space-8;background:var(--card)}
   .gcs-calc .grid{margin-bottom:$space-8}
   .blood-order-box{margin-top:$space-8;border:1px solid var(--line);border-radius:$space-10;padding:$space-8}
   .blood-order-box .row{gap:$space-8;flex-wrap:wrap;align-items:center}
@@ -58,7 +58,7 @@ section[data-tab="B – Kvėpavimas"] h3:first-of-type{margin-top:0}
     .hint{color:var(--muted);font-size:0.875rem}
     .error-msg{color:var(--red);font-size:0.875rem}
 input.invalid,select.invalid{border-color:var(--red)}
-      .badge{padding:$space-2 $space-8;border-radius:$space-8;font-size:$font-xs;border:1px solid var(--line);background:#152231;color:var(--muted)}
+        .badge{padding:$space-2 $space-8;border-radius:$space-8;font-size:$font-xs;border:1px solid var(--line);background:var(--card);color:var(--muted)}
   .activation-dot{width:0.75rem;height:0.75rem;border-radius:50%;display:none;margin-left:$space-8}
   .activation-dot.red{background:var(--red);display:inline-block}
   .activation-dot.yellow{background:var(--yellow);display:inline-block}
@@ -78,7 +78,7 @@ input.invalid,select.invalid{border-color:var(--red)}
 .timeline-entry:last-child{border-bottom:none}
 /* SVG body map */
 .map-toolbar{display:flex;gap:$space-8;flex-wrap:wrap;align-items:center;margin:$space-6 0}
-  .tool{padding:$space-8 $space-10;border-radius:$space-10;border:1px solid var(--line);min-height:2.25rem;cursor:pointer;font-weight:700;display:inline-flex;align-items:center;gap:$space-8;--btn-color:#152231;background:var(--btn-color);color:var(--ink);}
+    .tool{padding:$space-8 $space-10;border-radius:$space-10;border:1px solid var(--line);min-height:2.25rem;cursor:pointer;font-weight:700;display:inline-flex;align-items:center;gap:$space-8;--btn-color:var(--card);background:var(--btn-color);color:var(--ink);}
   .tool .icon{display:inline-flex;width:1em;height:1em;align-items:center;justify-content:center}
   .tool[data-tool="Ž"]{--btn-color:#ef5350;color:#fff}
   .tool[data-tool="S"]{--btn-color:#64b5f6;color:#000}
@@ -88,7 +88,7 @@ input.invalid,select.invalid{border-color:var(--red)}
   #btnClearMap{--btn-color:#ffb74d;color:#000}
   #btnExportSvg{--btn-color:#81c784;color:#000}
 .tool.active{background:color-mix(in srgb,var(--btn-color),#000 20%);color:#fff;border-color:color-mix(in srgb,var(--btn-color),#000 30%)}
-  #bodySvg{display:block;width:100%;height:auto;aspect-ratio:1500/1100;max-width:40rem;max-height:80vh;border:1px solid var(--line);border-radius:$space-12;background:#0b141e}
+    #bodySvg{display:block;width:100%;height:auto;aspect-ratio:1500/1100;max-width:40rem;max-height:80vh;border:1px solid var(--line);border-radius:$space-12;background:var(--bg)}
 .silhouette{fill:var(--accent);stroke:var(--accent);stroke-width:2}
     .label{fill:#a9b6c5;font:bold $font-lg system-ui}
 .mark-w{stroke:#ef5350;stroke-width:3;fill:none}
@@ -104,18 +104,26 @@ input.invalid,select.invalid{border-color:var(--red)}
   .zone.selected{fill:color-mix(in srgb,var(--accent) 80%,transparent)}
 #navToggle{display:none}
 #patientMenuToggle{
-  display:none;
-  width:3rem;
-  height:3rem;
-  border-radius:50%;
-  padding:0;
+  display:inline-block;
 }
 .patient-menu{position:relative;display:flex;align-items:center}
 .nav-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:10;display:none}
 body.nav-open .nav-overlay:not([hidden]){display:block}
 .patient-menu-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:10;display:none}
 body.patient-menu-open .patient-menu-overlay:not([hidden]){display:block}
-body.patient-menu-open{overflow:hidden}
+.patient-menu-content{
+  position:absolute;
+  top:100%;
+  left:0;
+  margin-top:$space-4;
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:$space-8;
+  padding:$space-8;
+  flex-wrap:nowrap;
+  gap:$space-6;
+  z-index:100;
+}
   @media (max-width:768px){
   #navToggle{display:inline-block;margin-bottom:$space-8}
   #patientMenuToggle{display:inline-flex;margin-bottom:$space-8;align-items:center;justify-content:center}
@@ -123,22 +131,24 @@ body.patient-menu-open{overflow:hidden}
     position:fixed;
     top:0;right:0;bottom:0;
     width:13.75rem;
-    background:#0d151f;
+      background:var(--card);
     transform:translateX(100%);
     transition:transform .3s ease;
     padding:$space-14 $space-16;
     overflow:auto;
     z-index:1100;
     pointer-events:none;
+    flex-wrap:wrap;
+    gap:$space-8;
   }
   body.patient-menu-open .patient-menu-content{transform:translateX(0);pointer-events:auto}
-  body.nav-open{overflow:hidden}
+  body.patient-menu-open{overflow:hidden}
   main{grid-template-columns:1fr}
   nav{
     position:fixed;
     top:0;left:0;bottom:0;
     width:13.75rem;
-    background:#0d151f;
+      background:var(--card);
     transform:translateX(-100%);
     transition:transform .3s ease;
     padding:$space-14 $space-16;
@@ -147,6 +157,7 @@ body.patient-menu-open{overflow:hidden}
     pointer-events:none;
   }
   body.nav-open nav{transform:translateX(0);pointer-events:auto}
+  body.nav-open{overflow:hidden}
 }
 @media print{ header,nav,.toolbar{display:none!important} body{background:#fff;color:#000} section.card{break-inside:avoid} }
 /* Interventions compact layout */
