@@ -104,26 +104,17 @@ input.invalid,select.invalid{border-color:var(--red)}
   .zone.selected{fill:color-mix(in srgb,var(--accent) 80%,transparent)}
 #navToggle{display:none}
 #patientMenuToggle{
-  display:inline-block;
+  display:none;
+  width:3rem;
+  height:3rem;
+  border-radius:50%;
+  padding:0;
 }
 .patient-menu{position:relative;display:flex;align-items:center}
 .nav-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:10;display:none}
 body.nav-open .nav-overlay:not([hidden]){display:block}
 .patient-menu-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:10;display:none}
 body.patient-menu-open .patient-menu-overlay:not([hidden]){display:block}
-.patient-menu-content{
-  position:absolute;
-  top:100%;
-  left:0;
-  margin-top:$space-4;
-  background:var(--card);
-  border:1px solid var(--line);
-  border-radius:$space-8;
-  padding:$space-8;
-  flex-wrap:nowrap;
-  gap:$space-6;
-  z-index:100;
-}
   @media (max-width:768px){
   #navToggle{display:inline-block;margin-bottom:$space-8}
   #patientMenuToggle{display:inline-flex;margin-bottom:$space-8;align-items:center;justify-content:center}
@@ -138,8 +129,6 @@ body.patient-menu-open .patient-menu-overlay:not([hidden]){display:block}
     overflow:auto;
     z-index:1100;
     pointer-events:none;
-    flex-wrap:wrap;
-    gap:$space-8;
   }
   body.patient-menu-open .patient-menu-content{transform:translateX(0);pointer-events:auto}
   body.patient-menu-open{overflow:hidden}
