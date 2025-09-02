@@ -15,6 +15,7 @@ export function addChipIndicators(chip){
     const icon=document.createElement('span');
     icon.className='chip-status-icon';
     icon.setAttribute('aria-hidden','true');
+    icon.innerHTML=`<svg class="chip-icon chip-icon-default" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2"><line x1="1" y1="1" x2="9" y2="9"/><line x1="9" y1="1" x2="1" y2="9"/></svg><svg class="chip-icon chip-icon-selected" viewBox="0 0 10 10" fill="none" stroke="currentColor" stroke-width="2" hidden><polyline points="1 5 4 8 9 1"/></svg>`;
     chip.prepend(icon);
     const sr=document.createElement('span');
     sr.className='chip-status-text sr-only';
@@ -44,7 +45,12 @@ export function setChipActive(chip, active){
   }
   const icon=chip.querySelector('.chip-status-icon');
   const sr=chip.querySelector('.chip-status-text');
-  if(icon) icon.textContent=active?'✓':'✗';
+  const def=icon?.querySelector('.chip-icon-default');
+  const sel=icon?.querySelector('.chip-icon-selected');
+  if(def && sel){
+    def.hidden=!!active;
+    sel.hidden=!active;
+  }
   if(sr) sr.textContent=active?'selected':'not selected';
 }
 
