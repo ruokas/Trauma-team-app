@@ -39,11 +39,11 @@ export function initNavToggle(toggle, nav){
     }
   }
   function open(){
-    document.body.classList.add('nav-open');
+    const mobile=!navMq || !navMq.matches;
+    document.body.classList.toggle('nav-open', mobile);
     toggle.setAttribute('aria-expanded','true');
     nav.removeAttribute('aria-hidden');
     nav.removeAttribute('hidden');
-    const mobile=!navMq || !navMq.matches;
     if(overlay) overlay.hidden=!mobile;
     document.body.style.overflow=mobile ? 'hidden' : '';
     const items=nav.querySelectorAll(focusableSel);
@@ -106,11 +106,11 @@ export function initPatientMenuToggle(toggle, menu){
     }
   }
   function open(){
-    document.body.classList.add('patient-menu-open');
+    const mobile=!mq || !mq.matches;
+    document.body.classList.toggle('patient-menu-open', mobile);
     toggle.setAttribute('aria-expanded','true');
     menu.removeAttribute('hidden');
     menu.removeAttribute('aria-hidden');
-    const mobile=!mq || !mq.matches;
     if(overlay) overlay.hidden=!mobile;
     document.body.style.overflow=mobile ? 'hidden' : '';
     const items=menu.querySelectorAll(focusableSel);
