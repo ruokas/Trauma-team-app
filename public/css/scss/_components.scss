@@ -7,6 +7,7 @@
 .btn.primary{background:var(--accent);color:#fff;border-color:#2d74b8}
 .btn.warn{background:#ffb74d;color:#271400;border-color:#bf7d19}
 .btn.ghost{background:transparent;color:var(--muted);border-style:dashed}
+.btn.icon-btn{padding:$space-8;min-width:0;width:2.5rem;height:2.5rem}
 #d_gks_total{margin-left:auto;font-weight:700}
 .pill{display:inline-flex;align-items:center;gap:$space-8;padding:$space-6 $space-10;border:1px solid var(--line);border-radius:999px;background:#152231;color:#fff;font-weight:700}
 .pill:has(input:checked){background:var(--accent);border-color:#2d74b8}
