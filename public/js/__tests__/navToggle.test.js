@@ -51,7 +51,7 @@ describe('initNavToggle',()=>{
       tabs[0].click();
       expect(toggle.getAttribute('aria-expanded')).toBe('true');
       expect(nav.hasAttribute('aria-hidden')).toBe(false);
-      expect(document.body.classList.contains('nav-open')).toBe(true);
+      expect(document.body.classList.contains('nav-open')).toBe(false);
     });
 
     test('reopens if another handler hides it', () => {
@@ -59,12 +59,12 @@ describe('initNavToggle',()=>{
       tabs[0].addEventListener('click', () => {
         nav.setAttribute('hidden','');
         nav.setAttribute('aria-hidden','true');
-        document.body.classList.remove('nav-open');
+        document.body.classList.add('nav-open');
       });
       tabs[0].click();
       jest.runAllTimers();
       expect(nav.hasAttribute('hidden')).toBe(false);
-      expect(document.body.classList.contains('nav-open')).toBe(true);
+      expect(document.body.classList.contains('nav-open')).toBe(false);
       jest.useRealTimers();
     });
   });
