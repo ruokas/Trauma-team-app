@@ -1,3 +1,4 @@
+import { notify } from '../alerts.js';
 
 const NAV_BREAKPOINT = 768;
 let navMq;
@@ -38,17 +39,13 @@ export function initNavToggle(toggle, nav){
     }
   }
   function open(){
-    document.body.classList.add('nav-open');
+    const mobile=!navMq || !navMq.matches;
+    document.body.classList.toggle('nav-open', mobile);
     toggle.setAttribute('aria-expanded','true');
     nav.removeAttribute('aria-hidden');
     nav.removeAttribute('hidden');
-    if(!navMq || !navMq.matches){
-      if(overlay) overlay.hidden=false;
-      document.body.style.overflow='hidden';
-    }else{
-      if(overlay) overlay.hidden=true;
-      document.body.style.overflow='';
-    }
+    if(overlay) overlay.hidden=!mobile;
+    document.body.style.overflow=mobile ? 'hidden' : '';
     const items=nav.querySelectorAll(focusableSel);
     if(items.length) items[0].focus();
     document.addEventListener('keydown', trap);
@@ -59,15 +56,15 @@ export function initNavToggle(toggle, nav){
   if(overlay){
     overlay.addEventListener('click', close);
   }
-  // Ensure the navigation stays open on desktop after tab clicks.
-  nav.addEventListener('click',()=>{
+  // Close the navigation after selecting a tab on small screens while
+  // keeping it open on desktop.
+  nav.addEventListener('click', () => {
     if(navMq && navMq.matches){
       setTimeout(open);
+    }else{
+      close();
     }
   });
-  // Clicking a tab should no longer hide the navigation menu. The handler
-  // that previously closed the menu on tab clicks has been removed to keep
-  // the navigation visible.
   navMq=typeof matchMedia==='function' ? matchMedia(`(min-width: ${NAV_BREAKPOINT}px)`) : null;
   if(navMq){
     navMqListener=e=>{ e.matches ? open() : close(); };
@@ -78,16 +75,39 @@ export function initNavToggle(toggle, nav){
   }
 }
 
+export function initPatientMenuToggle(menu){
+  if(!menu) return;
+  const search=menu.querySelector('#patientSearch');
+  const searchToggle=menu.querySelector('#patientSearchToggle');
+  const mq=typeof matchMedia==='function' ? matchMedia('(min-width: 769px)') : null;
+  const update=()=>{ if(mq && mq.matches) menu.setAttribute('open',''); else menu.removeAttribute('open'); };
+  update();
+  window.addEventListener('resize', update);
+  document.addEventListener('click', e=>{
+    if(menu.hasAttribute('open') && !menu.contains(e.target)){
+      menu.removeAttribute('open');
+      search?.classList.add('hidden');
+    }
+  });
+  searchToggle?.addEventListener('click',()=>{
+    search?.classList.toggle('hidden');
+    if(!search?.classList.contains('hidden')) search.focus();
+    else if(search) search.value='';
+  });
+}
+
 export async function initTopbar(){
   const header=document.getElementById('appHeader');
   if(!header || typeof fetch!=='function') return;
   try{
     const res=await fetch('assets/partials/topbar.html');
-    if(res.ok){
-      header.innerHTML=await res.text();
-    }
+    if(!res.ok) throw new Error(`HTTP ${res.status}`);
+    header.innerHTML=await res.text();
   }catch(e){
     console.error('Failed to load topbar', e);
+    notify({type:'error', message:'Failed to load topbar'});
+    header.innerHTML='<div class="wrap"><button type="button" class="btn" id="retryTopbar">Retry</button></div>';
+    header.querySelector('#retryTopbar')?.addEventListener('click', initTopbar);
   }
   if(typeof ResizeObserver==='function'){
     const updateHeight=entries=>{
@@ -101,4 +121,6 @@ export async function initTopbar(){
   const toggle=document.getElementById('navToggle');
   const nav=document.querySelector('nav');
   initNavToggle(toggle, nav);
+  const patientMenu=document.getElementById('patientMenu');
+  initPatientMenuToggle(patientMenu);
 }
