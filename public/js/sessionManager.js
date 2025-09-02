@@ -6,7 +6,7 @@ import { updateDomToggles } from './domToggles.js';
 
 let authToken = localStorage.getItem('trauma_token') || null;
 let currentSessionId = localStorage.getItem('trauma_current_session') || null;
-let theme = localStorage.getItem('trauma_theme') || (typeof window !== 'undefined' ? window.initialTheme : null) || 'dark';
+let theme = localStorage.getItem('trauma_theme') || 'dark';
 
 export function setTheme(t){
   theme = t === 'light' ? 'light' : 'dark';
