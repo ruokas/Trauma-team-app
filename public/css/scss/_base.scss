@@ -203,24 +203,8 @@ h1{font-size:clamp(1.25rem,5vw,2rem);line-height:1.2;margin:$space-4 0}
   margin-right:$space-4;
   &:only-child{margin-right:0}
 }
-.icon-field{
-  position:relative;
-  svg{
-    position:absolute;
-    top:50%;
-    left:$space-8;
-    width:1em;
-    height:1em;
-    transform:translateY(-50%);
-    pointer-events:none;
-  }
-  input,select{
-    padding-left:$space-32;
-  }
-}
 .toolbar{display:flex;gap:$space-8;flex-wrap:wrap;margin-top:$space-8}
 .toolbar--scroll{flex-wrap:nowrap;overflow-x:auto}
-.session-filter{display:flex;align-items:center;gap:$space-8}
 .header-actions .toolbar:first-child,
 .header-center .toolbar:first-child{margin-top:0}
 main{max-width:1200px;margin:$space-12 auto;padding:0 $space-16;display:grid;grid-template-columns:220px 1fr;gap:$space-12}
