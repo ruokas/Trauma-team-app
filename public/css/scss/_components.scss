@@ -107,9 +107,9 @@ input.invalid,select.invalid{border-color:var(--red)}
   display:inline-block;
 }
 .patient-menu{position:relative;display:flex;align-items:center}
-.nav-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:10;display:none}
+.nav-overlay{position:fixed;inset:0;background:var(--overlay);z-index:10;display:none}
 body.nav-open .nav-overlay:not([hidden]){display:block}
-.patient-menu-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:10;display:none}
+.patient-menu-overlay{position:fixed;inset:0;background:var(--overlay);z-index:10;display:none}
 body.patient-menu-open .patient-menu-overlay:not([hidden]){display:block}
 .patient-menu-content{
   position:absolute;
@@ -169,7 +169,7 @@ section[data-tab="Intervencijos"] .med-search{margin-bottom:$space-8}
 #pain_meds{grid-template-columns:1fr;gap:$space-4}
 #pain_meds .chip{width:100%;justify-content:flex-start;text-align:left;padding:$space-4 $space-8;white-space:normal}
 /* Modal and toast components */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:1000}
+.modal-overlay{position:fixed;inset:0;background:var(--overlay);display:flex;align-items:center;justify-content:center;z-index:1000}
   .modal{background:var(--card);color:var(--ink);padding:$space-20;border-radius:$space-10;box-shadow:0 2px 10px rgba(0,0,0,0.3);max-width:90%;width:20rem}
 .modal p{margin-top:0}
 .modal .actions{display:flex;justify-content:flex-end;gap:$space-8;margin-top:$space-16}
