@@ -22,4 +22,26 @@ describe('initPatientMenuToggle', () => {
     toggle.click();
     expect(search.classList.contains('hidden')).toBe(true);
   });
+
+  test('does not close on outside click on desktop', () => {
+    document.body.innerHTML = '<details id="patientMenu"><summary class="btn">Menu</summary><div class="menu"></div></details><div id="outside"></div>';
+    global.matchMedia = jest.fn().mockReturnValue({ matches: true, addEventListener: jest.fn() });
+    const menu = document.getElementById('patientMenu');
+    const outside = document.getElementById('outside');
+    initPatientMenuToggle(menu);
+    expect(menu.hasAttribute('open')).toBe(true);
+    outside.click();
+    expect(menu.hasAttribute('open')).toBe(true);
+  });
+
+  test('closes on outside click on mobile', () => {
+    document.body.innerHTML = '<details id="patientMenu"><summary class="btn">Menu</summary><div class="menu"></div></details><div id="outside"></div>';
+    global.matchMedia = jest.fn().mockReturnValue({ matches: false, addEventListener: jest.fn() });
+    const menu = document.getElementById('patientMenu');
+    const outside = document.getElementById('outside');
+    initPatientMenuToggle(menu);
+    menu.setAttribute('open', '');
+    outside.click();
+    expect(menu.hasAttribute('open')).toBe(false);
+  });
 });
