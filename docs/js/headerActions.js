@@ -2,7 +2,7 @@ import { $ } from './utils.js';
 import { notify } from './alerts.js';
 import { startArrivalTimer } from './arrival.js';
 import { showTab } from './tabs.js';
-import { getAuthToken, logout, setTheme } from './sessionManager.js';
+import { getAuthToken, logout } from './sessionManager.js';
 import bodyMap from './bodyMap.js';
 
 export function setupHeaderActions({ validateForm }){
@@ -72,34 +72,13 @@ export function setupHeaderActions({ validateForm }){
   }));
 
   const actionsBar=document.getElementById('desktopActions');
-  if(actionsBar){
-    let themeBtn=document.getElementById('btnTheme');
-    if(!themeBtn){
-      themeBtn=document.createElement('button');
-      themeBtn.type='button';
-      themeBtn.className='btn';
-      themeBtn.id='btnTheme';
-      actionsBar.appendChild(themeBtn);
-    }
-    const updateThemeBtn=()=>{
-      const dark=document.documentElement.classList.contains('dark');
-      themeBtn.textContent=dark?'Light mode':'Dark mode';
-    };
-    themeBtn.addEventListener('click',()=>{
-      const next=document.documentElement.classList.contains('dark')?'light':'dark';
-      setTheme(next);
-      updateThemeBtn();
-    });
-    updateThemeBtn();
-
-    if(getAuthToken() && !document.getElementById('btnLogout')){
-      const btn=document.createElement('button');
-      btn.type='button';
-      btn.className='btn';
-      btn.id='btnLogout';
-      btn.textContent='Logout';
-      btn.addEventListener('click',()=>logout());
-      actionsBar.appendChild(btn);
-    }
+  if(actionsBar && getAuthToken() && !document.getElementById('btnLogout')){
+    const btn=document.createElement('button');
+    btn.type='button';
+    btn.className='btn';
+    btn.id='btnLogout';
+    btn.textContent='Logout';
+    btn.addEventListener('click',()=>logout());
+    actionsBar.appendChild(btn);
   }
 }
