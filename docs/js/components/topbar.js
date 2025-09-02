@@ -82,8 +82,10 @@ export async function initTopbar(){
   const header=document.getElementById('appHeader');
   if(!header || typeof fetch!=='function') return;
   try{
-    const base=typeof window!=='undefined'? (window.location.pathname.endsWith('/')?window.location.pathname:window.location.pathname+'/') : '/';
-    const res=await fetch(base+'assets/partials/topbar.html');
+    const base=typeof window!=='undefined'
+      ? new URL('.', window.location.href).pathname
+      : '/';
+    const res=await fetch(base + 'assets/partials/topbar.html');
     if(res.ok){
       header.innerHTML=await res.text();
     }
