@@ -32,13 +32,13 @@ header{
   min-height:var(--header-height);
   display:flex;
   align-items:center;
-  --line:color-mix(in srgb,#2d3b4f,white 20%);
-  --ink:color-mix(in srgb,#e9f2fb,white 10%);
+  --line:color-mix(in srgb,var(--line),var(--bg) 20%);
+  --ink:color-mix(in srgb,var(--ink),var(--bg) 10%);
   position:sticky;
   top:0;
   z-index:1000;
   width:100%;
-  background:#0d151fdd;
+  background:color-mix(in srgb,var(--card),transparent 15%);
   backdrop-filter:blur(6px);
   border-bottom:1px solid var(--line);
 }
@@ -210,18 +210,18 @@ h1{font-size:clamp(1.25rem,5vw,2rem);line-height:1.2;margin:$space-4 0}
 main{max-width:1200px;margin:$space-12 auto;padding:0 $space-16;display:grid;grid-template-columns:220px 1fr;gap:$space-12}
 nav{position:sticky;top:var(--header-height);align-self:start}
 #navToggle{display:none}
-nav .tab{display:flex;align-items:center;gap:$space-8;width:100%;white-space:nowrap;padding:$space-10 $space-12;border:1px solid var(--line);border-radius:$space-10;margin-bottom:$space-8;background:#152231;color:var(--ink);cursor:pointer;font-weight:600;text-align:left;text-transform:none;font-size:$font-lg;transition:background-color .2s,color .2s}
-nav .tab:hover{background:color-mix(in srgb,#152231,white 10%);color:color-mix(in srgb,var(--ink),white 10%)}
-nav .tab.active{background:#1f2e44;border-color:#2b405c}
+nav .tab{display:flex;align-items:center;gap:$space-8;width:100%;white-space:nowrap;padding:$space-10 $space-12;border:1px solid var(--line);border-radius:$space-10;margin-bottom:$space-8;background:var(--card);color:var(--ink);cursor:pointer;font-weight:600;text-align:left;text-transform:none;font-size:$font-lg;transition:background-color .2s,color .2s}
+nav .tab:hover{background:color-mix(in srgb,var(--card),var(--bg) 10%);color:color-mix(in srgb,var(--ink),var(--bg) 10%)}
+nav .tab.active{background:color-mix(in srgb,var(--card),var(--ink) 20%);border-color:color-mix(in srgb,var(--line),var(--ink) 20%)}
 nav .tab:focus{outline:none}
 nav .tab:focus-visible{outline:$space-2 solid var(--accent)}
 .tab-icon{width:1.5rem}
-section.card{background:rgba(18,26,36,.6);backdrop-filter:blur(10px);border:1px solid color-mix(in srgb,var(--line),white 20%);border-radius:$space-14;padding:$space-14;color:var(--ink)}
+section.card{background:var(--card);backdrop-filter:blur(10px);border:1px solid color-mix(in srgb,var(--line),var(--bg) 20%);border-radius:$space-14;padding:$space-14;color:var(--ink)}
 section.card h2{font-size:clamp(1rem,3.5vw,1.5rem);margin:0 0 $space-10}
 section.card .grid{display:grid;gap:$space-10}
 label{display:block;color:var(--muted);font-size:$font-sm;margin-bottom:$space-4}
 input[type="text"],input[type="number"],input[type="time"],input[type="date"],textarea,select{
-  width:100%;padding:$space-9 $space-10;border:1px solid var(--line);border-radius:$space-10;background:#0f1620;color:var(--ink);font-size:$font-md
+  width:100%;padding:$space-9 $space-10;border:1px solid var(--line);border-radius:$space-10;background:var(--card);color:var(--ink);font-size:$font-md
 }
 input[type="text"]:focus-visible,input[type="number"]:focus-visible,input[type="time"]:focus-visible,input[type="date"]:focus-visible,textarea:focus-visible,select:focus-visible{outline:$space-2 solid var(--accent)}
 input::placeholder,
