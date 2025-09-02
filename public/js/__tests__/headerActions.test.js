@@ -14,12 +14,12 @@ describe('setupHeaderActions', () => {
   });
 
   test('toggles theme when btnTheme is present', () => {
-    document.body.innerHTML='<div id="desktopActions"><button id="btnTheme" class="btn"></button></div>';
+    document.body.innerHTML='<div id="desktopActions"><button id="btnTheme" class="btn icon-btn"></button></div>';
     setupHeaderActions({ validateForm: () => true });
     const btn=document.getElementById('btnTheme');
-    expect(btn.textContent).toBe('Light mode');
+    expect(btn.getAttribute('title')).toBe('Šviesus režimas');
     btn.click();
     expect(document.documentElement.classList.contains('light')).toBe(true);
-    expect(btn.textContent).toBe('Dark mode');
+    expect(btn.getAttribute('title')).toBe('Tamsus režimas');
   });
 });
