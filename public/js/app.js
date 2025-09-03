@@ -122,7 +122,9 @@ function clampNumberInputs(){
 /* ===== Init modules ===== */
 async function init(){
   if(typeof navigator !== 'undefined' && 'serviceWorker' in navigator){
-    navigator.serviceWorker.register('/sw.js');
+    // Use a relative path so the service worker is correctly located when the
+    // site is served from a subdirectory (e.g. GitHub Pages project sites).
+    navigator.serviceWorker.register('./sw.js');
   }
   await initTopbar();
   setupHeaderActions({ validateForm });
