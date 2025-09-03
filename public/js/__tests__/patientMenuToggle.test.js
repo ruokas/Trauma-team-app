@@ -23,6 +23,17 @@ describe('initPatientMenuToggle', () => {
     expect(search.classList.contains('hidden')).toBe(true);
   });
 
+  test('keeps menu open when toggling search on mobile', () => {
+    document.body.innerHTML = '<details id="patientMenu"><summary class="btn">Menu</summary><div class="menu"><button id="patientSearchToggle"></button><input id="patientSearch" class="hidden"></div></details>';
+    global.matchMedia = jest.fn().mockReturnValue({ matches: false, addEventListener: jest.fn() });
+    const menu = document.getElementById('patientMenu');
+    const toggle = document.getElementById('patientSearchToggle');
+    initPatientMenuToggle(menu);
+    menu.setAttribute('open', '');
+    toggle.click();
+    expect(menu.hasAttribute('open')).toBe(true);
+  });
+
   test('does not close on outside click on desktop', () => {
     document.body.innerHTML = '<details id="patientMenu"><summary class="btn">Menu</summary><div class="menu"></div></details><div id="outside"></div>';
     global.matchMedia = jest.fn().mockReturnValue({ matches: true, addEventListener: jest.fn() });
