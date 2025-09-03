@@ -32,6 +32,7 @@ select option.red{color:var(--red)}
   font:inherit;
   outline:none;
 }
+  .chip:hover{filter:brightness(1.1)}
   .chip-status-icon{font-weight:700;width:1em;text-align:center}
 label.chip input{
   position:absolute;
@@ -44,6 +45,7 @@ label.chip input{
     outline-offset:$space-2;
   }
 .chip.active{background:var(--accent);color:#fff;border-color:#2d74b8}
+.chip.active:hover{filter:brightness(1)}
 .chip.red.active{background:var(--red);color:#fff;border-color:#a52623}
 .chip.yellow.active{background:var(--yellow);color:#231b00;border-color:#8a7400}
 .chip.auto{outline:$space-2 dashed var(--accent);outline-offset:$space-2}
