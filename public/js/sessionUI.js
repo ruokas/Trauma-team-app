@@ -27,6 +27,10 @@ export async function initSessions(){
   const searchInput=$('#sessionSearch');
   let sessions=await getSessions();
   let currentSessionId=getCurrentSessionId();
+  const patientLabel=$('#patientMenuLabel');
+  const renameBtn=$('#renamePatientBtn');
+  const deleteBtn=$('#deletePatientBtn');
+  const saveBtn=$('#saveBtn');
   let modal=$('#sessionManagerModal');
   let modalContent;
   if(!modal){
@@ -183,17 +187,21 @@ export async function initSessions(){
       if(focusEl) focusEl.focus();
     }
   }
-  const render=(focusId)=>{
-      const filtered=populateSessionSelect(select, sessions, { query: searchInput?.value || '' });
-      if(currentSessionId && filtered.some(s=>s.id===currentSessionId)){
-        select.value=currentSessionId;
-      }else{
-        currentSessionId=filtered[0]?.id||null;
-        setCurrentSessionId(currentSessionId);
-        if(currentSessionId) select.value=currentSessionId; else select.value='';
-      }
-      renderDeleteButtons(focusId);
-    };
+    const render=(focusId)=>{
+        const filtered=populateSessionSelect(select, sessions, { query: searchInput?.value || '' });
+        if(currentSessionId && filtered.some(s=>s.id===currentSessionId)){
+          select.value=currentSessionId;
+        }else{
+          currentSessionId=filtered[0]?.id||null;
+          setCurrentSessionId(currentSessionId);
+          if(currentSessionId) select.value=currentSessionId; else select.value='';
+        }
+        if(patientLabel){
+          const current=filtered.find(s=>s.id===currentSessionId);
+          patientLabel.textContent=current ? current.name : 'Pacientas';
+        }
+        renderDeleteButtons(focusId);
+      };
     toggleArchived.addEventListener('click', () => {
       showArchived = !showArchived;
       toggleArchived.textContent = showArchived ? 'Hide archived' : 'Show archived';
@@ -215,7 +223,55 @@ export async function initSessions(){
     currentSessionId=sessions.find(s=>!s.archived)?.id || sessions[0].id;
     setCurrentSessionId(currentSessionId);
   }
+      render();
+
+  renameBtn?.addEventListener('click', async () => {
+    const id=getCurrentSessionId();
+    const session=sessions.find(s=>s.id===id);
+    if(!session) return;
+    const newName=await notify({type:'prompt', message:'Paciento ID', defaultValue: session.name});
+    if(!newName) return;
+    const trimmed=newName.trim();
+    if(!trimmed){
+      notify({ type:'error', message:'Pavadinimas negali būti tuščias.' });
+      return;
+    }
+    if(sessions.some(s=>s.id!==id && s.name.trim().toLowerCase()===trimmed.toLowerCase())){
+      notify({ type:'error', message:'Pacientas su tokiu pavadinimu jau egzistuoja.' });
+      return;
+    }
+    session.name=trimmed;
+    await saveSessions(sessions);
+    render(id);
+  });
+
+  deleteBtn?.addEventListener('click', async () => {
+    const id=getCurrentSessionId();
+    if(!id) return;
+    const session=sessions.find(s=>s.id===id);
+    if(!session) return;
+    if(!await notify({type:'confirm', message:'Ar tikrai norite ištrinti pacientą?'})) return;
+    const token=getAuthToken();
+    if(token && typeof fetch==='function'){
+      try{ await fetch(`/api/sessions/${id}`, { method:'DELETE', headers:{ 'Authorization':'Bearer '+token } }); }catch(e){ console.error(e); }
+    }
+    sessions=sessions.filter(s=>s.id!==id);
+    await saveSessions(sessions);
+    localStorage.removeItem('trauma_v10_'+id);
     render();
+    localStorage.setItem('v10_activeTab','Aktyvacija');
+    location.reload();
+  });
+
+  saveBtn?.addEventListener('click', () => {
+    try{
+      saveAll();
+      notify({ type:'success', message:'Išsaugota.' });
+    }catch(e){
+      console.error(e);
+      notify({ type:'error', message:'Nepavyko išsaugoti.' });
+    }
+  });
 
   $('#btnNewSession').addEventListener('click',async()=>{
     const name=await notify({type:'prompt', message:'Paciento ID'});
