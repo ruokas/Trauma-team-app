@@ -100,7 +100,7 @@ export async function initTopbar(){
   const header=document.getElementById('appHeader');
   if(!header || typeof fetch!=='function') return;
   try{
-    const res=await fetch('assets/partials/topbar.html');
+    const res=await fetch(new URL('assets/partials/topbar.html', document.baseURI).href);
     if(!res.ok) throw new Error(`HTTP ${res.status}`);
     header.innerHTML=await res.text();
   }catch(e){
