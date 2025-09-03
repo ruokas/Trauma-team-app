@@ -109,10 +109,13 @@ export function initPatientMenuToggle(menu){
     }
   };
   document.addEventListener('click', patientMenuDocListener);
-  patientMenuSearchListener=()=>{
+  patientMenuSearchListener=e=>{
+    e.stopPropagation();
+    e.preventDefault();
     search?.classList.toggle('hidden');
     if(!search?.classList.contains('hidden')) search.focus();
     else if(search) search.value='';
+    menu.setAttribute('open','');
   };
   if(searchToggle){
     searchToggle.addEventListener('click', patientMenuSearchListener);
