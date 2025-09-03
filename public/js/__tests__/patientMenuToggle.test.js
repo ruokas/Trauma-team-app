@@ -44,4 +44,18 @@ describe('initPatientMenuToggle', () => {
     outside.click();
     expect(menu.hasAttribute('open')).toBe(false);
   });
+
+  test('removes previous listeners on reinit', () => {
+    document.body.innerHTML = '<details id="patientMenu"><summary class="btn">Menu</summary><div class="menu"></div></details><div id="outside"></div>';
+    global.matchMedia = jest.fn().mockReturnValue({ matches: false, addEventListener: jest.fn() });
+    const menu = document.getElementById('patientMenu');
+    const outside = document.getElementById('outside');
+    initPatientMenuToggle(menu);
+    initPatientMenuToggle(menu);
+    menu.setAttribute('open','');
+    const spy = jest.spyOn(menu, 'removeAttribute');
+    outside.click();
+    expect(spy).toHaveBeenCalledTimes(1);
+    spy.mockRestore();
+  });
 });
