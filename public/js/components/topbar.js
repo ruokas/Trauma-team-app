@@ -75,15 +75,18 @@ export function initNavToggle(toggle, nav){
   }
 }
 
-let patientMenuResizeListener;
+let patientMenuMq;
+let patientMenuMqListener;
 let patientMenuDocListener;
 let patientMenuSearchListener;
 let patientMenuSearchToggle;
 
 export function initPatientMenuToggle(menu){
-  if(patientMenuResizeListener){
-    window.removeEventListener('resize', patientMenuResizeListener);
-    patientMenuResizeListener=null;
+  if(patientMenuMq && patientMenuMqListener){
+    if(typeof patientMenuMq.removeEventListener==='function'){
+      patientMenuMq.removeEventListener('change', patientMenuMqListener);
+    }
+    patientMenuMqListener=null;
   }
   if(patientMenuDocListener){
     document.removeEventListener('click', patientMenuDocListener);
@@ -97,13 +100,15 @@ export function initPatientMenuToggle(menu){
   if(!menu) return;
   const search=menu.querySelector('#patientSearch');
   const searchToggle=menu.querySelector('#patientSearchToggle');
-  const mq=typeof matchMedia==='function' ? matchMedia('(min-width: 769px)') : null;
-  const update=()=>{ if(mq && mq.matches) menu.setAttribute('open',''); else menu.removeAttribute('open'); };
+  patientMenuMq=typeof matchMedia==='function' ? matchMedia('(min-width: 769px)') : null;
+  const update=()=>{ if(patientMenuMq && patientMenuMq.matches) menu.setAttribute('open',''); else menu.removeAttribute('open'); };
   update();
-  patientMenuResizeListener=update;
-  window.addEventListener('resize', patientMenuResizeListener);
+  if(patientMenuMq){
+    patientMenuMqListener=update;
+    patientMenuMq.addEventListener('change', patientMenuMqListener);
+  }
   patientMenuDocListener=e=>{
-    if(menu.hasAttribute('open') && (!mq || !mq.matches) && !menu.contains(e.target)){
+    if(menu.hasAttribute('open') && (!patientMenuMq || !patientMenuMq.matches) && !menu.contains(e.target)){
       menu.removeAttribute('open');
       search?.classList.add('hidden');
     }
