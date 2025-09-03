@@ -34,6 +34,19 @@ describe('initPatientMenuToggle', () => {
     expect(menu.hasAttribute('open')).toBe(true);
   });
 
+  test('retains open state after search toggle when opened on mobile', () => {
+    document.body.innerHTML = '<details id="patientMenu"><summary class="btn">Menu</summary><div class="menu"><button id="patientSearchToggle"></button><input id="patientSearch" class="hidden"></div></details>';
+    global.matchMedia = jest.fn().mockReturnValue({ matches: false, addEventListener: jest.fn() });
+    const menu = document.getElementById('patientMenu');
+    const toggle = document.getElementById('patientSearchToggle');
+    const summary = menu.querySelector('summary');
+    initPatientMenuToggle(menu);
+    summary.click();
+    expect(menu.hasAttribute('open')).toBe(true);
+    toggle.click();
+    expect(menu.hasAttribute('open')).toBe(true);
+  });
+
   test('does not close on outside click on desktop', () => {
     document.body.innerHTML = '<details id="patientMenu"><summary class="btn">Menu</summary><div class="menu"></div></details><div id="outside"></div>';
     global.matchMedia = jest.fn().mockReturnValue({ matches: true, addEventListener: jest.fn() });
