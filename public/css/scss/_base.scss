@@ -32,7 +32,7 @@ header{
   min-height:var(--header-height);
   display:flex;
   align-items:center;
-  --line:color-mix(in srgb,var(--line),var(--bg) 20%);
+  --header-line:color-mix(in srgb,var(--line),var(--bg) 20%);
   --ink:color-mix(in srgb,var(--ink),var(--bg) 10%);
   position:sticky;
   top:0;
@@ -40,8 +40,9 @@ header{
   width:100%;
   background:color-mix(in srgb,var(--card),transparent 15%);
   backdrop-filter:blur(6px);
-  border-bottom:1px solid var(--line);
+  border-bottom:1px solid var(--header-line);
 }
+header .btn{border-color:var(--header-line);}
 .wrap{
   width:100%;
   max-width:1200px;
@@ -86,7 +87,7 @@ header{
   &.nowrap{
     flex-wrap:nowrap;
     > .toolbar:not(:first-child){
-      border-left:1px solid var(--line);
+      border-left:1px solid var(--header-line);
       padding-left:$space-8;
     }
   }
@@ -101,7 +102,7 @@ header{
   }
   .toolbar + .toolbar,
   .toolbar + .patient-menu{
-    border-left:1px solid var(--line);
+      border-left:1px solid var(--header-line);
     padding-left:$space-8;
   }
 }
