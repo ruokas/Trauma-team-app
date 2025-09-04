@@ -76,7 +76,7 @@ header .btn{border-color:var(--header-line);}
     flex:1 1 clamp(80px,33%,220px);
     min-width:clamp(80px,33%,220px);
   }
-  .btn{
+  .btn:not(.icon-btn){
     flex:1 1 clamp(60px,45%,100px);
     min-width:clamp(60px,45%,100px);
   }
