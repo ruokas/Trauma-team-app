@@ -46,6 +46,7 @@ export function initNavToggle(toggle, nav){
   }
   function open(){
     const mobile=!navMq || !navMq.matches;
+    const wasClosed=!navOpen;
     navOpen=true;
     document.body.classList.toggle('nav-open', mobile);
     toggle.setAttribute('aria-expanded','true');
@@ -55,7 +56,7 @@ export function initNavToggle(toggle, nav){
       if(overlay) overlay.hidden=false;
       document.body.style.overflow='hidden';
       const items=nav.querySelectorAll(focusableSel);
-      if(items.length) items[0].focus();
+      if(wasClosed && items.length) items[0].focus();
       if(!trapActive){
         document.addEventListener('keydown', trap);
         trapActive=true;
