@@ -111,6 +111,7 @@ input.invalid,select.invalid{border-color:var(--red)}
   padding:0;
 }
 .patient-menu{position:relative;display:flex;align-items:center}
+.patient-menu[open]>summary{pointer-events:none}
 .nav-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:10;display:none}
 body.nav-open .nav-overlay:not([hidden]){display:block}
 .patient-menu-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:10;display:none}
