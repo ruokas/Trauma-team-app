@@ -1,9 +1,11 @@
 const WIDTH = 48;
 
 /**
- * Mirror an SVG path across the vertical axis of the viewBox. The function only
- * supports absolute M, L, H, V and Z commands as they are sufficient for the
- * simple rectangular shapes used in the body map.
+ * Mirror an SVG path across the vertical axis of the viewBox. Originally this
+ * utility only understood the very small subset of commands used for simple
+ * rectangular shapes.  The body map now uses cubic curves as well, so the
+ * function recognises the C/c commands and mirrors all x‑coordinates,
+ * including control points.
  *
  * @param {string} d  Path definition for the left side of the body
  * @returns {string} Mirrored path suitable for the right side
@@ -16,13 +18,19 @@ function mirrorPath (d) {
       const nums = seg.slice(1).trim();
       if (!nums) return cmd;
       const parts = nums.split(/[ ,]+/).filter(Boolean).map(Number);
-      if (cmd === 'M' || cmd === 'L') {
+      if (cmd === 'M' || cmd === 'L' || cmd === 'C') {
+        // Absolute commands – subtract coordinates from WIDTH
         for (let i = 0; i < parts.length; i += 2) {
           parts[i] = WIDTH - parts[i];
         }
       } else if (cmd === 'H') {
         for (let i = 0; i < parts.length; i++) {
           parts[i] = WIDTH - parts[i];
+        }
+      } else if (cmd === 'c') {
+        // Relative cubic curve – mirror x deltas
+        for (let i = 0; i < parts.length; i += 2) {
+          parts[i] = -parts[i];
         }
       }
       return cmd + parts.join(' ');
@@ -74,6 +82,8 @@ const frontDefs = [
 
 // Back definitions reuse the same limb shapes
 const backDefs = [...frontDefs];
+
+export { mirrorPath };
 
 export default [
   // Front zones
