@@ -172,7 +172,7 @@ section.card h2{font-size:clamp(1rem,3.5vw,1.5rem);margin:0 0 $space-10}
 section.card .grid{display:grid;gap:$space-10}
 label{display:block;color:var(--muted);font-size:$font-sm;margin-bottom:$space-4}
 input[type="text"],input[type="number"],input[type="time"],input[type="date"],textarea,select{
-  width:100%;padding:$space-9 $space-10;border:1px solid var(--line);border-radius:$space-10;background:var(--card);color:var(--ink);font-size:$font-md
+  width:100%;padding:$space-9 $space-10;border:1px solid var(--line);border-radius:$space-10;background:var(--card);background:color-mix(in srgb,var(--card),#fff 20%);color:var(--ink);font-size:$font-md
 }
 input[type="text"]:focus-visible,input[type="number"]:focus-visible,input[type="time"]:focus-visible,input[type="date"]:focus-visible,textarea:focus-visible,select:focus-visible{outline:$space-2 solid var(--accent)}
 input::placeholder,
