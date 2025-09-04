@@ -63,12 +63,9 @@ describe('tabs', () => {
       expect(active.dataset.tab).toBe('A – Kvėpavimo takai');
     });
 
-    test('includes timeline tab before report', () => {
+    test('does not include timeline tab', () => {
       const tabs = require('../tabs.js');
       const timelineIndex = tabs.TABS.findIndex(t => t.name === 'Laiko juosta');
-      const reportIndex = tabs.TABS.findIndex(t => t.name === 'Santrauka');
-      expect(timelineIndex).toBeGreaterThan(-1);
-      expect(reportIndex).toBeGreaterThan(-1);
-      expect(timelineIndex).toBeLessThan(reportIndex);
+      expect(timelineIndex).toBe(-1);
     });
   });

@@ -15,7 +15,6 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/main.css">
-<link rel="stylesheet" href="https://unpkg.com/vis-timeline@8.3.0/styles/vis-timeline-graph2d.min.css">
 </head>
 <body>
 <a href="#views" class="skip-link">Skip to content</a>
@@ -486,31 +485,6 @@
         </div>
       </div>
     </section>
-    <section class="card view" id="view-laiko-juosta" data-tab="Laiko juosta">
-      <h2>Laiko juosta</h2>
-      <div class="row mb-8">
-        <select id="timelineFilter">
-          <option value="">Visi</option>
-          <option value="med">Vaistai</option>
-          <option value="proc">Procedūros</option>
-        <option value="vital">Gyvybiniai rodikliai</option>
-      </select>
-      <button type="button" class="btn" id="timelineExport">
-        <svg class="btn-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"/>
-        </svg>
-        Eksportuoti
-      </button>
-      <button type="button" class="btn" id="timelineClear">
-        <svg class="btn-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M6 18 18 6M6 6l12 12"/>
-        </svg>
-        Išvalyti
-      </button>
-    </div>
-    <div id="timelineGraph" class="timeline-graph mb-8"></div>
-    <div id="timelineList" class="timeline-list"></div>
-  </section>
     <section class="card view" id="view-santrauka" data-tab="Santrauka">
       <h2>Sugeneruotas tekstas</h2>
       <textarea id="output" placeholder="Santrauka sugeneruojama automatiškai"></textarea>
@@ -540,7 +514,6 @@
   </div>
 </main>
 
-<script src="https://unpkg.com/vis-timeline@8.3.0/standalone/umd/vis-timeline-graph2d.min.js"></script>
 <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous"></script>
 <script src="js/app.js" defer type="module"></script>
 </body>

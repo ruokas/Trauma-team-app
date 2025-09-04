@@ -1,5 +1,4 @@
 import { $, $$, nowHM } from './utils.js';
-import { logEvent } from './timeline.js';
 
 export const PAIN_MEDS = ['Fentanilis','Paracetamolis','Ketoprofenas'];
 export const BLEEDING_MEDS = ['TXA','O- kraujas','Fibryga','Ca gliukonatas'];
@@ -150,8 +149,6 @@ export function initActions(saveAll){
     const dose=card.querySelector('.act_dose');
     const name=card.querySelector('.act_name').textContent;
     const includeDose=!!dose;
-    const field=chk.dataset.field||'';
-    const group=field.split('_')[0];
 
     const update=()=>{
       if(chk.checked || card.classList.contains('expanded')) detail.classList.remove('collapsed');
@@ -162,7 +159,6 @@ export function initActions(saveAll){
       if(chk.checked){
         if(!time.value) time.value=nowHM();
         if(includeDose && !dose.value && DEFAULT_DOSES[name]) dose.value=DEFAULT_DOSES[name];
-        logEvent(group, name, includeDose && dose ? dose.value : '', time.value);
       }
       update();
       if(typeof saveAll==='function') saveAll();
