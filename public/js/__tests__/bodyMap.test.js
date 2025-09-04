@@ -122,6 +122,53 @@ describe('BodyMap instance', () => {
     expect(document.querySelectorAll('#marks use').length).toBe(2);
   });
 
+  test('selecting wound tool and clicking map adds a mark', () => {
+    setupDom();
+    document.querySelector('#layer-front').innerHTML = '<g id="front-shape" data-side="front"><path></path></g>';
+    const bm = new BodyMap();
+    bm.init(() => {});
+    const identity = { a: 1, b: 0, c: 0, d: 1, e: 0, f: 0, inverse() { return this; } };
+    bm.svg.getScreenCTM = () => identity;
+    bm.svg.createSVGPoint = () => ({
+      x: 0,
+      y: 0,
+      matrixTransform(m) {
+        return {
+          x: this.x * m.a + this.y * m.c + m.e,
+          y: this.x * m.b + this.y * m.d + m.f,
+          matrixTransform: this.matrixTransform
+        };
+      }
+    });
+    const shape = document.getElementById('front-shape');
+    shape.getScreenCTM = () => ({
+      a: 2,
+      b: 0,
+      c: 0,
+      d: 2,
+      e: 100,
+      f: 100,
+      inverse() {
+        return {
+          a: 0.5,
+          b: 0,
+          c: 0,
+          d: 0.5,
+          e: -50,
+          f: -50,
+          inverse() { return shape.getScreenCTM(); }
+        };
+      }
+    });
+    const path = shape.querySelector('path');
+    path.isPointInFill = jest.fn(pt => pt.x >= 0 && pt.x <= 10 && pt.y >= 0 && pt.y <= 10);
+    bm.setTool(TOOLS.WOUND.char);
+    bm.svgPoint = () => ({ x: 110, y: 110 });
+    shape.dispatchEvent(new MouseEvent('click'));
+    expect(document.querySelectorAll('#marks use').length).toBe(1);
+    expect(path.isPointInFill).toHaveBeenCalledWith(expect.objectContaining({ x: 5, y: 5 }));
+  });
+
   test('addBrush increases burn area and serializes', () => {
     setupDom();
     const bm = new BodyMap();

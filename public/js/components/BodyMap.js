@@ -76,10 +76,24 @@ export default class BodyMap {
     pt.y = y;
     const sides = side ? [side] : ['front', 'back'];
     return sides.some(s => {
-      const path = this.svg.querySelector(`#${s}-shape path`);
-      return path && typeof path.isPointInFill === 'function'
-        ? path.isPointInFill(pt)
-        : true;
+      const svgEl = this.svg.querySelector(`#${s}-shape`);
+      const path = svgEl?.querySelector('path');
+      if (
+        !svgEl ||
+        !path ||
+        typeof path.isPointInFill !== 'function' ||
+        typeof svgEl.getScreenCTM !== 'function' ||
+        typeof this.svg.getScreenCTM !== 'function'
+      ) {
+        return true;
+      }
+      try {
+        const screenPt = pt.matrixTransform(this.svg.getScreenCTM());
+        const localPt = screenPt.matrixTransform(svgEl.getScreenCTM().inverse());
+        return path.isPointInFill(localPt);
+      } catch {
+        return true;
+      }
     });
   }
 
