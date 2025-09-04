@@ -13,7 +13,7 @@ describe('gksSum', () => {
 describe('generateReport circulation metrics', () => {
   test('includes VAS and shock index', () => {
     document.body.innerHTML = `
-      <input id="patient_age"><input id="patient_sex"><input id="patient_history">
+        <input id="patient_age"><input id="patient_sex">
       <input id="gmp_hr"><input id="gmp_rr"><input id="gmp_spo2"><input id="gmp_sbp"><input id="gmp_dbp">
       <input id="gmp_gksa"><input id="gmp_gksk"><input id="gmp_gksm"><input id="gmp_time"><input id="gmp_mechanism"><input id="gmp_notes">
       <input id="a_notes">

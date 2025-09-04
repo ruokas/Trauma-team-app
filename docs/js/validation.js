@@ -40,7 +40,7 @@ export function validateField(el) {
 }
 
 export function validateVitals() {
-  const fields = ['#gmp_hr','#gmp_rr','#gmp_spo2','#gmp_sbp','#gmp_dbp','#gmp_gksa','#gmp_gksk','#gmp_gksm','#d_gksa','#d_gksk','#d_gksm','#patient_age','#patient_sex','#patient_history'];
+  const fields = ['#gmp_hr','#gmp_rr','#gmp_spo2','#gmp_sbp','#gmp_dbp','#gmp_gksa','#gmp_gksk','#gmp_gksm','#d_gksa','#d_gksk','#d_gksm','#patient_age','#patient_sex'];
   let ok = true;
   fields.forEach(sel => {
     const el = $(sel);
@@ -53,7 +53,7 @@ export function validateVitals() {
 }
 
 export function initValidation() {
-  const selectors = ['#patient_age','#patient_sex','#patient_history','#gmp_hr','#gmp_rr','#gmp_spo2','#gmp_sbp','#gmp_dbp','#gmp_gksa','#gmp_gksk','#gmp_gksm','#d_gksa','#d_gksk','#d_gksm'];
+  const selectors = ['#patient_age','#patient_sex','#gmp_hr','#gmp_rr','#gmp_spo2','#gmp_sbp','#gmp_dbp','#gmp_gksa','#gmp_gksk','#gmp_gksm','#d_gksa','#d_gksk','#d_gksm'];
   selectors.forEach(sel => {
     const el = $(sel);
     if (!el) return;
