@@ -33,6 +33,16 @@ describe('BodyMap instance', () => {
     warn.mockRestore();
   });
 
+  test('init skips zones for missing layer elements', () => {
+    setupDom();
+    document.querySelector('#layer-back').remove();
+    const bm = new BodyMap();
+    const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    expect(() => bm.init(() => {})).not.toThrow();
+    expect(warn).toHaveBeenCalled();
+    warn.mockRestore();
+  });
+
   test('addMark and serialize', () => {
     setupDom();
     const bm = new BodyMap();
