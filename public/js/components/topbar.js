@@ -118,9 +118,15 @@ export function initPatientMenuToggle(menu){
     e.stopPropagation();
     e.preventDefault();
     search?.classList.toggle('hidden');
-    if(!search?.classList.contains('hidden')) search.focus();
-    else if(search) search.value='';
     menu.setAttribute('open','');
+    if(!search?.classList.contains('hidden')){
+      requestAnimationFrame(()=>{
+        search.focus();
+        menu.setAttribute('open','');
+      });
+    }else if(search){
+      search.value='';
+    }
   };
   if(searchToggle){
     searchToggle.addEventListener('click', patientMenuSearchListener);
