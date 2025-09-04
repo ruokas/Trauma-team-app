@@ -100,12 +100,18 @@ export default class BodyMap {
   /** Initialise DOM references and event listeners. */
   init(saveCb) {
     if (this.initialized) return;
+
+    this.svg = $('#bodySvg');
+    this.marks = $('#marks');
+    if (!this.svg || !this.marks) {
+      console.warn('BodyMap.init: missing SVG or marks element');
+      return;
+    }
+
     this.initialized = true;
 
     this.saveCb = typeof saveCb === 'function' ? saveCb : () => {};
 
-    this.svg = $('#bodySvg');
-    this.marks = $('#marks');
     this.tools = $$('.map-toolbar .tool[data-tool]');
     this.btnUndo = $('#btnUndo');
     this.btnRedo = $('#btnRedo');
@@ -199,22 +205,24 @@ export default class BodyMap {
     this.setTool(this.activeTool);
 
     // Brush drawing and erasing on SVG
-    this.svg.addEventListener('pointerdown', e => {
-      if (this.activeTool === TOOLS.BURN.char && this.inBody(e)) {
-        this.isDrawing = true;
-        this.drawBrush(e);
-      } else if (this.activeTool === TOOLS.BURN_ERASE.char) {
-        this.isDrawing = true;
-        this.eraseBrush(e);
-      }
-    });
-    this.svg.addEventListener('pointermove', e => {
-      if (this.activeTool === TOOLS.BURN.char && this.isDrawing && this.inBody(e)) {
-        this.drawBrush(e);
-      } else if (this.activeTool === TOOLS.BURN_ERASE.char && this.isDrawing) {
-        this.eraseBrush(e);
-      }
-    });
+    if (this.svg) {
+      this.svg.addEventListener('pointerdown', e => {
+        if (this.activeTool === TOOLS.BURN.char && this.inBody(e)) {
+          this.isDrawing = true;
+          this.drawBrush(e);
+        } else if (this.activeTool === TOOLS.BURN_ERASE.char) {
+          this.isDrawing = true;
+          this.eraseBrush(e);
+        }
+      });
+      this.svg.addEventListener('pointermove', e => {
+        if (this.activeTool === TOOLS.BURN.char && this.isDrawing && this.inBody(e)) {
+          this.drawBrush(e);
+        } else if (this.activeTool === TOOLS.BURN_ERASE.char && this.isDrawing) {
+          this.eraseBrush(e);
+        }
+      });
+    }
     document.addEventListener('pointerup', () => {
       if (this.isDrawing) {
         this.isDrawing = false;

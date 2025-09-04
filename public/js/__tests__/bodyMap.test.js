@@ -23,6 +23,16 @@ function setupDom() {
 }
 
 describe('BodyMap instance', () => {
+  test('init exits gracefully when SVG structure is incomplete', () => {
+    document.body.innerHTML = '<svg id="bodySvg"></svg>';
+    const bm = new BodyMap();
+    const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+    expect(() => bm.init(() => {})).not.toThrow();
+    expect(warn).toHaveBeenCalled();
+    expect(bm.initialized).toBe(false);
+    warn.mockRestore();
+  });
+
   test('addMark and serialize', () => {
     setupDom();
     const bm = new BodyMap();
