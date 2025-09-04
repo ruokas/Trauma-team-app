@@ -13,6 +13,8 @@ export function initNavToggle(toggle, nav){
   toggle.setAttribute('aria-expanded','false');
   const overlay=document.querySelector('.nav-overlay');
   const focusableSel='a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
+  let navOpen=false;
+  let trapActive=false;
   function close(){
     document.body.classList.remove('nav-open');
     toggle.setAttribute('aria-expanded','false');
@@ -20,7 +22,11 @@ export function initNavToggle(toggle, nav){
     nav.setAttribute('hidden','');
     if(overlay) overlay.hidden=true;
     document.body.style.overflow='';
-    document.removeEventListener('keydown', trap);
+    if(trapActive){
+      document.removeEventListener('keydown', trap);
+      trapActive=false;
+    }
+    navOpen=false;
     toggle.focus();
   }
   function trap(e){
@@ -40,29 +46,43 @@ export function initNavToggle(toggle, nav){
   }
   function open(){
     const mobile=!navMq || !navMq.matches;
+    navOpen=true;
     document.body.classList.toggle('nav-open', mobile);
     toggle.setAttribute('aria-expanded','true');
     nav.removeAttribute('aria-hidden');
     nav.removeAttribute('hidden');
-    if(overlay) overlay.hidden=!mobile;
-    document.body.style.overflow=mobile ? 'hidden' : '';
-    const items=nav.querySelectorAll(focusableSel);
-    if(items.length) items[0].focus();
-    document.addEventListener('keydown', trap);
+    if(mobile){
+      if(overlay) overlay.hidden=false;
+      document.body.style.overflow='hidden';
+      const items=nav.querySelectorAll(focusableSel);
+      if(items.length) items[0].focus();
+      if(!trapActive){
+        document.addEventListener('keydown', trap);
+        trapActive=true;
+      }
+    }else{
+      if(overlay) overlay.hidden=true;
+      document.body.style.overflow='';
+      if(trapActive){
+        document.removeEventListener('keydown', trap);
+        trapActive=false;
+      }
+    }
   }
   toggle.addEventListener('click',()=>{
-    document.body.classList.contains('nav-open') ? close() : open();
+    navOpen ? close() : open();
   });
   if(overlay){
     overlay.addEventListener('click', close);
   }
-  // Close the navigation after selecting a tab on small screens while
-  // keeping it open on desktop.
   nav.addEventListener('click', () => {
-    if(navMq && navMq.matches){
-      setTimeout(open);
-    }else{
+    const mobile=!navMq || !navMq.matches;
+    if(mobile){
       close();
+    }else{
+      setTimeout(()=>{
+        if(nav.hasAttribute('hidden')) open();
+      });
     }
   });
   navMq=typeof matchMedia==='function' ? matchMedia(`(min-width: ${NAV_BREAKPOINT}px)`) : null;
