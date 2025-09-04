@@ -24,7 +24,6 @@
     "jsonwebtoken": "^9.0.2",
     "jspdf": "^2.5.1",
     "socket.io": "^4.7.5",
-    "vis-timeline": "^8.3.0",
     "winston": "^3.13.0"
   },
   "devDependencies": {

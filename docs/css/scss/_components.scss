@@ -1,7 +1,7 @@
 @use 'variables' as *;
 
-.btn{border:1px solid var(--line);background:var(--card);color:var(--ink);padding:$space-8 $space-12;border-radius:$space-10;cursor:pointer;font-weight:600;transition:background-color .2s,color .2s;display:flex;align-items:center;justify-content:center}
-.btn:hover{filter:brightness(1.1)}
+.btn{border:1px solid var(--line);background:var(--card);color:var(--ink);padding:$space-8 $space-12;border-radius:$space-10;cursor:pointer;font-weight:600;transition:background-color .2s,color .2s,filter .2s;display:flex;align-items:center;justify-content:center}
+.btn:hover{filter:brightness(1.2)}
 .btn:active{filter:brightness(.9)}
 .btn:focus-visible{outline:$space-3 solid var(--accent);outline-offset:$space-2;transition:background-color .2s,color .2s}
 .btn.primary{background:var(--accent);color:#fff;border-color:#2d74b8}
@@ -32,6 +32,7 @@ select option.red{color:var(--red)}
   font:inherit;
   outline:none;
 }
+  .chip:hover{filter:brightness(1.1)}
   .chip-status-icon{font-weight:700;width:1em;text-align:center}
 label.chip input{
   position:absolute;
@@ -44,6 +45,7 @@ label.chip input{
     outline-offset:$space-2;
   }
 .chip.active{background:var(--accent);color:#fff;border-color:#2d74b8}
+.chip.active:hover{filter:brightness(1)}
 .chip.red.active{background:var(--red);color:#fff;border-color:#a52623}
 .chip.yellow.active{background:var(--yellow);color:#231b00;border-color:#8a7400}
 .chip.auto{outline:$space-2 dashed var(--accent);outline-offset:$space-2}
@@ -73,9 +75,6 @@ input.invalid,select.invalid{border-color:var(--red)}
 .interv-group>.grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
 .interv-group.collapsed>.grid{display:none}
 .med-search{margin-bottom:$space-8;width:100%}
-  .timeline-list{border:1px solid var(--line);border-radius:$space-10;padding:$space-8;max-height:18.75rem;overflow-y:auto}
-.timeline-entry{padding:$space-4 0;border-bottom:1px solid var(--line)}
-.timeline-entry:last-child{border-bottom:none}
 /* SVG body map */
 .map-toolbar{display:flex;gap:$space-8;flex-wrap:wrap;align-items:center;margin:$space-6 0}
     .tool{padding:$space-8 $space-10;border-radius:$space-10;border:1px solid var(--line);min-height:2.25rem;cursor:pointer;font-weight:700;display:inline-flex;align-items:center;gap:$space-8;--btn-color:var(--card);background:var(--btn-color);color:var(--ink);}

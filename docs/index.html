@@ -4,14 +4,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark light">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0c1218">
 <title>Sunkios traumos forma</title>
 <script>
   const savedTheme = localStorage.getItem('trauma_theme') || 'dark';
   document.documentElement.classList.add(savedTheme,'js');
 </script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/main.css">
-<link rel="stylesheet" href="https://unpkg.com/vis-timeline@8.3.0/styles/vis-timeline-graph2d.min.css">
 </head>
 <body>
 <a href="#views" class="skip-link">Skip to content</a>
@@ -19,7 +22,7 @@
   <details id="patientMenu" class="patient-menu">
     <summary class="btn" aria-label="Pacientai"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span id="patientMenuLabel" class="btn-label">Pacientas</span></summary>
     <div class="menu">
-      <button id="patientSearchToggle" class="btn" title="Search patients" aria-label="Search patients"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
+      <button type="button" id="patientSearchToggle" class="btn" title="Search patients" aria-label="Search patients"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button>
       <input id="patientSearch" class="btn hidden" type="search" placeholder="Search…">
       <select id="sessionSelect" title="Pacientai" aria-label="Pacientai" class="btn"></select>
       <button id="btnNewSession" title="Naujas pacientas" aria-label="Naujas pacientas" class="btn"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg> <span class="btn-label">Naujas</span></button>
@@ -482,31 +485,6 @@
         </div>
       </div>
     </section>
-    <section class="card view" id="view-laiko-juosta" data-tab="Laiko juosta">
-      <h2>Laiko juosta</h2>
-      <div class="row mb-8">
-        <select id="timelineFilter">
-          <option value="">Visi</option>
-          <option value="med">Vaistai</option>
-          <option value="proc">Procedūros</option>
-        <option value="vital">Gyvybiniai rodikliai</option>
-      </select>
-      <button type="button" class="btn" id="timelineExport">
-        <svg class="btn-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"/>
-        </svg>
-        Eksportuoti
-      </button>
-      <button type="button" class="btn" id="timelineClear">
-        <svg class="btn-icon" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M6 18 18 6M6 6l12 12"/>
-        </svg>
-        Išvalyti
-      </button>
-    </div>
-    <div id="timelineGraph" class="timeline-graph mb-8"></div>
-    <div id="timelineList" class="timeline-list"></div>
-  </section>
     <section class="card view" id="view-santrauka" data-tab="Santrauka">
       <h2>Sugeneruotas tekstas</h2>
       <textarea id="output" placeholder="Santrauka sugeneruojama automatiškai"></textarea>
@@ -536,7 +514,6 @@
   </div>
 </main>
 
-<script src="https://unpkg.com/vis-timeline@8.3.0/standalone/umd/vis-timeline-graph2d.min.js"></script>
 <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous"></script>
 <script src="js/app.js" defer type="module"></script>
 </body>

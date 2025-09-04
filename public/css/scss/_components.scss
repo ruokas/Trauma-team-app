@@ -75,9 +75,6 @@ input.invalid,select.invalid{border-color:var(--red)}
 .interv-group>.grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
 .interv-group.collapsed>.grid{display:none}
 .med-search{margin-bottom:$space-8;width:100%}
-  .timeline-list{border:1px solid var(--line);border-radius:$space-10;padding:$space-8;max-height:18.75rem;overflow-y:auto}
-.timeline-entry{padding:$space-4 0;border-bottom:1px solid var(--line)}
-.timeline-entry:last-child{border-bottom:none}
 /* SVG body map */
 .map-toolbar{display:flex;gap:$space-8;flex-wrap:wrap;align-items:center;margin:$space-6 0}
     .tool{padding:$space-8 $space-10;border-radius:$space-10;border:1px solid var(--line);min-height:2.25rem;cursor:pointer;font-weight:700;display:inline-flex;align-items:center;gap:$space-8;--btn-color:var(--card);background:var(--btn-color);color:var(--ink);}

@@ -3,7 +3,6 @@ import { initTabs } from './tabs.js';
 import { initChips, setChipActive, isChipActive, addChipIndicators } from './chips.js';
 import { initAutoActivate } from './autoActivate.js';
 import { initActions } from './actions.js';
-import { initTimeline } from './timeline.js';
 import './components/toast.js';
 import './components/modal.js';
 import { initValidation, validateVitals } from './validation.js';
@@ -22,7 +21,6 @@ import { IMG_CT, IMG_XRAY, LABS, BLOOD_GROUPS } from './config.js';
 import { init as initFastGrid } from './fastGrid.js';
 import { init as initTeamGrid } from './teamGrid.js';
 import { init as initMechanismList } from './mechanismList.js';
-import { init as initVitalsEvents } from './vitalsEvents.js';
 import { initChipGroups } from './chipData.js';
 export { validateVitals, createChipGroup };
 
@@ -149,12 +147,10 @@ async function init(){
   initChips(saveAllDebounced);
   initAutoActivate(saveAllDebounced);
   initActions(saveAllDebounced);
-  initTimeline();
   setupActivationControls();
   initFastGrid();
   initTeamGrid();
   initMechanismList();
-  initVitalsEvents();
   document.addEventListener('input', saveAllDebounced);
   initCirculation();
   const btnOxygen=$('#btnOxygen');
