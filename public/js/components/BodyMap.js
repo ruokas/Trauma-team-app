@@ -154,14 +154,19 @@ export default class BodyMap {
     if (this.svg && !this.svg.querySelector('.zone')) {
       const layers = { front: $('#layer-front'), back: $('#layer-back') };
       zones.forEach(z => {
-        let group = layers[z.side].querySelector('.zones');
+        const layer = layers[z.side];
+        if (!layer) {
+          console.warn(`BodyMap.init: missing layer-${z.side}`);
+          return; // skip zones for this side
+        }
+        let group = layer.querySelector('.zones');
         if (!group) {
           group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
           group.classList.add('zones');
-          const shape = layers[z.side].querySelector(`#${z.side}-shape`);
+          const shape = layer.querySelector(`#${z.side}-shape`);
           const tr = shape?.getAttribute('transform');
           if (tr) group.setAttribute('transform', tr);
-          layers[z.side].appendChild(group);
+          layer.appendChild(group);
         }
         const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         path.classList.add('zone');
