@@ -193,8 +193,7 @@ async function init(){
 function validateForm(){
   const fields=[
     {el:$('#patient_age'),check:e=>e.value!=='' && +e.value>=0 && +e.value<=120,msg:'Amžius 0-120'},
-    {el:$('#patient_sex'),check:e=>e.value!=='',msg:'Pasirinkite lytį'},
-    {el:$('#patient_history'),check:e=>e.value.trim()!=='',msg:'Ligos istorijos nr. privalomas'}
+    {el:$('#patient_sex'),check:e=>e.value!=='',msg:'Pasirinkite lytį'}
   ];
   let ok=true;
   fields.forEach(({el,check,msg})=>{

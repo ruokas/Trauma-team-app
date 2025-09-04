@@ -64,7 +64,7 @@ const setupDom = () => {
   skinColor.className='chip-group';
   skinColor.dataset.single='true';
   skinColor.innerHTML='<button class="chip" data-value="Rausva"></button><button class="chip" data-value="Blyški"></button><button class="chip" data-value="Kita"></button>';
-  const textInputs=['a_notes','gmp_mechanism','gmp_notes','b_oxygen_type','b_dpv_fio2','d_pupil_left_note','d_pupil_right_note','d_notes','e_back_notes','e_abdomen_notes','e_other','spr_skyrius_kita','spr_ligonine','patient_history','c_skin_color_other'];
+  const textInputs=['a_notes','gmp_mechanism','gmp_notes','b_oxygen_type','b_dpv_fio2','d_pupil_left_note','d_pupil_right_note','d_notes','e_back_notes','e_abdomen_notes','e_other','spr_skyrius_kita','spr_ligonine','c_skin_color_other'];
   textInputs.forEach(id=>{ const i=document.createElement('input'); i.id=id; i.type='text'; document.body.appendChild(i); });
   const numberInputs=['b_rr','b_spo2','b_oxygen_liters','c_hr','c_sbp','c_dbp','c_caprefill','d_gksa','d_gksk','d_gksm','e_temp',
     'spr_hr','spr_rr','spr_spo2','spr_sbp','spr_dbp','spr_gksa','spr_gksk','spr_gksm','patient_age','gmp_hr','gmp_rr','gmp_spo2',
@@ -101,31 +101,25 @@ describe('patient fields', () => {
   test('persist with saveAll/loadAll', () => {
     document.getElementById('patient_age').value='25';
     document.getElementById('patient_sex').value='M';
-    document.getElementById('patient_history').value='H123';
     saveAll();
     const stored = JSON.parse(localStorage.getItem('trauma_v10_test'));
     expect(stored.patient_age).toBe('25');
     expect(stored.patient_sex).toBe('M');
-    expect(stored.patient_history).toBe('H123');
     document.getElementById('patient_age').value='';
     document.getElementById('patient_sex').value='';
-    document.getElementById('patient_history').value='';
     loadAll();
     expect(document.getElementById('patient_age').value).toBe('25');
     expect(document.getElementById('patient_sex').value).toBe('M');
-    expect(document.getElementById('patient_history').value).toBe('H123');
   });
 
   test('report includes patient info', () => {
     document.getElementById('patient_age').value='25';
     document.getElementById('patient_sex').value='M';
-    document.getElementById('patient_history').value='H123';
     generateReport();
     const report=document.getElementById('output').value;
     expect(report.startsWith('--- Pacientas ---')).toBe(true);
     expect(report).toContain('25');
     expect(report).toContain('M');
-    expect(report).toContain('H123');
   });
 
   test('new circulation fields persist and report', () => {
@@ -203,7 +197,6 @@ describe('patient fields', () => {
   test('PDF button generates file via jsPDF', async () => {
     document.getElementById('patient_age').value='25';
     document.getElementById('patient_sex').value='M';
-    document.getElementById('patient_history').value='H123';
     document.getElementById('btnPdfReport').click();
     await new Promise(resolve => setTimeout(resolve, 0));
     expect(mockJsPDF).toHaveBeenCalled();
@@ -221,7 +214,6 @@ describe('patient fields', () => {
     const openMock = jest.spyOn(window, 'open').mockReturnValue(win);
     document.getElementById('patient_age').value='25';
     document.getElementById('patient_sex').value='M';
-    document.getElementById('patient_history').value='H123';
     document.getElementById('btnPrintReport').click();
     await new Promise(resolve => setTimeout(resolve, 0));
     expect(openMock).toHaveBeenCalled();
@@ -235,7 +227,6 @@ describe('patient fields', () => {
   test('switching sessions clears patient fields', () => {
     document.getElementById('patient_age').value='40';
     document.getElementById('patient_sex').value='F';
-    document.getElementById('patient_history').value='hist';
     const { setChipActive } = require('../chips.js');
     const chip=document.querySelector('#c_skin_color_group .chip[data-value="Blyški"]');
     setChipActive(chip,true);
@@ -252,7 +243,6 @@ describe('patient fields', () => {
     loadAll();
     expect(document.getElementById('patient_age').value).toBe('');
     expect(document.getElementById('patient_sex').value).toBe('');
-    expect(document.getElementById('patient_history').value).toBe('');
     expect(document.querySelector('#c_skin_color_group .chip.active')).toBeNull();
     expect(card.querySelector('.act_chk').checked).toBe(false);
     expect(card.querySelector('.act_time').value).toBe('');

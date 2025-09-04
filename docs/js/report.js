@@ -29,8 +29,8 @@ export function bodymapSummary(){
 
 export function generateReport(){
   const out=[];
-  const patient={ age:$('#patient_age').value, sex:$('#patient_sex').value, history:$('#patient_history').value };
-  const patientLine=[patient.age?`Amžius ${patient.age}`:null, patient.sex?`Lytis ${patient.sex}`:null, patient.history?`Ligos istorijos nr. ${patient.history}`:null].filter(Boolean).join('; ');
+  const patient={ age:$('#patient_age').value, sex:$('#patient_sex').value };
+  const patientLine=[patient.age?`Amžius ${patient.age}`:null, patient.sex?`Lytis ${patient.sex}`:null].filter(Boolean).join('; ');
   if(patientLine){ out.push('--- Pacientas ---'); out.push(patientLine); }
   const red=listChips('#chips_red'), yellow=listChips('#chips_yellow');
   const gmp={ hr:$('#gmp_hr').value, rr:$('#gmp_rr').value, spo2:$('#gmp_spo2').value, sbp:$('#gmp_sbp').value, dbp:$('#gmp_dbp').value, gksa:$('#gmp_gksa').value, gksk:$('#gmp_gksk').value, gksm:$('#gmp_gksm').value, time:$('#gmp_time').value, mechanism:$('#gmp_mechanism').value, notes:$('#gmp_notes').value };
