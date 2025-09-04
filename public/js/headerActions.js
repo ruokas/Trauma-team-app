@@ -29,7 +29,7 @@ export function setupHeaderActions({ validateForm }){
     const text = $('#output').value || '';
     try {
       const module = await import('./lib/jspdf.umd.min.js');
-      const { jsPDF } = module.default;
+      const { jsPDF } = module.default || module;
       const doc = new jsPDF();
       const lines = doc.splitTextToSize(text, 180);
       doc.text(lines, 10, 10);
