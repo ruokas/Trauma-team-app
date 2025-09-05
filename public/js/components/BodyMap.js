@@ -349,7 +349,7 @@ export default class BodyMap {
       this.updateUndoRedoButtons();
     }
     this.updateBurnDisplay();
-    this.saveCb();
+    if (record) this.saveCb();
   }
 
   removeBrush(id, record = true) {
@@ -373,7 +373,7 @@ export default class BodyMap {
       this.updateUndoRedoButtons();
     }
     this.updateBurnDisplay();
-    this.saveCb();
+    if (record) this.saveCb();
   }
 
   /** Add a new mark to the map. */
@@ -402,7 +402,7 @@ export default class BodyMap {
       this.redoStack = [];
       this.updateUndoRedoButtons();
     }
-    this.saveCb();
+    if (record) this.saveCb();
   }
 
   /** Begin dragging a mark. */
@@ -452,7 +452,7 @@ export default class BodyMap {
       this.redoStack = [];
       this.updateUndoRedoButtons();
     }
-    this.saveCb();
+    if (record) this.saveCb();
   }
 
   /**

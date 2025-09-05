@@ -55,20 +55,33 @@ describe('BodyMap instance', () => {
     expect(data.marks[0]).toMatchObject({ x: 10, y: 20, type: TOOLS.WOUND.char, side: 'front', zone: 'front-torso' });
   });
 
-    test('load restores marks and brushes', () => {
-      setupDom();
-      const bm = new BodyMap();
-      bm.init(() => {});
-      bm.load({
-        tool: TOOLS.WOUND.char,
-        marks: [{ id: 1, x: 5, y: 5, type: TOOLS.WOUND.char, side: 'front', zone: 'front-torso' }],
-        brushes: [{ id: 1, x: 10, y: 10, r: 20 }]
-      });
-      expect(document.querySelectorAll('#marks use').length).toBe(1);
-      expect(bm.brushLayer.querySelectorAll('circle').length).toBe(1);
-      const serialized = JSON.parse(bm.serialize());
-      expect(serialized.brushes.length).toBe(1);
+  test('load restores marks and brushes', () => {
+    setupDom();
+    const bm = new BodyMap();
+    bm.init(() => {});
+    bm.load({
+      tool: TOOLS.WOUND.char,
+      marks: [{ id: 1, x: 5, y: 5, type: TOOLS.WOUND.char, side: 'front', zone: 'front-torso' }],
+      brushes: [{ id: 1, x: 10, y: 10, r: 20 }]
     });
+    expect(document.querySelectorAll('#marks use').length).toBe(1);
+    expect(bm.brushLayer.querySelectorAll('circle').length).toBe(1);
+    const serialized = JSON.parse(bm.serialize());
+    expect(serialized.brushes.length).toBe(1);
+  });
+
+  test('load does not invoke save callback', () => {
+    setupDom();
+    const save = jest.fn();
+    const bm = new BodyMap();
+    bm.init(save);
+    bm.load({
+      tool: TOOLS.WOUND.char,
+      marks: [{ id: 1, x: 5, y: 5, type: TOOLS.WOUND.char, side: 'front', zone: 'front-torso' }],
+      brushes: [{ id: 1, x: 10, y: 10, r: 20 }]
+    });
+    expect(save).not.toHaveBeenCalled();
+  });
 
     test('zoneCounts aggregates marks', () => {
       setupDom();
@@ -112,7 +125,7 @@ describe('BodyMap instance', () => {
     document.dispatchEvent(new MouseEvent('pointermove', { clientX: 30, clientY: 40 }));
     document.dispatchEvent(new MouseEvent('pointerup', { clientX: 30, clientY: 40 }));
     expect(mark.getAttribute('transform')).toBe('translate(30,40)');
-    expect(save).toHaveBeenCalledTimes(2);
+    expect(save).toHaveBeenCalledTimes(1);
   });
 
     test('init only runs once and avoids duplicating listeners', () => {
@@ -264,6 +277,19 @@ describe('BodyMap instance', () => {
     bm.svg.dispatchEvent(new MouseEvent('pointerdown', { clientX: 0, clientY: 0 }));
     document.dispatchEvent(new MouseEvent('pointerup'));
     expect(bm.brushLayer.childElementCount).toBe(0);
+  });
+
+  test('undo and redo do not invoke save callback', () => {
+    setupDom();
+    const save = jest.fn();
+    const bm = new BodyMap();
+    bm.init(save);
+    bm.addMark(5, 5, TOOLS.WOUND.char, 'front');
+    save.mockClear();
+    bm.undo();
+    expect(save).not.toHaveBeenCalled();
+    bm.redo();
+    expect(save).not.toHaveBeenCalled();
   });
 
   test('undo and redo actions manage stacks and buttons', () => {
