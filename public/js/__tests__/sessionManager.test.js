@@ -94,7 +94,8 @@ describe('sessionManager utilities', () => {
       <div id="pain_meds"></div>
       <div id="bleeding_meds"></div>
       <div id="other_meds"></div>
-      <div id="procedures"></div>
+      <div id="procedures_it"></div>
+      <div id="procedures_other"></div>
     `;
     const mockFetch = jest.fn(() => Promise.resolve({ ok: true }));
     global.fetch = mockFetch;

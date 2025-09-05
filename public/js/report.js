@@ -78,13 +78,15 @@ export function generateReport(){
   out.push('\n--- E Kita ---'); out.push([$('#e_temp').value?('T '+$('#e_temp').value+'°C'):null, back==='Be pakitimų'?'Nugara: be pakitimų':(back==='Pakitimai'&&$('#e_back_notes').value?('Nugara: '+$('#e_back_notes').value):null), abdomen==='Be pakitimų'?'Pilvas: be pakitimų':(abdomen==='Pakitimai'&&$('#e_abdomen_notes').value?('Pilvas: '+$('#e_abdomen_notes').value):null), $('#e_other').value?('Kita: '+$('#e_other').value):null, bodymapSummary()].filter(Boolean).join(' | '));
 
   function collect(container){ return Array.from(container.children).map(card=>{ const on=card.querySelector('.act_chk').checked; if(!on) return null; const nameInput=card.querySelector('.act_custom_name'); const base=card.querySelector('.act_name').textContent.trim(); const customName=nameInput?nameInput.value.trim():''; const name=nameInput?customName:base; if(nameInput && !customName) return null; const time=card.querySelector('.act_time').value; const doseInput=card.querySelector('.act_dose'); const dose=doseInput?doseInput.value:''; const note=card.querySelector('.act_note').value; return [name, time?('laikas '+time):null, dose?('dozė '+dose):null, note?('pastabos '+note):null].filter(Boolean).join(' | '); }).filter(Boolean);}
-  const pain=collect($('#pain_meds')), bleeding=collect($('#bleeding_meds')), other=collect($('#other_meds')), procs=collect($('#procedures'));
-  if(pain.length||bleeding.length||other.length||procs.length){
+  const pain=collect($('#pain_meds')), bleeding=collect($('#bleeding_meds')), other=collect($('#other_meds')),
+    procsIt=collect($('#procedures_it')), procsOther=collect($('#procedures_other'));
+  if(pain.length||bleeding.length||other.length||procsIt.length||procsOther.length){
     out.push('\n--- Intervencijos ---');
     if(pain.length) out.push('Medikamentai (skausmo kontrolė):\n'+pain.join('\n'));
     if(bleeding.length) out.push('Medikamentai (kraujavimo kontrolė):\n'+bleeding.join('\n'));
     if(other.length) out.push('Medikamentai (kita):\n'+other.join('\n'));
-    if(procs.length) out.push('Procedūros:\n'+procs.join('\n'));
+    if(procsIt.length) out.push('Procedūros (IT):\n'+procsIt.join('\n'));
+    if(procsOther.length) out.push('Procedūros (kitos):\n'+procsOther.join('\n'));
   }
 
   let imgs=[...listChips('#imaging_ct'), ...listChips('#imaging_xray')];

@@ -44,7 +44,7 @@ const setupDom = () => {
     'a_airway_group','b_breath_left_group','b_breath_right_group',
     'c_pulse_radial_group','c_pulse_femoral_group','c_skin_temp_group','c_skin_color_group',
     'd_pupil_left_group','d_pupil_right_group','spr_decision_group',
-    'pain_meds','bleeding_meds','other_meds','procedures','fastGrid','teamGrid','oxygenFields','dpvFields',
+    'pain_meds','bleeding_meds','other_meds','procedures_it','procedures_other','fastGrid','teamGrid','oxygenFields','dpvFields',
     'spr_skyrius_container','spr_ligonine_container','imaging_other'
   ];
   divIds.forEach(id=>{ const d=document.createElement('div'); d.id=id; document.body.appendChild(d); });
