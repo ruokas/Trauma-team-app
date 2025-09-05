@@ -45,6 +45,7 @@ export default class BodyMap {
     this.brushSize = 20;
     this.brushBurns = [];
     this.isDrawing = false;
+    this.pendingBrushes = [];
     this.vbWidth = 1500;
     this.vbHeight = 1100;
     // The total drawable area will be derived from the front and back
@@ -214,6 +215,7 @@ export default class BodyMap {
       this.svg.addEventListener('pointerdown', e => {
         if (this.activeTool === TOOLS.BURN.char && this.inBody(e)) {
           this.isDrawing = true;
+          this.pendingBrushes = [];
           this.drawBrush(e);
         } else if (this.activeTool === TOOLS.BURN_ERASE.char) {
           this.isDrawing = true;
@@ -231,6 +233,12 @@ export default class BodyMap {
     document.addEventListener('pointerup', () => {
       if (this.isDrawing) {
         this.isDrawing = false;
+        if (this.activeTool === TOOLS.BURN.char && this.pendingBrushes.length) {
+          this.undoStack.push({ type: 'brush-add', brushes: this.pendingBrushes });
+          this.redoStack = [];
+          this.updateUndoRedoButtons();
+        }
+        this.pendingBrushes = [];
         this.saveCb();
       }
     });
@@ -321,7 +329,8 @@ export default class BodyMap {
   /** Draw brush stroke at event location. */
   drawBrush(evt) {
     const p = this.svgPoint(evt);
-    this.addBrush(p.x, p.y, this.brushSize);
+    const b = this.addBrush(p.x, p.y, this.brushSize, undefined, false);
+    if (b) this.pendingBrushes.push(b);
   }
 
   eraseBrush(evt) {
@@ -342,14 +351,16 @@ export default class BodyMap {
     circle.classList.add('burn-area');
     circle.dataset.id = mid;
     this.brushLayer.appendChild(circle);
-    this.brushBurns.push({ id: mid, x, y, r });
+    const brush = { id: mid, x, y, r };
+    this.brushBurns.push(brush);
     if (record) {
-      this.undoStack.push({ type: 'brush-add', brush: { id: mid, x, y, r } });
+      this.undoStack.push({ type: 'brush-add', brush });
       this.redoStack = [];
       this.updateUndoRedoButtons();
     }
     this.updateBurnDisplay();
     if (record) this.saveCb();
+    return brush;
   }
 
   removeBrush(id, record = true) {
@@ -592,7 +603,11 @@ export default class BodyMap {
         break;
       }
       case 'brush-add':
-        this.removeBrush(action.brush.id, false);
+        if (action.brushes) {
+          for (const b of action.brushes) this.removeBrush(b.id, false);
+        } else {
+          this.removeBrush(action.brush.id, false);
+        }
         break;
       case 'brush-remove': {
         const b = action.brush;
@@ -620,8 +635,12 @@ export default class BodyMap {
         break;
       }
       case 'brush-add': {
-        const b = action.brush;
-        this.addBrush(b.x, b.y, b.r, b.id, false);
+        if (action.brushes) {
+          for (const b of action.brushes) this.addBrush(b.x, b.y, b.r, b.id, false);
+        } else {
+          const b = action.brush;
+          this.addBrush(b.x, b.y, b.r, b.id, false);
+        }
         break;
       }
       case 'brush-remove':
