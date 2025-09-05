@@ -6,17 +6,19 @@
 
 :root.light{
   color-scheme:light;
-  --bg:#fdfdfd;--card:#f5f5f5;--ink:#0c0c0c;
-  --muted:#374151;--line:#9ca3af;
-  --accent:#7b1fa2;--red:#b91c1c;--yellow:#b45309;--green:#166534;--ink2:#1e293b;
+  /* Increase contrast between background elements */
+  --bg:#fff;
+  --card:#f1f5f9;--ink:#0f172a;
+  --muted:#475569;--line:#cbd5e1;--shadow:0 4px 8px rgba(0,0,0,0.1);
+  --accent:#4ea0f5;--red:#e53935;--yellow:#ffb74d;--green:#00c853;--ink2:#1e293b;
 }
 
 :root.dark{
   color-scheme:dark;
   --bg:#111827;--card:#1f2937;--ink:#f3f4f6;
   /* brighten supporting colours for better contrast */
-  --muted:#9ca3af;--line:#4b5563;
-  --accent:#c084fc;--red:#f87171;--yellow:#fbbf24;--green:#34d399;--ink2:#e0e7ff;
+  --muted:#9ca3af;--line:#4b5563;--shadow:0 4px 8px rgba(0,0,0,0.5);
+  --accent:#60a5fa;--red:#f87171;--yellow:#fbbf24;--green:#34d399;--ink2:#e0e7ff;
 }
 
 *{box-sizing:border-box}
@@ -38,9 +40,10 @@ header{
   top:0;
   z-index:1000;
   width:100%;
-  background:color-mix(in srgb,var(--card),transparent 15%);
+  background:linear-gradient(90deg,var(--accent),color-mix(in srgb,var(--accent),var(--card) 70%));
   backdrop-filter:blur(6px);
   border-bottom:1px solid var(--header-line);
+  box-shadow:var(--shadow);
 }
 header .btn{border-color:var(--header-line);}
 .wrap{
@@ -167,7 +170,8 @@ nav .tab.active{background:color-mix(in srgb,var(--card),var(--ink) 20%);border-
 nav .tab:focus{outline:none}
 nav .tab:focus-visible{outline:$space-2 solid var(--accent)}
 .tab-icon{width:1.5rem}
-section.card{background:var(--card);backdrop-filter:blur(10px);border:1px solid color-mix(in srgb,var(--line),var(--bg) 20%);border-radius:$space-14;padding:$space-14;color:var(--ink)}
+section.card{background:var(--card);backdrop-filter:blur(10px);border:1px solid color-mix(in srgb,var(--line),var(--bg) 20%);border-radius:$space-14;padding:$space-14;color:var(--ink);box-shadow:var(--shadow);transition:box-shadow .2s}
+section.card:hover{box-shadow:0 6px 12px rgba(0,0,0,.15)}
 section.card h2{font-size:clamp(1rem,3.5vw,1.5rem);margin:0 0 $space-10}
 section.card .grid{display:grid;gap:$space-10}
 label{display:block;color:var(--muted);font-size:$font-sm;margin-bottom:$space-4}

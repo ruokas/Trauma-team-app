@@ -7,10 +7,10 @@
 :root.light{
   color-scheme:light;
   /* Increase contrast between background elements */
-  --bg:#ffffff;
-  --card:#e5e7eb;--ink:#0c0c0c;
-  --muted:#374151;--line:#6b7280;--shadow:0 4px 8px rgba(0,0,0,0.1);
-  --accent:#3b82f6;--red:#b91c1c;--yellow:#b45309;--green:#166534;--ink2:#1e293b;
+  --bg:#fff;
+  --card:#f1f5f9;--ink:#0f172a;
+  --muted:#475569;--line:#cbd5e1;--shadow:0 4px 8px rgba(0,0,0,0.1);
+  --accent:#4ea0f5;--red:#e53935;--yellow:#ffb74d;--green:#00c853;--ink2:#1e293b;
 }
 
 :root.dark{
