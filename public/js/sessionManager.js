@@ -44,7 +44,10 @@ export async function saveAll(){
     ...serializeChips(CHIP_GROUPS)
   };
   function pack(container){ return Array.from(container.children).map(card=>({ name:limit(card.querySelector('.act_custom_name')?card.querySelector('.act_custom_name').value:card.querySelector('.act_name').textContent.trim()), on:card.querySelector('.act_chk').checked, time:limit(card.querySelector('.act_time').value), dose:limit(card.querySelector('.act_dose')?card.querySelector('.act_dose').value:''), note:limit(card.querySelector('.act_note').value) }));}
-  data['pain_meds']=pack($('#pain_meds')); data['bleeding_meds']=pack($('#bleeding_meds')); data['other_meds']=pack($('#other_meds')); data['procs']=pack($('#procedures'));
+  data['pain_meds']=pack($('#pain_meds'));
+  data['bleeding_meds']=pack($('#bleeding_meds'));
+  data['other_meds']=pack($('#other_meds'));
+  data['procs']=pack($('#procedures_it')).concat(pack($('#procedures_other')));
   data['bodymap_svg']=limit(bodyMap.serialize(), 200000);
   localStorage.setItem(sessionKey(), JSON.stringify(data));
   const statusEl = $('#saveStatus');
@@ -114,7 +117,10 @@ function loadRecords(data){
   unpack($('#pain_meds'),data['pain_meds']);
   unpack($('#bleeding_meds'),data['bleeding_meds']);
   unpack($('#other_meds'),data['other_meds']);
-  unpack($('#procedures'),data['procs']);
+  const procsArr=Array.isArray(data['procs'])?data['procs']:[];
+  const itCount=$('#procedures_it').children.length;
+  unpack($('#procedures_it'),procsArr.slice(0,itCount));
+  unpack($('#procedures_other'),procsArr.slice(itCount));
 }
 
 function loadBodyMap(data){

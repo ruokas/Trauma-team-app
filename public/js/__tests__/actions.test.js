@@ -6,7 +6,8 @@ describe('initActions default doses', () => {
       <div id="pain_meds"></div>
       <div id="bleeding_meds"></div>
       <div id="other_meds"></div>
-      <div id="procedures"></div>
+      <div id="procedures_it"></div>
+      <div id="procedures_other"></div>
       <input id="medSearch" />
     `;
     initActions(() => {});
@@ -32,7 +33,8 @@ describe('initActions default doses', () => {
         <div id="pain_meds"></div>
         <div id="bleeding_meds"></div>
         <div id="other_meds"></div>
-        <div id="procedures"></div>
+        <div id="procedures_it"></div>
+        <div id="procedures_other"></div>
         <input id="medSearch" />
       `;
       initActions(() => {});
@@ -51,7 +53,8 @@ describe('initActions default doses', () => {
       <div id="pain_meds"></div>
       <div id="bleeding_meds"></div>
       <div id="other_meds"></div>
-      <div id="procedures"></div>
+      <div id="procedures_it"></div>
+      <div id="procedures_other"></div>
       <input id="medSearch" />
     `;
     initActions(() => {});
@@ -64,11 +67,12 @@ describe('initActions default doses', () => {
       <div id="pain_meds"></div>
       <div id="bleeding_meds"></div>
       <div id="other_meds"></div>
-      <div id="procedures"></div>
+      <div id="procedures_it"></div>
+      <div id="procedures_other"></div>
       <input id="medSearch" />
     `;
     initActions(() => {});
-    const procCard = document.querySelector('#procedures .card');
+    const procCard = document.querySelector('#procedures_it .card');
     expect(procCard.querySelector('.act_dose')).toBeNull();
   });
 });

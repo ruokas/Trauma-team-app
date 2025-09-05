@@ -3,7 +3,8 @@ import { $, $$, nowHM } from './utils.js';
 export const PAIN_MEDS = ['Fentanilis','Paracetamolis','Ketoprofenas'];
 export const BLEEDING_MEDS = ['TXA','O- kraujas','Fibryga','Ca gliukonatas'];
 export const OTHER_MEDS = ['Ringerio tirpalas','Noradrenalinas','Metoklopramidas','Ondansetronas'];
-export const PROCS = ['Intubacija','Krikotirotomija','Pleuros drenažas','Adatinė dekompresija','Kūno šildymas','Turniketas','Dubens diržas','Gipsavimas','Siuvimas','Repocizija'];
+export const PROCS_IT = ['Intubacija','Krikotirotomija','Pleuros drenažas','Adatinė dekompresija'];
+export const PROCS_OTHER = ['Kūno šildymas','Turniketas','Dubens diržas','Gipsavimas','Siuvimas','Repocizija'];
 
 // Default doses for medications
 export const DEFAULT_DOSES = {
@@ -116,7 +117,8 @@ export function initActions(saveAll){
   const painWrap=$('#pain_meds');
   const bleedingWrap=$('#bleeding_meds');
   const otherWrap=$('#other_meds');
-  const procsWrap=$('#procedures');
+  const procsItWrap=$('#procedures_it');
+  const procsOtherWrap=$('#procedures_other');
   const sortedPainMeds = PAIN_MEDS.slice().sort((a,b)=>a.localeCompare(b));
   const sortedBleedingMeds = BLEEDING_MEDS.slice().sort((a,b)=>a.localeCompare(b));
   const sortedOtherMeds = OTHER_MEDS.slice().sort((a,b)=>a.localeCompare(b));
@@ -134,11 +136,14 @@ export function initActions(saveAll){
   otherFrag.appendChild(buildActionCard('med','Kita', saveAll, {custom:true}));
   otherWrap.appendChild(otherFrag);
 
-  const procsFrag=document.createDocumentFragment();
-  PROCS.forEach(n=>procsFrag.appendChild(buildActionCard('proc', n, saveAll)));
-  procsWrap.appendChild(procsFrag);
+  const procsItFrag=document.createDocumentFragment();
+  PROCS_IT.forEach(n=>procsItFrag.appendChild(buildActionCard('proc', n, saveAll)));
+  procsItWrap.appendChild(procsItFrag);
+  const procsOtherFrag=document.createDocumentFragment();
+  PROCS_OTHER.forEach(n=>procsOtherFrag.appendChild(buildActionCard('proc', n, saveAll)));
+  procsOtherWrap.appendChild(procsOtherFrag);
 
-  const wraps=[painWrap,bleedingWrap,otherWrap,procsWrap];
+  const wraps=[painWrap,bleedingWrap,otherWrap,procsItWrap,procsOtherWrap];
 
   function handleAction(e){
     const card=e.target.closest('.card');
@@ -176,7 +181,7 @@ export function initActions(saveAll){
 
   const medSearch=$('#medSearch');
   if(medSearch){
-    const medWraps=[painWrap,bleedingWrap,otherWrap,procsWrap];
+    const medWraps=[painWrap,bleedingWrap,otherWrap,procsItWrap,procsOtherWrap];
     medSearch.addEventListener('input',()=>{
       const q=medSearch.value.trim().toLowerCase();
       medWraps.forEach(wrap=>{
