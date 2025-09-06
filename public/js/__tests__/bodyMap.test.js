@@ -279,6 +279,24 @@ describe('BodyMap instance', () => {
     expect(bm.brushLayer.childElementCount).toBe(0);
   });
 
+  test('continuous brush stroke triggers single save', () => {
+    setupDom();
+    const save = jest.fn();
+    const bm = new BodyMap();
+    bm.init(save);
+    bm.setTool(TOOLS.BURN.char);
+    bm.inBody = () => true;
+    bm.svgPoint = () => ({ x: 10, y: 10 });
+    bm.svg.dispatchEvent(new MouseEvent('pointerdown'));
+    bm.svg.dispatchEvent(new MouseEvent('pointermove'));
+    bm.svg.dispatchEvent(new MouseEvent('pointermove'));
+    document.dispatchEvent(new MouseEvent('pointerup'));
+    expect(save).toHaveBeenCalledTimes(1);
+    expect(bm.brushLayer.childElementCount).toBe(3);
+    expect(bm.undoStack.length).toBe(1);
+    expect(bm.undoStack[0].brushes.length).toBe(3);
+  });
+
   test('undo and redo do not invoke save callback', () => {
     setupDom();
     const save = jest.fn();
