@@ -3,6 +3,7 @@
 .btn{border:1px solid var(--line);background:var(--card);color:var(--ink);padding:$space-8 $space-12;border-radius:$space-10;cursor:pointer;font-weight:600;transition:background-color .2s,color .2s,filter .2s;display:flex;align-items:center;justify-content:center}
 .btn:hover{filter:brightness(1.2)}
 .btn:active{filter:brightness(.9)}
+.btn:disabled{opacity:.5;cursor:not-allowed;filter:none}
 .btn:focus-visible{outline:$space-3 solid var(--accent);outline-offset:$space-2;transition:background-color .2s,color .2s}
 .btn.primary{background:var(--accent);color:#fff;border-color:#2d74b8}
 .btn.warn{background:#ffb74d;color:#271400;border-color:#bf7d19}
@@ -72,7 +73,7 @@ input.invalid,select.invalid{border-color:var(--red)}
 .split>div{flex:1}
 .interv-groups{display:grid;gap:$space-12;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
 .interv-group{display:flex;flex-direction:column;gap:$space-8;background:var(--bg);border:1px solid var(--line);border-radius:$space-10;padding:$space-8}
-.interv-group>.grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
+.interv-group>.grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:$space-8}
 .interv-group.collapsed>.grid{display:none}
 .med-search{margin-bottom:$space-8;width:100%}
 /* SVG body map */
@@ -152,12 +153,26 @@ body.patient-menu-open .patient-menu-overlay:not([hidden]){display:block}
 .header-actions .patient-menu{position:relative}
 .header-actions .patient-menu>summary.btn{min-width:0}
 .header-actions .patient-menu .menu{position:absolute;right:0;display:flex;flex-direction:column;gap:$space-4;background:var(--card);border:1px solid var(--line);border-radius:$space-10;padding:$space-8;margin-top:$space-4}
-.header-actions .patient-menu .btn{width:100%;border:1px solid color-mix(in srgb,var(--line),var(--ink) 30%)}
+.header-actions .patient-menu .btn{
+  width:100%;
+  border:1px solid var(--line);
+  border-color:var(--line);
+  @supports (color:color-mix(in srgb,red,blue)){
+    border-color:color-mix(in srgb,var(--line),var(--ink) 30%);
+  }
+}
 @media (min-width:769px){
   .header-actions .patient-menu{position:static}
   .header-actions .patient-menu>summary.btn{display:none}
   .header-actions .patient-menu .menu{position:static;flex-direction:row;gap:$space-4;background:none;border:0;border-radius:0;padding:0;margin-top:0}
-  .header-actions .patient-menu .btn{width:auto;border:1px solid color-mix(in srgb,var(--line),var(--ink) 30%)}
+  .header-actions .patient-menu .btn{
+    width:auto;
+    border:1px solid var(--line);
+    border-color:var(--line);
+    @supports (color:color-mix(in srgb,red,blue)){
+      border-color:color-mix(in srgb,var(--line),var(--ink) 30%);
+    }
+  }
 }
 @media print{ header,nav,.toolbar{display:none!important} body{background:#fff;color:#000} section.card{break-inside:avoid} }
 /* Interventions compact layout */

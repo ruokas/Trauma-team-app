@@ -73,7 +73,7 @@ input.invalid,select.invalid{border-color:var(--red)}
 .split>div{flex:1}
 .interv-groups{display:grid;gap:$space-12;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
 .interv-group{display:flex;flex-direction:column;gap:$space-8;background:var(--bg);border:1px solid var(--line);border-radius:$space-10;padding:$space-8}
-.interv-group>.grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
+.interv-group>.grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:$space-8}
 .interv-group.collapsed>.grid{display:none}
 .med-search{margin-bottom:$space-8;width:100%}
 /* SVG body map */
