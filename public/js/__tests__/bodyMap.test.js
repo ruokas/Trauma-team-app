@@ -55,6 +55,18 @@ describe('BodyMap instance', () => {
     expect(data.marks[0]).toMatchObject({ x: 10, y: 20, type: TOOLS.WOUND.char, side: 'front', zone: 'front-torso' });
   });
 
+  test('setMarkScale applies scaling to new marks', () => {
+    setupDom();
+    const bm = new BodyMap();
+    bm.init(() => {});
+    bm.setMarkScale(0.5);
+    bm.addMark(10, 20, TOOLS.WOUND.char, 'front', 'front-torso');
+    bm.addMark(30, 40, TOOLS.WOUND.char, 'back', 'back-torso');
+    const marks = document.querySelectorAll('#marks use');
+    expect(marks[0].getAttribute('transform')).toBe('translate(10,20) scale(0.5)');
+    expect(marks[1].getAttribute('transform')).toBe('translate(30,40) scale(0.5)');
+  });
+
   test('load restores marks and brushes', () => {
     setupDom();
     const bm = new BodyMap();
