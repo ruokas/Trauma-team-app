@@ -6,7 +6,7 @@ const mockJsPDF = jest.fn().mockImplementation(() => ({
 }));
 jest.mock('../lib/jspdf.umd.min.js', () => ({ __esModule: true, default: { jsPDF: mockJsPDF } }));
 
-let saveAll, loadAll, generateReport, setupHeaderActions, initBodyMap, setCurrentSessionId;
+let saveAll, loadAll, generateReport, setupHeaderActions, bodyMap, setCurrentSessionId;
 
 const setupDom = () => {
   document.body.innerHTML = `
@@ -85,9 +85,9 @@ describe('patient fields', () => {
     ({ saveAll, loadAll, setCurrentSessionId } = require('../sessionManager.js'));
     ({ generateReport } = require('../report.js'));
     ({ setupHeaderActions } = require('../headerActions.js'));
-    ({ initBodyMap } = require('../bodyMap.js'));
+    ({ default: bodyMap } = require('../bodyMap.js'));
     setCurrentSessionId('test');
-    initBodyMap(()=>{});
+    bodyMap.init(()=>{});
     setupHeaderActions({ validateForm: () => true });
     require('../app.js');
     mockJsPDF.mockClear();
