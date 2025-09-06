@@ -186,7 +186,8 @@ describe('BodyMap instance', () => {
       }
     });
     const shape = document.getElementById('front-shape');
-    shape.getScreenCTM = () => ({
+    const path = shape.querySelector('path');
+    path.getScreenCTM = () => ({
       a: 2,
       b: 0,
       c: 0,
@@ -200,18 +201,59 @@ describe('BodyMap instance', () => {
           c: 0,
           d: 0.5,
           e: -50,
-          f: -50,
-          inverse() { return shape.getScreenCTM(); }
+          f: -50
         };
       }
     });
-    const path = shape.querySelector('path');
     path.isPointInFill = jest.fn(pt => pt.x >= 0 && pt.x <= 10 && pt.y >= 0 && pt.y <= 10);
     bm.setTool(TOOLS.WOUND.char);
     bm.svgPoint = () => ({ x: 110, y: 110 });
     shape.dispatchEvent(new MouseEvent('click'));
     expect(document.querySelectorAll('#marks use').length).toBe(1);
     expect(path.isPointInFill).toHaveBeenCalledWith(expect.objectContaining({ x: 5, y: 5 }));
+  });
+
+  test('inBody accepts points within both silhouettes', () => {
+    setupDom();
+    document.querySelector('#layer-front').innerHTML = '<g id="front-shape" data-side="front"><path></path></g>';
+    document.querySelector('#layer-back').innerHTML = '<g id="back-shape" data-side="back"><path></path></g>';
+    const bm = new BodyMap();
+    bm.init(() => {});
+    const makeMatrix = (e = 0) => ({
+      a: 1,
+      b: 0,
+      c: 0,
+      d: 1,
+      e,
+      f: 0,
+      inverse() { return makeMatrix(-e); }
+    });
+    const point = {
+      x: 0,
+      y: 0,
+      matrixTransform(m) {
+        return {
+          x: this.x * m.a + this.y * m.c + m.e,
+          y: this.x * m.b + this.y * m.d + m.f,
+          matrixTransform: this.matrixTransform
+        };
+      }
+    };
+    bm.svg.getScreenCTM = () => makeMatrix();
+    bm.svg.createSVGPoint = () => ({ ...point });
+    const frontPath = document.querySelector('#front-shape path');
+    const backPath = document.querySelector('#back-shape path');
+    frontPath.getScreenCTM = () => makeMatrix(0);
+    backPath.getScreenCTM = () => makeMatrix(100);
+    frontPath.isPointInFill = jest.fn(() => false);
+    backPath.isPointInFill = jest.fn(() => true);
+
+    bm.svgPoint = () => ({ x: 10, y: 10 });
+    expect(bm.inBody({ target: frontPath })).toBe(true);
+    bm.svgPoint = () => ({ x: 110, y: 10 });
+    expect(bm.inBody({ target: backPath })).toBe(true);
+    expect(frontPath.isPointInFill).toHaveBeenCalledWith(expect.objectContaining({ x: 10, y: 10 }));
+    expect(backPath.isPointInFill).toHaveBeenCalledWith(expect.objectContaining({ x: 10, y: 10 }));
   });
 
   test('addBrush increases burn area and serializes', () => {
