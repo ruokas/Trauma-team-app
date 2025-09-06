@@ -144,6 +144,7 @@ async function init(){
     initCollapsibles();
   }
   bodyMap.init(saveAllDebounced);
+  bodyMap.setMarkScale(0.5);
   initChips(saveAllDebounced);
   initAutoActivate(saveAllDebounced);
   initActions(saveAllDebounced);
