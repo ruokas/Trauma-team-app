@@ -44,6 +44,8 @@ export default class BodyMap {
     this.redoStack = [];
     this.brushSize = 20;
     this.brushBurns = [];
+    // Scale factor applied to wound/bruise markers
+    this.markScale = 1;
     this.isDrawing = false;
     this.pendingBrushes = [];
     this.vbWidth = 0;
@@ -56,6 +58,12 @@ export default class BodyMap {
     this.drag = null;
     this.onDragMove = this.onDragMove.bind(this);
     this.onDragEnd = this.onDragEnd.bind(this);
+  }
+
+  /** Set scaling factor for wound and bruise markers. */
+  setMarkScale(scale) {
+    const s = parseFloat(scale);
+    if (!isNaN(s) && s > 0) this.markScale = s;
   }
 
   /** Determine whether event occurred within body silhouette. */
@@ -160,13 +168,18 @@ export default class BodyMap {
     if (this.svg && !this.svg.querySelector('.zone')) {
       const layers = { front: $('#layer-front'), back: $('#layer-back') };
       zones.forEach(z => {
-        let group = layers[z.side].querySelector('.zones');
+        const layer = layers[z.side];
+        if (!layer) {
+          console.warn(`BodyMap.init: missing layer-${z.side}`);
+          return; // skip zones for this side
+        }
+        let group = layer.querySelector('.zones');
         let sx = 1;
         let sy = 1;
         if (!group) {
           group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
           group.classList.add('zones');
-          const shape = layers[z.side].querySelector(`#${z.side}-shape`);
+          const shape = layer.querySelector(`#${z.side}-shape`);
           if (shape) {
             const width = parseFloat(shape.getAttribute('width')) || shape.getBBox?.().width || 0;
             const height = parseFloat(shape.getAttribute('height')) || shape.getBBox?.().height || 0;
@@ -180,7 +193,7 @@ export default class BodyMap {
           }
           group.dataset.scaleX = sx;
           group.dataset.scaleY = sy;
-          layers[z.side].appendChild(group);
+          layer.appendChild(group);
         } else {
           sx = parseFloat(group.dataset.scaleX) || 1;
           sy = parseFloat(group.dataset.scaleY) || 1;
@@ -430,7 +443,7 @@ export default class BodyMap {
       this.updateUndoRedoButtons();
     }
     this.updateBurnDisplay();
-    this.saveCb();
+    if (record) this.saveCb();
   }
 
   /** Add a new mark to the map. */
@@ -443,7 +456,9 @@ export default class BodyMap {
       use.setAttribute('href', symbol);
       use.setAttributeNS('http://www.w3.org/1999/xlink', 'href', symbol);
     }
-    use.setAttribute('transform', `translate(${x},${y})`);
+    const transforms = [`translate(${x},${y})`];
+    if (this.markScale !== 1) transforms.push(`scale(${this.markScale})`);
+    use.setAttribute('transform', transforms.join(' '));
     const mid = id || ++this.markSeq;
     use.dataset.id = mid;
     use.dataset.type = type;
@@ -459,7 +474,7 @@ export default class BodyMap {
       this.redoStack = [];
       this.updateUndoRedoButtons();
     }
-    this.saveCb();
+    if (record) this.saveCb();
   }
 
   /** Begin dragging a mark. */
@@ -509,7 +524,7 @@ export default class BodyMap {
       this.redoStack = [];
       this.updateUndoRedoButtons();
     }
-    this.saveCb();
+    if (record) this.saveCb();
   }
 
   /**
