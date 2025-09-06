@@ -44,6 +44,8 @@ export default class BodyMap {
     this.redoStack = [];
     this.brushSize = 20;
     this.brushBurns = [];
+    // Scale factor applied to wound/bruise markers
+    this.markScale = 1;
     this.isDrawing = false;
     this.pendingBrushes = [];
     this.vbWidth = 0;
@@ -56,6 +58,12 @@ export default class BodyMap {
     this.drag = null;
     this.onDragMove = this.onDragMove.bind(this);
     this.onDragEnd = this.onDragEnd.bind(this);
+  }
+
+  /** Set scaling factor for wound and bruise markers. */
+  setMarkScale(scale) {
+    const s = parseFloat(scale);
+    if (!isNaN(s) && s > 0) this.markScale = s;
   }
 
   /** Determine whether event occurred within body silhouette. */
@@ -448,7 +456,9 @@ export default class BodyMap {
       use.setAttribute('href', symbol);
       use.setAttributeNS('http://www.w3.org/1999/xlink', 'href', symbol);
     }
-    use.setAttribute('transform', `translate(${x},${y})`);
+    const transforms = [`translate(${x},${y})`];
+    if (this.markScale !== 1) transforms.push(`scale(${this.markScale})`);
+    use.setAttribute('transform', transforms.join(' '));
     const mid = id || ++this.markSeq;
     use.dataset.id = mid;
     use.dataset.type = type;
