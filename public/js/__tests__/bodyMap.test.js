@@ -114,6 +114,18 @@ describe('BodyMap instance', () => {
       expect(document.querySelectorAll('#marks use').length).toBe(1);
     });
 
+    test('pointerdown followed by click adds only one mark', () => {
+      setupDom();
+      const bm = new BodyMap();
+      bm.init(() => {});
+      bm.svgPoint = () => ({ x: 10, y: 10 });
+      const zone = document.querySelector('.zone[data-zone="front-torso"]');
+      zone.dispatchEvent(new MouseEvent('pointerdown', { bubbles: true }));
+      zone.dispatchEvent(new MouseEvent('pointerup', { bubbles: true }));
+      zone.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+      expect(document.querySelectorAll('#marks use').length).toBe(1);
+    });
+
     test('pointer events move mark and save', () => {
       setupDom();
       const save = jest.fn();

@@ -183,25 +183,42 @@ export default class BodyMap {
       });
     }
 
-    // Cache zone elements and attach click/pointer handlers
+    const attachPointer = (el, handler) => {
+      let handled = false;
+      el.addEventListener('pointerdown', e => {
+        handled = true;
+        handler(e);
+        e.preventDefault();
+      });
+      el.addEventListener('pointerup', () => {
+        setTimeout(() => { handled = false; }, 0);
+      });
+      el.addEventListener('pointercancel', () => { handled = false; });
+      el.addEventListener('click', e => {
+        if (handled) {
+          handled = false;
+          return;
+        }
+        handler(e);
+      });
+    };
+
+    // Cache zone elements and attach pointer handlers
     $$('.zone', this.svg).forEach(el => {
       const id = el.dataset.zone;
       this.zoneMap.set(id, el);
       const handler = evt => {
-        if (evt.type === 'pointerdown') evt.preventDefault();
         const side = el.closest('#layer-back') ? 'back' : 'front';
         const p = this.svgPoint(evt);
         if (!this.pointInBody(p.x, p.y, side)) return;
         if (this.activeTool === TOOLS.BURN.char) {
-          if (evt.type === 'click') return; // avoid duplicate via click
           evt.stopPropagation();
           this.addBrush(p.x, p.y, this.brushSize);
         } else {
           this.addMark(p.x, p.y, this.activeTool, side, id);
         }
       };
-      el.addEventListener('click', handler);
-      el.addEventListener('pointerdown', handler);
+      attachPointer(el, handler);
     });
 
     // Tool buttons
@@ -248,13 +265,11 @@ export default class BodyMap {
       const el = document.getElementById(id);
       if (!el) return;
       const handler = evt => {
-        if (evt.type === 'pointerdown') evt.preventDefault();
         const p = this.svgPoint(evt);
         if (!this.pointInBody(p.x, p.y, el.dataset.side)) return;
         this.addMark(p.x, p.y, this.activeTool, el.dataset.side);
       };
-      el.addEventListener('click', handler);
-      el.addEventListener('pointerdown', handler);
+      attachPointer(el, handler);
     });
 
     // Mark selection and dragging
