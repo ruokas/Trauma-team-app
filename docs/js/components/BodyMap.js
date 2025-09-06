@@ -46,8 +46,8 @@ export default class BodyMap {
     this.brushBurns = [];
     this.isDrawing = false;
     this.pendingBrushes = [];
-    this.vbWidth = 1500;
-    this.vbHeight = 1100;
+    this.vbWidth = 0;
+    this.vbHeight = 0;
     // The total drawable area will be derived from the front and back
     // body silhouettes once the SVG is available.
     this.totalArea = 0;
@@ -124,8 +124,10 @@ export default class BodyMap {
     this.burnTotalEl = $('#burnTotal');
     this.brushSizeInput = $('#brushSize');
 
-    const vb = this.svg?.getAttribute('viewBox')?.split(/\s+/).map(Number);
-    if (vb) {
+    const vb = (this.svg?.getAttribute('viewBox') || '')
+      .split(/\s+/)
+      .map(Number);
+    if (vb.length === 4 && vb.every(n => !isNaN(n))) {
       this.vbWidth = vb[2];
       this.vbHeight = vb[3];
     }
@@ -236,6 +238,18 @@ export default class BodyMap {
         }
       };
       attachPointer(el, handler);
+    });
+
+    // Ensure zone bounding boxes reflect the actual SVG dimensions
+    this.zoneMap.forEach(el => {
+      if (typeof el.getBBox === 'function') {
+        try {
+          const b = el.getBBox();
+          el.dataset.bbox = `${b.x},${b.y},${b.x + b.width},${b.y + b.height}`;
+        } catch {
+          // ignore failures in environments without SVG geometry support
+        }
+      }
     });
 
     // Tool buttons

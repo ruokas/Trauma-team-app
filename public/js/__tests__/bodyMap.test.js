@@ -7,7 +7,7 @@ const frontZone = zones.find(z => z.id === 'front-torso');
 
 function setupDom() {
   document.body.innerHTML = `
-    <svg id="bodySvg"><g id="layer-front"></g><g id="layer-back"></g><g id="marks"></g></svg>
+    <svg id="bodySvg" viewBox="0 0 1500 1090"><g id="layer-front"></g><g id="layer-back"></g><g id="marks"></g></svg>
     <div id="burnTotal"></div>
       <div class="map-toolbar">
         <button class="tool" data-tool="${TOOLS.WOUND.char}"></button>
@@ -24,7 +24,7 @@ function setupDom() {
 
 describe('BodyMap instance', () => {
   test('init exits gracefully when SVG structure is incomplete', () => {
-    document.body.innerHTML = '<svg id="bodySvg"></svg>';
+    document.body.innerHTML = '<svg id="bodySvg" viewBox="0 0 1500 1090"></svg>';
     const bm = new BodyMap();
     const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
     expect(() => bm.init(() => {})).not.toThrow();
