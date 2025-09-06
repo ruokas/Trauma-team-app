@@ -71,26 +71,29 @@ export default class BodyMap {
 
   /** Check if given coordinates lie within the body silhouette. */
   pointInBody(x, y, side) {
-    if (!this.svg || typeof this.svg.createSVGPoint !== 'function') return true;
+    if (
+      !this.svg ||
+      typeof this.svg.createSVGPoint !== 'function' ||
+      typeof this.svg.getScreenCTM !== 'function'
+    ) {
+      return true;
+    }
     const pt = this.svg.createSVGPoint();
     pt.x = x;
     pt.y = y;
+    const screenPt = pt.matrixTransform(this.svg.getScreenCTM());
     const sides = side ? [side] : ['front', 'back'];
     return sides.some(s => {
-      const svgEl = this.svg.querySelector(`#${s}-shape`);
-      const path = svgEl?.querySelector('path');
+      const path = this.svg.querySelector(`#${s}-shape path`);
       if (
-        !svgEl ||
         !path ||
         typeof path.isPointInFill !== 'function' ||
-        typeof svgEl.getScreenCTM !== 'function' ||
-        typeof this.svg.getScreenCTM !== 'function'
+        typeof path.getScreenCTM !== 'function'
       ) {
         return true;
       }
       try {
-        const screenPt = pt.matrixTransform(this.svg.getScreenCTM());
-        const localPt = screenPt.matrixTransform(svgEl.getScreenCTM().inverse());
+        const localPt = screenPt.matrixTransform(path.getScreenCTM().inverse());
         return path.isPointInFill(localPt);
       } catch {
         return true;
