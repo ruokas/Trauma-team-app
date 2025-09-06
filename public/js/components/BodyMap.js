@@ -164,19 +164,38 @@ export default class BodyMap {
           return; // skip zones for this side
         }
         let group = layer.querySelector('.zones');
+        let sx = 1;
+        let sy = 1;
         if (!group) {
           group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
           group.classList.add('zones');
           const shape = layer.querySelector(`#${z.side}-shape`);
-          const tr = shape?.getAttribute('transform');
-          if (tr) group.setAttribute('transform', tr);
+          if (shape) {
+            const width = parseFloat(shape.getAttribute('width')) || shape.getBBox?.().width || 0;
+            const height = parseFloat(shape.getAttribute('height')) || shape.getBBox?.().height || 0;
+            sx = width ? width / 48 : 1;
+            sy = height ? height / 50 : 1;
+            const tr = shape.getAttribute('transform');
+            const transforms = [];
+            if (tr) transforms.push(tr);
+            if (sx !== 1 || sy !== 1) transforms.push(`scale(${sx} ${sy})`);
+            if (transforms.length) group.setAttribute('transform', transforms.join(' '));
+          }
+          group.dataset.scaleX = sx;
+          group.dataset.scaleY = sy;
           layer.appendChild(group);
+        } else {
+          sx = parseFloat(group.dataset.scaleX) || 1;
+          sy = parseFloat(group.dataset.scaleY) || 1;
         }
         const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         path.classList.add('zone');
         path.dataset.zone = z.id;
         path.dataset.area = z.area;
-        if (z.bbox) path.dataset.bbox = z.bbox.join(',');
+        if (z.bbox) {
+          const [x1, y1, x2, y2] = z.bbox;
+          path.dataset.bbox = [x1 * sx, y1 * sy, x2 * sx, y2 * sy].join(',');
+        }
         path.setAttribute('d', z.path);
         path.setAttribute('aria-label', z.label);
         const title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
