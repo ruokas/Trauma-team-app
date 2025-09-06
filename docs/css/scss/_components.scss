@@ -161,6 +161,9 @@ body.patient-menu-open .patient-menu-overlay:not([hidden]){display:block}
     border-color:color-mix(in srgb,var(--line),var(--ink) 30%);
   }
 }
+@media (max-width:768px){
+  .header-actions .patient-menu>summary.btn{display:flex}
+}
 @media (min-width:769px){
   .header-actions .patient-menu{position:static}
   .header-actions .patient-menu>summary.btn{display:none}
