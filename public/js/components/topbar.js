@@ -11,82 +11,38 @@ export function initNavToggle(toggle, nav){
   if(!toggle || !nav) return;
   toggle.setAttribute('aria-controls', nav.id);
   toggle.setAttribute('aria-expanded','false');
-  const overlay=document.querySelector('.nav-overlay');
   const focusableSel='a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
-  let navOpen=false;
-  let trapActive=false;
-  function close(){
-    document.body.classList.remove('nav-open');
+  const close=()=>{
+    if(typeof nav.close==='function') nav.close(); else nav.removeAttribute('open');
     toggle.setAttribute('aria-expanded','false');
-    nav.setAttribute('aria-hidden','true');
-    nav.setAttribute('hidden','');
-    if(overlay) overlay.hidden=true;
-    document.body.style.overflow='';
-    if(trapActive){
-      document.removeEventListener('keydown', trap);
-      trapActive=false;
-    }
-    navOpen=false;
-    toggle.focus();
-  }
-  function trap(e){
-    if(e.key==='Tab'){
-      const items=nav.querySelectorAll(focusableSel);
-      if(!items.length) return;
-      const first=items[0];
-      const last=items[items.length-1];
-      if(e.shiftKey){
-        if(document.activeElement===first){ e.preventDefault(); last.focus(); }
-      }else{
-        if(document.activeElement===last){ e.preventDefault(); first.focus(); }
-      }
-    }else if(e.key==='Escape'){
-      close();
-    }
-  }
-  function open(){
+    if(!navMq || !navMq.matches) toggle.focus();
+  };
+  const open=()=>{
     const mobile=!navMq || !navMq.matches;
-    const wasClosed=!navOpen;
-    navOpen=true;
-    document.body.classList.toggle('nav-open', mobile);
+    if(mobile){
+      if(typeof nav.showModal==='function'){ nav.showModal(); } else { nav.setAttribute('open',''); }
+      nav.querySelector(focusableSel)?.focus();
+    }else{
+      if(typeof nav.show==='function'){ nav.show(); } else { nav.setAttribute('open',''); }
+    }
     toggle.setAttribute('aria-expanded','true');
-    nav.removeAttribute('aria-hidden');
-    nav.removeAttribute('hidden');
-    if(mobile){
-      if(overlay) overlay.hidden=false;
-      document.body.style.overflow='hidden';
-      const items=nav.querySelectorAll(focusableSel);
-      if(wasClosed && items.length) items[0].focus();
-      if(!trapActive){
-        document.addEventListener('keydown', trap);
-        trapActive=true;
-      }
-    }else{
-      if(overlay) overlay.hidden=true;
-      document.body.style.overflow='';
-      if(trapActive){
-        document.removeEventListener('keydown', trap);
-        trapActive=false;
-      }
-    }
-  }
+  };
   toggle.addEventListener('click',()=>{
-    navOpen ? close() : open();
+    nav.hasAttribute('open') ? close() : open();
   });
-  if(overlay){
-    overlay.addEventListener('click', close);
-  }
-  nav.addEventListener('click', () => {
+  nav.addEventListener('close',()=>{
+    toggle.setAttribute('aria-expanded','false');
+    if(!navMq || !navMq.matches) toggle.focus();
+  });
+  nav.addEventListener('click',e=>{
+    if(e.target===nav) return close();
     const mobile=!navMq || !navMq.matches;
-    if(mobile){
-      close();
-    }else{
-      setTimeout(()=>{
-        if(nav.hasAttribute('hidden')) open();
-      });
-    }
+    if(mobile && e.target.closest('a')) close();
   });
-  navMq=typeof matchMedia==='function' ? matchMedia(`(min-width: ${NAV_BREAKPOINT}px)`) : null;
+  if(!('showModal' in nav)){
+    nav.addEventListener('keydown',e=>{ if(e.key==='Escape') close(); });
+  }
+  navMq=typeof matchMedia==='function'?matchMedia(`(min-width: ${NAV_BREAKPOINT}px)`):null;
   if(navMq){
     navMqListener=e=>{ e.matches ? open() : close(); };
     navMq.addEventListener('change', navMqListener);
@@ -98,7 +54,6 @@ export function initNavToggle(toggle, nav){
 
 let patientMenuMq;
 let patientMenuMqListener;
-let patientMenuDocListener;
 let patientMenuSearchListener;
 let patientMenuSearchToggle;
 
@@ -109,42 +64,39 @@ export function initPatientMenuToggle(menu){
     }
     patientMenuMqListener=null;
   }
-  if(patientMenuDocListener){
-    document.removeEventListener('click', patientMenuDocListener);
-    patientMenuDocListener=null;
-  }
   if(patientMenuSearchToggle && patientMenuSearchListener){
     patientMenuSearchToggle.removeEventListener('click', patientMenuSearchListener);
     patientMenuSearchToggle=null;
     patientMenuSearchListener=null;
   }
   if(!menu) return;
+  const toggle=document.getElementById('patientMenuToggle');
   const search=menu.querySelector('#patientSearch');
-  const searchToggle=menu.querySelector('#patientSearchToggle');
-  patientMenuMq=typeof matchMedia==='function' ? matchMedia('(min-width: 769px)') : null;
-  const update=()=>{ if(patientMenuMq && patientMenuMq.matches) menu.setAttribute('open',''); else menu.removeAttribute('open'); };
+  const searchToggle=document.getElementById('patientSearchToggle');
+  patientMenuMq=typeof matchMedia==='function'?matchMedia('(min-width: 769px)'):null;
+  const update=()=>{
+    if(patientMenuMq && patientMenuMq.matches){
+      if(typeof menu.show==='function') menu.show(); else menu.setAttribute('open','');
+    }else{
+      if(typeof menu.close==='function') menu.close(); else menu.removeAttribute('open');
+    }
+  };
   update();
   if(patientMenuMq){
     patientMenuMqListener=update;
     patientMenuMq.addEventListener('change', patientMenuMqListener);
   }
-  patientMenuDocListener=e=>{
-    if(menu.hasAttribute('open') && (!patientMenuMq || !patientMenuMq.matches) && !menu.contains(e.target)){
-      menu.removeAttribute('open');
-      search?.classList.add('hidden');
-    }
-  };
-  document.addEventListener('click', patientMenuDocListener);
+  toggle?.addEventListener('click',()=>{
+    menu.hasAttribute('open') ? (menu.close?menu.close():menu.removeAttribute('open')) : (menu.showModal?menu.showModal():menu.setAttribute('open',''));
+  });
+  menu.addEventListener('click',e=>{ if(e.target===menu) (menu.close?menu.close():menu.removeAttribute('open')); });
+  menu.addEventListener('close',()=>{ search?.classList.add('hidden'); });
   patientMenuSearchListener=e=>{
     e.stopPropagation();
     e.preventDefault();
     search?.classList.toggle('hidden');
-    menu.setAttribute('open','');
     if(!search?.classList.contains('hidden')){
-      requestAnimationFrame(()=>{
-        search.focus();
-        menu.setAttribute('open','');
-      });
+      requestAnimationFrame(()=>{ search.focus(); });
     }else if(search){
       search.value='';
     }
@@ -178,7 +130,7 @@ export async function initTopbar(){
     ro.observe(header);
   }
   const toggle=document.getElementById('navToggle');
-  const nav=document.querySelector('nav');
+  const nav=document.getElementById('navDialog');
   initNavToggle(toggle, nav);
   const patientMenu=document.getElementById('patientMenu');
   initPatientMenuToggle(patientMenu);

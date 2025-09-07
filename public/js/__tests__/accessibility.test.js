@@ -1,6 +1,6 @@
 describe('accessibility',()=>{
   test('header and nav have appropriate roles',()=>{
-    document.body.innerHTML=`<header id="appHeader" role="banner"></header><nav id="tabs" aria-label="Primary navigation"></nav>`;
+    document.body.innerHTML=`<header id="appHeader" role="banner"></header><dialog id="navDialog"><nav id="tabs" aria-label="Primary navigation"></nav></dialog>`;
     const header=document.getElementById('appHeader');
     const nav=document.getElementById('tabs');
     expect(header.getAttribute('role')).toBe('banner');
@@ -8,7 +8,7 @@ describe('accessibility',()=>{
   });
 
   test('nav toggle manages aria-expanded and focus',()=>{
-    document.body.innerHTML=`<button id="navToggle">Menu</button><nav id="tabs"><a href="#" class="tab">One</a></nav>`;
+    document.body.innerHTML=`<button id="navToggle">Menu</button><dialog id="tabs"><a href="#" class="tab">One</a></dialog>`;
     const { initNavToggle }=require('../components/topbar.js');
     const toggle=document.getElementById('navToggle');
     const nav=document.getElementById('tabs');
