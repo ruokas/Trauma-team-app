@@ -1,45 +1,35 @@
-const CACHE_NAME = 'trauma-cache-v1';
-const ASSETS = [
-  '/',
-  '/index.html',
-  '/css/main.css',
-  '/js/app.js'
-];
+importScripts('https://storage.googleapis.com/workbox-cdn/releases/6.5.4/workbox-sw.js');
+
+const { core, precaching, routing, strategies } = workbox;
+
+core.skipWaiting();
+core.clientsClaim();
+
+precaching.precacheAndRoute(self.__WB_MANIFEST);
+
+// Runtime caching for API requests
+routing.registerRoute(
+  ({ url }) => url.pathname.startsWith('/api/'),
+  new strategies.NetworkFirst({
+    cacheName: 'api-cache'
+  })
+);
+
+// Runtime caching for static resources
+routing.registerRoute(
+  ({ request }) => ['style', 'script', 'image'].includes(request.destination),
+  new strategies.StaleWhileRevalidate({
+    cacheName: 'static-resources'
+  })
+);
 
 const SYNC_TAG = 'sync-sessions';
 const DB_NAME = 'trauma-sync';
 const STORE_NAME = 'queue';
 
-self.addEventListener('install', event => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))
-  );
-  self.skipWaiting();
-});
-
-self.addEventListener('activate', event => {
-  event.waitUntil(
-    caches.keys().then(keys => Promise.all(
-      keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))
-    ))
-  );
-  self.clients.claim();
-});
-
-self.addEventListener('fetch', event => {
-  if(event.request.method !== 'GET') return;
-  event.respondWith(
-    fetch(event.request).then(res => {
-      const copy = res.clone();
-      caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
-      return res;
-    }).catch(() => caches.match(event.request))
-  );
-});
-
 self.addEventListener('message', event => {
   const msg = event.data || {};
-  if(msg.type === 'queue-session'){
+  if (msg.type === 'queue-session') {
     event.waitUntil(
       queueRequest(msg.id, msg.data, msg.token).then(() => {
         return self.registration.sync.register(SYNC_TAG);
@@ -49,12 +39,12 @@ self.addEventListener('message', event => {
 });
 
 self.addEventListener('sync', event => {
-  if(event.tag === SYNC_TAG){
+  if (event.tag === SYNC_TAG) {
     event.waitUntil(processQueue());
   }
 });
 
-function openDb(){
+function openDb () {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, 1);
     request.onupgradeneeded = () => {
@@ -65,7 +55,7 @@ function openDb(){
   });
 }
 
-async function queueRequest(id, data, token){
+async function queueRequest (id, data, token) {
   const db = await openDb();
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORE_NAME, 'readwrite');
@@ -75,7 +65,7 @@ async function queueRequest(id, data, token){
   });
 }
 
-async function getAll(){
+async function getAll () {
   const db = await openDb();
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORE_NAME, 'readonly');
@@ -90,7 +80,7 @@ async function getAll(){
   });
 }
 
-async function clear(id){
+async function clear (id) {
   const db = await openDb();
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORE_NAME, 'readwrite');
@@ -100,11 +90,11 @@ async function clear(id){
   });
 }
 
-async function processQueue(){
+async function processQueue () {
   const items = await getAll();
-  for(const { id, value } of items){
+  for (const { id, value } of items) {
     const { data, token } = value;
-    try{
+    try {
       const res = await fetch(`/api/sessions/${id}/data`, {
         method: 'PUT',
         headers: {
@@ -113,8 +103,8 @@ async function processQueue(){
         },
         body: JSON.stringify(data)
       });
-      if(res.ok) await clear(id);
-    }catch(e){
+      if (res.ok) await clear(id);
+    } catch (e) {
       // Leave in queue for next sync
     }
   }
