@@ -50,16 +50,16 @@ header .btn{border-color:var(--header-line);}
   width:100%;
   max-width:1200px;
   margin-inline:auto;
-  padding:$space-8 $space-20;
+  padding:$space-4 $space-16;
   display:grid;
   grid-template-columns:auto 1fr auto;
   align-items:center;
-  gap:$space-8;
+  gap:$space-6;
 }
 .header-left{
   display:flex;
   align-items:center;
-  gap:$space-12;
+  gap:$space-8;
   > div{
     flex:1;
     min-width:0;
@@ -69,13 +69,13 @@ header .btn{border-color:var(--header-line);}
 .header-actions{
   display:flex;
   flex-wrap:wrap;
-  gap:$space-12;
+  gap:$space-8;
   align-items:center;
   min-width:0;
   .toolbar{
     display:flex;
     flex-wrap:wrap;
-    gap:$space-10;
+    gap:$space-8;
     flex:1 1 clamp(80px,33%,220px);
     min-width:clamp(80px,33%,220px);
   }
@@ -86,7 +86,7 @@ header .btn{border-color:var(--header-line);}
 }
 
 .header-actions{
-  column-gap:$space-16;
+  column-gap:$space-8;
   &.nowrap{
     flex-wrap:nowrap;
     > .toolbar:not(:first-child){
@@ -101,7 +101,7 @@ header .btn{border-color:var(--header-line);}
   justify-self:center;
   justify-content:center;
   .toolbar{
-    gap:$space-12;
+    gap:$space-8;
   }
   .toolbar + .toolbar,
   .toolbar + .patient-menu{
@@ -119,7 +119,7 @@ header .btn{border-color:var(--header-line);}
     .status-wrap{
       display:flex;
       align-items:center;
-      gap:$space-8;
+      gap:$space-6;
       flex:1 1 auto;
       min-width:0;
 
@@ -139,7 +139,7 @@ header .btn{border-color:var(--header-line);}
     .btn{
       flex:0 0 auto;
       min-width:80px;
-      padding:$space-6 $space-8;
+      padding:$space-4 $space-6;
     }
   }
   #desktopActions{
@@ -157,7 +157,7 @@ h1{font-size:clamp(1.25rem,5vw,2rem);line-height:1.2;margin:$space-4 0}
   margin-right:$space-4;
   &:only-child{margin-right:0}
 }
-.toolbar{display:flex;gap:$space-8;flex-wrap:wrap;margin-top:$space-8}
+.toolbar{display:flex;gap:$space-6;flex-wrap:wrap;margin-top:$space-6}
 .toolbar--scroll{flex-wrap:nowrap;overflow-x:auto}
 .header-actions .toolbar:first-child,
 .header-center .toolbar:first-child{margin-top:0}
