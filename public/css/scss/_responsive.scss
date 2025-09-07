@@ -1,15 +1,28 @@
+@use 'variables' as *;
+
 @media (max-width: 768px) {
   header .wrap {
-    grid-template-columns: 1fr;
+    display:flex;
+    flex-wrap:wrap;
+    padding:$space-4 $space-12;
+    gap:$space-4;
   }
 
   .header-left,
-  .header-center,
   .header-actions {
-    grid-column: 1 / -1;
+    flex:1 1 50%;
+    gap:$space-6;
+    align-items:center;
   }
 
   .header-actions {
-    justify-self: end;
+    justify-content:flex-end;
+  }
+
+  .header-center {
+    order:3;
+    flex:1 1 100%;
+    justify-content:center;
+    margin-top:$space-4;
   }
 }
