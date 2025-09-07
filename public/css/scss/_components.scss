@@ -119,31 +119,18 @@ input.invalid,select.invalid{border-color:var(--red)}
 }
 .patient-menu{position:relative;display:flex;align-items:center}
 .patient-menu[open]>summary{pointer-events:none}
-#navDialog,
-#patientMenu{
-  border:0;
-  padding:0;
-  margin:0;
-  background:transparent;
-  position:fixed;
-  top:0;
-  bottom:0;
-  width:13.75rem;
-}
-
-#navDialog{left:0;}
-#patientMenu{right:0;}
-
-#navDialog::backdrop,
-#patientMenu::backdrop{
-  background:rgba(0,0,0,0.5);
-}
-@container (max-width:768px){
+.nav-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:10;display:none}
+body.nav-open .nav-overlay:not([hidden]){display:block}
+.patient-menu-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:10;display:none}
+body.patient-menu-open .patient-menu-overlay:not([hidden]){display:block}
+  @container (max-width:768px){
   #navToggle{display:inline-block;margin-bottom:$space-8}
   #patientMenuToggle{display:inline-flex;margin-bottom:$space-8;align-items:center;justify-content:center}
-
-  #patientMenu{
-    background:var(--card);
+  .patient-menu-content{
+    position:fixed;
+    top:0;right:0;bottom:0;
+    width:13.75rem;
+      background:var(--card);
     transform:translateX(100%);
     transition:transform .3s ease;
     padding:$space-14 $space-16;
@@ -151,21 +138,23 @@ input.invalid,select.invalid{border-color:var(--red)}
     z-index:1100;
     pointer-events:none;
   }
-  #patientMenu[open]{transform:translateX(0);pointer-events:auto}
-
+  body.patient-menu-open .patient-menu-content{transform:translateX(0);pointer-events:auto}
+  body.patient-menu-open{overflow:hidden}
   main{grid-template-columns:1fr}
-
-  #navDialog{z-index:1100;}
-  #navDialog nav{
-    background:var(--card);
+  nav{
+    position:fixed;
+    top:0;left:0;bottom:0;
+    width:13.75rem;
+      background:var(--card);
     transform:translateX(-100%);
     transition:transform .3s ease;
     padding:$space-14 $space-16;
     overflow:auto;
-    height:100%;
+    z-index:1100;
     pointer-events:none;
   }
-  #navDialog[open] nav{transform:translateX(0);pointer-events:auto}
+  body.nav-open nav{transform:translateX(0);pointer-events:auto}
+  body.nav-open{overflow:hidden}
 }
 /* Stroke app patient menu styles */
 .header-actions .patient-menu{position:relative}
