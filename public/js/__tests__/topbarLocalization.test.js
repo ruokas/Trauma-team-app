@@ -10,7 +10,7 @@ describe('topbar', () => {
       expect(u).toBe(url);
       return Promise.resolve({ ok: true, text: () => Promise.resolve(html) });
     });
-    document.body.innerHTML = '<header id="appHeader"></header><nav></nav>';
+    document.body.innerHTML = '<header id="appHeader"></header><dialog id="navDialog"></dialog>';
     window.matchMedia = window.matchMedia || function(){
       return { matches: false, addEventListener(){}, removeEventListener(){}, addListener(){}, removeListener(){} };
     };
