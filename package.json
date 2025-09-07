@@ -8,7 +8,7 @@
     "test:client": "jest --config jest.config.js --passWithNoTests",
     "test:server": "jest --config jest.server.config.js",
     "build:css": "sass --no-source-map --style=compressed public/css/scss/main.scss public/css/main.css",
-    "build": "npm run build:css && rm -rf docs && cp -r public docs && rm -rf docs/js/__tests__",
+    "build": "npm run build:css && rm -rf docs && cp -r public docs && rm -rf docs/js/__tests__ && node build-sw.js",
     "start": "node server/start.js",
     "lint": "eslint server public/js",
     "prepare": "husky install"
@@ -37,6 +37,7 @@
     "jest": "^27.5.1",
     "jsdom": "^26.1.0",
     "sass": "^1.90.0",
-    "supertest": "^6.3.3"
+    "supertest": "^6.3.3",
+    "workbox-build": "^6.6.0"
   }
 }
