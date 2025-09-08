@@ -1,4 +1,5 @@
-const WIDTH = 48;
+export const CANVAS = { WIDTH: 48, HEIGHT: 50 };
+const WIDTH = CANVAS.WIDTH;
 
 /**
  * Mirror an SVG path across the vertical axis of the viewBox. Originally this
