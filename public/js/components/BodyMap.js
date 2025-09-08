@@ -456,6 +456,9 @@ export default class BodyMap {
       use.setAttribute('href', symbol);
       use.setAttributeNS('http://www.w3.org/1999/xlink', 'href', symbol);
     }
+    const size = TOOLS[type]?.size || 14;
+    use.setAttribute('width', size);
+    use.setAttribute('height', size);
     const transforms = [`translate(${x},${y})`];
     if (this.markScale !== 1) transforms.push(`scale(${this.markScale})`);
     use.setAttribute('transform', transforms.join(' '));
