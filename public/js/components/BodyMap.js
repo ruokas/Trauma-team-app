@@ -75,8 +75,11 @@ export default class BodyMap {
     this.initialized = true;
   }
 
-  svgPoint(evt) {
-    return { x: evt.offsetX || 0, y: evt.offsetY || 0 };
+  svgPoint(evt){
+    const pt=this.svg.createSVGPoint();
+    pt.x=evt.clientX; pt.y=evt.clientY;
+    const {x,y}=pt.matrixTransform(this.svg.getScreenCTM().inverse());
+    return {x,y};
   }
 
   setTool(tool) { this.activeTool = tool; }

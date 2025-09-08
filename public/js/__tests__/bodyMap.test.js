@@ -24,6 +24,15 @@ describe('BodyMap minimal', () => {
     expect(data.marks[0]).toMatchObject({ x: 10, y: 20, type: TOOLS.WOUND.char, zone: 'front-torso' });
   });
 
+  test('addBrush uses provided coordinates', () => {
+    setupDom();
+    const bm = new BodyMap();
+    bm.init(() => {});
+    const brush = bm.addBrush(15, 25, 5);
+    expect(brush.getAttribute('cx')).toBe('15');
+    expect(brush.getAttribute('cy')).toBe('25');
+  });
+
   test('load restores marks and brushes', () => {
     setupDom();
     const bm = new BodyMap();
