@@ -1,5 +1,5 @@
 import { $ } from '../utils.js';
-import zones from '../bodyMapZones.js';
+import zones, { CANVAS } from '../bodyMapZones.js';
 import { TOOLS } from '../BodyMapTools.js';
 
 const TOOL_SYMBOL = Object.values(TOOLS).reduce((acc, t) => {
@@ -46,6 +46,10 @@ export default class BodyMap {
       if (!group) {
         group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
         group.classList.add('zones');
+        const vb = this.svg.viewBox?.baseVal;
+        const sx = vb ? (vb.width / 2) / CANVAS.WIDTH : 1;
+        const sy = vb ? vb.height / CANVAS.HEIGHT : 1;
+        group.setAttribute('transform', `scale(${sx} ${sy})`);
         layer.appendChild(group);
       }
       const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
@@ -157,12 +161,17 @@ export default class BodyMap {
       if (!counts[zone]) counts[zone] = { label: ZONE_LABELS[zone] || '', burned: 0 };
       counts[zone][type] = (counts[zone][type] || 0) + 1;
     });
+    const vb = this.svg.viewBox?.baseVal;
+    const sx = vb ? (vb.width / 2) / CANVAS.WIDTH : 1;
+    const sy = vb ? vb.height / CANVAS.HEIGHT : 1;
     this.brushLayer.querySelectorAll('circle').forEach(c => {
       const x = Number(c.dataset.x);
       const y = Number(c.dataset.y);
       const r = Number(c.dataset.r);
       const area = Math.PI * r * r;
-      const zone = zones.find(z => x >= z.bbox[0] && x <= z.bbox[2] && y >= z.bbox[1] && y <= z.bbox[3]);
+      const zone = zones.find(z =>
+        x >= z.bbox[0] * sx && x <= z.bbox[2] * sx &&
+        y >= z.bbox[1] * sy && y <= z.bbox[3] * sy);
       if (zone) counts[zone.id].burned += (area * 100) / zone.area;
     });
     return counts;
