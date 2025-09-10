@@ -67,6 +67,8 @@ export default class BodyMap {
       const pt = this.svgPoint(evt);
       if (this.activeTool === TOOLS.BURN.char) {
         this.addBrush(pt.x, pt.y, this.brushSize);
+      } else if (this.activeTool === TOOLS.BURN_ERASE.char) {
+        this.eraseBrush(pt.x, pt.y, this.brushSize);
       } else {
         this.addMark(pt.x, pt.y, this.activeTool, zone.dataset.side, zone.dataset.zone);
       }
@@ -120,6 +122,19 @@ export default class BodyMap {
     c.dataset.r = r;
     this.brushLayer.appendChild(c);
     return c;
+  }
+
+  /** Remove burn marks within the eraser radius. */
+  eraseBrush(x, y, r) {
+    const circles = [...this.brushLayer.querySelectorAll('circle')];
+    circles.forEach(c => {
+      const cx = Number(c.dataset.x);
+      const cy = Number(c.dataset.y);
+      const cr = Number(c.dataset.r);
+      const dx = cx - x;
+      const dy = cy - y;
+      if (Math.hypot(dx, dy) <= r + cr) c.remove();
+    });
   }
 
   clear() {
