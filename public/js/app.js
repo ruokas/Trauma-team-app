@@ -154,6 +154,21 @@ async function init(){
   initMechanismList();
   document.addEventListener('input', saveAllDebounced);
   initCirculation();
+  const toolBtns=$$('.map-toolbar .tool');
+  toolBtns.forEach(btn=>{
+    if(btn.dataset.tool===bodyMap.activeTool) btn.classList.add('active');
+    btn.addEventListener('click',()=>{
+      if(btn.dataset.tool){
+        bodyMap.setTool(btn.dataset.tool);
+        toolBtns.forEach(b=>b.classList.toggle('active', b===btn));
+      }
+    });
+  });
+  const btnClearMap=$('#btnClearMap');
+  if(btnClearMap) btnClearMap.addEventListener('click',()=>{
+    bodyMap.clear();
+    saveAllDebounced();
+  });
   const btnOxygen=$('#btnOxygen');
   if(btnOxygen) btnOxygen.addEventListener('click',()=>{
     const box=$('#oxygenFields');
