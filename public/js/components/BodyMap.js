@@ -23,6 +23,7 @@ export default class BodyMap {
     this.brushLayer = null;
     this.activeTool = TOOLS.WOUND.char;
     this.markScale = 1;
+    this.brushSize = 20;
     this.saveCb = () => {};
     this.idSeq = 1;
   }
@@ -65,7 +66,7 @@ export default class BodyMap {
       if (!zone) return;
       const pt = this.svgPoint(evt);
       if (this.activeTool === TOOLS.BURN.char) {
-        this.addBrush(pt.x, pt.y, 20);
+        this.addBrush(pt.x, pt.y, this.brushSize);
       } else {
         this.addMark(pt.x, pt.y, this.activeTool, zone.dataset.side, zone.dataset.zone);
       }
@@ -87,6 +88,11 @@ export default class BodyMap {
   setMarkScale(scale) {
     const s = parseFloat(scale);
     if (!isNaN(s) && s > 0) this.markScale = s;
+  }
+
+  setBrushSize(size) {
+    const s = parseFloat(size);
+    if (!isNaN(s) && s > 0) this.brushSize = s;
   }
 
   addMark(x, y, type, side, zone) {

@@ -145,6 +145,8 @@ async function init(){
   }
   bodyMap.init(saveAllDebounced);
   bodyMap.setMarkScale(0.35);
+  const brushSlider = $('#brushSize');
+  if(brushSlider) brushSlider.addEventListener('input', e => bodyMap.setBrushSize(e.target.value));
   initChips(saveAllDebounced);
   initAutoActivate(saveAllDebounced);
   initActions(saveAllDebounced);
