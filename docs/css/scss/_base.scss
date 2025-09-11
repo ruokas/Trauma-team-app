@@ -159,7 +159,7 @@ h1{font-size:clamp(1.25rem,5vw,2rem);line-height:1.2;margin:$space-4 0}
 }
 .toolbar{display:flex;gap:$space-6;flex-wrap:wrap;margin-top:$space-6}
 .toolbar--scroll{flex-wrap:nowrap;overflow-x:auto}
-.header-actions .toolbar:first-child,
+.header-actions .toolbar,
 .header-center .toolbar:first-child{margin-top:0}
 main{max-width:1200px;margin:$space-12 auto;padding:0 $space-16;display:grid;grid-template-columns:220px 1fr;gap:$space-12}
 nav{position:sticky;top:var(--header-height);align-self:start}
