@@ -166,6 +166,10 @@ async function init(){
       }
     });
   });
+  const btnUndo=$('#btnUndo');
+  if(btnUndo) btnUndo.addEventListener('click',()=>{ bodyMap.undo(); saveAllDebounced(); });
+  const btnRedo=$('#btnRedo');
+  if(btnRedo) btnRedo.addEventListener('click',()=>{ bodyMap.redo(); saveAllDebounced(); });
   const btnClearMap=$('#btnClearMap');
   if(btnClearMap) btnClearMap.addEventListener('click',()=>{
     bodyMap.clear();

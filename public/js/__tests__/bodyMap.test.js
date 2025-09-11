@@ -52,5 +52,30 @@ describe('BodyMap minimal', () => {
     expect(counts['front-torso'][TOOLS.WOUND.char]).toBe(1);
     expect(counts['front-torso'].burned).toBeGreaterThan(0);
   });
+
+  test('undo and redo revert mark operations', () => {
+    setupDom();
+    const bm = new BodyMap();
+    bm.init(() => {});
+    bm.addMark(10,20,TOOLS.WOUND.char,'front','front-torso');
+    expect(bm.marksLayer.querySelectorAll('use').length).toBe(1);
+    bm.undo();
+    expect(bm.marksLayer.querySelectorAll('use').length).toBe(0);
+    bm.redo();
+    expect(bm.marksLayer.querySelectorAll('use').length).toBe(1);
+  });
+
+  test('undo restores erased brush', () => {
+    setupDom();
+    const bm = new BodyMap();
+    bm.init(() => {});
+    bm.addBrush(10,10,5);
+    bm.eraseBrush(10,10,5);
+    expect(bm.brushLayer.querySelectorAll('circle').length).toBe(0);
+    bm.undo();
+    expect(bm.brushLayer.querySelectorAll('circle').length).toBe(1);
+    bm.redo();
+    expect(bm.brushLayer.querySelectorAll('circle').length).toBe(0);
+  });
 });
 
