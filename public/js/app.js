@@ -156,14 +156,12 @@ async function init(){
   initMechanismList();
   document.addEventListener('input', saveAllDebounced);
   initCirculation();
-  const toolBtns=$$('.map-toolbar .tool');
+  const toolBtns=$$('.map-toolbar .tool[data-tool]');
   toolBtns.forEach(btn=>{
     if(btn.dataset.tool===bodyMap.activeTool) btn.classList.add('active');
     btn.addEventListener('click',()=>{
-      if(btn.dataset.tool){
-        bodyMap.setTool(btn.dataset.tool);
-        toolBtns.forEach(b=>b.classList.toggle('active', b===btn));
-      }
+      bodyMap.setTool(btn.dataset.tool);
+      toolBtns.forEach(b=>b.classList.toggle('active', b===btn));
     });
   });
   const btnUndo=$('#btnUndo');
