@@ -5,8 +5,12 @@ const STRINGS = {
   traumaType: 'Traumos tipas',
   notes: 'Pastabos',
   save: 'Išsaugoti',
-  cancel: 'Atšaukti'
+  cancel: 'Atšaukti',
+  clear: 'Clear All',
+  delete: 'Delete'
 };
+
+let bodyMapRef;
 
 function createInput(id, labelText, type = 'text') {
   const label = document.createElement('label');
@@ -66,11 +70,19 @@ export function open(mark) {
     btnCancel.type = 'button';
     btnCancel.className = 'btn';
     btnCancel.textContent = STRINGS.cancel;
+    const btnClear = document.createElement('button');
+    btnClear.type = 'button';
+    btnClear.className = 'btn';
+    btnClear.textContent = STRINGS.clear;
+    const btnDelete = document.createElement('button');
+    btnDelete.type = 'button';
+    btnDelete.className = 'btn';
+    btnDelete.textContent = STRINGS.delete;
     const btnSave = document.createElement('button');
     btnSave.type = 'submit';
     btnSave.className = 'btn primary';
     btnSave.textContent = STRINGS.save;
-    actions.append(btnCancel, btnSave);
+    actions.append(btnCancel, btnClear, btnDelete, btnSave);
     form.appendChild(actions);
     box.appendChild(form);
     overlay.appendChild(box);
@@ -114,6 +126,21 @@ export function open(mark) {
       close(data);
     });
 
+    btnClear.addEventListener('click', () => {
+      locInput.value = '';
+      lenInput.value = '';
+      conInput.value = '';
+      typeInput.value = '';
+      noteInput.value = '';
+    });
+    btnDelete.addEventListener('click', () => {
+      mark.remove();
+      if (bodyMapRef) {
+        bodyMapRef.undoStack.push({ type: 'deleteMark', el: mark });
+        bodyMapRef.redoStack = [];
+      }
+      close('deleted');
+    });
     btnCancel.addEventListener('click', () => close(null));
     overlay.addEventListener('click', e => { if (e.target === overlay) close(null); });
     document.addEventListener('keydown', trap, true);
@@ -123,6 +150,7 @@ export function open(mark) {
 
 export function init(bodyMap){
   if(!bodyMap) return;
+  bodyMapRef = bodyMap;
 
   const edit = async mark => {
     const data = await open(mark);

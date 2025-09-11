@@ -244,6 +244,9 @@ export default class BodyMap {
       case 'eraseBrush':
         action.els.forEach(el => this.brushLayer.appendChild(el));
         break;
+      case 'deleteMark':
+        this.marksLayer.appendChild(action.el);
+        break;
       default:
         break;
     }
@@ -262,6 +265,9 @@ export default class BodyMap {
         break;
       case 'eraseBrush':
         action.els.forEach(el => el.remove());
+        break;
+      case 'deleteMark':
+        action.el.remove();
         break;
       default:
         break;
