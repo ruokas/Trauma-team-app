@@ -26,6 +26,8 @@ export default class BodyMap {
     this.brushSize = 20;
     this.saveCb = () => {};
     this.idSeq = 1;
+    this.undoStack = [];
+    this.redoStack = [];
   }
 
   init(saveCb) {
@@ -108,6 +110,8 @@ export default class BodyMap {
     use.dataset.x = x;
     use.dataset.y = y;
     this.marksLayer.appendChild(use);
+    this.undoStack.push({ type: 'addMark', el: use });
+    this.redoStack = [];
     return use;
   }
 
@@ -121,25 +125,37 @@ export default class BodyMap {
     c.dataset.y = y;
     c.dataset.r = r;
     this.brushLayer.appendChild(c);
+    this.undoStack.push({ type: 'addBrush', el: c });
+    this.redoStack = [];
     return c;
   }
 
   /** Remove burn marks within the eraser radius. */
   eraseBrush(x, y, r) {
     const circles = [...this.brushLayer.querySelectorAll('circle')];
+    const removed = [];
     circles.forEach(c => {
       const cx = Number(c.dataset.x);
       const cy = Number(c.dataset.y);
       const cr = Number(c.dataset.r);
       const dx = cx - x;
       const dy = cy - y;
-      if (Math.hypot(dx, dy) <= r + cr) c.remove();
+      if (Math.hypot(dx, dy) <= r + cr) {
+        removed.push(c);
+        c.remove();
+      }
     });
+    if (removed.length) {
+      this.undoStack.push({ type: 'eraseBrush', els: removed });
+      this.redoStack = [];
+    }
   }
 
   clear() {
     this.marksLayer.innerHTML = '';
     this.brushLayer.innerHTML = '';
+    this.undoStack = [];
+    this.redoStack = [];
   }
 
   serialize() {
@@ -199,6 +215,42 @@ export default class BodyMap {
       if (zone) counts[zone.id].burned += (area * 100) / zone.area;
     });
     return counts;
+  }
+
+  undo() {
+    const action = this.undoStack.pop();
+    if (!action) return;
+    switch (action.type) {
+      case 'addMark':
+      case 'addBrush':
+        action.el.remove();
+        break;
+      case 'eraseBrush':
+        action.els.forEach(el => this.brushLayer.appendChild(el));
+        break;
+      default:
+        break;
+    }
+    this.redoStack.push(action);
+  }
+
+  redo() {
+    const action = this.redoStack.pop();
+    if (!action) return;
+    switch (action.type) {
+      case 'addMark':
+        this.marksLayer.appendChild(action.el);
+        break;
+      case 'addBrush':
+        this.brushLayer.appendChild(action.el);
+        break;
+      case 'eraseBrush':
+        action.els.forEach(el => el.remove());
+        break;
+      default:
+        break;
+    }
+    this.undoStack.push(action);
   }
 
   async embedSilhouettes(svg) {
