@@ -218,3 +218,6 @@ section[data-tab="Intervencijos"] .med-search{margin-bottom:$space-8}
   color:#fff;
   font-weight:600;
 }
+
+.legend-icon{display:inline-block;margin-left:$space-4;transition:transform .2s}
+.legend-icon.collapsed{transform:rotate(-90deg)}
