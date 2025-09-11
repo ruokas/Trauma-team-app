@@ -36,3 +36,7 @@
 .collapsed .fieldset-content{max-height:0;opacity:0;pointer-events:none}
 .skip-link{position:absolute;left:-10000px;top:auto;width:1px;height:1px;overflow:hidden}
 .skip-link:focus{left:0;top:0;width:auto;height:auto;padding:$space-8;background:var(--bg);z-index:1000}
+
+@media (max-width:480px){
+  .row{flex-direction:column;align-items:stretch;}
+}
