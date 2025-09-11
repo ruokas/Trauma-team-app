@@ -106,7 +106,7 @@ export default class BodyMap {
     if (!isNaN(s) && s > 0) this.brushSize = s;
   }
 
-  addMark(x, y, type, side, zone) {
+  addMark(x, y, type, side, zone, details = {}) {
     const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
     use.setAttribute('href', TOOL_SYMBOL[type] || '');
     use.setAttribute('transform', `translate(${x},${y}) scale(${this.markScale})`);
@@ -116,6 +116,7 @@ export default class BodyMap {
     use.dataset.zone = zone;
     use.dataset.x = x;
     use.dataset.y = y;
+    use.dataset.details = JSON.stringify(details);
     this.marksLayer.appendChild(use);
     this.undoStack.push({ type: 'addMark', el: use });
     this.redoStack = [];
@@ -174,7 +175,8 @@ export default class BodyMap {
       y: Number(el.dataset.y),
       type: el.dataset.type,
       side: el.dataset.side,
-      zone: el.dataset.zone
+      zone: el.dataset.zone,
+      details: JSON.parse(el.dataset.details || '{}')
     }));
     const brushes = [...this.brushLayer.querySelectorAll('circle')].map(el => ({
       id: Number(el.dataset.id),
@@ -189,7 +191,7 @@ export default class BodyMap {
     const obj = typeof data === 'string' ? JSON.parse(data) : data;
     this.clear();
     this.activeTool = obj.tool || this.activeTool;
-    (obj.marks || []).forEach(m => this.addMark(m.x, m.y, m.type, m.side, m.zone));
+    (obj.marks || []).forEach(m => this.addMark(m.x, m.y, m.type, m.side, m.zone, m.details));
     (obj.brushes || []).forEach(b => this.addBrush(b.x, b.y, b.r));
   }
 
