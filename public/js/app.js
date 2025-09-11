@@ -175,6 +175,24 @@ async function init(){
     bodyMap.clear();
     saveAllDebounced();
   });
+  const btnExport=$('#btnExportSvg');
+  if(btnExport) btnExport.addEventListener('click',async()=>{
+    try{
+      const svg=$('#bodySvg')?.cloneNode(true);
+      if(!svg) return;
+      await bodyMap.embedSilhouettes(svg);
+      const xml=new XMLSerializer().serializeToString(svg);
+      const blob=new Blob([xml],{type:'image/svg+xml'});
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement('a');
+      a.href=url;
+      a.download='bodymap.svg';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }catch(err){ console.error('SVG export failed', err); }
+  });
   const btnOxygen=$('#btnOxygen');
   if(btnOxygen) btnOxygen.addEventListener('click',()=>{
     const box=$('#oxygenFields');
