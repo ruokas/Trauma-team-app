@@ -52,8 +52,8 @@ export function setupHeaderActions({ validateForm }){
       doc.open();
       doc.write('<!DOCTYPE html><html><head><meta charset="utf-8"><title>Santrauka</title><link rel="stylesheet" href="/css/main.css"><style>body{font-family:sans-serif;padding:20px;} pre{white-space:pre-wrap;}</style></head><body></body></html>');
       doc.close();
-      const svg=doc.importNode(document.getElementById('bodySvg'), true);
-      await bodyMap.embedSilhouettes(svg);
+      let svg=doc.importNode(document.getElementById('bodySvg'), true);
+      svg=await bodyMap.embedSilhouettes(svg);
       const front=svg.querySelector('#layer-front');
       const back=svg.querySelector('#layer-back');
       if(front) front.classList.remove('hidden');

@@ -262,8 +262,42 @@ export default class BodyMap {
     this.undoStack.push(action);
   }
 
+  /**
+   * Replace <use> elements with the referenced shapes so the SVG renders
+   * correctly when exported or printed.
+   * @param {SVGElement} [svg=this.svg] - SVG root to process.
+   * @returns {SVGElement} The processed SVG element.
+   */
   async embedSilhouettes(svg) {
-    return svg;
+    const root = svg || this.svg;
+    if (!root) return svg;
+
+    root.querySelectorAll('use').forEach(use => {
+      const href = use.getAttribute('href') || use.getAttribute('xlink:href');
+      if (!href || !href.startsWith('#')) return;
+      const ref = root.querySelector(href);
+      if (!ref) return;
+
+      const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      // Copy all attributes except the href to preserve transforms and data attrs
+      [...use.attributes].forEach(attr => {
+        if (attr.name === 'href' || attr.name === 'xlink:href') return;
+        g.setAttribute(attr.name, attr.value);
+      });
+
+      const refClone = ref.cloneNode(true);
+      if (refClone.tagName.toLowerCase() === 'symbol') {
+        while (refClone.firstChild) {
+          g.appendChild(refClone.firstChild);
+        }
+      } else {
+        g.appendChild(refClone);
+      }
+
+      use.replaceWith(g);
+    });
+
+    return root;
   }
 }
 
