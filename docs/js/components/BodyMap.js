@@ -111,6 +111,7 @@ export default class BodyMap {
     c.dataset.y = y;
     c.dataset.r = r;
     this.brushLayer.appendChild(c);
+    this.updateBurnTotal();
     return c;
   }
 
@@ -151,6 +152,13 @@ export default class BodyMap {
       return sum + Math.PI * r * r;
     }, 0);
     return (total * 100) / TOTAL_AREA;
+  }
+
+  updateBurnTotal() {
+    const el = document.querySelector('#burnTotal');
+    if (!el) return;
+    const pct = this.burnArea().toFixed(1);
+    el.textContent = `${pct}%`;
   }
 
   zoneCounts() {

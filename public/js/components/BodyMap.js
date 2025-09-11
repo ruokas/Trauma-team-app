@@ -127,6 +127,7 @@ export default class BodyMap {
     this.brushLayer.appendChild(c);
     this.undoStack.push({ type: 'addBrush', el: c });
     this.redoStack = [];
+    this.updateBurnTotal();
     return c;
   }
 
@@ -149,6 +150,7 @@ export default class BodyMap {
       this.undoStack.push({ type: 'eraseBrush', els: removed });
       this.redoStack = [];
     }
+    this.updateBurnTotal();
   }
 
   clear() {
@@ -190,6 +192,13 @@ export default class BodyMap {
       return sum + Math.PI * r * r;
     }, 0);
     return (total * 100) / TOTAL_AREA;
+  }
+
+  updateBurnTotal() {
+    const el = document.querySelector('#burnTotal');
+    if (!el) return;
+    const pct = this.burnArea().toFixed(1);
+    el.textContent = `${pct}%`;
   }
 
   zoneCounts() {
