@@ -22,6 +22,7 @@ import { init as initFastGrid } from './fastGrid.js';
 import { init as initTeamGrid } from './teamGrid.js';
 import { init as initMechanismList } from './mechanismList.js';
 import { initChipGroups } from './chipData.js';
+import woundEditor from './woundEditor.js';
 export { validateVitals, createChipGroup };
 
 initTheme();
@@ -145,6 +146,7 @@ async function init(){
   }
   bodyMap.init(saveAllDebounced);
   bodyMap.setMarkScale(0.35);
+  woundEditor.init(bodyMap);
   const brushSlider = $('#brushSize');
   if(brushSlider) brushSlider.addEventListener('input', e => bodyMap.setBrushSize(e.target.value));
   initChips(saveAllDebounced);
