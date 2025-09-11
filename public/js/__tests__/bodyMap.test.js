@@ -3,6 +3,7 @@ import { TOOLS } from '../BodyMapTools.js';
 
 function setupDom() {
   document.body.innerHTML = `
+    <div id="burnTotal"></div>
     <svg id="bodySvg"><g id="layer-front"></g><g id="layer-back"></g><g id="marks"></g></svg>
   `;
 }
@@ -76,6 +77,17 @@ describe('BodyMap minimal', () => {
     expect(bm.brushLayer.querySelectorAll('circle').length).toBe(1);
     bm.redo();
     expect(bm.brushLayer.querySelectorAll('circle').length).toBe(0);
+  });
+
+  test('burnTotal updates after brush changes', () => {
+    setupDom();
+    const bm = new BodyMap();
+    bm.init(() => {});
+    const totalEl = document.getElementById('burnTotal');
+    bm.addBrush(10,10,5);
+    expect(totalEl.textContent).toBe(`${bm.burnArea().toFixed(1)}%`);
+    bm.eraseBrush(10,10,5);
+    expect(totalEl.textContent).toBe(`${bm.burnArea().toFixed(1)}%`);
   });
 });
 
