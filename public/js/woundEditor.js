@@ -76,12 +76,12 @@ export function open(mark) {
     overlay.appendChild(box);
     document.body.appendChild(overlay);
 
-    const { location = '', length = '', contamination = '', traumaType = '', notes = '' } = mark.dataset;
-    locInput.value = location;
-    lenInput.value = length;
-    conInput.value = contamination;
-    typeInput.value = traumaType;
-    noteInput.value = notes;
+    const existing = mark.dataset.details ? JSON.parse(mark.dataset.details) : {};
+    locInput.value = existing.location || '';
+    lenInput.value = existing.length || '';
+    conInput.value = existing.contamination || '';
+    typeInput.value = existing.traumaType || '';
+    noteInput.value = existing.notes || '';
 
     const focusable = box.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
     const first = focusable[0];
@@ -110,7 +110,7 @@ export function open(mark) {
         traumaType: typeInput.value.trim(),
         notes: noteInput.value.trim()
       };
-      Object.assign(mark.dataset, data);
+      mark.dataset.details = JSON.stringify(data);
       close(data);
     });
 
@@ -121,4 +121,25 @@ export function open(mark) {
   });
 }
 
-export default { open };
+export function init(bodyMap){
+  if(!bodyMap) return;
+
+  const edit = async mark => {
+    const data = await open(mark);
+    if(data && typeof bodyMap.saveCb === 'function') bodyMap.saveCb();
+  };
+
+  const origAddMark = bodyMap.addMark.bind(bodyMap);
+  bodyMap.addMark = function(...args){
+    const mark = origAddMark(...args);
+    edit(mark);
+    return mark;
+  };
+
+  bodyMap.marksLayer?.addEventListener('click', e => {
+    const mark = e.target.closest('use');
+    if(mark) edit(mark);
+  });
+}
+
+export default { open, init };
