@@ -42,6 +42,7 @@ export default class BodyMap {
     this.svg.insertBefore(this.brushLayer, this.marksLayer);
 
     const layers = { front: $('#layer-front'), back: $('#layer-back') };
+    const { sx, sy } = this.getScale();
     zones.forEach(z => {
       const layer = layers[z.side];
       if (!layer) return;
@@ -49,9 +50,6 @@ export default class BodyMap {
       if (!group) {
         group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
         group.classList.add('zones');
-        const vb = this.svg.viewBox?.baseVal;
-        const sx = vb ? (vb.width / 2) / CANVAS.WIDTH : 1;
-        const sy = vb ? vb.height / CANVAS.HEIGHT : 1;
         group.setAttribute('transform', `scale(${sx} ${sy})`);
         layer.appendChild(group);
       }
@@ -78,6 +76,15 @@ export default class BodyMap {
     });
 
     this.initialized = true;
+  }
+
+  getScale() {
+    const vb = this.svg.viewBox?.baseVal;
+    return {
+      // viewBox width includes both front and back halves
+      sx: vb ? (vb.width / 2) / CANVAS.WIDTH : 1,
+      sy: vb ? vb.height / CANVAS.HEIGHT : 1
+    };
   }
 
   svgPoint(evt){
@@ -210,9 +217,7 @@ export default class BodyMap {
       if (!counts[zone]) counts[zone] = { label: ZONE_LABELS[zone] || '', burned: 0 };
       counts[zone][type] = (counts[zone][type] || 0) + 1;
     });
-    const vb = this.svg.viewBox?.baseVal;
-    const sx = vb ? (vb.width / 2) / CANVAS.WIDTH : 1;
-    const sy = vb ? vb.height / CANVAS.HEIGHT : 1;
+    const { sx, sy } = this.getScale();
     this.brushLayer.querySelectorAll('circle').forEach(c => {
       const x = Number(c.dataset.x);
       const y = Number(c.dataset.y);

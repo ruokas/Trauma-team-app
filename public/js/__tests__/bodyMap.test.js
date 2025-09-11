@@ -48,7 +48,7 @@ describe('BodyMap minimal', () => {
     const bm = new BodyMap();
     bm.init(() => {});
     bm.addMark(5,5,TOOLS.WOUND.char,'front','front-chest');
-    bm.addBrush(24,30,5);
+    bm.addBrush(240,250,5);
     const counts = bm.zoneCounts();
     expect(counts['front-chest'][TOOLS.WOUND.char]).toBe(1);
     expect(counts['front-chest'].burned).toBeGreaterThan(0);

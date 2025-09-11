@@ -1,4 +1,4 @@
-export const CANVAS = { WIDTH: 48, HEIGHT: 50 };
+export const CANVAS = { WIDTH: 480, HEIGHT: 500 };
 const WIDTH = CANVAS.WIDTH;
 
 /**
@@ -63,31 +63,31 @@ function makeSymmetric (side, defs) {
 
 // Symmetric limb definitions used for both front and back views
 const limbDefs = [
-  { id: 'upper-arm', path: 'M1 20 L6 20 L6 32 L1 32 Z', area: 60, label: 'žastas', bbox: [1, 20, 6, 32] },
-  { id: 'lower-arm', path: 'M1.5 32 L5.5 32 L5.5 44 L1.5 44 Z', area: 48, label: 'dilbis', bbox: [1.5, 32, 5.5, 44] },
-  { id: 'hand', path: 'M1.5 44 L6 44 L6 48 L1.5 48 Z', area: 18, label: 'plaštaka', bbox: [1.5, 44, 6, 48] },
-  { id: 'thigh', path: 'M15 30 L23 30 L23 41 L15 41 Z', area: 88, label: 'šlaunis', bbox: [15, 30, 23, 41] },
-  { id: 'leg', path: 'M16 41 L22 41 L22 46 L16 46 Z', area: 30, label: 'blauzda', bbox: [16, 41, 22, 46] },
-  { id: 'foot', path: 'M15 46 L23 46 L23 50 L15 50 Z', area: 32, label: 'pėda', bbox: [15, 46, 23, 50] }
+  { id: 'upper-arm', path: 'M10 200 L60 200 L60 320 L10 320 Z', area: 60, label: 'žastas', bbox: [10, 200, 60, 320] },
+  { id: 'lower-arm', path: 'M15 320 L55 320 L55 440 L15 440 Z', area: 48, label: 'dilbis', bbox: [15, 320, 55, 440] },
+  { id: 'hand', path: 'M15 440 L60 440 L60 480 L15 480 Z', area: 18, label: 'plaštaka', bbox: [15, 440, 60, 480] },
+  { id: 'thigh', path: 'M150 300 L230 300 L230 410 L150 410 Z', area: 88, label: 'šlaunis', bbox: [150, 300, 230, 410] },
+  { id: 'leg', path: 'M160 410 L220 410 L220 460 L160 460 Z', area: 30, label: 'blauzda', bbox: [160, 410, 220, 460] },
+  { id: 'foot', path: 'M150 460 L230 460 L230 500 L150 500 Z', area: 32, label: 'pėda', bbox: [150, 460, 230, 500] }
 ];
 
 export { mirrorPath };
 
 export default [
   // Front zones
-  { id: 'front-head', side: 'front', path: 'M24 3c4 0 7 3 7 7s-3 7-7 7-7-3-7-7 3-7 7-7z', area: 153.94, label: 'Galva (priekis)', bbox: [17, 3, 31, 17] },
-  { id: 'front-neck', side: 'front', path: 'M21 17 L27 17 L27 20 L21 20 Z', area: 18, label: 'Kaklas (priekis)', bbox: [21, 17, 27, 20] },
-  { id: 'front-chest', side: 'front', path: 'M14 20 L34 20 L34 30 L14 30 Z', area: 200, label: 'Krūtinė (priekis)', bbox: [14, 20, 34, 30] },
-  { id: 'front-abdomen', side: 'front', path: 'M14 30 L34 30 L34 40 L14 40 Z', area: 200, label: 'Pilvas (priekis)', bbox: [14, 30, 34, 40] },
-  { id: 'front-pelvis', side: 'front', path: 'M17 40 L31 40 L31 46 L17 46 Z', area: 84, label: 'Dubuo (priekis)', bbox: [17, 40, 31, 46] },
-  { id: 'front-groin', side: 'front', path: 'M20 46 L28 46 L28 48 L20 48 Z', area: 16, label: 'Tarpvietė', bbox: [20, 46, 28, 48] },
+  { id: 'front-head', side: 'front', path: 'M240 30c40 0 70 30 70 70s-30 70-70 70-70-30-70-70 30-70 70-70z', area: 153.94, label: 'Galva (priekis)', bbox: [170, 30, 310, 170] },
+  { id: 'front-neck', side: 'front', path: 'M210 170 L270 170 L270 200 L210 200 Z', area: 18, label: 'Kaklas (priekis)', bbox: [210, 170, 270, 200] },
+  { id: 'front-chest', side: 'front', path: 'M140 200 L340 200 L340 300 L140 300 Z', area: 200, label: 'Krūtinė (priekis)', bbox: [140, 200, 340, 300] },
+  { id: 'front-abdomen', side: 'front', path: 'M140 300 L340 300 L340 400 L140 400 Z', area: 200, label: 'Pilvas (priekis)', bbox: [140, 300, 340, 400] },
+  { id: 'front-pelvis', side: 'front', path: 'M170 400 L310 400 L310 460 L170 460 Z', area: 84, label: 'Dubuo (priekis)', bbox: [170, 400, 310, 460] },
+  { id: 'front-groin', side: 'front', path: 'M200 460 L280 460 L280 480 L200 480 Z', area: 16, label: 'Tarpvietė', bbox: [200, 460, 280, 480] },
   ...makeSymmetric('front', limbDefs),
 
   // Back zones
-  { id: 'back-head', side: 'back', path: 'M24 3c4 0 7 3 7 7s-3 7-7 7-7-3-7-7 3-7 7-7z', area: 153.94, label: 'Galva (nugara)', bbox: [17, 3, 31, 17] },
-  { id: 'back-neck', side: 'back', path: 'M21 17 L27 17 L27 20 L21 20 Z', area: 18, label: 'Kaklas (nugara)', bbox: [21, 17, 27, 20] },
-  { id: 'back-upper-back', side: 'back', path: 'M14 20 L34 20 L34 30 L14 30 Z', area: 200, label: 'Viršutinė nugara', bbox: [14, 20, 34, 30] },
-  { id: 'back-lower-back', side: 'back', path: 'M14 30 L34 30 L34 40 L14 40 Z', area: 200, label: 'Juosmuo', bbox: [14, 30, 34, 40] },
-  { id: 'back-buttocks', side: 'back', path: 'M17 40 L31 40 L31 46 L17 46 Z', area: 84, label: 'Sėdmenys', bbox: [17, 40, 31, 46] },
+  { id: 'back-head', side: 'back', path: 'M240 30c40 0 70 30 70 70s-30 70-70 70-70-30-70-70 30-70 70-70z', area: 153.94, label: 'Galva (nugara)', bbox: [170, 30, 310, 170] },
+  { id: 'back-neck', side: 'back', path: 'M210 170 L270 170 L270 200 L210 200 Z', area: 18, label: 'Kaklas (nugara)', bbox: [210, 170, 270, 200] },
+  { id: 'back-upper-back', side: 'back', path: 'M140 200 L340 200 L340 300 L140 300 Z', area: 200, label: 'Viršutinė nugara', bbox: [140, 200, 340, 300] },
+  { id: 'back-lower-back', side: 'back', path: 'M140 300 L340 300 L340 400 L140 400 Z', area: 200, label: 'Juosmuo', bbox: [140, 300, 340, 400] },
+  { id: 'back-buttocks', side: 'back', path: 'M170 400 L310 400 L310 460 L170 460 Z', area: 84, label: 'Sėdmenys', bbox: [170, 400, 310, 460] },
   ...makeSymmetric('back', limbDefs)
 ];
