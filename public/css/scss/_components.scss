@@ -11,7 +11,8 @@ body,
   border:1px solid color-mix(in srgb,var(--line),var(--ink) 30%);
   background:color-mix(in srgb,var(--card),var(--ink) 5%);
   color:var(--ink);
-  padding:$space-8 $space-12;
+  min-height:44px;
+  padding:$space-12 $space-16;
   border-radius:$space-10;
   cursor:pointer;
   font-weight:600;
