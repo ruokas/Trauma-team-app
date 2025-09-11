@@ -72,12 +72,12 @@
 
         <fieldset class="collapsible" id="activation-gmp">
           <legend>GMP rodikliai</legend>
-          <div class="grid cols-3 cols-auto">
+          <div class="grid cols-3">
               <div><label for="gmp_hr">GMP ŠSD (k./min)</label><input id="gmp_hr" type="number" min="0" max="250" title="ŠSD – beats per minute, 0–250"></div>
               <div><label for="gmp_rr">GMP KD (k./min)</label><input id="gmp_rr" type="number" min="0" max="80" title="KD – breaths per minute, 0–80"></div>
               <div><label for="gmp_spo2">GMP SpO₂ (%)</label><input id="gmp_spo2" type="number" min="0" max="100" title="SpO₂ – percent, 0–100"></div>
           </div>
-          <div class="grid cols-3 cols-auto mt-8">
+          <div class="grid cols-3 mt-8">
               <div class="row"><div class="flex-1"><label for="gmp_sbp">GMP AKS s</label><input id="gmp_sbp" type="number" min="0" max="300" title="AKS s – mmHg, 0–300"></div><div class="flex-1"><label for="gmp_dbp">GMP AKS d</label><input id="gmp_dbp" type="number" min="0" max="200" title="AKS d – mmHg, 0–200"></div></div>
               <div><label>GMP GKS (A-K-M)</label><div class="row"><input id="gmp_gksa" type="number" min="1" max="4" placeholder="A"><input id="gmp_gksk" type="number" min="1" max="5" placeholder="K"><input id="gmp_gksm" type="number" min="1" max="6" placeholder="M"><span id="gmp_gks_total"></span></div></div>
               <div>
@@ -181,7 +181,7 @@
     <!-- C -->
     <section class="card view" id="view-c" data-tab="C – Kraujotaka">
       <h2>C – Kraujotaka</h2>
-      <div class="grid cols-3 cols-auto">
+      <div class="grid cols-3">
         <div><label for="c_hr">ŠSD (k./min)</label><input id="c_hr" type="number" min="0" max="250" title="ŠSD – beats per minute, 0–250"></div>
         <div class="row"><div class="flex-1"><label for="c_sbp">AKS s</label><input id="c_sbp" type="number" min="0" max="300" title="AKS s – mmHg, 0–300"></div><div class="flex-1"><label for="c_dbp">AKS d</label><input id="c_dbp" type="number" min="0" max="200" title="AKS d – mmHg, 0–200"></div><div class="flex-1"><label>VAS</label><span id="c_map"></span></div><div class="flex-1"><label>ŠI</label><span id="c_si"></span></div></div>
         <div><label for="c_caprefill">KPL (sek.)</label><input id="c_caprefill" type="number" step="0.1" min="0" max="20" title="KPL – seconds, 0–20"></div>
@@ -224,7 +224,7 @@
           <div role="dialog" aria-modal="true" aria-labelledby="d_gcs_calc_title">
             <h3 id="d_gcs_calc_title" class="sr-only">GKS skaičiuoklė</h3>
             <button type="button" class="btn ghost" id="d_gcs_close">Uždaryti</button>
-            <div class="grid cols-3 cols-auto">
+            <div class="grid cols-3">
               <div>
                 <label for="d_gcs_calc_a">Akių atmerkimas (A)</label>
                 <select id="d_gcs_calc_a">
@@ -288,7 +288,7 @@
     <!-- E -->
     <section class="card view" id="view-e" data-tab="E – Kita">
       <h2>E – Kita</h2>
-      <div class="grid cols-3 cols-auto">
+      <div class="grid cols-3">
         <div><label for="e_temp">Temperatūra (°C)</label><input id="e_temp" type="number" step="0.1" min="30" max="43"></div>
         <div><label for="e_back_notes">Nugaros apžiūra</label><div class="row"><div class="chip-group" id="e_back_group" data-single="true"></div><input id="e_back_notes" type="text" placeholder="Pakitimai..." class="hidden"></div></div>
         <div><label for="e_abdomen_notes">Pilvo apžiūra</label><div class="row"><div class="chip-group" id="e_abdomen_group" data-single="true"></div><input id="e_abdomen_notes" type="text" placeholder="Pakitimai..." class="hidden"></div></div>
@@ -357,19 +357,19 @@
         </section>
         <section class="interv-group">
           <button class="interv-toggle" aria-expanded="true">💊 Medikamentai – kraujavimo kontrolė</button>
-          <div class="grid cols-3 cols-auto" id="bleeding_meds"></div>
+          <div class="grid cols-auto" id="bleeding_meds"></div>
         </section>
         <section class="interv-group">
           <button class="interv-toggle" aria-expanded="true">💊 Medikamentai – kita</button>
-          <div class="grid cols-3 cols-auto" id="other_meds"></div>
+          <div class="grid cols-auto" id="other_meds"></div>
         </section>
         <section class="interv-group">
           <button class="interv-toggle" aria-expanded="true">🛠 Procedūros – IT (intensyvios terapijos)</button>
-          <div class="grid cols-3 cols-auto" id="procedures_it"></div>
+          <div class="grid cols-auto" id="procedures_it"></div>
         </section>
         <section class="interv-group">
           <button class="interv-toggle" aria-expanded="true">🛠 Procedūros – kitos</button>
-          <div class="grid cols-3 cols-auto" id="procedures_other"></div>
+          <div class="grid cols-auto" id="procedures_other"></div>
         </section>
       </div>
       <div class="hint mt-6">Paspaudus ant vaisto automatiškai užpildomi laikas ir standartinė dozė (galima koreguoti), o ant procedūros – tik laikas.</div>
@@ -379,7 +379,7 @@
     <section class="card view" id="view-vaizdiniai-tyrimai" data-tab="Vaizdiniai tyrimai">
       <h2>Vaizdiniai tyrimai</h2>
       <h3 class="h3-muted">FAST</h3>
-      <div class="grid cols-3 cols-auto" id="fastGrid"></div>
+      <div class="grid cols-auto" id="fastGrid"></div>
       <h3 class="h3-muted mt-8">KT</h3>
       <div class="chip-group" id="imaging_ct" aria-label="KT"></div>
       <h3 class="h3-muted mt-8">Rentgenogramos</h3>
@@ -400,7 +400,7 @@
         </div>
       </div>
     </section>
-    <section class="card view" id="view-komanda" data-tab="Komanda"><h2>Komandos nariai</h2><div class="grid cols-3 cols-auto" id="teamGrid"></div></section>
+    <section class="card view" id="view-komanda" data-tab="Komanda"><h2>Komandos nariai</h2><div class="grid cols-auto" id="teamGrid"></div></section>
     <section class="card view" id="view-sprendimas" data-tab="Sprendimas">
       <h2>Sprendimas</h2>
       <div><label for="spr_time">Laikas</label><div class="row"><input id="spr_time" type="time"><button type="button" class="btn ghost" id="btnSprNow">Dabar</button></div></div>
@@ -424,7 +424,7 @@
         <label for="spr_ligonine">Ligoninė</label>
         <input id="spr_ligonine" type="text" placeholder="Ligoninė">
       </div>
-      <div class="grid cols-3 cols-auto mt-8">
+      <div class="grid cols-3 mt-8">
         <div><label for="spr_hr">ŠSD (k./min)</label><input id="spr_hr" type="number" min="0" max="250"></div>
         <div><label for="spr_rr">KD (k./min)</label><input id="spr_rr" type="number" min="0" max="80"></div>
         <div><label for="spr_spo2">SpO₂ (%)</label><input id="spr_spo2" type="number" min="0" max="100"></div>
@@ -446,7 +446,7 @@
           <div role="dialog" aria-modal="true" aria-labelledby="spr_gcs_calc_title">
             <h3 id="spr_gcs_calc_title" class="sr-only">GKS skaičiuoklė</h3>
             <button type="button" class="btn ghost" id="spr_gcs_close">Uždaryti</button>
-            <div class="grid cols-3 cols-auto">
+            <div class="grid cols-3">
               <div>
                 <label for="spr_gcs_calc_a">Akių atmerkimas (A)</label>
                 <select id="spr_gcs_calc_a">
