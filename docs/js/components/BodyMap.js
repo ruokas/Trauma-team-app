@@ -181,9 +181,37 @@ export default class BodyMap {
     return counts;
   }
 
-  // Atspausdinimui – grąžina perduotą SVG be papildomų veiksmų
+  // Atspausdinimui – <use> simbolius paverčia tikromis figūromis,
+  // kad eksportuojamas SVG būtų matomas be išorinių nuorodų.
   async embedSilhouettes(svg) {
-    return svg;
+    const root = svg || this.svg;
+    if (!root) return svg;
+
+    root.querySelectorAll('use').forEach(use => {
+      const href = use.getAttribute('href') || use.getAttribute('xlink:href');
+      if (!href || !href.startsWith('#')) return;
+      const ref = root.querySelector(href);
+      if (!ref) return;
+
+      const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      [...use.attributes].forEach(attr => {
+        if (attr.name === 'href' || attr.name === 'xlink:href') return;
+        g.setAttribute(attr.name, attr.value);
+      });
+
+      const refClone = ref.cloneNode(true);
+      if (refClone.tagName.toLowerCase() === 'symbol') {
+        while (refClone.firstChild) {
+          g.appendChild(refClone.firstChild);
+        }
+      } else {
+        g.appendChild(refClone);
+      }
+
+      use.replaceWith(g);
+    });
+
+    return root;
   }
 }
 
