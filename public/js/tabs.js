@@ -1,16 +1,16 @@
 export const TABS = [
-  { name: 'Aktyvacija', icon: '🚨' },
+  { name: 'Aktyvacija', icon: 'alarm' },
   { name: 'A – Kvėpavimo takai' },
   { name: 'B – Kvėpavimas' },
   { name: 'C – Kraujotaka' },
   { name: 'D – Sąmonė' },
   { name: 'E – Kita' },
-  { name: 'Intervencijos', icon: '💉' },
-  { name: 'Vaizdiniai tyrimai', icon: '☢️' },
-  { name: 'Laboratorija', icon: '🧪' },
-  { name: 'Komanda', icon: '👥' },
-  { name: 'Sprendimas', icon: '⚖️' },
-  { name: 'Santrauka', icon: '📝' }
+  { name: 'Intervencijos', icon: 'syringe' },
+  { name: 'Vaizdiniai tyrimai', icon: 'radiation' },
+  { name: 'Laboratorija', icon: 'lab' },
+  { name: 'Komanda', icon: 'team' },
+  { name: 'Sprendimas', icon: 'scale' },
+  { name: 'Santrauka', icon: 'note' }
 ];
 
 export const TAB_NAMES = TABS.map(t => t.name);
@@ -33,13 +33,23 @@ export function showTab(name){
 export function initTabs(){
   const nav = document.getElementById('tabs');
   nav.setAttribute('role','tablist');
+  const iconCache = {};
   TABS.forEach((t,i)=>{
     const b=document.createElement('button');
     b.type='button';
     b.className='tab'+(i===0?' active':'');
     b.dataset.tab = t.name;
     const label = t.name;
-    b.innerHTML = `<span class="tab-icon">${t.icon ? t.icon : ''}</span><span class="tab-label">${label}</span>`;
+    b.innerHTML = '<span class="tab-icon"></span><span class="tab-label">'+label+'</span>';
+    if(t.icon && typeof fetch === 'function'){
+      if(!iconCache[t.icon]){
+        iconCache[t.icon] = fetch(`assets/icons/${t.icon}.svg`).then(r=>r.text()).catch(()=> '');
+      }
+      iconCache[t.icon].then(svg=>{
+        const span = b.querySelector('.tab-icon');
+        if(span && svg) span.innerHTML = svg;
+      });
+    }
     b.setAttribute('role','tab');
     b.setAttribute('tabindex','0');
     b.setAttribute('aria-selected', i===0 ? 'true' : 'false');
