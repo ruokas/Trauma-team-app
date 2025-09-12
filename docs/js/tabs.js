@@ -25,6 +25,7 @@ export function showTab(name){
     const visible = v.dataset.tab === name;
     v.classList.toggle('visible', visible);
     v.classList.toggle('hidden', !visible);
+    v.toggleAttribute('hidden', !visible);
   });
   localStorage.setItem('v10_activeTab', name);
   document.dispatchEvent(new CustomEvent('tabShown',{detail:name}));
@@ -65,8 +66,11 @@ export function initTabs(){
     b.onclick=()=>showTab(t.name);
     nav.appendChild(b);
   });
-  document.querySelectorAll('.view').forEach((v,i)=>{
-    v.classList.add(i===0 ? 'visible' : 'hidden');
+  document.querySelectorAll('.view').forEach((v, i) => {
+    const active = i === 0;
+    v.classList.toggle('visible', active);
+    v.classList.toggle('hidden', !active);
+    v.toggleAttribute('hidden', !active);
   });
 
   nav.addEventListener('keydown', e=>{
