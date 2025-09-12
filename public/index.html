@@ -181,30 +181,46 @@
     <!-- C -->
     <section class="card view" id="view-c" data-tab="C – Kraujotaka">
       <h2>C – Kraujotaka</h2>
-      <div class="grid cols-3">
-        <div><label for="c_hr">ŠSD (k./min)</label><input id="c_hr" type="number" min="0" max="250" title="ŠSD – beats per minute, 0–250"></div>
-        <div class="row"><div class="flex-1"><label for="c_sbp">AKS s</label><input id="c_sbp" type="number" min="0" max="300" title="AKS s – mmHg, 0–300"></div><div class="flex-1"><label for="c_dbp">AKS d</label><input id="c_dbp" type="number" min="0" max="200" title="AKS d – mmHg, 0–200"></div><div class="flex-1"><label>VAS</label><span id="c_map"></span></div><div class="flex-1"><label>ŠI</label><span id="c_si"></span></div></div>
-        <div><label for="c_caprefill">KPL (sek.)</label><input id="c_caprefill" type="number" step="0.1" min="0" max="20" title="KPL – seconds, 0–20"></div>
-        <div>
-          <label>Radialinis pulsas</label>
-          <div class="chip-group" id="c_pulse_radial_group" data-single="true"></div>
+
+      <fieldset class="collapsible" id="circulation-vitals">
+        <legend>Gyvybiniai rodikliai</legend>
+        <div class="grid cols-3">
+          <div><label for="c_hr">ŠSD (k./min)</label><input id="c_hr" type="number" min="0" max="250" title="ŠSD – beats per minute, 0–250"></div>
+          <div class="row"><div class="flex-1"><label for="c_sbp">AKS s</label><input id="c_sbp" type="number" min="0" max="300" title="AKS s – mmHg, 0–300"></div><div class="flex-1"><label for="c_dbp">AKS d</label><input id="c_dbp" type="number" min="0" max="200" title="AKS d – mmHg, 0–200"></div><div class="flex-1"><label>VAS</label><span id="c_map"></span></div><div class="flex-1"><label>ŠI</label><span id="c_si"></span></div></div>
+          <div><label for="c_caprefill">KPL (sek.)</label><input id="c_caprefill" type="number" step="0.1" min="0" max="20" title="KPL – seconds, 0–20"></div>
         </div>
-        <div>
-          <label>Femoralis pulsas</label>
-          <div class="chip-group" id="c_pulse_femoral_group" data-single="true"></div>
-        </div>
-        <div>
-          <label>Odos temp.</label>
-          <div class="chip-group" id="c_skin_temp_group" data-single="true"></div>
-        </div>
-        <div>
-          <label>Odos spalva</label>
-          <div class="row">
-            <div class="chip-group" id="c_skin_color_group" data-single="true"></div>
-            <input id="c_skin_color_other" type="text" placeholder="Kita..." class="hidden">
+      </fieldset>
+
+      <fieldset class="collapsible" id="circulation-pulses">
+        <legend>Pulsai</legend>
+        <div class="grid cols-2">
+          <div>
+            <label>Radialinis pulsas</label>
+            <div class="chip-group" id="c_pulse_radial_group" data-single="true"></div>
+          </div>
+          <div>
+            <label>Femoralis pulsas</label>
+            <div class="chip-group" id="c_pulse_femoral_group" data-single="true"></div>
           </div>
         </div>
-      </div>
+      </fieldset>
+
+      <fieldset class="collapsible" id="circulation-skin">
+        <legend>Oda</legend>
+        <div class="grid cols-2">
+          <div>
+            <label>Odos temp.</label>
+            <div class="chip-group" id="c_skin_temp_group" data-single="true"></div>
+          </div>
+          <div>
+            <label>Odos spalva</label>
+            <div class="row">
+              <div class="chip-group" id="c_skin_color_group" data-single="true"></div>
+              <input id="c_skin_color_other" type="text" placeholder="Kita..." class="hidden">
+            </div>
+          </div>
+        </div>
+      </fieldset>
     </section>
 
     <!-- D -->
