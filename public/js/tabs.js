@@ -65,8 +65,14 @@ export function initTabs(){
     b.onclick=()=>showTab(t.name);
     nav.appendChild(b);
   });
-  document.querySelectorAll('.view').forEach((v,i)=>{
-    v.classList.add(i===0 ? 'visible' : 'hidden');
+  document.querySelectorAll('.view').forEach((v, i) => {
+    if (i === 0) {
+      v.classList.add('visible');
+      v.classList.remove('hidden');
+    } else {
+      v.classList.add('hidden');
+      v.classList.remove('visible');
+    }
   });
 
   nav.addEventListener('keydown', e=>{
