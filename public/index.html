@@ -181,7 +181,9 @@
     <!-- C -->
     <section class="card view" id="view-c" data-tab="C – Kraujotaka">
       <h2>C – Kraujotaka</h2>
-      <div class="grid cols-3">
+      <fieldset>
+        <legend>Kraujotakos rodikliai</legend>
+        <div class="grid cols-3">
         <div><label for="c_hr">ŠSD (k./min)</label><input id="c_hr" type="number" min="0" max="250" title="ŠSD – beats per minute, 0–250"></div>
         <div class="row"><div class="flex-1"><label for="c_sbp">AKS s</label><input id="c_sbp" type="number" min="0" max="300" title="AKS s – mmHg, 0–300"></div><div class="flex-1"><label for="c_dbp">AKS d</label><input id="c_dbp" type="number" min="0" max="200" title="AKS d – mmHg, 0–200"></div><div class="flex-1"><label>VAS</label><span id="c_map"></span></div><div class="flex-1"><label>ŠI</label><span id="c_si"></span></div></div>
         <div><label for="c_caprefill">KPL (sek.)</label><input id="c_caprefill" type="number" step="0.1" min="0" max="20" title="KPL – seconds, 0–20"></div>
@@ -204,13 +206,15 @@
             <input id="c_skin_color_other" type="text" placeholder="Kita..." class="hidden">
           </div>
         </div>
-      </div>
+      </fieldset>
     </section>
 
     <!-- D -->
     <section class="card view" id="view-d" data-tab="D – Sąmonė">
       <h2>D – Sąmonė</h2>
-      <div>
+      <fieldset>
+        <legend>Sąmonės įvertinimas</legend>
+        <div>
         <label>GKS (A-K-M) <span class="subtle">(15b. mygtukas užpildo 4/5/6)</span></label>
         <div class="row">
             <input id="d_gksa" class="gcs-input" type="number" min="1" max="4" placeholder="A">
@@ -265,8 +269,8 @@
             </div>
           </div>
         </div>
-      </div>
-      <div class="mt-8">
+        </div>
+        <div class="mt-8">
         <label>Vyzdžiai – Kairė</label>
         <div id="d_pupil_left_wrapper" aria-expanded="false">
           <div class="chip-group" id="d_pupil_left_group" data-single="true" aria-label="Vyzdžiai – Kairė"></div>
@@ -274,30 +278,33 @@
           <input id="d_pupil_left_note" type="text" placeholder="Pastabos..." class="mt-6 hidden" hidden>
         </div>
       </div>
-      <div class="mt-8">
-        <label>Vyzdžiai – Dešinė</label>
-        <div id="d_pupil_right_wrapper" aria-expanded="false">
-          <div class="chip-group" id="d_pupil_right_group" data-single="true" aria-label="Vyzdžiai – Dešinė"></div>
-          <label for="d_pupil_right_note" class="mt-6 hidden" hidden>Pastabos</label>
-          <input id="d_pupil_right_note" type="text" placeholder="Pastabos..." class="mt-6 hidden" hidden>
+        <div class="mt-8">
+          <label>Vyzdžiai – Dešinė</label>
+          <div id="d_pupil_right_wrapper" aria-expanded="false">
+            <div class="chip-group" id="d_pupil_right_group" data-single="true" aria-label="Vyzdžiai – Dešinė"></div>
+            <label for="d_pupil_right_note" class="mt-6 hidden" hidden>Pastabos</label>
+            <input id="d_pupil_right_note" type="text" placeholder="Pastabos..." class="mt-6 hidden" hidden>
+          </div>
         </div>
-      </div>
-      <div class="row mt-8"><label class="m-0" for="d_notes">Pastabos</label><input id="d_notes" type="text" placeholder="Trumpai..."></div>
+        <div class="row mt-8"><label class="m-0" for="d_notes">Pastabos</label><input id="d_notes" type="text" placeholder="Trumpai..."></div>
+      </fieldset>
     </section>
 
     <!-- E -->
     <section class="card view" id="view-e" data-tab="E – Kita">
       <h2>E – Kita</h2>
-      <div class="grid cols-3">
+      <fieldset>
+        <legend>Kita</legend>
+        <div class="grid cols-3">
         <div><label for="e_temp">Temperatūra (°C)</label><input id="e_temp" type="number" step="0.1" min="30" max="43"></div>
         <div><label for="e_back_notes">Nugaros apžiūra</label><div class="row"><div class="chip-group" id="e_back_group" data-single="true"></div><input id="e_back_notes" type="text" placeholder="Pakitimai..." class="hidden"></div></div>
         <div><label for="e_abdomen_notes">Pilvo apžiūra</label><div class="row"><div class="chip-group" id="e_abdomen_group" data-single="true"></div><input id="e_abdomen_notes" type="text" placeholder="Pakitimai..." class="hidden"></div></div>
         <div><label for="e_other">Kitos pastabos</label><input id="e_other" type="text" placeholder="..."></div>
       </div>
 
-      <div class="divider"></div>
-      <h3 class="h3-muted m-0 mb-6">Kūno žemėlapis (SVG) – Žaizda (Ž), Sumušimas (S), Nudegimas</h3>
-      <div class="map-toolbar">
+        <div class="divider"></div>
+        <h3 class="h3-muted m-0 mb-6">Kūno žemėlapis (SVG) – Žaizda (Ž), Sumušimas (S), Nudegimas</h3>
+        <div class="map-toolbar">
         <button type="button" class="tool" data-tool="Ž"><svg class="icon" viewBox="-12 -12 24 24"><circle r="8" class="mark-w"/><path d="M-6 0 L6 0 M0 -6 L0 6" class="mark-w"/></svg><span>Žaizda</span></button>
         <button type="button" class="tool" data-tool="S"><svg class="icon" viewBox="-12 -12 24 24"><circle r="8" class="mark-b"/></svg><span>Sumušimas</span></button>
         <button type="button" class="tool" data-tool="B"><svg class="icon" viewBox="-12 -12 24 24"><circle r="8" class="burn-area"/></svg><span>Nudegimas</span></button>
@@ -344,6 +351,7 @@
       </svg>
       <div id="burnTotal" class="hint mt-2"></div>
       <div class="hint">Spragtelėkite ant figūros – įdedama pasirinkta žyma.</div>
+      </fieldset>
     </section>
 
     <!-- Intervencijos -->
