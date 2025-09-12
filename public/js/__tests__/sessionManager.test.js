@@ -58,9 +58,9 @@ describe('sessionManager utilities', () => {
   test('updateDomToggles responds to chip state', () => {
     document.body.innerHTML = `
       <div id="d_pupil_left_group"><span class="chip" data-value="kita"></span></div>
-      <div id="d_pupil_left_wrapper"><label for="d_pupil_left_note"></label><input id="d_pupil_left_note" class="hidden" /></div>
+      <fieldset id="d_pupil_left_wrapper"><label for="d_pupil_left_note"></label><input id="d_pupil_left_note" class="hidden" /></fieldset>
       <div id="d_pupil_right_group"></div>
-      <div id="d_pupil_right_wrapper"><label for="d_pupil_right_note"></label><input id="d_pupil_right_note" /></div>
+      <fieldset id="d_pupil_right_wrapper"><label for="d_pupil_right_note"></label><input id="d_pupil_right_note" /></fieldset>
       <div id="e_back_group"></div><div id="e_back_notes"></div>
       <div id="e_abdomen_group"></div><div id="e_abdomen_notes"></div>
       <div id="c_skin_color_group"></div><input id="c_skin_color_other" />
