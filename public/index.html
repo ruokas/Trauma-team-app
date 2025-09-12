@@ -127,7 +127,7 @@
     </section>
 
     <!-- A -->
-    <section class="card view" id="view-a" data-tab="A – Kvėpavimo takai">
+    <section class="card view hidden" id="view-a" data-tab="A – Kvėpavimo takai">
       <h2>A – Kvėpavimo takai</h2>
       <label>Takai</label>
       <div class="chip-group" id="a_airway_group" data-single="true" aria-label="Takai"></div>
@@ -135,7 +135,7 @@
     </section>
 
     <!-- B -->
-    <section class="card view" id="view-b" data-tab="B – Kvėpavimas">
+    <section class="card view hidden" id="view-b" data-tab="B – Kvėpavimas">
       <h2>B – Kvėpavimas</h2>
         <fieldset class="collapsible" id="breathing-vitals">
           <legend>Gyvybiniai rodikliai</legend>
@@ -182,7 +182,7 @@
     </section>
 
     <!-- C -->
-    <section class="card view" id="view-c" data-tab="C – Kraujotaka">
+    <section class="card view hidden" id="view-c" data-tab="C – Kraujotaka">
       <h2>C – Kraujotaka</h2>
 
       <fieldset class="collapsible" id="circulation-vitals">
@@ -227,7 +227,7 @@
     </section>
 
     <!-- D -->
-    <section class="card view" id="view-d" data-tab="D – Sąmonė">
+    <section class="card view hidden" id="view-d" data-tab="D – Sąmonė">
       <h2>D – Sąmonė</h2>
         <fieldset>
           <legend>GKS (A-K-M) <span class="subtle">(15b. mygtukas užpildo 4/5/6)</span></legend>
@@ -301,7 +301,7 @@
     </section>
 
     <!-- E -->
-    <section class="card view" id="view-e" data-tab="E – Kita">
+    <section class="card view hidden" id="view-e" data-tab="E – Kita">
       <h2>E – Kita</h2>
       <fieldset id="e_additional">
         <legend>Papildomos apžiūros</legend>
@@ -365,7 +365,7 @@
     </section>
 
     <!-- Intervencijos -->
-    <section class="card view" id="view-intervencijos" data-tab="Intervencijos">
+    <section class="card view hidden" id="view-intervencijos" data-tab="Intervencijos">
       <h2>Intervencijos</h2>
       <input id="medSearch" type="text" placeholder="Ieškoti intervencijų…" aria-label="Ieškoti intervencijų" class="med-search">
       <div class="interv-groups">
@@ -394,7 +394,7 @@
     </section>
 
     <!-- Vaizdai / Laboratorija / Komanda / Sprendimas / Santrauka -->
-    <section class="card view" id="view-vaizdiniai-tyrimai" data-tab="Vaizdiniai tyrimai">
+    <section class="card view hidden" id="view-vaizdiniai-tyrimai" data-tab="Vaizdiniai tyrimai">
       <h2>Vaizdiniai tyrimai</h2>
       <h3 class="h3-muted">FAST</h3>
       <div class="grid cols-auto" id="fastGrid"></div>
@@ -406,7 +406,7 @@
       <div class="chip-group" id="imaging_other_group" aria-label="Kiti vaizdiniai tyrimai"></div>
       <input id="imaging_other" type="text" placeholder="Įvesti kitą tyrimą" class="hidden mt-8">
     </section>
-    <section class="card view" id="view-laboratorija" data-tab="Laboratorija">
+    <section class="card view hidden" id="view-laboratorija" data-tab="Laboratorija">
       <h2>Laboratoriniai tyrimai</h2>
       <div class="chip-group" id="labs_basic" aria-label="Laboratoriniai tyrimai"></div>
       <div class="blood-order-box">
@@ -418,8 +418,8 @@
         </div>
       </div>
     </section>
-    <section class="card view" id="view-komanda" data-tab="Komanda"><h2>Komandos nariai</h2><div class="grid cols-auto" id="teamGrid"></div></section>
-    <section class="card view" id="view-sprendimas" data-tab="Sprendimas">
+    <section class="card view hidden" id="view-komanda" data-tab="Komanda"><h2>Komandos nariai</h2><div class="grid cols-auto" id="teamGrid"></div></section>
+    <section class="card view hidden" id="view-sprendimas" data-tab="Sprendimas">
       <h2>Sprendimas</h2>
       <div><label for="spr_time">Laikas</label><div class="row"><input id="spr_time" type="time"><button type="button" class="btn ghost" id="btnSprNow">Dabar</button></div></div>
       <div class="mt-8">
@@ -507,7 +507,7 @@
         </fieldset>
       </div>
     </section>
-    <section class="card view" id="view-santrauka" data-tab="Santrauka">
+    <section class="card view hidden" id="view-santrauka" data-tab="Santrauka">
       <h2>Sugeneruotas tekstas</h2>
       <textarea id="output" placeholder="Santrauka sugeneruojama automatiškai"></textarea>
       <div class="row mb-8">
