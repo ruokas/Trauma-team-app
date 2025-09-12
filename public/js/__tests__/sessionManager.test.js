@@ -55,13 +55,34 @@ describe('sessionManager utilities', () => {
     expect(document.querySelector('#group .chip[data-value="b"]').classList.contains('active')).toBe(true);
   });
 
-  test('updateDomToggles responds to chip state', () => {
+  test('togglePupilNote responds to chip state', () => {
     document.body.innerHTML = `
       <div id="d_pupil_left_group"><span class="chip" data-value="kita"></span></div>
       <fieldset id="d_pupil_left_wrapper"><label for="d_pupil_left_note"></label><input id="d_pupil_left_note" class="hidden" /></fieldset>
-      <div id="d_pupil_right_group"></div>
-      <fieldset id="d_pupil_right_wrapper"><label for="d_pupil_right_note"></label><input id="d_pupil_right_note" /></fieldset>
-      <div id="e_back_group"></div><div id="e_back_notes"></div>
+      <div id="d_pupil_right_group"><span class="chip" data-value="kita"></span></div>
+      <fieldset id="d_pupil_right_wrapper"><label for="d_pupil_right_note"></label><input id="d_pupil_right_note" class="hidden" /></fieldset>
+    `;
+    const { togglePupilNote, setChipActive } = require('../chips.js');
+    const leftChip = document.querySelector('#d_pupil_left_group .chip');
+    const rightChip = document.querySelector('#d_pupil_right_group .chip');
+    togglePupilNote('left');
+    togglePupilNote('right');
+    expect(document.getElementById('d_pupil_left_note').classList.contains('hidden')).toBe(true);
+    expect(document.getElementById('d_pupil_right_note').classList.contains('hidden')).toBe(true);
+    setChipActive(leftChip, true);
+    togglePupilNote('left');
+    expect(document.getElementById('d_pupil_left_note').classList.contains('hidden')).toBe(false);
+    setChipActive(rightChip, true);
+    togglePupilNote('right');
+    expect(document.getElementById('d_pupil_right_note').classList.contains('hidden')).toBe(false);
+    setChipActive(leftChip, false);
+    togglePupilNote('left');
+    expect(document.getElementById('d_pupil_left_note').classList.contains('hidden')).toBe(true);
+  });
+
+  test('updateDomToggles toggles back notes based on chip state', () => {
+    document.body.innerHTML = `
+      <div id="e_back_group"><span class="chip" data-value="Pakitimai"></span></div><div id="e_back_notes" class="hidden"></div>
       <div id="e_abdomen_group"></div><div id="e_abdomen_notes"></div>
       <div id="c_skin_color_group"></div><input id="c_skin_color_other" />
       <div id="oxygenFields"></div><input id="b_oxygen_liters"><input id="b_oxygen_type">
@@ -77,12 +98,12 @@ describe('sessionManager utilities', () => {
       <div id="imaging_other" class="hidden"></div>
     `;
     const { updateDomToggles } = require('../domToggles.js');
-    const chip = document.querySelector('#d_pupil_left_group .chip');
+    const chip = document.querySelector('#e_back_group .chip');
     updateDomToggles();
-    expect(document.getElementById('d_pupil_left_note').classList.contains('hidden')).toBe(true);
+    expect(document.getElementById('e_back_notes').classList.contains('hidden')).toBe(true);
     chip.classList.add('active');
     updateDomToggles();
-    expect(document.getElementById('d_pupil_left_note').classList.contains('hidden')).toBe(false);
+    expect(document.getElementById('e_back_notes').classList.contains('hidden')).toBe(false);
   });
 
   test('saveAll resolves and updates status text', async () => {

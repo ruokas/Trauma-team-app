@@ -2,24 +2,6 @@ import { $, $$ } from './utils.js';
 import { IMAGING_GROUPS } from './chipState.js';
 
 export function updateDomToggles(){
-  const showLeftNote = $$('.chip.active', $('#d_pupil_left_group')).some(c => c.dataset.value === 'kita');
-  const leftNote = $('#d_pupil_left_note');
-  const leftLabel = $('#d_pupil_left_wrapper label[for="d_pupil_left_note"]');
-  leftNote.hidden = !showLeftNote;
-  leftNote.classList.toggle('hidden', !showLeftNote);
-  if(leftLabel){ leftLabel.hidden = !showLeftNote; leftLabel.classList.toggle('hidden', !showLeftNote); }
-  const leftWrapper = $('#d_pupil_left_wrapper');
-  if(leftWrapper) leftWrapper.setAttribute('aria-expanded', showLeftNote ? 'true' : 'false');
-
-  const showRightNote = $$('.chip.active', $('#d_pupil_right_group')).some(c => c.dataset.value === 'kita');
-  const rightNote = $('#d_pupil_right_note');
-  const rightLabel = $('#d_pupil_right_wrapper label[for="d_pupil_right_note"]');
-  rightNote.hidden = !showRightNote;
-  rightNote.classList.toggle('hidden', !showRightNote);
-  if(rightLabel){ rightLabel.hidden = !showRightNote; rightLabel.classList.toggle('hidden', !showRightNote); }
-  const rightWrapper = $('#d_pupil_right_wrapper');
-  if(rightWrapper) rightWrapper.setAttribute('aria-expanded', showRightNote ? 'true' : 'false');
-
   const showBack = $$('.chip.active', $('#e_back_group')).some(c => c.dataset.value === 'Pakitimai');
   const backNote = $('#e_back_notes');
   backNote.style.display = showBack ? 'block' : 'none';

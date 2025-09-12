@@ -48,21 +48,21 @@ export function setChipActive(chip, active){
   if(sr) sr.textContent=active?'selected':'not selected';
 }
 
-function togglePupilNote(side, chip){
-  const groupId = `d_pupil_${side}_group`;
-  if(chip.parentElement?.id !== groupId) return;
+export function togglePupilNote(side){
+  const group = $(`#d_pupil_${side}_group`);
   const note = $(`#d_pupil_${side}_note`);
-  const group = note.parentElement;
-  const show = chip.dataset.value==='kita' && isChipActive(chip);
+  if(!group || !note) return;
+  const show = $$('.chip.active', group).some(c => c.dataset.value === 'kita');
   note.hidden = !show;
   note.classList.toggle('hidden', !show);
-  const label = group.querySelector(`label[for="d_pupil_${side}_note"]`);
+  const label = $(`#d_pupil_${side}_wrapper label[for="d_pupil_${side}_note"]`);
   if(label){
     label.hidden = !show;
     label.classList.toggle('hidden', !show);
   }
   if(!show) note.value='';
-  group.setAttribute('aria-expanded', show ? 'true' : 'false');
+  const wrapper = $(`#d_pupil_${side}_wrapper`);
+  if(wrapper) wrapper.setAttribute('aria-expanded', show ? 'true' : 'false');
 }
 
 function toggleBackNote(chip){
@@ -122,6 +122,8 @@ export function initChips(saveAll){
     }
     setChipActive(chip, isChipActive(chip));
   });
+  togglePupilNote('left');
+  togglePupilNote('right');
   updateBreathGroups();
   if(listenersAdded) return;
   listenersAdded = true;
@@ -136,8 +138,8 @@ export function initChips(saveAll){
     } else {
       setChipActive(chip, !isChipActive(chip));
     }
-    togglePupilNote('left', chip);
-    togglePupilNote('right', chip);
+    togglePupilNote('left');
+    togglePupilNote('right');
     toggleBackNote(chip);
     toggleAbdomenNote(chip);
     toggleSkinColorNote(chip);
