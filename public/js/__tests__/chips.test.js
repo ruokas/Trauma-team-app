@@ -214,14 +214,15 @@ describe('chips', () => {
 
   test('toggles pupil note visibility and clears value when switching options', () => {
     document.body.innerHTML = `
-      <div id="d_pupil_left_wrapper" aria-expanded="false">
+      <fieldset id="d_pupil_left_wrapper" aria-expanded="false">
+        <legend>Vyzdžiai – Kairė</legend>
         <div id="d_pupil_left_group" data-single="true">
           <button type="button" class="chip" data-value="n.y." aria-pressed="false"></button>
           <button type="button" class="chip" data-value="kita" aria-pressed="false"></button>
         </div>
         <label for="d_pupil_left_note" class="hidden" hidden>Pastabos</label>
         <input id="d_pupil_left_note" class="hidden" hidden />
-      </div>
+      </fieldset>
     `;
     const { initChips } = require('../chips.js');
     initChips();

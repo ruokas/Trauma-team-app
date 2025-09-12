@@ -62,7 +62,7 @@ function togglePupilNote(side, chip){
     label.classList.toggle('hidden', !show);
   }
   if(!show) note.value='';
-  group.setAttribute('aria-expanded', show);
+  group.setAttribute('aria-expanded', show ? 'true' : 'false');
 }
 
 function toggleBackNote(chip){
