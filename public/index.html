@@ -79,7 +79,10 @@
           </div>
           <div class="grid cols-3 mt-8">
               <div class="row"><div class="flex-1"><label for="gmp_sbp">GMP AKS s</label><input id="gmp_sbp" type="number" min="0" max="300" title="AKS s – mmHg, 0–300"></div><div class="flex-1"><label for="gmp_dbp">GMP AKS d</label><input id="gmp_dbp" type="number" min="0" max="200" title="AKS d – mmHg, 0–200"></div></div>
-              <div><label>GMP GKS (A-K-M)</label><div class="row"><input id="gmp_gksa" type="number" min="1" max="4" placeholder="A"><input id="gmp_gksk" type="number" min="1" max="5" placeholder="K"><input id="gmp_gksm" type="number" min="1" max="6" placeholder="M"><span id="gmp_gks_total"></span></div></div>
+                <fieldset>
+                  <legend>GKS (A-K-M)</legend>
+                  <div class="row"><input id="gmp_gksa" type="number" min="1" max="4" placeholder="A"><input id="gmp_gksk" type="number" min="1" max="5" placeholder="K"><input id="gmp_gksm" type="number" min="1" max="6" placeholder="M"><span id="gmp_gks_total"></span></div>
+                </fieldset>
               <div>
                 <label for="gmp_time">GMP pranešimo laikas</label>
                 <div class="row">
@@ -226,17 +229,17 @@
     <!-- D -->
     <section class="card view" id="view-d" data-tab="D – Sąmonė">
       <h2>D – Sąmonė</h2>
-      <div>
-        <label>GKS (A-K-M) <span class="subtle">(15b. mygtukas užpildo 4/5/6)</span></label>
-        <div class="row">
-            <input id="d_gksa" class="gcs-input" type="number" min="1" max="4" placeholder="A">
-            <input id="d_gksk" class="gcs-input" type="number" min="1" max="5" placeholder="K">
-            <input id="d_gksm" class="gcs-input" type="number" min="1" max="6" placeholder="M">
-            <button type="button" class="btn" id="btnGCS15">15b.</button>
-            <button type="button" class="btn" id="btnGCSCalc">Skaičiuoti</button>
-            <span id="d_gks_total"></span>
-        </div>
-        <div id="d_gcs_calc" class="gcs-calc hidden">
+        <fieldset>
+          <legend>GKS (A-K-M) <span class="subtle">(15b. mygtukas užpildo 4/5/6)</span></legend>
+          <div class="row">
+              <input id="d_gksa" class="gcs-input" type="number" min="1" max="4" placeholder="A">
+              <input id="d_gksk" class="gcs-input" type="number" min="1" max="5" placeholder="K">
+              <input id="d_gksm" class="gcs-input" type="number" min="1" max="6" placeholder="M">
+              <button type="button" class="btn" id="btnGCS15">15b.</button>
+              <button type="button" class="btn" id="btnGCSCalc">Skaičiuoti</button>
+              <span id="d_gks_total"></span>
+          </div>
+          <div id="d_gcs_calc" class="gcs-calc hidden">
           <div role="dialog" aria-modal="true" aria-labelledby="d_gcs_calc_title">
             <h3 id="d_gcs_calc_title" class="sr-only">GKS skaičiuoklė</h3>
             <button type="button" class="btn ghost" id="d_gcs_close">Uždaryti</button>
@@ -280,7 +283,7 @@
               <span id="d_gcs_calc_total"></span>
             </div>
           </div>
-        </div>
+        </fieldset>
       </div>
       <div class="mt-8">
         <label>Vyzdžiai – Kairė</label>
@@ -449,16 +452,16 @@
         <div class="flex-1"><label for="spr_sbp">AKS s</label><input id="spr_sbp" type="number" min="0" max="300"></div>
         <div class="flex-1"><label for="spr_dbp">AKS d</label><input id="spr_dbp" type="number" min="0" max="200"></div>
       </div>
-      <div class="mt-8">
-        <label>GKS (A-K-M)</label>
-        <div class="row">
-          <input id="spr_gksa" type="number" min="1" max="4" placeholder="A">
-          <input id="spr_gksk" type="number" min="1" max="5" placeholder="K">
-          <input id="spr_gksm" type="number" min="1" max="6" placeholder="M">
-          <button type="button" class="btn" id="btnSprGCSCalc">Skaičiuoti</button>
-          <span id="spr_gks_total"></span>
-        </div>
-        <div id="spr_gcs_calc" class="gcs-calc hidden">
+        <fieldset class="mt-8">
+          <legend>GKS (A-K-M)</legend>
+          <div class="row">
+            <input id="spr_gksa" type="number" min="1" max="4" placeholder="A">
+            <input id="spr_gksk" type="number" min="1" max="5" placeholder="K">
+            <input id="spr_gksm" type="number" min="1" max="6" placeholder="M">
+            <button type="button" class="btn" id="btnSprGCSCalc">Skaičiuoti</button>
+            <span id="spr_gks_total"></span>
+          </div>
+          <div id="spr_gcs_calc" class="gcs-calc hidden">
           <div role="dialog" aria-modal="true" aria-labelledby="spr_gcs_calc_title">
             <h3 id="spr_gcs_calc_title" class="sr-only">GKS skaičiuoklė</h3>
             <button type="button" class="btn ghost" id="spr_gcs_close">Uždaryti</button>
@@ -502,7 +505,7 @@
               <span id="spr_gcs_calc_total"></span>
             </div>
           </div>
-        </div>
+        </fieldset>
       </div>
     </section>
     <section class="card view" id="view-santrauka" data-tab="Santrauka">
