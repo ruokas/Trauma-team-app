@@ -303,12 +303,15 @@
     <!-- E -->
     <section class="card view" id="view-e" data-tab="E – Kita">
       <h2>E – Kita</h2>
-      <div class="grid cols-3">
-        <div><label for="e_temp">Temperatūra (°C)</label><input id="e_temp" type="number" step="0.1" min="30" max="43"></div>
-        <div><label for="e_back_notes">Nugaros apžiūra</label><div class="row"><div class="chip-group" id="e_back_group" data-single="true"></div><input id="e_back_notes" type="text" placeholder="Pakitimai..." class="hidden"></div></div>
-        <div><label for="e_abdomen_notes">Pilvo apžiūra</label><div class="row"><div class="chip-group" id="e_abdomen_group" data-single="true"></div><input id="e_abdomen_notes" type="text" placeholder="Pakitimai..." class="hidden"></div></div>
-        <div><label for="e_other">Kitos pastabos</label><input id="e_other" type="text" placeholder="..."></div>
-      </div>
+      <fieldset id="e_additional">
+        <legend>Papildomos apžiūros</legend>
+        <div class="grid cols-3">
+          <div><label for="e_temp">Temperatūra (°C)</label><input id="e_temp" type="number" step="0.1" min="30" max="43"></div>
+          <div><label for="e_back_notes">Nugaros apžiūra</label><div class="row"><div class="chip-group" id="e_back_group" data-single="true"></div><input id="e_back_notes" type="text" placeholder="Pakitimai..." class="hidden"></div></div>
+          <div><label for="e_abdomen_notes">Pilvo apžiūra</label><div class="row"><div class="chip-group" id="e_abdomen_group" data-single="true"></div><input id="e_abdomen_notes" type="text" placeholder="Pakitimai..." class="hidden"></div></div>
+          <div><label for="e_other">Kitos pastabos</label><input id="e_other" type="text" placeholder="..."></div>
+        </div>
+      </fieldset>
 
       <div class="divider"></div>
       <h3 class="h3-muted m-0 mb-6">Kūno žemėlapis (SVG) – Žaizda (Ž), Sumušimas (S), Nudegimas</h3>
