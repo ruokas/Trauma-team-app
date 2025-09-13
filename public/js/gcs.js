@@ -18,6 +18,7 @@ function setupGcsCalc(prefix){
 
   let firstFocusable, lastFocusable;
   const close=()=>{
+    panel.classList.add('hidden');
     panel.style.display='none';
     document.removeEventListener('keydown',onKey);
     document.removeEventListener('click',onDocClick);
@@ -49,8 +50,9 @@ function setupGcsCalc(prefix){
   if(btnClose) btnClose.addEventListener('click',close);
 
   return ()=>{
-    const hidden=panel.style.display==='none';
+    const hidden=getComputedStyle(panel).display==='none';
     if(hidden){
+      panel.classList.remove('hidden');
       panel.style.display='block';
       const focusables=panel.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');
       firstFocusable=focusables[0];
