@@ -22,13 +22,28 @@ import { init as initFastGrid } from './fastGrid.js';
 import { init as initTeamGrid } from './teamGrid.js';
 import { init as initMechanismList } from './mechanismList.js';
 import { initChipGroups } from './chipData.js';
-import { createChipGroup } from './chipGroup.js';
 import woundEditor from './woundEditor.js';
-export { validateVitals };
+export { validateVitals, createChipGroup };
 
 initTheme();
 
 /* ===== Imaging / Labs / Team ===== */
+function createChipGroup(selector, values){
+  const wrap=$(selector);
+  if(!wrap) return null;
+  values.forEach(val=>{
+    const chip=document.createElement('span');
+    chip.className='chip';
+    chip.dataset.value=val;
+    chip.textContent=val;
+    addChipIndicators(chip);
+    wrap.appendChild(chip);
+  });
+  return wrap;
+}
+
+initChipGroups();
+
 createChipGroup('#imaging_ct', IMG_CT);
 createChipGroup('#imaging_xray', IMG_XRAY);
 createChipGroup('#imaging_other_group', ['Kita']);
@@ -105,7 +120,6 @@ function clampNumberInputs(){
 
 /* ===== Init modules ===== */
 async function init(){
-  initChipGroups();
   if(typeof navigator !== 'undefined' && 'serviceWorker' in navigator){
     // Use a relative path so the service worker is correctly located when the
     // site is served from a subdirectory (e.g. GitHub Pages project sites).
