@@ -1,4 +1,4 @@
-import { createChipGroup } from './app.js';
+import { createChipGroup } from './chipGroup.js';
 
 export const CHIP_DATA = {
   chips_red: [
