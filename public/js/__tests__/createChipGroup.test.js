@@ -1,12 +1,8 @@
-jest.mock('../gcs.js', () => ({ initGcs: jest.fn() }));
-
 describe('createChipGroup', () => {
   let createChipGroup;
 
   beforeAll(() => {
-    Object.defineProperty(document, 'readyState', { configurable: true, value: 'loading' });
-    document.body.innerHTML = '<div id="fastGrid"></div><div id="teamGrid"></div>';
-    ({ createChipGroup } = require('../app.js'));
+    ({ createChipGroup } = require('../chipGroup.js'));
   });
 
   beforeEach(() => {

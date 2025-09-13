@@ -22,27 +22,13 @@ import { init as initFastGrid } from './fastGrid.js';
 import { init as initTeamGrid } from './teamGrid.js';
 import { init as initMechanismList } from './mechanismList.js';
 import { initChipGroups } from './chipData.js';
-export { validateVitals, createChipGroup };
+import { createChipGroup } from './chipGroup.js';
+import woundEditor from './woundEditor.js';
+export { validateVitals };
 
 initTheme();
 
 /* ===== Imaging / Labs / Team ===== */
-function createChipGroup(selector, values){
-  const wrap=$(selector);
-  if(!wrap) return null;
-  values.forEach(val=>{
-    const chip=document.createElement('span');
-    chip.className='chip';
-    chip.dataset.value=val;
-    chip.textContent=val;
-    addChipIndicators(chip);
-    wrap.appendChild(chip);
-  });
-  return wrap;
-}
-
-initChipGroups();
-
 createChipGroup('#imaging_ct', IMG_CT);
 createChipGroup('#imaging_xray', IMG_XRAY);
 createChipGroup('#imaging_other_group', ['Kita']);
@@ -119,6 +105,7 @@ function clampNumberInputs(){
 
 /* ===== Init modules ===== */
 async function init(){
+  initChipGroups();
   if(typeof navigator !== 'undefined' && 'serviceWorker' in navigator){
     // Use a relative path so the service worker is correctly located when the
     // site is served from a subdirectory (e.g. GitHub Pages project sites).
@@ -145,6 +132,9 @@ async function init(){
   }
   bodyMap.init(saveAllDebounced);
   bodyMap.setMarkScale(0.35);
+  woundEditor.init(bodyMap);
+  const brushSlider = $('#brushSize');
+  if(brushSlider) brushSlider.addEventListener('input', e => bodyMap.setBrushSize(e.target.value));
   initChips(saveAllDebounced);
   initAutoActivate(saveAllDebounced);
   initActions(saveAllDebounced);
@@ -154,6 +144,41 @@ async function init(){
   initMechanismList();
   document.addEventListener('input', saveAllDebounced);
   initCirculation();
+  const toolBtns=$$('.map-toolbar .tool[data-tool]');
+  toolBtns.forEach(btn=>{
+    if(btn.dataset.tool===bodyMap.activeTool) btn.classList.add('active');
+    btn.addEventListener('click',()=>{
+      bodyMap.setTool(btn.dataset.tool);
+      toolBtns.forEach(b=>b.classList.toggle('active', b===btn));
+    });
+  });
+  const btnUndo=$('#btnUndo');
+  if(btnUndo) btnUndo.addEventListener('click',()=>{ bodyMap.undo(); saveAllDebounced(); });
+  const btnRedo=$('#btnRedo');
+  if(btnRedo) btnRedo.addEventListener('click',()=>{ bodyMap.redo(); saveAllDebounced(); });
+  const btnClearMap=$('#btnClearMap');
+  if(btnClearMap) btnClearMap.addEventListener('click',()=>{
+    bodyMap.clear();
+    saveAllDebounced();
+  });
+  const btnExport=$('#btnExportSvg');
+  if(btnExport) btnExport.addEventListener('click',async()=>{
+    try{
+      const svg=$('#bodySvg')?.cloneNode(true);
+      if(!svg) return;
+      await bodyMap.embedSilhouettes(svg);
+      const xml=new XMLSerializer().serializeToString(svg);
+      const blob=new Blob([xml],{type:'image/svg+xml'});
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement('a');
+      a.href=url;
+      a.download='bodymap.svg';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    }catch(err){ console.error('SVG export failed', err); }
+  });
   const btnOxygen=$('#btnOxygen');
   if(btnOxygen) btnOxygen.addEventListener('click',()=>{
     const box=$('#oxygenFields');
