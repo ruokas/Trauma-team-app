@@ -10,6 +10,7 @@ import { initTopbar } from './components/topbar.js';
 import { initCollapsibles } from './sections.js';
 import { initTheme, saveAll, loadAll, getCurrentSessionId } from './sessionManager.js';
 import { connectSocket, fetchUsers } from './sessionApi.js';
+import { notify } from './alerts.js';
 import { initSessions, populateSessionSelect, updateUserList } from './sessionUI.js';
 import bodyMap from './bodyMap.js';
 import { generateReport } from './report.js';
@@ -125,24 +126,30 @@ async function init(){
     // site is served from a subdirectory (e.g. GitHub Pages project sites).
     navigator.serviceWorker.register('./sw.js');
   }
-  await initTopbar();
-  setupHeaderActions({ validateForm });
-  connectSocket({
-    onSessions: list => {
-      const sel = $('#sessionSelect');
-      if(sel) populateSessionSelect(sel, list);
-    },
-    onSessionData: ({ id }) => {
-      if(id === getCurrentSessionId()) loadAll();
-    },
-    onUsers: updateUserList
-  });
-  const users = await fetchUsers();
-  updateUserList(users);
-  await initSessions();
-  if(document.getElementById('tabs')){
-    initTabs();
-    initCollapsibles();
+  try{
+    await initTopbar();
+    setupHeaderActions({ validateForm });
+    await connectSocket({
+      onSessions: list => {
+        const sel = $('#sessionSelect');
+        if(sel) populateSessionSelect(sel, list);
+      },
+      onSessionData: ({ id }) => {
+        if(id === getCurrentSessionId()) loadAll();
+      },
+      onUsers: updateUserList
+    });
+    const users = await fetchUsers();
+    updateUserList(users);
+    await initSessions();
+  }catch(err){
+    console.error(err);
+    notify({ type:'error', message:'Nepavyko inicijuoti programos' });
+  }finally{
+    if(document.getElementById('tabs')){
+      initTabs();
+      initCollapsibles();
+    }
   }
   bodyMap.init(saveAllDebounced);
   bodyMap.setMarkScale(0.35);
