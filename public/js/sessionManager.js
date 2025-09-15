@@ -8,6 +8,9 @@ let authToken = localStorage.getItem('trauma_token') || null;
 let currentSessionId = localStorage.getItem('trauma_current_session') || null;
 let theme = localStorage.getItem('trauma_theme') || 'light';
 
+const MEDICATION_CONTAINER_IDS=['pain_meds','bleeding_meds','other_meds'];
+const PROCEDURE_CONTAINER_IDS=['procedures_it','procedures_other'];
+
 export function setTheme(t){
   theme = t === 'light' ? 'light' : 'dark';
   localStorage.setItem('trauma_theme', theme);
@@ -43,11 +46,13 @@ export async function saveAll(){
     ...serializeFields(),
     ...serializeChips(CHIP_GROUPS)
   };
-  function pack(container){ return Array.from(container.children).map(card=>({ name:limit(card.querySelector('.act_custom_name')?card.querySelector('.act_custom_name').value:card.querySelector('.act_name').textContent.trim()), on:card.querySelector('.act_chk').checked, time:limit(card.querySelector('.act_time').value), dose:limit(card.querySelector('.act_dose')?card.querySelector('.act_dose').value:''), note:limit(card.querySelector('.act_note').value) }));}
-  data['pain_meds']=pack($('#pain_meds'));
-  data['bleeding_meds']=pack($('#bleeding_meds'));
-  data['other_meds']=pack($('#other_meds'));
-  data['procs']=pack($('#procedures_it')).concat(pack($('#procedures_other')));
+  function pack(container){
+    const cards=container?Array.from(container.children):[];
+    return cards.map(card=>({ name:limit(card.querySelector('.act_custom_name')?card.querySelector('.act_custom_name').value:card.querySelector('.act_name').textContent.trim()), on:card.querySelector('.act_chk').checked, time:limit(card.querySelector('.act_time').value), dose:limit(card.querySelector('.act_dose')?card.querySelector('.act_dose').value:''), note:limit(card.querySelector('.act_note').value) }));
+  }
+  const packById=id=>pack($('#' + id));
+  MEDICATION_CONTAINER_IDS.forEach(id=>{ data[id]=packById(id); });
+  data['procs']=PROCEDURE_CONTAINER_IDS.reduce((arr,id)=>arr.concat(packById(id)),[]);
   data['bodymap_svg']=limit(bodyMap.serialize(), 200000);
   localStorage.setItem(sessionKey(), JSON.stringify(data));
   const statusEl = $('#saveStatus');
@@ -104,6 +109,7 @@ export function loadAll(){
 
 function loadRecords(data){
   function unpack(container,records){
+    if(!container) return;
     const arr=Array.isArray(records)?records:[];
     Array.from(container.children).forEach((card,i)=>{
       const r=arr[i]||{};
@@ -114,13 +120,17 @@ function loadRecords(data){
       const cn=card.querySelector('.act_custom_name'); if(cn) cn.value=r.name||'';
     });
   }
-  unpack($('#pain_meds'),data['pain_meds']);
-  unpack($('#bleeding_meds'),data['bleeding_meds']);
-  unpack($('#other_meds'),data['other_meds']);
+  MEDICATION_CONTAINER_IDS.forEach(id=>{
+    unpack($('#' + id),data[id]);
+  });
   const procsArr=Array.isArray(data['procs'])?data['procs']:[];
-  const itCount=$('#procedures_it').children.length;
-  unpack($('#procedures_it'),procsArr.slice(0,itCount));
-  unpack($('#procedures_other'),procsArr.slice(itCount));
+  let offset=0;
+  PROCEDURE_CONTAINER_IDS.forEach(id=>{
+    const container=$('#' + id);
+    const length=container?container.children.length:0;
+    unpack(container,procsArr.slice(offset,offset+length));
+    offset+=length;
+  });
 }
 
 function loadBodyMap(data){
