@@ -3,7 +3,9 @@ describe('initNavToggle',()=>{
   let toggle, nav, tabs;
 
   function setup(matches){
-    document.body.innerHTML=`<button id="navToggle">Menu</button><nav id="tabs"><a href="#" class="tab">One</a><a href="#" class="tab">Two</a></nav>`;
+    document.body.innerHTML =
+      '<button id="navToggle">Menu</button>' +
+      '<nav id="tabs"><a href="#" class="tab">One</a><a href="#" class="tab">Two</a></nav>';
     toggle=document.getElementById('navToggle');
     nav=document.getElementById('tabs');
     global.matchMedia = jest.fn().mockReturnValue({ matches, addEventListener: jest.fn(), removeEventListener: jest.fn() });
@@ -66,6 +68,36 @@ describe('initNavToggle',()=>{
       expect(nav.hasAttribute('hidden')).toBe(false);
       expect(document.body.classList.contains('nav-open')).toBe(false);
       jest.useRealTimers();
+    });
+  });
+
+  describe('without matchMedia', () => {
+    let removeSpy, originalMatchMedia;
+
+    beforeEach(() => {
+      document.body.innerHTML =
+        '<button id="navToggle">Menu</button>' +
+        '<nav id="tabs"><a href="#" class="tab">One</a><a href="#" class="tab">Two</a></nav>';
+      toggle = document.getElementById('navToggle');
+      nav = document.getElementById('tabs');
+      originalMatchMedia = global.matchMedia;
+      removeSpy = jest.spyOn(nav, 'removeAttribute');
+      delete global.matchMedia;
+      initNavToggle(toggle, nav);
+    });
+
+    afterEach(() => {
+      removeSpy.mockRestore();
+      global.matchMedia = originalMatchMedia;
+    });
+
+    test('shows nav when matchMedia unsupported', () => {
+      expect(removeSpy).toHaveBeenCalledWith('hidden');
+      expect(removeSpy).toHaveBeenCalledWith('aria-hidden');
+      expect(toggle.getAttribute('aria-expanded')).toBe('true');
+      expect(nav.hasAttribute('hidden')).toBe(false);
+      expect(nav.hasAttribute('aria-hidden')).toBe(false);
+      expect(document.body.classList.contains('nav-open')).toBe(true);
     });
   });
 });
