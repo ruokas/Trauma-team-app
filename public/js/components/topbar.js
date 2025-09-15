@@ -163,9 +163,12 @@ export async function initTopbar(){
     if(!res.ok) throw new Error(`HTTP ${res.status}`);
     header.innerHTML=await res.text();
   }catch(e){
-    console.error('Failed to load topbar', e);
-    notify({type:'error', message:'Failed to load topbar'});
+    console.warn('Nepavyko įkelti viršutinės juostos', e);
+    notify({type:'error', message:'Nepavyko įkelti viršutinės juostos'});
     header.innerHTML='<div class="wrap"><button type="button" class="btn" id="retryTopbar">Retry</button></div>';
+    const nav=document.querySelector('nav');
+    nav?.removeAttribute('hidden');
+    nav?.removeAttribute('aria-hidden');
     header.querySelector('#retryTopbar')?.addEventListener('click', initTopbar);
   }
   if(typeof ResizeObserver==='function'){
