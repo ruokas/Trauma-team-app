@@ -8,16 +8,20 @@ export function initNavToggle(toggle, nav){
   if(navMq && navMqListener){
     navMq.removeEventListener('change', navMqListener);
   }
-  if(!toggle || !nav) return;
-  toggle.setAttribute('aria-controls', nav.id);
-  toggle.setAttribute('aria-expanded','false');
+  if(!nav) return;
+  if(toggle){
+    toggle.setAttribute('aria-controls', nav.id);
+    toggle.setAttribute('aria-expanded','false');
+  }
   const overlay=document.querySelector('.nav-overlay');
   const focusableSel='a[href], button:not([disabled]), textarea, input, select, [tabindex]:not([tabindex="-1"])';
   let navOpen=false;
   let trapActive=false;
   function close(){
     document.body.classList.remove('nav-open');
-    toggle.setAttribute('aria-expanded','false');
+    if(toggle){
+      toggle.setAttribute('aria-expanded','false');
+    }
     nav.setAttribute('aria-hidden','true');
     nav.setAttribute('hidden','');
     if(overlay) overlay.hidden=true;
@@ -27,7 +31,9 @@ export function initNavToggle(toggle, nav){
       trapActive=false;
     }
     navOpen=false;
-    toggle.focus();
+    if(toggle){
+      toggle.focus();
+    }
   }
   function trap(e){
     if(e.key==='Tab'){
@@ -49,7 +55,9 @@ export function initNavToggle(toggle, nav){
     const wasClosed=!navOpen;
     navOpen=true;
     document.body.classList.toggle('nav-open', mobile);
-    toggle.setAttribute('aria-expanded','true');
+    if(toggle){
+      toggle.setAttribute('aria-expanded','true');
+    }
     nav.removeAttribute('aria-hidden');
     nav.removeAttribute('hidden');
     if(mobile){
@@ -70,29 +78,35 @@ export function initNavToggle(toggle, nav){
       }
     }
   }
-  toggle.addEventListener('click',()=>{
-    navOpen ? close() : open();
-  });
-  if(overlay){
-    overlay.addEventListener('click', close);
-  }
-  nav.addEventListener('click', () => {
-    const mobile=!navMq || !navMq.matches;
-    if(mobile){
-      close();
-    }else{
-      setTimeout(()=>{
-        if(nav.hasAttribute('hidden')) open();
-      });
+  if(toggle){
+    toggle.addEventListener('click',()=>{
+      navOpen ? close() : open();
+    });
+    if(overlay){
+      overlay.addEventListener('click', close);
     }
-  });
+    nav.addEventListener('click', () => {
+      const mobile=!navMq || !navMq.matches;
+      if(mobile){
+        close();
+      }else{
+        setTimeout(()=>{
+          if(nav.hasAttribute('hidden')) open();
+        });
+      }
+    });
+  }
   navMq=typeof matchMedia==='function' ? matchMedia(`(min-width: ${NAV_BREAKPOINT}px)`) : null;
   if(navMq){
     navMqListener=e=>{ e.matches ? open() : close(); };
     navMq.addEventListener('change', navMqListener);
-    navMq.matches ? open() : close();
+    if(toggle){
+      navMq.matches ? open() : close();
+    }else{
+      open();
+    }
   }else{
-    close();
+    open();
   }
 }
 
