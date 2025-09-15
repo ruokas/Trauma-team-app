@@ -151,10 +151,9 @@ export async function initTopbar(){
     const ro=new ResizeObserver(updateHeight);
     ro.observe(header);
   }
-  const nav=document.querySelector('nav');
-  nav?.removeAttribute('hidden');
   const toggle=document.getElementById('navToggle');
-  if(toggle && nav) initNavToggle(toggle, nav);
+  const nav=document.querySelector('nav');
+  initNavToggle(toggle, nav);
   const patientMenu=document.getElementById('patientMenu');
   initPatientMenuToggle(patientMenu);
 }
