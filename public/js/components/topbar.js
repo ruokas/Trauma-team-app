@@ -179,6 +179,10 @@ export async function initTopbar(){
   }
   const toggle=document.getElementById('navToggle');
   const nav=document.querySelector('nav');
+  if(!toggle && nav){
+    nav.removeAttribute('hidden');
+    nav.removeAttribute('aria-hidden');
+  }
   initNavToggle(toggle, nav);
   const patientMenu=document.getElementById('patientMenu');
   initPatientMenuToggle(patientMenu);
