@@ -32,7 +32,7 @@ body,
 #d_gks_total{margin-left:auto;font-weight:700}
 .pill{display:inline-flex;align-items:center;gap:$space-8;padding:$space-6 $space-10;border:1px solid var(--line);border-radius:999px;background:var(--card);color:var(--ink);font-weight:700}
 .pill:has(input:checked){background:var(--accent);border-color:#2d74b8}
-.pill.red:has(input:checked){background:var(--red);border-color:#a52623}
+.pill.red:has(input:checked){background:var(--red);border-color:#a52623;color:var(--bg)}
   #fastGrid .pill{
     padding:$space-10 $space-16;
     font-size:$font-lg;
@@ -67,8 +67,8 @@ label.chip input{
   }
 .chip.active{background:var(--accent);color:#fff;border-color:#2d74b8}
 .chip.active:hover{filter:brightness(1)}
-.chip.red.active{background:var(--red);color:#fff;border-color:#a52623}
-.chip.yellow.active{background:var(--yellow);color:#231b00;border-color:#8a7400}
+.chip.red.active{background:var(--red);color:var(--bg);border-color:#a52623}
+.chip.yellow.active{background:var(--yellow);color:var(--bg);border-color:#8a7400}
 .chip.auto{outline:$space-2 dashed var(--accent);outline-offset:$space-2}
   .chip-group{display:flex;flex-wrap:wrap;gap:$space-8}
     .gcs-calc{margin-top:$space-8;border:1px solid var(--line);border-radius:$space-10;padding:$space-8;background:var(--card)}
@@ -214,7 +214,7 @@ section[data-tab="Intervencijos"] .med-search{margin-bottom:$space-8}
 .toast-container{position:fixed;bottom:$space-20;right:$space-20;display:flex;flex-direction:column;gap:$space-8;z-index:1000}
 .toast{background:var(--card);color:var(--ink);border:1px solid var(--line);padding:$space-10 $space-16;border-radius:$space-6;box-shadow:0 2px 6px rgba(0,0,0,0.2);transition:opacity .3s,transform .3s}
 .toast.success{background:var(--green);color:#fff}
-.toast.error{background:var(--red);color:#fff}
+.toast.error{background:var(--red);color:var(--bg)}
 .toast.hide{opacity:0;transform:translateY($space-10)}
 .arrival-timer{
   font-family:monospace;
