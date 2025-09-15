@@ -28,7 +28,6 @@ export async function initSessions(){
   let sessions=await getSessions();
   let currentSessionId=getCurrentSessionId();
   const patientLabel=$('#patientMenuLabel');
-  const renameBtn=$('#renamePatientBtn');
   const deleteBtn=$('#deletePatientBtn');
   const saveBtn=$('#saveBtn');
   const render=()=>{
@@ -58,26 +57,6 @@ export async function initSessions(){
     setCurrentSessionId(currentSessionId);
   }
   render();
-
-  renameBtn?.addEventListener('click', async () => {
-    const id=getCurrentSessionId();
-    const session=sessions.find(s=>s.id===id);
-    if(!session) return;
-    const newName=await notify({type:'prompt', message:'Paciento ID', defaultValue: session.name});
-    if(!newName) return;
-    const trimmed=newName.trim();
-    if(!trimmed){
-      notify({ type:'error', message:'Pavadinimas negali būti tuščias.' });
-      return;
-    }
-    if(sessions.some(s=>s.id!==id && s.name.trim().toLowerCase()===trimmed.toLowerCase())){
-      notify({ type:'error', message:'Pacientas su tokiu pavadinimu jau egzistuoja.' });
-      return;
-    }
-    session.name=trimmed;
-    await saveSessions(sessions);
-    render();
-  });
 
   deleteBtn?.addEventListener('click', async () => {
     const id=getCurrentSessionId();

@@ -177,9 +177,10 @@ export async function initTopbar(){
     const ro=new ResizeObserver(updateHeight);
     ro.observe(header);
   }
-  const toggle=document.getElementById('navToggle');
   const nav=document.querySelector('nav');
-  initNavToggle(toggle, nav);
+  nav?.removeAttribute('hidden');
+  const toggle=document.getElementById('navToggle');
+  if(toggle && nav) initNavToggle(toggle, nav);
   const patientMenu=document.getElementById('patientMenu');
   initPatientMenuToggle(patientMenu);
 }
