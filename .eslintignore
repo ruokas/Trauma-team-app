@@ -1,3 +1,4 @@
 node_modules/
 docs/
 public/js/lib
+public/js/app.legacy.js
