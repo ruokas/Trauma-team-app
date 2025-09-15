@@ -21,6 +21,16 @@ const LOG_REQUESTS = process.env.NODE_ENV !== 'test';
 
 const EMPTY_DB = { sessions: [], data: {}, users: [] };
 
+async function backupAndNotify(){
+  const backup = `${DB_FILE}.bak`;
+  try {
+    await fs.promises.rename(DB_FILE, backup);
+    logger.error(`Backed up unreadable DB to ${backup}`);
+  } catch (err) {
+    logger.error('Failed to back up DB file', err);
+  }
+}
+
 function findSessionOr404 (req, res) {
   const id = req.params.id;
   const session = db.sessions.find(s => s.id === id);
@@ -32,15 +42,6 @@ function findSessionOr404 (req, res) {
 }
 
 async function loadDB(){
-  async function backupAndNotify(){
-    const backup = `${DB_FILE}.bak`;
-    try {
-      await fs.promises.rename(DB_FILE, backup);
-      logger.error(`Backed up unreadable DB to ${backup}`);
-    } catch (err) {
-      logger.error('Failed to back up DB file', err);
-    }
-  }
   try {
     const data = await fs.promises.readFile(DB_FILE, 'utf8');
     let parsed;
