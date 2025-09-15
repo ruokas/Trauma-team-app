@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="lt">
+<html lang="lt" class="no-js">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -8,8 +8,9 @@
 <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0c1218">
 <title>Sunkios traumos forma</title>
 <script>
+  document.documentElement.classList.remove('no-js');
   const savedTheme = localStorage.getItem('trauma_theme') || 'light';
-  document.documentElement.classList.add(savedTheme,'js');
+  document.documentElement.classList.add(savedTheme, 'js');
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
