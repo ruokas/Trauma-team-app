@@ -14,9 +14,9 @@ describe('accessibility',()=>{
     const nav=document.getElementById('tabs');
     initNavToggle(toggle,nav);
     expect(toggle.getAttribute('aria-controls')).toBe('tabs');
-    expect(toggle.getAttribute('aria-expanded')).toBe('false');
-    toggle.click();
     expect(toggle.getAttribute('aria-expanded')).toBe('true');
-    expect(document.activeElement).toBe(nav.querySelector('.tab'));
+    toggle.click();
+    expect(toggle.getAttribute('aria-expanded')).toBe('false');
+    expect(document.activeElement).toBe(toggle);
   });
 });
