@@ -1,42 +1,64 @@
 import { $, $$ } from './utils.js';
 import { IMAGING_GROUPS } from './chipState.js';
 
+function toggleNote({ groupId, noteId, triggerValue, hiddenAttr = false }) {
+  const note = $(noteId);
+  if (!note) {
+    return;
+  }
+
+  const selectors = Array.isArray(groupId) ? groupId : [groupId];
+  const shouldShow = selectors.some((selector) => {
+    const group = $(selector);
+    if (!group) {
+      return false;
+    }
+
+    if (typeof triggerValue === 'function') {
+      return Boolean(triggerValue(group));
+    }
+
+    if (group.matches('select, input, textarea')) {
+      return group.value === triggerValue;
+    }
+
+    const activeChips = $$('.chip.active', group);
+    if (Array.isArray(triggerValue)) {
+      return activeChips.some((chip) => triggerValue.includes(chip.dataset.value));
+    }
+
+    return activeChips.some((chip) => chip.dataset.value === triggerValue);
+  });
+
+  if (hiddenAttr) {
+    note.hidden = !shouldShow;
+  } else {
+    note.style.display = shouldShow ? 'block' : 'none';
+  }
+
+  note.classList.toggle('hidden', !shouldShow);
+}
+
 export function updateDomToggles(){
-  const showBack = $$('.chip.active', $('#e_back_group')).some(c => c.dataset.value === 'Pakitimai');
-  const backNote = $('#e_back_notes');
-  backNote.style.display = showBack ? 'block' : 'none';
-  backNote.classList.toggle('hidden', !showBack);
-
-  const showAbdomen = $$('.chip.active', $('#e_abdomen_group')).some(c => c.dataset.value === 'Pakitimai');
-  const abdomenNote = $('#e_abdomen_notes');
-  abdomenNote.style.display = showAbdomen ? 'block' : 'none';
-  abdomenNote.classList.toggle('hidden', !showAbdomen);
-
-  const showSkinColorOther = $$('.chip.active', $('#c_skin_color_group')).some(c => c.dataset.value === 'Kita');
-  const skinColorOther = $('#c_skin_color_other');
-  skinColorOther.hidden = !showSkinColorOther;
-  skinColorOther.classList.toggle('hidden', !showSkinColorOther);
-
-  $('#oxygenFields').classList.toggle('hidden', !($('#b_oxygen_liters').value || $('#b_oxygen_type').value));
-  $('#dpvFields').classList.toggle('hidden', !$('#b_dpv_fio2').value);
-
-  const showSky = $$('.chip.active', $('#spr_decision_group')).some(c => c.dataset.value === 'Stacionarizavimas');
-  const skyBox = $('#spr_skyrius_container');
-  skyBox.style.display = showSky ? 'block' : 'none';
-  skyBox.classList.toggle('hidden', !showSky);
-
-  const showHosp = $$('.chip.active', $('#spr_decision_group')).some(c => c.dataset.value === 'Pervežimas į kitą ligoninę');
-  const hospBox = $('#spr_ligonine_container');
-  hospBox.style.display = showHosp ? 'block' : 'none';
-  hospBox.classList.toggle('hidden', !showHosp);
-
-  const showSkyOther = ($('#spr_skyrius').value === 'Kita');
-  const skyOther = $('#spr_skyrius_kita');
-  skyOther.style.display = showSkyOther ? 'block' : 'none';
-  skyOther.classList.toggle('hidden', !showSkyOther);
-
-  const showImgOther = IMAGING_GROUPS.some(sel => $$('.chip.active', $(sel)).some(c => c.dataset.value === 'Kita'));
-  const imgOther = $('#imaging_other');
-  imgOther.style.display = showImgOther ? 'block' : 'none';
-  imgOther.classList.toggle('hidden', !showImgOther);
+  [
+    { groupId: '#e_back_group', noteId: '#e_back_notes', triggerValue: 'Pakitimai' },
+    { groupId: '#e_abdomen_group', noteId: '#e_abdomen_notes', triggerValue: 'Pakitimai' },
+    { groupId: '#c_skin_color_group', noteId: '#c_skin_color_other', triggerValue: 'Kita', hiddenAttr: true },
+    { groupId: '#spr_decision_group', noteId: '#spr_skyrius_container', triggerValue: 'Stacionarizavimas' },
+    { groupId: '#spr_decision_group', noteId: '#spr_ligonine_container', triggerValue: 'Pervežimas į kitą ligoninę' },
+    { groupId: '#spr_skyrius', noteId: '#spr_skyrius_kita', triggerValue: 'Kita' },
+    { groupId: IMAGING_GROUPS, noteId: '#imaging_other', triggerValue: 'Kita' },
+    {
+      groupId: ['#b_oxygen_liters', '#b_oxygen_type'],
+      noteId: '#oxygenFields',
+      triggerValue: (field) => field.value,
+      hiddenAttr: true,
+    },
+    {
+      groupId: '#b_dpv_fio2',
+      noteId: '#dpvFields',
+      triggerValue: (field) => field.value,
+      hiddenAttr: true,
+    },
+  ].forEach(toggleNote);
 }
