@@ -6,54 +6,19 @@
 
 :root.light{
   color-scheme:light;
+  /* Increase contrast between background elements */
   --bg:#fff;
-  --card:#f1f5f9;
-  --ink:#0f172a;
-  --muted:#475569;
-  --line:#cbd5e1;
-  --shadow:0 4px 8px rgba(0,0,0,0.1);
-  --accent:#4ea0f5;
-  --red:#e53935;
-  --yellow:#ffb74d;
-  --green:#00c853;
-  --ink2:#1e293b;
-  --button-bg:var(--card);
-  --header-bg:linear-gradient(90deg,var(--accent),color-mix(in srgb,var(--accent),var(--card) 70%));
-  --card-bg:color-mix(in srgb,var(--card),var(--bg) 60%);
-  --yellow-text:#271400;
-  --yellow-border:#bf7d19;
-  --btn-hover-bg:color-mix(in srgb,var(--card),var(--bg) 10%);
-  --btn-active-bg:color-mix(in srgb,var(--card),var(--ink) 20%);
-  --ghost-hover-bg:color-mix(in srgb,#c1c1c1,var(--bg) 10%);
-  --ghost-active-bg:color-mix(in srgb,var(--card),var(--ink) 20%);
-  --pill-bg:#d5d5d5;
-  --pill-border:#9daab7;
+  --card:#f1f5f9;--ink:#0f172a;
+  --muted:#475569;--line:#cbd5e1;--shadow:0 4px 8px rgba(0,0,0,0.1);
+  --accent:#4ea0f5;--red:#e53935;--yellow:#ffb74d;--green:#00c853;--ink2:#1e293b;
 }
 
 :root.dark{
   color-scheme:dark;
-  --bg:#111827;
-  --card:#1f2937;
-  --ink:#f3f4f6;
-  --muted:#ced8ea;
-  --line:#4b5563;
-  --shadow:0 4px 8px rgba(0,0,0,0.5);
-  --accent:#60a5fa;
-  --red:#f87171;
-  --yellow:#fbbf24;
-  --green:#34d399;
-  --ink2:#e0e7ff;
-  --button-bg:var(--card);
-  --header-bg:linear-gradient(90deg,var(--accent),color-mix(in srgb,var(--accent),var(--card) 70%));
-  --card-bg:color-mix(in srgb,var(--card),var(--bg) 60%);
-  --yellow-text:#271400;
-  --yellow-border:#bf7d19;
-  --btn-hover-bg:color-mix(in srgb,var(--card),var(--bg) 10%);
-  --btn-active-bg:color-mix(in srgb,var(--card),var(--ink) 20%);
-  --ghost-hover-bg:color-mix(in srgb,#434b55,var(--bg) 10%);
-  --ghost-active-bg:color-mix(in srgb,var(--card),var(--ink) 20%);
-  --pill-bg:#3c4859;
-  --pill-border:#9daab7;
+  --bg:#111827;--card:#404955;--ink:#f3f4f6;
+  /* brighten supporting colours for better contrast */
+  --muted:#9ca3af;--line:#4b5563;--shadow:0 4px 8px rgba(0,0,0,0.5);
+  --accent:#60a5fa;--red:#f87171;--yellow:#fbbf24;--green:#34d399;--ink2:#e0e7ff;
 }
 
 *{box-sizing:border-box}
@@ -75,7 +40,7 @@ header{
   top:0;
   z-index:1000;
   width:100%;
-  background:var(--header-bg);
+  background:linear-gradient(90deg,var(--accent),color-mix(in srgb,var(--accent),var(--card) 70%));
   backdrop-filter:blur(6px);
   border-bottom:1px solid var(--header-line);
   box-shadow:var(--shadow);
