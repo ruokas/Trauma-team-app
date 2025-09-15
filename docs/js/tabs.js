@@ -66,6 +66,8 @@ export function initTabs(){
     b.onclick=()=>showTab(t.name);
     nav.appendChild(b);
   });
+  nav.classList.add('tabs-ready');
+  nav.removeAttribute('aria-hidden');
   document.querySelectorAll('.view').forEach((v, i) => {
     const active = i === 0;
     v.classList.toggle('visible', active);

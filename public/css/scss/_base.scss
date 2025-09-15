@@ -165,6 +165,8 @@ h1{font-size:clamp(1.25rem,5vw,2rem);line-height:1.2;margin:$space-4 0}
 .header-center .toolbar:first-child{margin-top:0}
 main{max-width:1200px;margin:$space-12 auto;padding:0 $space-16;display:grid;grid-template-columns:220px 1fr;gap:$space-12}
 nav{position:sticky;top:var(--header-height);align-self:start}
+.js #tabs{display:none}
+.js #tabs.tabs-ready{display:block}
 #navToggle{display:none}
 nav .tab{display:flex;align-items:center;gap:$space-8;width:100%;white-space:nowrap;padding:$space-10 $space-12;border:1px solid var(--line);border-radius:$space-10;margin-bottom:$space-8;background:var(--card);color:var(--ink);cursor:pointer;font-weight:600;text-align:left;text-transform:none;font-size:$font-lg;transition:background-color .2s,color .2s}
 nav .tab:hover{background:color-mix(in srgb,var(--card),var(--bg) 10%);color:color-mix(in srgb,var(--ink),var(--bg) 10%)}
