@@ -21,6 +21,16 @@ const LOG_REQUESTS = process.env.NODE_ENV !== 'test';
 
 const EMPTY_DB = { sessions: [], data: {}, users: [] };
 
+function findSessionOr404 (req, res) {
+  const id = req.params.id;
+  const session = db.sessions.find(s => s.id === id);
+  if (!session) {
+    res.status(404).json({ error: 'Not found' });
+    return null;
+  }
+  return session;
+}
+
 async function loadDB(){
   async function backupAndNotify(){
     const backup = `${DB_FILE}.bak`;
@@ -211,9 +221,8 @@ app.post('/api/sessions', auth, validate(sessionSchema), async (req, res) => {
 });
 
 app.put('/api/sessions/:id', auth, validate(sessionSchema), async (req, res) => {
-  const id = req.params.id;
-  const session = db.sessions.find(s => s.id === id);
-  if(!session) return res.status(404).json({ error: 'Not found' });
+  const session = findSessionOr404(req, res);
+  if (!session) return;
   session.name = req.body.name;
   await saveDB();
   io.emit('sessions', db.sessions);
@@ -221,9 +230,8 @@ app.put('/api/sessions/:id', auth, validate(sessionSchema), async (req, res) => 
 });
 
 app.patch('/api/sessions/:id/archive', auth, validate(sessionArchiveSchema), async (req, res) => {
-  const id = req.params.id;
-  const session = db.sessions.find(s => s.id === id);
-  if (!session) return res.status(404).json({ error: 'Not found' });
+  const session = findSessionOr404(req, res);
+  if (!session) return;
   const { archived } = req.body;
   session.archived = archived;
   await saveDB();
@@ -232,11 +240,11 @@ app.patch('/api/sessions/:id/archive', auth, validate(sessionArchiveSchema), asy
 });
 
 app.delete('/api/sessions/:id', auth, async (req, res) => {
-  const id = req.params.id;
-  const index = db.sessions.findIndex(s => s.id === id);
-  if(index === -1) return res.status(404).json({ error: 'Not found' });
+  const session = findSessionOr404(req, res);
+  if (!session) return;
+  const index = db.sessions.indexOf(session);
   db.sessions.splice(index, 1);
-  delete db.data[id];
+  delete db.data[session.id];
   await saveDB();
   io.emit('sessions', db.sessions);
   res.json({ ok: true });
