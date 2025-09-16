@@ -24,6 +24,24 @@
 .btn.ghost:hover{background:var(--ghost-hover-bg,color-mix(in srgb,var(--card),var(--ink) 10%))}
 .btn.ghost:active{background:var(--ghost-active-bg,color-mix(in srgb,var(--card),var(--ink) 20%))}
 .btn.icon-btn{padding:$space-8;min-width:0;width:2.5rem;height:2.5rem}
+.topbar-search{
+  width:min(22rem,100%);
+  min-height:2.75rem;
+  padding:$space-10 $space-16;
+  border:1px solid var(--line);
+  border-radius:$space-12;
+  background:color-mix(in srgb,var(--card),#ffffff 60%);
+  color:var(--ink);
+  font:inherit;
+  transition:border-color .2s, box-shadow .2s, background-color .2s;
+}
+.topbar-search::placeholder{color:var(--muted)}
+.topbar-search:focus-visible{
+  outline:$space-3 solid var(--accent);
+  outline-offset:$space-2;
+  border-color:color-mix(in srgb,var(--accent),var(--line) 30%);
+  box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 30%, transparent);
+}
 #d_gks_total{margin-left:auto;font-weight:700}
 .pill{display:inline-flex;align-items:center;gap:$space-8;padding:$space-6 $space-10;border:1px solid var(--pill-border,var(--line));border-radius:999px;background:var(--pill-bg,var(--card));color:var(--ink);font-weight:700}
 .pill:has(input:checked){background:var(--accent);border-color:#2d74b8}
