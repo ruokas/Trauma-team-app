@@ -1,4 +1,5 @@
 import { $, $$ } from './utils.js';
+import { debounce, clampNumberInputs } from './utilTiming.js';
 import { initTabs } from './tabs.js';
 import { initChips, setChipActive, isChipActive, addChipIndicators } from './chips.js';
 import { initAutoActivate } from './autoActivate.js';
@@ -83,40 +84,9 @@ function expandOutput(){
   ta.style.height = ta.scrollHeight + 'px';
 }
 
-function debounce(fn, delay){
-  let t;
-  return (...args)=>{
-    clearTimeout(t);
-    t=setTimeout(()=>fn(...args),delay);
-  };
-}
 const saveAllDebounced = debounce(saveAll, 300);
 initGcs();
 /* ===== Other UI ===== */
-
-function clampNumberInputs(){
-  const clamp=el=>{
-    if(el.value==='') return;
-    const min=el.getAttribute('min');
-    const max=el.getAttribute('max');
-    const step=parseFloat(el.getAttribute('step')) || 1;
-    let val=parseFloat(el.value);
-    if(isNaN(val)) return;
-    if(min!==null && val<parseFloat(min)) val=parseFloat(min);
-    if(max!==null && val>parseFloat(max)) val=parseFloat(max);
-    val=Math.round(val/step)*step;
-    const decimals=(step.toString().split('.')[1]||'').length;
-    el.value=val.toFixed(decimals);
-  };
-  $$('input[type="number"]').forEach(el=>{
-    const min=el.getAttribute('min');
-    const max=el.getAttribute('max');
-    if(min!==null || max!==null){
-      ['input','change'].forEach(evt=>el.addEventListener(evt,()=>clamp(el)));
-      clamp(el);
-    }
-  });
-}
 
 
 /* ===== Init modules ===== */
