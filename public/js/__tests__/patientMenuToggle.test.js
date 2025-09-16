@@ -10,7 +10,7 @@ describe('initPatientMenuToggle', () => {
   });
 
   test('toggles search field', () => {
-    document.body.innerHTML = '<details id="patientMenu"><summary class="btn">Menu</summary><div class="menu"><button id="patientSearchToggle"></button><input id="patientSearch" class="hidden"></div></details>';
+    document.body.innerHTML = '<details id="patientMenu"><summary class="btn">Menu</summary><div class="menu"><button id="patientSearchToggle"></button><input id="patientSearch" class="topbar-search hidden"></div></details>';
     global.matchMedia = jest.fn().mockReturnValue({ matches: false, addEventListener: jest.fn() });
     const menu = document.getElementById('patientMenu');
     const search = document.getElementById('patientSearch');
@@ -23,8 +23,22 @@ describe('initPatientMenuToggle', () => {
     expect(search.classList.contains('hidden')).toBe(true);
   });
 
+  test('does not remove search styling class', () => {
+    document.body.innerHTML = '<details id="patientMenu"><summary class="btn">Menu</summary><div class="menu"><button id="patientSearchToggle"></button><input id="patientSearch" class="topbar-search hidden"></div></details>';
+    global.matchMedia = jest.fn().mockReturnValue({ matches: false, addEventListener: jest.fn() });
+    const menu = document.getElementById('patientMenu');
+    const search = document.getElementById('patientSearch');
+    const toggle = document.getElementById('patientSearchToggle');
+    initPatientMenuToggle(menu);
+    expect(search.classList.contains('topbar-search')).toBe(true);
+    toggle.click();
+    expect(search.classList.contains('topbar-search')).toBe(true);
+    toggle.click();
+    expect(search.classList.contains('topbar-search')).toBe(true);
+  });
+
   test('keeps menu open when toggling search on mobile', () => {
-    document.body.innerHTML = '<details id="patientMenu"><summary class="btn">Menu</summary><div class="menu"><button id="patientSearchToggle"></button><input id="patientSearch" class="hidden"></div></details>';
+    document.body.innerHTML = '<details id="patientMenu"><summary class="btn">Menu</summary><div class="menu"><button id="patientSearchToggle"></button><input id="patientSearch" class="topbar-search hidden"></div></details>';
     global.matchMedia = jest.fn().mockReturnValue({ matches: false, addEventListener: jest.fn() });
     const menu = document.getElementById('patientMenu');
     const toggle = document.getElementById('patientSearchToggle');
@@ -35,7 +49,7 @@ describe('initPatientMenuToggle', () => {
   });
 
   test('retains open state after search toggle when opened on mobile', () => {
-    document.body.innerHTML = '<details id="patientMenu"><summary class="btn">Menu</summary><div class="menu"><button id="patientSearchToggle"></button><input id="patientSearch" class="hidden"></div></details>';
+    document.body.innerHTML = '<details id="patientMenu"><summary class="btn">Menu</summary><div class="menu"><button id="patientSearchToggle"></button><input id="patientSearch" class="topbar-search hidden"></div></details>';
     global.matchMedia = jest.fn().mockReturnValue({ matches: false, addEventListener: jest.fn() });
     const menu = document.getElementById('patientMenu');
     const toggle = document.getElementById('patientSearchToggle');
@@ -48,7 +62,7 @@ describe('initPatientMenuToggle', () => {
   });
 
   test('stays open on resize after search toggle on mobile', () => {
-    document.body.innerHTML = '<details id="patientMenu"><summary class="btn">Menu</summary><div class="menu"><button id="patientSearchToggle"></button><input id="patientSearch" class="hidden"></div></details>';
+    document.body.innerHTML = '<details id="patientMenu"><summary class="btn">Menu</summary><div class="menu"><button id="patientSearchToggle"></button><input id="patientSearch" class="topbar-search hidden"></div></details>';
     global.matchMedia = jest.fn().mockReturnValue({ matches: false, addEventListener: jest.fn() });
     const menu = document.getElementById('patientMenu');
     const toggle = document.getElementById('patientSearchToggle');
@@ -60,7 +74,7 @@ describe('initPatientMenuToggle', () => {
   });
 
   test('remains open when focusing search on mobile', () => {
-    document.body.innerHTML = '<details id="patientMenu"><summary class="btn">Menu</summary><div class="menu"><button id="patientSearchToggle"></button><input id="patientSearch" class="hidden"></div></details>';
+    document.body.innerHTML = '<details id="patientMenu"><summary class="btn">Menu</summary><div class="menu"><button id="patientSearchToggle"></button><input id="patientSearch" class="topbar-search hidden"></div></details>';
     global.matchMedia = jest.fn().mockReturnValue({ matches: false, addEventListener: jest.fn() });
     const menu = document.getElementById('patientMenu');
     const toggle = document.getElementById('patientSearchToggle');
