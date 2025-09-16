@@ -13,7 +13,7 @@ body,
   color:var(--ink);
   min-height:44px;
   padding:$space-12 $space-16;
-  border-radius:$space-10;
+  border-radius:1.5rem;
   cursor:pointer;
   font-weight:600;
   transition:background-color .2s,color .2s;
@@ -225,7 +225,7 @@ section[data-tab="Intervencijos"] .med-search{margin-bottom:$space-8}
   font-size:$font-lg;
   min-width:6ch;
   padding:$space-8 $space-12;
-  border-radius:$space-10;
+  border-radius:1.5rem;
   border:1px solid #2d74b8;
   background:var(--accent);
   color:#fff;
