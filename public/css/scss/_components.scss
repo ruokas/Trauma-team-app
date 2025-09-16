@@ -30,14 +30,7 @@ body,
 .btn.ghost{background:transparent;color:var(--muted);border-style:dashed}
 .btn.ghost:hover{background:var(--ghost-hover-bg,color-mix(in srgb,var(--card),var(--ink) 10%))}
 .btn.ghost:active{background:var(--ghost-active-bg,color-mix(in srgb,var(--card),var(--ink) 20%))}
-.icon-btn{
-  // Naudojame pagrindinių mygtukų stilių ir pritaikome kvadratinį formatą ikonoms
-  @extend .btn;
-  padding:$space-8;
-  min-width:0;
-  width:2.5rem;
-  height:2.5rem;
-}
+.btn.icon-btn{padding:$space-8;min-width:0;width:2.5rem;height:2.5rem}
 #d_gks_total{margin-left:auto;font-weight:700}
 .pill{display:inline-flex;align-items:center;gap:$space-8;padding:$space-6 $space-10;border:1px solid var(--pill-border,var(--line));border-radius:999px;background:var(--pill-bg,var(--card));color:var(--ink);font-weight:700}
 .pill:has(input:checked){background:var(--accent);border-color:#2d74b8}
