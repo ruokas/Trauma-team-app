@@ -1,16 +1,31 @@
 @use 'variables' as *;
 
-.btn{border:1px solid var(--line);background:var(--card);color:var(--ink);padding:$space-8 $space-12;border-radius:1.5rem;cursor:pointer;font-weight:600;transition:background-color .2s,color .2s,filter .2s;display:flex;align-items:center;justify-content:center}
-.btn:hover{filter:brightness(1.2)}
-.btn:active{filter:brightness(.9)}
-.btn:disabled{opacity:.5;cursor:not-allowed;filter:none}
+.btn{
+  border:1px solid var(--btn-border,var(--line));
+  background:var(--btn-bg,var(--card));
+  color:var(--ink);
+  min-height:44px;
+  padding:$space-12 $space-16;
+  border-radius:1.5rem;
+  cursor:pointer;
+  font-weight:600;
+  transition:background-color .2s,color .2s;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.btn:hover{background:var(--btn-hover-bg,color-mix(in srgb,var(--card),var(--ink) 15%))}
+.btn:active{background:var(--btn-active-bg,color-mix(in srgb,var(--card),var(--ink) 20%))}
+.btn:disabled{opacity:.5;cursor:not-allowed}
 .btn:focus-visible{outline:$space-3 solid var(--accent);outline-offset:$space-2;transition:background-color .2s,color .2s}
 .btn.primary{background:var(--accent);color:#fff;border-color:#2d74b8}
-.btn.warn{background:#ffb74d;color:#271400;border-color:#bf7d19}
+.btn.warn{background:var(--yellow,#ffb74d);color:var(--yellow-text,#271400);border-color:var(--yellow-border,#bf7d19)}
 .btn.ghost{background:transparent;color:var(--muted);border-style:dashed}
+.btn.ghost:hover{background:var(--ghost-hover-bg,color-mix(in srgb,var(--card),var(--ink) 10%))}
+.btn.ghost:active{background:var(--ghost-active-bg,color-mix(in srgb,var(--card),var(--ink) 20%))}
 .btn.icon-btn{padding:$space-8;min-width:0;width:2.5rem;height:2.5rem}
 #d_gks_total{margin-left:auto;font-weight:700}
-.pill{display:inline-flex;align-items:center;gap:$space-8;padding:$space-6 $space-10;border:1px solid var(--line);border-radius:999px;background:var(--card);color:var(--ink);font-weight:700}
+.pill{display:inline-flex;align-items:center;gap:$space-8;padding:$space-6 $space-10;border:1px solid var(--pill-border,var(--line));border-radius:999px;background:var(--pill-bg,var(--card));color:var(--ink);font-weight:700}
 .pill:has(input:checked){background:var(--accent);border-color:#2d74b8}
 .pill.red:has(input:checked){background:var(--red);border-color:#a52623}
   #fastGrid .pill{
@@ -72,7 +87,7 @@ input.invalid,select.invalid{border-color:var(--red)}
 .split{display:flex;gap:$space-12;flex-wrap:wrap}
 .split>div{flex:1}
 .interv-groups{display:grid;gap:$space-12;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
-.interv-group{display:flex;flex-direction:column;gap:$space-8;background:var(--bg);border:1px solid var(--line);border-radius:$space-10;padding:$space-8}
+.interv-group{display:flex;flex-direction:column;gap:$space-8;background:var(--card-bg,var(--bg));border:1px solid var(--line);border-radius:$space-10;padding:$space-8}
 .interv-group>.grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:$space-8}
 .interv-group.collapsed>.grid{display:none}
 .med-search{margin-bottom:$space-8;width:100%}
