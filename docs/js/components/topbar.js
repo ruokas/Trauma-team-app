@@ -1,6 +1,6 @@
 import { notify } from '../alerts.js';
 
-const NAV_BREAKPOINT = 768;
+const NAV_BREAKPOINT = 1025;
 let navMq;
 let navMqListener;
 
@@ -97,7 +97,7 @@ export function initPatientMenuToggle(menu){
   if(!menu) return;
   const search=menu.querySelector('#patientSearch');
   const searchToggle=menu.querySelector('#patientSearchToggle');
-  const mq=typeof matchMedia==='function' ? matchMedia('(min-width: 769px)') : null;
+  const mq=typeof matchMedia==='function' ? matchMedia(`(min-width: ${NAV_BREAKPOINT}px)`) : null;
   const update=()=>{ if(mq && mq.matches) menu.setAttribute('open',''); else menu.removeAttribute('open'); };
   update();
   patientMenuResizeListener=update;

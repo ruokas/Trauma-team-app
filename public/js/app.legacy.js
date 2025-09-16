@@ -1255,7 +1255,7 @@ var TraumaTeamApp = (function (exports) {
     window.validateVitals = validateVitals;
   }
 
-  var NAV_BREAKPOINT = 768;
+  var NAV_BREAKPOINT = 1025;
   var navMq;
   var navMqListener;
   function initNavToggle(toggle, nav) {
@@ -1395,7 +1395,7 @@ var TraumaTeamApp = (function (exports) {
     if (!menu) return;
     var search = menu.querySelector('#patientSearch');
     var searchToggle = menu.querySelector('#patientSearchToggle');
-    patientMenuMq = typeof matchMedia === 'function' ? matchMedia('(min-width: 769px)') : null;
+    patientMenuMq = typeof matchMedia === 'function' ? matchMedia("(min-width: ".concat(NAV_BREAKPOINT, "px)")) : null;
     var update = function update() {
       if (patientMenuMq && patientMenuMq.matches) menu.setAttribute('open', '');else menu.removeAttribute('open');
     };
