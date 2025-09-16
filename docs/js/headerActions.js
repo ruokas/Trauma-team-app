@@ -28,7 +28,7 @@ export function setupHeaderActions({ validateForm }){
     showTab('Santrauka');
     const text = $('#output').value || '';
     try {
-      const module = await import('./lib/jspdf.umd.min.js');
+      const module = await import('jspdf');
       const { jsPDF } = module.default || module;
       const doc = new jsPDF();
       const lines = doc.splitTextToSize(text, 180);
