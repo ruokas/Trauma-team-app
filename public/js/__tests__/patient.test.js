@@ -4,7 +4,7 @@ const mockJsPDF = jest.fn().mockImplementation(() => ({
   text: jest.fn(),
   save: mockSave
 }));
-jest.mock('../lib/jspdf.umd.min.js', () => ({ __esModule: true, default: { jsPDF: mockJsPDF } }));
+jest.mock('jspdf', () => ({ __esModule: true, jsPDF: mockJsPDF, default: { jsPDF: mockJsPDF } }));
 
 let saveAll, loadAll, generateReport, setupHeaderActions, bodyMap, setCurrentSessionId;
 
