@@ -111,9 +111,9 @@ input.invalid,select.invalid{border-color:var(--red)}
 #saveStatus.offline::before{content:'⚠ ';}
 .split{display:flex;gap:$space-12;flex-wrap:wrap}
 .split>div{flex:1}
-.interv-groups{display:grid;gap:$space-12;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
-.interv-group{display:flex;flex-direction:column;gap:$space-8;background:var(--card-bg,var(--bg));border:1px solid var(--line);border-radius:$space-10;padding:$space-8}
-.interv-group>.grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:$space-8}
+.interv-groups{display:grid;gap:$space-8;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.interv-group{display:flex;flex-direction:column;gap:$space-6;background:var(--card-bg,var(--bg));border:1px solid var(--line);border-radius:$space-10;padding:$space-6}
+.interv-group>.grid{grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:$space-6}
 .interv-group.collapsed>.grid{display:none}
 .med-search{margin-bottom:$space-8;width:100%}
 /* SVG body map */
@@ -219,7 +219,7 @@ body.patient-menu-open .patient-menu-overlay:not([hidden]){display:block}
 }
 @media print{ header,nav,.toolbar{display:none!important} body{background:#fff;color:#000} section.card{break-inside:avoid} }
 /* Interventions compact layout */
-section[data-tab="Intervencijos"] .card{padding:$space-8}
+section[data-tab="Intervencijos"] .card{padding:$space-6}
 section[data-tab="Intervencijos"] .card .detail .grid{gap:$space-4}
 section[data-tab="Intervencijos"] .med-search{margin-bottom:$space-8}
     section[data-tab="Intervencijos"] .interv-toggle{margin:0 0 $space-8;font-size:$font-sm;color:var(--muted);display:flex;align-items:center;gap:$space-4;background:none;border:none;cursor:pointer;padding:0;text-align:left}
