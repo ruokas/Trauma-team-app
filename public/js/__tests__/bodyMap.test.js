@@ -89,5 +89,21 @@ describe('BodyMap minimal', () => {
     bm.eraseBrush(10,10,5);
     expect(totalEl.textContent).toBe(`${bm.burnArea().toFixed(1)}%`);
   });
+
+  test('svgPoint returns null when screen CTM is unavailable', () => {
+    setupDom();
+    const bm = new BodyMap();
+    bm.init(() => {});
+    bm.svg.createSVGPoint = jest.fn(() => ({
+      x: 0,
+      y: 0,
+      matrixTransform: jest.fn(() => ({ x: 0, y: 0 }))
+    }));
+    bm.svg.getScreenCTM = jest.fn(() => null);
+    bm.svg.getBoundingClientRect = jest.fn(() => null);
+    const call = () => bm.svgPoint({ clientX: 12, clientY: 34 });
+    expect(call).not.toThrow();
+    expect(call()).toBeNull();
+  });
 });
 

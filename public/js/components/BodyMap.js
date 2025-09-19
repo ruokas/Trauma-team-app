@@ -65,6 +65,7 @@ export default class BodyMap {
       const zone = evt.target.closest('.zone');
       if (!zone) return;
       const pt = this.svgPoint(evt);
+      if (!pt) return;
       if (this.activeTool === TOOLS.BURN.char) {
         this.addBrush(pt.x, pt.y, this.brushSize);
       } else if (this.activeTool === TOOLS.BURN_ERASE.char) {
@@ -87,11 +88,30 @@ export default class BodyMap {
     };
   }
 
-  svgPoint(evt){
-    const pt=this.svg.createSVGPoint();
-    pt.x=evt.clientX; pt.y=evt.clientY;
-    const {x,y}=pt.matrixTransform(this.svg.getScreenCTM().inverse());
-    return {x,y};
+  svgPoint(evt) {
+    if (!this.svg || typeof this.svg.createSVGPoint !== 'function') return null;
+
+    const pt = this.svg.createSVGPoint();
+    pt.x = evt.clientX;
+    pt.y = evt.clientY;
+
+    const ctm = this.svg.getScreenCTM();
+    if (!ctm) {
+      const rect = typeof this.svg.getBoundingClientRect === 'function'
+        ? this.svg.getBoundingClientRect()
+        : null;
+      const viewBox = this.svg.viewBox?.baseVal;
+      if (rect && viewBox && rect.width && rect.height) {
+        const x = ((evt.clientX - rect.left) / rect.width) * viewBox.width + viewBox.x;
+        const y = ((evt.clientY - rect.top) / rect.height) * viewBox.height + viewBox.y;
+        return { x, y };
+      }
+      return null;
+    }
+
+    const matrix = ctm.inverse();
+    const { x, y } = pt.matrixTransform(matrix);
+    return { x, y };
   }
 
   setTool(tool) { this.activeTool = tool; }
