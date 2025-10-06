@@ -4,5 +4,3 @@ export const TOOLS = {
   BURN: { char: 'B', symbol: '' },
   BURN_ERASE: { char: 'E', symbol: '' }
 };
-
-export default TOOLS;

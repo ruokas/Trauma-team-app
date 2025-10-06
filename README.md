@@ -53,7 +53,8 @@ debugging:
 - `reconnect` – logs successful reconnection and notifies the user.
 
 After refreshing authentication tokens, call `setAuthToken()` followed
-by `reconnectSocket()` to manually re-establish the connection.
+by `connectSocket({ force: true })` to manually re-establish the
+connection if needed.
 
 ## Offline Support
 
