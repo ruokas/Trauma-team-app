@@ -58,9 +58,15 @@ export async function saveSessions(list){
   }
 }
 
-export function connectSocket({ onSessions, onSessionData, onUsers }={}){
+export function connectSocket(options={}){
+  const { onSessions, onSessionData, onUsers, force = false } = options;
   const token = getAuthToken();
-  if(typeof io === 'undefined' || socket || !token) return;
+  if(typeof io === 'undefined' || !token) return;
+  if(socket){
+    if(!force) return;
+    socket.disconnect();
+    socket = null;
+  }
   socket = io(socketEndpoint || undefined,{ auth:{ token:'Bearer '+token } });
   socket.on('connect', resetDelay);
   socket.on('connect_error', err => {
@@ -81,13 +87,5 @@ export function connectSocket({ onSessions, onSessionData, onUsers }={}){
   if(onSessions) socket.on('sessions', onSessions);
   if(onSessionData) socket.on('sessionData', onSessionData);
   if(onUsers) socket.on('users', onUsers);
-}
-
-export function reconnectSocket(callbacks){
-  if(socket){
-    socket.disconnect();
-    socket = null;
-  }
-  connectSocket(callbacks);
 }
 
